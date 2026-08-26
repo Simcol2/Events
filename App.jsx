@@ -46,6 +46,49 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
+
+/* =====================================================
+   SECTION HEADING
+   ===================================================== */
+
+function SectionHeading({ eyebrow, title, subtitle }) {
+  return (
+    <div>
+      <div
+        className="font-[Jost] text-[9px] font-semibold tracking-[0.3em]"
+        style={{
+          color: "#B8935A",
+        }}
+      >
+        {eyebrow}
+      </div>
+
+      <h2
+        className="mt-4 font-['Cormorant_Garamond'] text-5xl font-semibold leading-none sm:text-6xl"
+        style={{
+          color: "#4E5A44",
+        }}
+      >
+        {title}
+      </h2>
+
+      <p
+        className="mt-5 max-w-2xl font-[Jost] text-sm leading-7"
+        style={{
+          color: "#716B5C",
+        }}
+      >
+        {subtitle}
+      </p>
+    </div>
+  );
+}
+
+
+/* =====================================================
+   HOME
+   ===================================================== */
+
 export default function Home({ navigate }) {
   const heroRef = useRef(null);
   const [heroOffset, setHeroOffset] = useState(0);
