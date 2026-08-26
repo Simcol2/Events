@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles, Leaf } from "lucide-react";
-import SectionHeading from "../components/SectionHeading";
 
 import heroImage from "../media/file_000000009b0081f6ab943d7379508069.png";
 
