@@ -5,7 +5,7 @@ import heroImage from "./media/file_000000009b0081f6ab943d7379508069.png";
 
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const element = ref.current;
