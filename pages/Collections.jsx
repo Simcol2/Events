@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, Leaf } from "lucide-react";
-import { SAGE, SAGE_DEEP, GOLD, CREAM, INK, LINE, MUTED, displayFont, scriptFont, bodyFont, ensureFonts } from "../lib/theme";
+import { SAGE, SAGE_DEEP, GOLD, CREAM, INK, LINE, MUTED, displayFont, scriptFont, bodyFont, ensureFonts } from "../theme";
 
 // Pulled from the six theme boards. Swap the `palette` hex values for exact
 // brand codes if/when you lock those in — these are close reads off the
