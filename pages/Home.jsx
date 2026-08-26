@@ -11,7 +11,7 @@ import {
   scriptFont,
   bodyFont,
   ensureFonts,
-} from "../lib/theme";
+} from "../theme";
 
 const HERO_IMAGE = "/media/Collections-3-Carnival-baby-mockup.png";
 
