@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { SAGE, SAGE_DEEP, GOLD, CREAM, INK, LINE, MUTED, displayFont, scriptFont, bodyFont, ensureFonts } from "../lib/theme";
+import { SAGE, SAGE_DEEP, GOLD, CREAM, INK, LINE, MUTED, displayFont, scriptFont, bodyFont, ensureFonts } from "../theme";
 
 const PILLARS = [
   {
