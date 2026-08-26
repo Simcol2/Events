@@ -21,7 +21,7 @@ import {
   ensureFonts,
 } from "../theme";
 
-import heroImage from "../media/file_000000009b0081f6ab943d7379508069.png";
+import heroImage from "../media/Collections-3-Carnival baby mockup.png";
 
 const COLORS = {
   blush: "#E8A3A8",
