@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { Leaf } from "lucide-react";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../supabaseClient";
 import {
   SAGE,
   SAGE_DEEP,
@@ -15,7 +15,7 @@ import {
   scriptFont,
   bodyFont,
   ensureFonts,
-} from "../lib/theme";
+} from "../theme";
 
 function Divider() {
   return (
