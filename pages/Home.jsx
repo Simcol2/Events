@@ -1,6 +1,5 @@
 import React from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
-import SectionHeading from "../components/SectionHeading";
 
 export default function Home({ navigate }) {
   return (
@@ -48,11 +47,30 @@ export default function Home({ navigate }) {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <SectionHeading
-          eyebrow="THE EXPERIENCE"
-          title="More than a rental."
-          subtitle="A Slice of G is built around the pieces that make a party feel intentional, without making the host become an event planner."
-        />
+        <div className="text-center">
+  <p
+    className="font-[Jost] text-[9px] font-semibold tracking-[0.3em]"
+    style={{ color: "#B8935A" }}
+  >
+    THE EXPERIENCE
+  </p>
+
+  <h2
+    className="mt-3 font-['Cormorant_Garamond'] text-5xl font-semibold leading-none sm:text-6xl"
+    style={{ color: "#4E5A44" }}
+  >
+    More than a rental.
+  </h2>
+
+  <p
+    className="mx-auto mt-5 max-w-2xl font-[Jost] text-sm leading-7"
+    style={{ color: "#716B5C" }}
+  >
+    A Slice of G is built around the pieces that make a
+    party feel intentional, without making the host become
+    an event planner.
+  </p>
+</div>
 
         <div className="mt-16 grid gap-px border border-[#E4DCC8] bg-[#E4DCC8] md:grid-cols-3">
           {[
