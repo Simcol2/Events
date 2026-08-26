@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles, Leaf } from "lucide-react";
 
-import heroImage from "../media/file_000000009b0081f6ab943d7379508069.png";
+import heroImage from "./media/file_000000009b0081f6ab943d7379508069.png";
 
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
