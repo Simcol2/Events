@@ -6,7 +6,6 @@ import HomePage from "./pages/Home";
 import DecorPage from "./pages/Decor";
 import ActivitiesPage from "./pages/Activities";
 import RentalBooking from "./rental-kit-booking-v5.jsx";
-import { ensureFonts } from "./theme";
 
 function pathPage() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
@@ -20,8 +19,7 @@ export default function App() {
   const [page, setPage] = React.useState(pathPage());
 
   useEffect(() => {
-    ensureFonts();
-    const onPop = () => setPage(pathPage());
+  const onPop = () => setPage(pathPage());
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
