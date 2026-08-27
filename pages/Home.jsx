@@ -163,20 +163,6 @@ export default function Home({ navigate }) {
         >
           <RotatingHeadline fonts={fonts} />
 
-          <p
-            style={{
-              ...fonts.bodyFont,
-              maxWidth: "600px",
-              margin: "0 auto",
-              color: "#FDF6EE",
-              fontSize: "18px",
-              lineHeight: 1.7,
-            }}
-          >
-            Everything for an unforgettable baby shower. Delivered, styled,
-            and designed to be remembered forever. Starting at $795.
-          </p>
-
           <div
             style={{
               display: "flex",
@@ -239,7 +225,37 @@ export default function Home({ navigate }) {
       <section
         style={{
           background: palette.bg,
-          padding: "100px 0",
+          padding: "60px 40px",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "1000px",
+            margin: "0 auto",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              ...fonts.bodyFont,
+              maxWidth: "700px",
+              margin: "0 auto",
+              color: palette.ink,
+              fontSize: "18px",
+              lineHeight: 1.7,
+            }}
+          >
+            Everything for an unforgettable baby shower. Delivered, styled,
+            and designed to be remembered forever. Starting at $795.
+          </p>
+        </div>
+      </section>
+
+      <section
+        style={{
+          background: palette.bg,
+          padding: "80px 0",
         }}
       >
         <div
@@ -334,10 +350,11 @@ export default function Home({ navigate }) {
           </Reveal>
 
           <div
+            className="essentials-grid"
             style={{
               marginTop: "64px",
               display: "grid",
-              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
               gap: "24px",
             }}
           >
