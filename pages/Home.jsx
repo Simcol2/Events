@@ -113,125 +113,234 @@ function RotatingHeadline({ fonts }) {
 export default function Home({ navigate }) {
   const { palette, fonts } = usePalette();
 
-  /* helper: add alpha to a 6-char hex */
-  const hex = (color, alphaHex) => {
-    const c = color.replace("#", "");
-    return `#${c}${alphaHex}`;
-  };
-
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
-
-      <section className="relative isolate flex min-h-[100svh] w-full items-center justify-center overflow-hidden">
+      <section
+        style={{
+          position: "relative",
+          width: "100%",
+          minHeight: "100svh",
+          overflow: "hidden",
+          isolation: "isolate",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <img
           src={heroFullBleed}
           alt="Baby shower styling"
-          className="absolute inset-0 z-0 h-full w-full object-cover"
-        />
-
-        <div
-          className="absolute inset-0 z-[1]"
           style={{
-            background: `
-              linear-gradient(
-                180deg,
-                rgba(35, 18, 28, 0.78) 0%,
-                rgba(35, 18, 28, 0.60) 35%,
-                rgba(35, 18, 28, 0.25) 70%,
-                rgba(35, 18, 28, 0.10) 100%
-              )
-            `,
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
           }}
         />
 
-        <div className="relative z-10 w-full max-w-full px-6 py-24 sm:px-10">
-          <div className="mx-auto max-w-[1000px] text-center" style={{ maxWidth: "100%" }}>
-            <RotatingHeadline fonts={fonts} />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1,
+            background:
+              "linear-gradient(180deg, rgba(25,15,20,.82) 0%, rgba(25,15,20,.68) 38%, rgba(25,15,20,.38) 72%, rgba(25,15,20,.18) 100%)",
+          }}
+        />
 
-            <p
-              className="mx-auto max-w-[600px] text-base leading-7 sm:text-lg"
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            width: "100%",
+            maxWidth: "1000px",
+            margin: "0 auto",
+            padding: "120px 32px 80px",
+            textAlign: "center",
+          }}
+        >
+          <RotatingHeadline fonts={fonts} />
+
+          <p
+            style={{
+              ...fonts.bodyFont,
+              maxWidth: "600px",
+              margin: "0 auto",
+              color: "#FDF6EE",
+              fontSize: "18px",
+              lineHeight: 1.7,
+            }}
+          >
+            Everything for an unforgettable baby shower. Delivered, styled,
+            and designed to be remembered forever. Starting at $795.
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              gap: "20px",
+              width: "100%",
+              marginTop: "32px",
+            }}
+          >
+            <button
+              onClick={() => navigate("/package-builder")}
               style={{
                 ...fonts.bodyFont,
-                color: "#FDF6EE",
-                maxWidth: "100%",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "12px",
+                padding: "16px 28px",
+                border: "0",
+                borderRadius: "2px",
+                background: palette.primaryDeep,
+                color: "#FFFFFF",
+                fontSize: "14px",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                whiteSpace: "nowrap",
               }}
             >
-              Everything for an unforgettable baby shower. Delivered, styled,
-              and designed to be remembered forever. Starting at $795.
-            </p>
+              BUILD YOUR PACKAGE
+              <ArrowRight size={17} />
+            </button>
 
-            <div className="mt-8 flex max-w-full flex-wrap items-center justify-center gap-5">
-              <button
-                onClick={() => navigate("/package-builder")}
-                className="inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ ...fonts.bodyFont, background: palette.primaryDeep, maxWidth: "100%" }}
-              >
-                BUILD YOUR PACKAGE <ArrowRight size={17} />
-              </button>
-
-              <button
-                onClick={() => navigate("/how-it-works")}
-                className="text-sm font-semibold tracking-[0.1em] text-white underline underline-offset-4 transition-opacity hover:opacity-80"
-                style={{ ...fonts.bodyFont, maxWidth: "100%" }}
-              >
-                SEE HOW IT WORKS
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/how-it-works")}
+              style={{
+                ...fonts.bodyFont,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "16px 10px",
+                border: "0",
+                background: "transparent",
+                color: "#FFFFFF",
+                fontSize: "14px",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                textDecoration: "underline",
+                textUnderlineOffset: "4px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              SEE HOW IT WORKS
+            </button>
           </div>
         </div>
       </section>
 
-      <section className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+      <section
+        style={{
+          background: palette.bg,
+          padding: "100px 0",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "1400px",
+            margin: "0 auto",
+            padding: "0 40px",
+          }}
+        >
           <Reveal>
-            <div className="grid min-h-[560px] lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
-              <div className="flex items-center px-2 py-10 lg:pr-16">
-                <div className="max-w-xl">
-                  <p
-                    className="text-xs font-semibold tracking-[0.3em]"
-                    style={{
-                      ...fonts.bodyFont,
-                      color: palette.gold,
-                    }}
-                  >
-                    THE ESSENTIALS
-                  </p>
+            <div
+              className="essentials-split"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                minHeight: "560px",
+                width: "100%",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                  padding: "60px 70px 60px 0",
+                }}
+              >
+                <p
+                  style={{
+                    ...fonts.bodyFont,
+                    margin: 0,
+                    color: palette.gold,
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    letterSpacing: "0.3em",
+                  }}
+                >
+                  THE ESSENTIALS
+                </p>
 
-                  <h2
-                    className="mt-5 font-semibold leading-none"
-                    style={{
-                      ...fonts.displayFont,
-                      color: palette.primaryDeep,
-                      fontSize: "clamp(5rem, 10vw, 9rem)",
-                    }}
-                  >
-                    $795
-                  </h2>
+                <h2
+                  style={{
+                    ...fonts.displayFont,
+                    margin: "20px 0 0",
+                    color: palette.primaryDeep,
+                    fontSize: "clamp(5rem, 9vw, 9rem)",
+                    fontWeight: 600,
+                    lineHeight: 0.9,
+                  }}
+                >
+                  $795
+                </h2>
 
-                  <p
-                    className="mt-6 max-w-lg text-lg leading-8"
-                    style={{
-                      ...fonts.bodyFont,
-                      color: palette.ink,
-                    }}
-                  >
-                    The core experience. Everything you need for a shower guests
-                    will actually remember.
-                  </p>
-                </div>
+                <p
+                  style={{
+                    ...fonts.bodyFont,
+                    maxWidth: "500px",
+                    margin: "28px 0 0",
+                    color: palette.ink,
+                    fontSize: "18px",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  The core experience. Everything you need for a shower guests
+                  will actually remember.
+                </p>
               </div>
 
-              <div className="relative min-h-[400px] overflow-hidden lg:min-h-[560px]">
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  minHeight: "560px",
+                  overflow: "hidden",
+                }}
+              >
                 <img
                   src={essentialsImage}
                   alt="Essentials event styling"
-                  className="absolute inset-0 h-full w-full object-cover"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                 />
               </div>
             </div>
           </Reveal>
 
-          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            style={{
+              marginTop: "64px",
+              display: "grid",
+              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gap: "24px",
+            }}
+          >
             {ESSENTIALS_FEATURES.map((f, i) => (
               <Reveal key={f.id} delay={i * 60}>
                 <FeatureCard
