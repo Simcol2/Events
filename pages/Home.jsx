@@ -60,44 +60,40 @@ function RotatingHeadline({ fonts }) {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % HERO_LINES.length);
     }, 3500);
+
     return () => clearInterval(timer);
   }, []);
 
   return (
     <div
+      className="relative mx-auto w-full"
       style={{
-        position: "relative",
-        minHeight: "clamp(4rem, 10vw, 7rem)",
+        minHeight: "clamp(5.5rem, 13vw, 9rem)",
         marginBottom: "1.5rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
       }}
     >
       {HERO_LINES.map((line, i) => (
         <h1
-          key={i}
+          key={line}
           style={{
             ...fonts.displayFont,
             position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform:
-              i === index
-                ? "translate(-50%, -50%)"
-                : "translate(-50%, calc(-50% + 12px))",
-            width: "100%",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 10px",
             margin: 0,
             fontSize: "clamp(2rem, 5vw, 4.2rem)",
             fontWeight: 500,
-            lineHeight: 1.15,
+            lineHeight: 1.1,
             color: "#FDF6EE",
             opacity: i === index ? 1 : 0,
-            transition: "opacity 600ms ease, transform 600ms ease",
-            textShadow: "0 2px 20px rgba(0,0,0,0.35)",
+            transform: i === index ? "translateY(0)" : "translateY(14px)",
+            transition: "opacity 600ms ease, transform 600ms cubic-bezier(.22,1,.36,1)",
+            textShadow: "0 2px 24px rgba(0,0,0,0.45)",
             pointerEvents: "none",
             textAlign: "center",
-            whiteSpace: "nowrap",
           }}
         >
           {line}
@@ -120,40 +116,37 @@ export default function Home({ navigate }) {
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
 
-      {/* ═══════════════════════════════════════
-          FULL-BLEED HERO
-          ═══════════════════════════════════════ */}
-      <section className="relative w-full" style={{ minHeight: "100vh" }}>
-        {/* Background image */}
+      <section className="relative isolate flex min-h-[100svh] w-full items-center justify-center overflow-hidden">
         <img
           src={heroFullBleed}
           alt="Baby shower styling"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 z-0 h-full w-full object-cover"
         />
 
-        {/* Gradient overlay */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 z-[1]"
           style={{
-            background: `linear-gradient(
-              180deg,
-              ${hex(palette.primaryDeep, "E6")} 0%,
-              ${hex(palette.primaryDeep, "80")} 40%,
-              transparent 65%
-            )`,
+            background: `
+              linear-gradient(
+                180deg,
+                rgba(35, 18, 28, 0.78) 0%,
+                rgba(35, 18, 28, 0.60) 35%,
+                rgba(35, 18, 28, 0.25) 70%,
+                rgba(35, 18, 28, 0.10) 100%
+              )
+            `,
           }}
         />
 
-        {/* Content */}
-        <div className="relative z-10 flex min-h-[100dvh] items-center justify-center px-6 pt-24 pb-16 sm:px-10">
-          <div className="w-full max-w-[900px] text-center">
+        <div className="relative z-10 w-full px-6 py-24 sm:px-10">
+          <div className="mx-auto max-w-[1000px] text-center">
             <RotatingHeadline fonts={fonts} />
 
             <p
               className="mx-auto max-w-[600px] text-base leading-7 sm:text-lg"
               style={{
                 ...fonts.bodyFont,
-                color: "rgba(253, 246, 238, 0.92)",
+                color: "#FDF6EE",
               }}
             >
               Everything for an unforgettable baby shower. Delivered, styled,
@@ -181,44 +174,51 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          THE ESSENTIALS
-          ═══════════════════════════════════════ */}
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <Reveal>
-            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
-              <div className="max-w-xl text-left">
-                <p
-                  className="text-xs font-semibold tracking-[0.3em]"
-                  style={{ ...fonts.bodyFont, color: palette.gold }}
-                >
-                  THE ESSENTIALS
-                </p>
-                <h2
-                  className="mt-5 font-semibold leading-[0.9]"
-                  style={{
-                    ...fonts.displayFont,
-                    color: palette.primaryDeep,
-                    fontSize: "clamp(4rem, 10vw, 9rem)",
-                  }}
-                >
-                  $795
-                </h2>
-                <p
-                  className="mt-5 max-w-lg text-lg leading-8"
-                  style={{ ...fonts.bodyFont, color: palette.ink }}
-                >
-                  The core experience. Everything you need for a shower guests
-                  will actually remember.
-                </p>
+            <div className="grid min-h-[560px] lg:grid-cols-2">
+              <div className="flex items-center px-2 py-10 lg:pr-16">
+                <div className="max-w-xl">
+                  <p
+                    className="text-xs font-semibold tracking-[0.3em]"
+                    style={{
+                      ...fonts.bodyFont,
+                      color: palette.gold,
+                    }}
+                  >
+                    THE ESSENTIALS
+                  </p>
+
+                  <h2
+                    className="mt-5 font-semibold leading-none"
+                    style={{
+                      ...fonts.displayFont,
+                      color: palette.primaryDeep,
+                      fontSize: "clamp(5rem, 10vw, 9rem)",
+                    }}
+                  >
+                    $795
+                  </h2>
+
+                  <p
+                    className="mt-6 max-w-lg text-lg leading-8"
+                    style={{
+                      ...fonts.bodyFont,
+                      color: palette.ink,
+                    }}
+                  >
+                    The core experience. Everything you need for a shower guests
+                    will actually remember.
+                  </p>
+                </div>
               </div>
 
-              <div className="relative aspect-[4/3] w-full overflow-hidden lg:aspect-auto lg:h-[560px]">
+              <div className="relative min-h-[400px] overflow-hidden lg:min-h-0">
                 <img
                   src={essentialsImage}
                   alt="Essentials event styling"
-                  className="h-full w-full object-cover"
+                  className="absolute inset-0 h-full w-full object-cover"
                 />
               </div>
             </div>
