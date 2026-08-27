@@ -4,7 +4,8 @@ import { usePalette } from "../PaletteContext";
 import FeatureCard from "../components/FeatureCard";
 import { PACKAGE_INTRO, ESSENTIALS_FEATURES, ADDONS } from "../packageContent";
 
-import heroFullBleed from "../media/hero.png";
+import heroFullBleed from "../media/timecapsul.png";
+import essentialsImage from "../media/hero.png";
 
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
@@ -157,36 +158,49 @@ export default function Home({ navigate }) {
       </section>
 
       {/* THE ESSENTIALS */}
-      <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
-        <Reveal>
-          <div className="text-center mb-14">
-            <p className="text-xs font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
-              THE ESSENTIALS
-            </p>
-            <h2 className="mt-3 text-5xl sm:text-6xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-              $795
-            </h2>
-            <p className="mt-3 max-w-xl mx-auto text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-              The core experience. Everything you need for a shower guests will actually remember.
-            </p>
-          </div>
-        </Reveal>
+      <section className="relative overflow-hidden py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <Reveal>
+            <div className="mb-12 grid items-center gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-0">
+              <div className="max-w-xl text-left">
+                <p className="text-xs font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                  THE ESSENTIALS
+                </p>
+                <h2 className="mt-5 text-5xl sm:text-6xl lg:text-7xl font-semibold leading-none" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                  $795
+                </h2>
+                <p className="mt-5 max-w-lg text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                  The core experience. Everything you need for a shower guests will actually remember.
+                </p>
+              </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ESSENTIALS_FEATURES.map((f, i) => (
-            <Reveal key={f.id} delay={i * 60}>
-              <FeatureCard
-                icon={f.icon}
-                name={f.name}
-                tagline={f.tagline}
-                description={f.description}
-                photoKey={f.id}
-                photoUrl={f.photoUrl}
-                fit={f.fit}
-                aspect={f.aspect}
-              />
-            </Reveal>
-          ))}
+              <div className="relative h-[360px] w-full lg:h-[500px] lg:ml-auto lg:w-[calc(100%+2rem)]">
+                <img
+                  src={essentialsImage}
+                  alt="Essentials event styling"
+                  className="absolute inset-y-0 right-0 h-full w-full object-cover lg:w-[120%]"
+                  style={{ clipPath: "inset(0 0 0 0 round 0 0 0 0)" }}
+                />
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {ESSENTIALS_FEATURES.map((f, i) => (
+              <Reveal key={f.id} delay={i * 60}>
+                <FeatureCard
+                  icon={f.icon}
+                  name={f.name}
+                  tagline={f.tagline}
+                  description={f.description}
+                  photoKey={f.id}
+                  photoUrl={f.photoUrl}
+                  fit={f.fit}
+                  aspect={f.aspect}
+                />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
