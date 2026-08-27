@@ -109,7 +109,7 @@ export default function Home({ navigate }) {
     <div className="overflow-hidden" style={{ background: palette.bg }}>
 
       {/* FULL-BLEED HERO */}
-      <section className="relative flex w-full items-center justify-center overflow-hidden" style={{ minHeight: "88vh" }}>
+      <section className="relative w-full overflow-hidden" style={{ minHeight: "88vh" }}>
         <img
           src={heroFullBleed}
           alt="A Slice of G Events"
@@ -122,8 +122,8 @@ export default function Home({ navigate }) {
           }}
         />
 
-        <div className="relative z-10 w-full px-6 pb-14 pt-32 sm:px-10 sm:pb-20">
-          <div className="mx-auto w-[90%] max-w-[900px] text-center">
+        <div className="relative z-10 flex min-h-[88vh] items-center justify-center px-6 pb-14 pt-32 sm:px-10 sm:pb-20">
+          <div className="w-[90%] max-w-[900px] text-center">
             <RotatingHeadline palette={palette} fonts={fonts} />
 
             <p className="mx-auto mt-6 max-w-[600px] text-base leading-7 sm:text-lg" style={{ ...fonts.bodyFont, color: "rgba(253, 246, 238, 0.9)" }}>
@@ -155,7 +155,7 @@ export default function Home({ navigate }) {
       <section className="relative py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <Reveal>
-            <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10">
+            <div className="grid items-center gap-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
               <div className="max-w-xl text-left">
                 <p className="text-xs font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                   THE ESSENTIALS
@@ -168,7 +168,7 @@ export default function Home({ navigate }) {
                 </p>
               </div>
 
-              <div className="relative h-[360px] w-full justify-self-end lg:h-[560px] lg:w-[95%]">
+              <div className="relative h-[360px] w-full justify-self-end lg:h-[560px] lg:w-full">
                 <img
                   src={essentialsImage}
                   alt="Essentials event styling"
