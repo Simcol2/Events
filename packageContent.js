@@ -1,5 +1,10 @@
 import { Sparkles, Camera, Mail, Leaf, Brain, Music, Hand, Images, Mic, Smartphone, PartyPopper, Sprout } from "lucide-react";
 import arrivalPhoto from "./media/web_arrival.png";
+import timeCapsulePhoto from "./media/timecapsul.png";
+import nurseryRhymePhoto from "./media/poem.png";
+import welcomeSignPhoto from "./media/welcomesign.png";
+import photoWallPhoto from "./media/featurewall.png";
+import lilRootsPhoto from "./media/lilroots.png";
 
 export const PACKAGE_INTRO = {
   eyebrow: "MADE FOR MEMORIES",
@@ -32,6 +37,7 @@ export const ESSENTIALS_FEATURES = [
     tagline: "A little piece of today, saved for tomorrow.",
     description:
       "Photos, stories, and sweet little memories from the people who celebrated baby before they ever knew them. Sealed up and saved for the future.",
+    photoUrl: timeCapsulePhoto,
   },
   {
     id: "ohBabyCenterpiece",
@@ -56,6 +62,7 @@ export const ESSENTIALS_FEATURES = [
     tagline: "A story about the two people who started it all.",
     description:
       "We turn Mom and Dad's story into a one of a kind nursery rhyme, beautifully printed and framed as part of the shower decor.",
+    photoUrl: nurseryRhymePhoto,
   },
   {
     id: "welcomeSign",
@@ -64,6 +71,7 @@ export const ESSENTIALS_FEATURES = [
     tagline: "First impressions, but make them fun.",
     description:
       "A custom welcome sign designed around your shower theme and ready to greet your guests as they arrive.",
+    photoUrl: welcomeSignPhoto,
   },
 ];
 
@@ -76,6 +84,7 @@ export const ADDONS = [
     description:
       "Turn your photo display into a full feature moment with balloons, florals, fabric, and statement details designed to coordinate with your shower.",
     price: 350,
+    photoUrl: photoWallPhoto,
   },
   {
     id: "voiceNotes",
@@ -115,5 +124,6 @@ export const KEEPSAKES = [
     description:
       "A planted seedling in a beautifully wrapped keepsake jar, paired with a gourmet treat. A tiny reminder of the little person everyone came to celebrate.",
     pricePerGuest: 15,
+    photoUrl: lilRootsPhoto,
   },
 ];
