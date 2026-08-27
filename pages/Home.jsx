@@ -158,15 +158,15 @@ export default function Home({ navigate }) {
       </section>
 
       {/* THE ESSENTIALS */}
-      <section className="relative overflow-hidden py-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+      <section className="relative py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <Reveal>
-            <div className="mb-12 grid items-center gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-0">
+            <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10">
               <div className="max-w-xl text-left">
                 <p className="text-xs font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                   THE ESSENTIALS
                 </p>
-                <h2 className="mt-5 text-5xl sm:text-6xl lg:text-7xl font-semibold leading-none" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                <h2 className="mt-5 font-semibold leading-[0.9]" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(4rem, 8vw, 9rem)" }}>
                   $795
                 </h2>
                 <p className="mt-5 max-w-lg text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
@@ -174,12 +174,12 @@ export default function Home({ navigate }) {
                 </p>
               </div>
 
-              <div className="relative h-[360px] w-full lg:h-[500px] lg:ml-auto lg:w-[calc(100%+2rem)]">
+              <div className="relative h-[360px] w-full justify-self-end lg:h-[560px] lg:w-[95%]">
                 <img
                   src={essentialsImage}
                   alt="Essentials event styling"
-                  className="absolute inset-y-0 right-0 h-full w-full object-cover lg:w-[120%]"
-                  style={{ clipPath: "inset(0 0 0 0 round 0 0 0 0)" }}
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: "center" }}
                 />
               </div>
             </div>
