@@ -5,6 +5,9 @@ import nurseryRhymePhoto from "./media/poem.png";
 import welcomeSignPhoto from "./media/welcomesign.png";
 import photoWallPhoto from "./media/featurewall.png";
 import lilRootsPhoto from "./media/lilroots.png";
+import babyTriviaPhoto from "./media/babytrivia.png";
+import ohBabyCenterPhoto from "./media/ohbabycenter.png";
+import pictureThisPhoto from "./media/picturethis.png";
 
 export const PACKAGE_INTRO = {
   eyebrow: "MADE FOR MEMORIES",
