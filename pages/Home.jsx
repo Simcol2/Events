@@ -70,6 +70,7 @@ function RotatingHeadline({ fonts }) {
       style={{
         minHeight: "clamp(5.5rem, 13vw, 9rem)",
         marginBottom: "1.5rem",
+        maxWidth: "100%",
       }}
     >
       {HERO_LINES.map((line, i) => (
@@ -84,6 +85,8 @@ function RotatingHeadline({ fonts }) {
             justifyContent: "center",
             padding: "0 10px",
             margin: 0,
+            width: "100%",
+            maxWidth: "100%",
             fontSize: "clamp(2rem, 5vw, 4.2rem)",
             fontWeight: 500,
             lineHeight: 1.1,
@@ -94,6 +97,9 @@ function RotatingHeadline({ fonts }) {
             textShadow: "0 2px 24px rgba(0,0,0,0.45)",
             pointerEvents: "none",
             textAlign: "center",
+            whiteSpace: "normal",
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
           }}
         >
           {line}
@@ -138,8 +144,8 @@ export default function Home({ navigate }) {
           }}
         />
 
-        <div className="relative z-10 w-full px-6 py-24 sm:px-10">
-          <div className="mx-auto max-w-[1000px] text-center">
+        <div className="relative z-10 w-full max-w-full px-6 py-24 sm:px-10">
+          <div className="mx-auto max-w-[1000px] text-center" style={{ maxWidth: "100%" }}>
             <RotatingHeadline fonts={fonts} />
 
             <p
@@ -147,17 +153,18 @@ export default function Home({ navigate }) {
               style={{
                 ...fonts.bodyFont,
                 color: "#FDF6EE",
+                maxWidth: "100%",
               }}
             >
               Everything for an unforgettable baby shower. Delivered, styled,
               and designed to be remembered forever. Starting at $795.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
+            <div className="mt-8 flex max-w-full flex-wrap items-center justify-center gap-5">
               <button
                 onClick={() => navigate("/package-builder")}
                 className="inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+                style={{ ...fonts.bodyFont, background: palette.primaryDeep, maxWidth: "100%" }}
               >
                 BUILD YOUR PACKAGE <ArrowRight size={17} />
               </button>
@@ -165,7 +172,7 @@ export default function Home({ navigate }) {
               <button
                 onClick={() => navigate("/how-it-works")}
                 className="text-sm font-semibold tracking-[0.1em] text-white underline underline-offset-4 transition-opacity hover:opacity-80"
-                style={{ ...fonts.bodyFont }}
+                style={{ ...fonts.bodyFont, maxWidth: "100%" }}
               >
                 SEE HOW IT WORKS
               </button>
@@ -177,7 +184,7 @@ export default function Home({ navigate }) {
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
           <Reveal>
-            <div className="grid min-h-[560px] lg:grid-cols-2">
+            <div className="grid min-h-[560px] lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
               <div className="flex items-center px-2 py-10 lg:pr-16">
                 <div className="max-w-xl">
                   <p
@@ -214,7 +221,7 @@ export default function Home({ navigate }) {
                 </div>
               </div>
 
-              <div className="relative min-h-[400px] overflow-hidden lg:min-h-0">
+              <div className="relative min-h-[400px] overflow-hidden lg:min-h-[560px]">
                 <img
                   src={essentialsImage}
                   alt="Essentials event styling"
