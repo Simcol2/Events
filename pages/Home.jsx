@@ -152,6 +152,7 @@ export default function Home({ navigate }) {
                 description={f.description}
                 photoKey={f.id}
                 photoUrl={f.photoUrl}
+                fit={f.fit}
               />
             </Reveal>
           ))}
