@@ -24,6 +24,7 @@ export const ESSENTIALS_FEATURES = [
     description:
       "Guests make their best guess on your personalized online game. They can pick the date, time, and even predict what Mom will be doing when it all begins.",
     photoUrl: arrivalPhoto,
+    fit: "contain",
   },
   {
     id: "pictureThis",
@@ -32,6 +33,7 @@ export const ESSENTIALS_FEATURES = [
     tagline: "Snap it. Print it. Keep it.",
     description:
       "Guests print their favourite photo from the day and add it to your custom photo display. At the end of the shower, everything goes into baby's time capsule to discover someday.",
+    photoUrl: pictureThisPhoto,
   },
   {
     id: "timeCapsule",
@@ -49,6 +51,7 @@ export const ESSENTIALS_FEATURES = [
     tagline: "A centerpiece with a little history.",
     description:
       "A custom wooden display featuring childhood photos of Mom and Dad, with space to serve your favourite shower treats.",
+    photoUrl: ohBabyCenterPhoto,
   },
   {
     id: "babyTrivia",
@@ -57,6 +60,7 @@ export const ESSENTIALS_FEATURES = [
     tagline: "Think you know babies? Let's see.",
     description:
       "A playful collection of baby and parent trivia for guests to test their knowledge. You can also add up to 15 custom questions all about Mom and Dad.",
+    photoUrl: babyTriviaPhoto,
   },
   {
     id: "nurseryRhyme",
