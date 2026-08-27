@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowRight, Sparkles, HeartPulse, Mic } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import FeatureCard from "../components/FeatureCard";
 import { PACKAGE_INTRO, ESSENTIALS_FEATURES, ADDONS } from "../packageContent";
@@ -57,53 +57,47 @@ const FADE_MS = 500;
 
 function RotatingHeadline({ palette, fonts }) {
   const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const fadeOutTimer = setTimeout(() => setVisible(false), VISIBLE_MS);
-    return () => clearTimeout(fadeOutTimer);
-  }, [index]);
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % HERO_LINES.length);
+    }, VISIBLE_MS);
 
-  useEffect(() => {
-    if (!visible) {
-      const switchTimer = setTimeout(() => {
-        setIndex((i) => (i + 1) % HERO_LINES.length);
-        setVisible(true);
-      }, FADE_MS);
-      return () => clearTimeout(switchTimer);
-    }
-  }, [visible]);
-
-  // Voice Notes gets its own icon since the line calls it out directly;
-  // every other line gets a subtle heartbeat to reinforce the memory theme.
-  const isVoiceNotesLine = HERO_LINES[index].includes("Voice Notes");
-  const Icon = isVoiceNotesLine ? Mic : HeartPulse;
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <div className="flex items-start gap-3">
-      <Icon
-        size={26}
-        className="mt-2 flex-shrink-0 animate-pulse"
-        style={{ color: palette.gold }}
-        strokeWidth={1.6}
-      />
-      <h1
-        className="font-semibold tracking-[-0.02em]"
-        style={{
-          ...fonts.displayFont,
-          color: "#FFFFFF",
-          fontSize: "clamp(2.6rem, 6.5vw, 5.2rem)",
-          lineHeight: 1.05,
-          opacity: visible ? 1 : 0,
-          transition: `opacity ${FADE_MS}ms ease`,
-          display: "-webkit-box",
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-        }}
-      >
-        {HERO_LINES[index]}
-      </h1>
+    <div
+      style={{
+        position: "relative",
+        height: "clamp(3.5rem, 8vw, 6rem)",
+        marginBottom: "1.5rem",
+      }}
+    >
+      {HERO_LINES.map((line, i) => (
+        <h1
+          key={line}
+          style={{
+            ...fonts.displayFont,
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            margin: 0,
+            fontSize: "clamp(2.2rem, 5vw, 4.5rem)",
+            fontWeight: 500,
+            lineHeight: 1.15,
+            color: "#FDF6EE",
+            opacity: i === index ? 1 : 0,
+            transform: i === index ? "translateY(0)" : "translateY(12px)",
+            transition: "opacity 0.6s ease, transform 0.6s ease",
+            textShadow: "0 2px 20px rgba(0,0,0,0.3)",
+            pointerEvents: "none",
+            textAlign: "center",
+          }}
+        >
+          {line}
+        </h1>
+      ))}
     </div>
   );
 }
@@ -115,29 +109,29 @@ export default function Home({ navigate }) {
     <div className="overflow-hidden" style={{ background: palette.bg }}>
 
       {/* FULL-BLEED HERO */}
-      <section className="relative w-full flex items-end" style={{ minHeight: "88vh" }}>
+      <section className="relative flex w-full items-center justify-center overflow-hidden" style={{ minHeight: "88vh" }}>
         <img
           src={heroFullBleed}
           alt="A Slice of G Events"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(180deg, ${palette.primaryDeep}66 0%, ${palette.primaryDeep}CC 100%)`,
+            background: `linear-gradient(180deg, ${palette.primaryDeep}E6 0%, ${palette.primaryDeep}66 38%, rgba(26,60,42,0) 62%)`,
           }}
         />
 
         <div className="relative z-10 w-full px-6 pb-14 pt-32 sm:px-10 sm:pb-20">
-          <div className="max-w-3xl">
+          <div className="mx-auto w-[90%] max-w-[900px] text-center">
             <RotatingHeadline palette={palette} fonts={fonts} />
 
-            <p className="mt-6 max-w-xl text-base sm:text-lg leading-7" style={{ ...fonts.bodyFont, color: "#FFFFFFDD" }}>
+            <p className="mx-auto mt-6 max-w-[600px] text-base leading-7 sm:text-lg" style={{ ...fonts.bodyFont, color: "rgba(253, 246, 238, 0.9)" }}>
               Everything for an unforgettable baby shower. Delivered, styled, and designed to be
               remembered forever. Starting at $795.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-5">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
               <button
                 onClick={() => navigate("/package-builder")}
                 className="inline-flex items-center gap-3 px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5"
