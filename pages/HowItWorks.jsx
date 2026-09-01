@@ -4,7 +4,7 @@ import { usePalette } from "../PaletteContext";
 
 const STEPS = [
   { icon: Calendar, title: "Choose Your Date", body: "Pick the date of your celebration and let's get the planning party started!" },
-  { icon: Palette, title: "Choose Your Palette or Theme", body: "Tell us your vibe and we'll help bring it to life — modern, playful, elegant, or bold." },
+  { icon: Palette, title: "Choose Your Palette or Theme", body: "Tell us your vibe and we'll help bring it to life: modern, playful, elegant, or bold." },
   { icon: PackageCheck, title: "Choose Your Package & Add-Ons", body: "Build your perfect experience and add any extras that make it even more special." },
   { icon: ShieldCheck, title: "Pay Deposit & Security Deposit", body: "Lock in your date with a deposit. The security deposit holds your goodies safe and sound." },
   { icon: Mail, title: "Submit Info & Photos", body: "Send over the details and photos we need to customize everything just for you." },

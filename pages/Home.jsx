@@ -55,7 +55,7 @@ const HERO_LINES = [
   "A Time Capsule Your Guests Actually Fill.",
   "Balloons Die. Memories Last Forever.",
   "Curated Décor. Real Keepsakes. Zero Stress.",
-  "Your Guests Don't Just Show Up—They Leave Something Real.",
+  "Your Guests Don't Just Show Up. They Leave Something Real.",
   "The Celebration That Gets Better After It Ends.",
   "Pick a Date. Pick a Vibe. We Handle the Rest.",
 ];
@@ -66,7 +66,7 @@ function RotatingHeadline({ fonts }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % HERO_LINES.length);
-    }, 3500);
+    }, 5000);
 
     return () => clearInterval(timer);
   }, []);
@@ -99,8 +99,8 @@ function RotatingHeadline({ fonts }) {
             lineHeight: 1.1,
             color: "#FDF6EE",
             opacity: i === index ? 1 : 0,
-            transform: i === index ? "translateY(0)" : "translateY(14px)",
-            transition: "opacity 600ms ease, transform 600ms cubic-bezier(.22,1,.36,1)",
+            transform: i === index ? "translateY(0)" : "translateY(18px)",
+            transition: "opacity 1100ms ease, transform 1100ms cubic-bezier(.22,1,.36,1)",
             textShadow: "0 2px 24px rgba(0,0,0,0.45)",
             pointerEvents: "none",
             textAlign: "center",
@@ -258,8 +258,8 @@ export default function Home({ navigate }) {
             style={{ ...fonts.bodyFont, color: palette.ink }}
           >
             We're not here to just drop off decor and pick it up the next day.
-            Every piece is designed so your guests actually participate —
-            leaving behind a note, a page, a photo, a memory — so the day
+            Every piece is designed so your guests actually participate,
+            leaving behind a note, a page, a photo, or a memory, so the day
             keeps giving back long after it's over.
           </p>
           <p
@@ -267,8 +267,8 @@ export default function Home({ navigate }) {
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
             We specialize in baby showers and 1st–3rd birthdays, and we
-            customize every package for other special moments too — birthdays,
-            holidays, or anything worth celebrating.
+            customize every package for other special moments too, including
+            birthdays, holidays, or anything worth celebrating.
           </p>
         </div>
       </section>

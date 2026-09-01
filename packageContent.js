@@ -51,7 +51,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Picture This",
         tagline: "Snap it. Print it. Keep it.",
         description:
-          "Guests print their favourite photo from the celebration and add it to your custom photo display — a growing, hands-on keepsake everyone helps build.",
+          "Guests print their favourite photo from the celebration and add it to your custom photo display, a growing, hands-on keepsake everyone helps build.",
       },
       babyShower: {
         name: "Picture This",
@@ -69,7 +69,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Picture This",
         tagline: "Snap it. Print it. Keep it.",
         description:
-          "Guests print their favourite photo from the party and add it to a custom photo display — a keepsake of everyone who came to celebrate.",
+          "Guests print their favourite photo from the party and add it to a custom photo display, a keepsake of everyone who came to celebrate.",
       },
       holiday: {
         name: "Picture This",
@@ -81,7 +81,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Picture This",
         tagline: "Every moment, captured.",
         description:
-          "Guests print their favourite photo from the day and add it to a custom display — a keepsake built by everyone who was there.",
+          "Guests print their favourite photo from the day and add it to a custom display, a keepsake built by everyone who was there.",
       },
     },
     photos: {
@@ -101,7 +101,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Kindness Station",
         tagline: "Be kind. Pass it on.",
         description:
-          "Guests write little notes of encouragement for a stranger to find and take home — a small act of kindness carried out into the world in your honor.",
+          "Guests write little notes of encouragement for a stranger to find and take home, a small act of kindness carried out into the world in your honor.",
       },
       babyShower: {
         name: "Hello, Stranger Kindness Station",
@@ -113,7 +113,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Kindness Corner",
         tagline: "Teaching kindness, one birthday at a time.",
         description:
-          "In honor of the birthday, guests leave a kind note for a stranger to find — a sweet little tradition that can grow with your little one every year.",
+          "In honor of the birthday, guests leave a kind note for a stranger to find, a sweet little tradition that can grow with your little one every year.",
       },
       birthday: {
         name: "Kindness Station",
@@ -131,7 +131,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Kindness Station",
         tagline: "A little kindness, for someone else.",
         description:
-          "Guests leave a small note of kindness for a stranger to find — a quiet way of marking the occasion that reaches beyond your guest list.",
+          "Guests leave a small note of kindness for a stranger to find, a quiet way of marking the occasion that reaches beyond your guest list.",
       },
     },
     photos: {
@@ -151,37 +151,37 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Their Story Book",
         tagline: "Every guest becomes part of the story.",
         description:
-          "Each guest contributes a page — a memory, a wish, a little drawing — to a keepsake storybook that becomes part of the story you're celebrating.",
+          "Each guest contributes a page (a memory, a wish, a little drawing) to a keepsake storybook that becomes part of the story you're celebrating.",
       },
       babyShower: {
         name: "First Story Book",
         tagline: "The story starts before they even arrive.",
         description:
-          "Every guest becomes one of baby's story friends and contributes a page — a doodle, a wish, something they hope baby learns — to a keepsake storybook that begins their very first adventure.",
+          "Every guest becomes one of baby's story friends and contributes a page (a doodle, a wish, something they hope baby learns) to a keepsake storybook that begins their very first adventure.",
       },
       milestoneBirthday: {
         name: "Their Big Adventure",
         tagline: "Guests write the next chapter.",
         description:
-          "Every guest adds a page to a growing storybook — a memory, a lesson, a little piece of this year's adventure — building a keepsake you'll add to for every birthday to come.",
+          "Every guest adds a page to a growing storybook (a memory, a lesson, a little piece of this year's adventure), building a keepsake you'll add to for every birthday to come.",
       },
       birthday: {
         name: "Their Story So Far",
         tagline: "A page from everyone who came to celebrate.",
         description:
-          "Every guest adds a page to a keepsake storybook — a memory, a wish, or a little note — building something to keep long after the party ends.",
+          "Every guest adds a page to a keepsake storybook (a memory, a wish, or a little note), building something to keep long after the party ends.",
       },
       holiday: {
         name: "Our Holiday Story",
         tagline: "A page for every guest, a story for every year.",
         description:
-          "Every guest adds a page about this year's celebration — a memory, a wish, a little tradition — building a storybook you can add to each season.",
+          "Every guest adds a page about this year's celebration (a memory, a wish, a little tradition), building a storybook you can add to each season.",
       },
       specialMoment: {
         name: "Our Story Together",
         tagline: "A page from everyone who was there.",
         description:
-          "Every guest contributes a page — a memory, a wish, a little drawing — to a keepsake storybook built entirely around this moment.",
+          "Every guest contributes a page (a memory, a wish, a little drawing) to a keepsake storybook built entirely around this moment.",
       },
     },
     photos: {
@@ -301,7 +301,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Custom Wall Puzzle",
         tagline: "Help us put it together.",
         description:
-          "A giant portrait puzzle guests gradually assemble throughout the celebration — piece by piece, together — becoming a keepsake to hang afterward.",
+          "A giant portrait puzzle guests gradually assemble throughout the celebration, piece by piece, together, becoming a keepsake to hang afterward.",
       },
       babyShower: {
         name: "Put Baby Together",
@@ -319,7 +319,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Custom Wall Puzzle",
         tagline: "Help us put it together.",
         description:
-          "A giant portrait puzzle guests gradually assemble throughout the party — a keepsake built by everyone who came.",
+          "A giant portrait puzzle guests gradually assemble throughout the party, a keepsake built by everyone who came.",
       },
       holiday: {
         name: "Custom Wall Puzzle",
@@ -363,13 +363,13 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "The World at 18 Time Capsule",
         tagline: "What will the world look like when they turn 18?",
         description:
-          "Guests make predictions about the world and leave a message for your little one's future self — sealed up and opened together on their 18th birthday.",
+          "Guests make predictions about the world and leave a message for your little one's future self, sealed up and opened together on their 18th birthday.",
       },
       birthday: {
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Guests leave a note, a memory, or a message for the future — sealed up and saved to open again on a birthday down the road.",
+          "Guests leave a note, a memory, or a message for the future, sealed up and saved to open again on a birthday down the road.",
       },
       holiday: {
         name: "Time Capsule",
@@ -412,7 +412,7 @@ export const ADDONS = [
     name: "Guess the Arrival Day",
     tagline: "When will baby make their grand entrance?",
     description:
-      "Guests make their best guess on a personalized online game — the date, the time, and even what Mom will be doing when it all begins.",
+      "Guests make their best guess on a personalized online game: the date, the time, and even what Mom will be doing when it all begins.",
     price: 150,
     photoUrl: arrivalPhoto,
     fit: "contain",
