@@ -31,6 +31,7 @@ export const PALETTES = [
   {
     id: "signature",
     name: "Signature",
+    description: "Our signature look — sage, coral and gold.",
     // A brighter read of the flyer's own dark-green/coral/gold — same DNA,
     // lifted out of near-black so it works as a default site theme.
     bg: "#FAF6ED",
@@ -47,6 +48,7 @@ export const PALETTES = [
   {
     id: "village-sage",
     name: "It Takes a Village — Sage",
+    description: "A celebration honoring the people who will love them the most.",
     bg: "#F7F3E8",
     surface: "#FFFFFF",
     primary: "#6B7A5E",
@@ -61,6 +63,7 @@ export const PALETTES = [
   {
     id: "village-boho",
     name: "It Takes a Village — Boho",
+    description: "Because this little one is already so loved.",
     bg: "#F3EEE2",
     surface: "#FFFFFF",
     primary: "#5A6B4C",
@@ -75,6 +78,7 @@ export const PALETTES = [
   {
     id: "carnival-baby",
     name: "Carnival Baby",
+    description: "Bright, bold and playful — for your little masquerader.",
     bg: "#FFF6F2",
     surface: "#FFFFFF",
     primary: "#7A8A54",
@@ -89,6 +93,7 @@ export const PALETTES = [
   {
     id: "sunday-best",
     name: "Sunday Best",
+    description: "Good people. Good food. Good memories.",
     bg: "#FBF3EC",
     surface: "#FFFFFF",
     primary: "#7A2530",
@@ -103,6 +108,7 @@ export const PALETTES = [
   {
     id: "sparkle-navy",
     name: "Never Let Anyone Dull Your Sparkle — Navy",
+    description: "A celebration of the people at the center of it all.",
     bg: "#F5F5EF",
     surface: "#FFFFFF",
     primary: "#28407A",
@@ -117,6 +123,7 @@ export const PALETTES = [
   {
     id: "sparkle-blush",
     name: "Never Let Anyone Dull Your Sparkle — Blush",
+    description: "Because their story didn't start with you — but you're the best chapter yet.",
     bg: "#FDF3F6",
     surface: "#FFFFFF",
     primary: "#D9497A",

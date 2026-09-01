@@ -4,6 +4,8 @@ export default {
     "./index.html",
     "./*.{js,jsx,ts,tsx}",
     "./SRC/**/*.{js,jsx,ts,tsx}",
+    "./pages/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {},

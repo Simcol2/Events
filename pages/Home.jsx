@@ -1,8 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowRight, Heart, Sparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 import FeatureCard from "../components/FeatureCard";
-import { ESSENTIALS_FEATURES, ADDONS } from "../packageContent";
+import {
+  MAIN_PACKAGE_ITEMS,
+  ADDONS,
+  PACKAGE_NAME,
+  MADE_FOR_MEMORIES_PRICE,
+  resolvePackageItem,
+} from "../packageContent";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -46,10 +53,10 @@ function Reveal({ children, className = "", delay = 0 }) {
 /* ─── Hero rotating text ─── */
 const HERO_LINES = [
   "A Time Capsule Your Guests Actually Fill.",
-  "Balloons Die. Voice Notes Last Forever.",
+  "Balloons Die. Memories Last Forever.",
   "Curated Décor. Real Keepsakes. Zero Stress.",
   "Your Guests Don't Just Show Up—They Leave Something Real.",
-  "The Only Baby Shower That Gets Better After It Ends.",
+  "The Celebration That Gets Better After It Ends.",
   "Pick a Date. Pick a Vibe. We Handle the Rest.",
 ];
 
@@ -112,6 +119,12 @@ function RotatingHeadline({ fonts }) {
 /* ─── Main page ─── */
 export default function Home({ navigate }) {
   const { palette, fonts } = usePalette();
+  const { eventTypeId, eventType } = useEventType();
+
+  const resolvedItems = useMemo(
+    () => MAIN_PACKAGE_ITEMS.map((item) => resolvePackageItem(item, eventTypeId)),
+    [eventTypeId]
+  );
 
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
@@ -129,7 +142,7 @@ export default function Home({ navigate }) {
       >
         <img
           src={heroFullBleed}
-          alt="Baby shower styling"
+          alt="Event styling"
           style={{
             position: "absolute",
             inset: 0,
@@ -222,40 +235,51 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-      <section
-        style={{
-          background: palette.bg,
-          padding: "60px 40px",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "1000px",
-            margin: "0 auto",
-            textAlign: "center",
-          }}
-        >
+      {/* ═══════════════════════════════════════
+          WHO WE ARE — leads before anything else
+          ═══════════════════════════════════════ */}
+      <section style={{ background: palette.bg, padding: "80px 40px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+          <Heart className="mx-auto" size={22} strokeWidth={1.2} style={{ color: palette.gold }} />
           <p
-            style={{
-              ...fonts.bodyFont,
-              maxWidth: "700px",
-              margin: "0 auto",
-              color: palette.ink,
-              fontSize: "18px",
-              lineHeight: 1.7,
-            }}
+            className="mt-4 text-xs font-semibold tracking-[0.3em]"
+            style={{ ...fonts.bodyFont, color: palette.gold }}
           >
-            Everything for an unforgettable baby shower. Delivered, styled,
-            and designed to be remembered forever. Starting at $795.
+            NOT YOUR TYPICAL RENTAL COMPANY
+          </p>
+          <h2
+            className="mt-3 text-4xl font-semibold sm:text-5xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            We facilitate experiences, memories, and kindness.
+          </h2>
+          <p
+            className="mx-auto mt-5 max-w-xl text-lg leading-8"
+            style={{ ...fonts.bodyFont, color: palette.ink }}
+          >
+            We're not here to just drop off decor and pick it up the next day.
+            Every piece is designed so your guests actually participate —
+            leaving behind a note, a page, a photo, a memory — so the day
+            keeps giving back long after it's over.
+          </p>
+          <p
+            className="mx-auto mt-4 max-w-xl text-base leading-7"
+            style={{ ...fonts.bodyFont, color: palette.muted }}
+          >
+            We specialize in baby showers and 1st–3rd birthdays, and we
+            customize every package for other special moments too — birthdays,
+            holidays, or anything worth celebrating.
           </p>
         </div>
       </section>
 
+      {/* ═══════════════════════════════════════
+          THE PACKAGE
+          ═══════════════════════════════════════ */}
       <section
         style={{
           background: palette.bg,
-          padding: "80px 0",
+          padding: "40px 0",
         }}
       >
         <div
@@ -295,7 +319,7 @@ export default function Home({ navigate }) {
                     letterSpacing: "0.3em",
                   }}
                 >
-                  THE ESSENTIALS
+                  THE {PACKAGE_NAME.toUpperCase()} PACKAGE
                 </p>
 
                 <h2
@@ -303,12 +327,12 @@ export default function Home({ navigate }) {
                     ...fonts.displayFont,
                     margin: "20px 0 0",
                     color: palette.primaryDeep,
-                    fontSize: "clamp(5rem, 9vw, 9rem)",
+                    fontSize: "clamp(3rem, 6vw, 5.5rem)",
                     fontWeight: 600,
-                    lineHeight: 0.9,
+                    lineHeight: 0.95,
                   }}
                 >
-                  $795
+                  {PACKAGE_NAME}.
                 </h2>
 
                 <p
@@ -321,8 +345,9 @@ export default function Home({ navigate }) {
                     lineHeight: 1.7,
                   }}
                 >
-                  The core experience. Everything you need for a shower guests
-                  will actually remember.
+                  Seven signature pieces for your {eventType.label.toLowerCase()},
+                  starting at ${MADE_FOR_MEMORIES_PRICE}. Every piece is built to
+                  get guests involved, not just looking at decor.
                 </p>
               </div>
 
@@ -336,7 +361,7 @@ export default function Home({ navigate }) {
               >
                 <img
                   src={essentialsImage}
-                  alt="Essentials event styling"
+                  alt="Event styling"
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -358,17 +383,15 @@ export default function Home({ navigate }) {
               gap: "24px",
             }}
           >
-            {ESSENTIALS_FEATURES.map((f, i) => (
-              <Reveal key={f.id} delay={i * 60}>
+            {resolvedItems.map((item, i) => (
+              <Reveal key={item.id} delay={i * 60}>
                 <FeatureCard
-                  icon={f.icon}
-                  name={f.name}
-                  tagline={f.tagline}
-                  description={f.description}
-                  photoKey={f.id}
-                  photoUrl={f.photoUrl}
-                  fit={f.fit}
-                  aspect={f.aspect}
+                  icon={item.icon}
+                  name={item.name}
+                  tagline={item.tagline}
+                  description={item.description}
+                  photoKey={item.id}
+                  photoUrl={item.photoUrl}
                 />
               </Reveal>
             ))}
@@ -387,26 +410,26 @@ export default function Home({ navigate }) {
                 className="text-xs font-semibold tracking-[0.3em]"
                 style={{ ...fonts.bodyFont, color: palette.gold }}
               >
-                MAKE IT MORE
+                MAKE IT YOURS
               </p>
               <h2
                 className="mt-3 text-4xl font-semibold sm:text-5xl"
                 style={{ ...fonts.displayFont, color: palette.primaryDeep }}
               >
-                Add any extras
+                Build your own package
               </h2>
               <p
                 className="mt-3 text-lg"
                 style={{ ...fonts.bodyFont, color: palette.ink }}
               >
-                Or get all three bundled into It Lasts Forever, our complete
-                experience.
+                Start with {PACKAGE_NAME}, then layer on any upgrades that fit
+                your celebration.
               </p>
             </div>
           </Reveal>
 
           <div className="grid gap-6 sm:grid-cols-3">
-            {ADDONS.map((a, i) => (
+            {ADDONS.slice(0, 3).map((a, i) => (
               <Reveal key={a.id} delay={i * 80}>
                 <FeatureCard
                   icon={a.icon}
@@ -416,7 +439,6 @@ export default function Home({ navigate }) {
                   photoKey={a.id}
                   photoUrl={a.photoUrl}
                   fit={a.fit}
-                  aspect={a.aspect}
                   priceLabel={`+$${a.price}`}
                 />
               </Reveal>
@@ -459,15 +481,15 @@ export default function Home({ navigate }) {
               className="mx-auto mt-5 max-w-lg text-lg leading-8"
               style={{ ...fonts.bodyFont, color: `${palette.bg}DD` }}
             >
-              Looking for a specific color palette or theme instead of building
-              from scratch?
+              Looking for a specific color palette or design theme instead of
+              building from scratch?
             </p>
             <button
-              onClick={() => navigate("/collections")}
+              onClick={() => navigate("/design")}
               className="mt-7 inline-flex items-center gap-3 border-2 px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:bg-white/10"
               style={{ ...fonts.bodyFont, borderColor: palette.gold }}
             >
-              BROWSE COLLECTIONS <ArrowRight size={17} />
+              BROWSE DESIGN & THEMES <ArrowRight size={17} />
             </button>
           </Reveal>
         </div>

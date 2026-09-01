@@ -123,8 +123,8 @@ export default function Decor({ navigate }) {
           <p className="font-[Jost] text-[10px] tracking-[0.18em] text-[#8C846F]">
             WANT TO BUILD A PACKAGE AROUND THESE PIECES?
           </p>
-          <button onClick={() => navigate("/reservations")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]">
-            VIEW RESERVATIONS
+          <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]">
+            BUILD YOUR PACKAGE
           </button>
         </div>
       </section>
