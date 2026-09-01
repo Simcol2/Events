@@ -21,6 +21,8 @@ import babyTriviaPhoto from "./media/babytrivia.png";
 import kindnessStationPhoto from "./media/file_00000000dcd4822fb648d37e9526b4b3.png";
 import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.png";
 import wallPuzzleEngagementPhoto from "./media/file_00000000a204822f9ab953201c8b7043.png";
+import ohBabyBlocksPhoto from "./media/oh-baby-blocks-tablescape.png";
+import ohBabyTrayPhoto from "./media/oh-sweet-baby-tray.png";
 import timeCapsulePhoto from "./media/timecapsul.png";
 import photoWallPhoto from "./media/featurewall.png";
 import lilRootsPhoto from "./media/lilroots.png";
@@ -207,7 +209,7 @@ export const MAIN_PACKAGE_ITEMS = [
           "A custom display featuring photos from before, with space to serve your favourite treats at the centre of it all.",
       },
       babyShower: {
-        name: "Oh Baby Centerpiece",
+        name: "Oh Baby Decor",
         tagline: "A centerpiece with a little history.",
         description:
           "A custom wooden display featuring childhood photos of Mom and Dad, with space to serve your favourite shower treats.",
@@ -238,8 +240,8 @@ export const MAIN_PACKAGE_ITEMS = [
       },
     },
     photos: {
-      default: ohBabyCenterPhoto,
-      babyShower: ohBabyCenterPhoto,
+      default: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
+      babyShower: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
@@ -398,12 +400,17 @@ export const MAIN_PACKAGE_ITEMS = [
   },
 ];
 
-// Resolves one package item's copy + photo for the active event type,
-// falling back to `default` for anything without an explicit override.
+// Resolves one package item's copy + photo(s) for the active event type,
+// falling back to `default` for anything without an explicit override. A
+// photo entry can be a single image or an array of images; either way this
+// always returns a normalized `photoUrls` array (empty when there's no
+// photo yet), which PhotoSlot turns into a crossfading slideshow when it
+// has more than one image.
 export function resolvePackageItem(item, eventTypeId) {
   const copy = item.copy[eventTypeId] || item.copy.default;
-  const photoUrl = item.photos[eventTypeId] ?? item.photos.default ?? null;
-  return { id: item.id, icon: item.icon, photoUrl, ...copy };
+  const raw = item.photos[eventTypeId] ?? item.photos.default ?? null;
+  const photoUrls = (Array.isArray(raw) ? raw : raw ? [raw] : []).filter(Boolean);
+  return { id: item.id, icon: item.icon, photoUrls, ...copy };
 }
 
 // Optional upgrades layered on top of the fixed package via the Package

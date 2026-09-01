@@ -86,7 +86,7 @@ export default function PackageBuilder() {
                 tagline={item.tagline}
                 description={item.description}
                 photoKey={item.id}
-                photoUrl={item.photoUrl}
+                photoUrls={item.photoUrls}
                 priceLabel="Included"
               />
             ))}

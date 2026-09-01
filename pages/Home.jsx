@@ -391,7 +391,7 @@ export default function Home({ navigate }) {
                   tagline={item.tagline}
                   description={item.description}
                   photoKey={item.id}
-                  photoUrl={item.photoUrl}
+                  photoUrls={item.photoUrls}
                 />
               </Reveal>
             ))}
