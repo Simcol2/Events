@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { usePalette } from "../PaletteContext";
-import PaletteToggle from "./PaletteToggle";
+import EventTypeBar from "./EventTypeBar";
 
 export default function SiteHeader({ current, navigate, nav }) {
   const { palette, fonts } = usePalette();
@@ -17,8 +17,8 @@ export default function SiteHeader({ current, navigate, nav }) {
       className="sticky top-0 z-50 backdrop-blur-md"
       style={{ borderBottom: `1px solid ${palette.line}CC`, background: `${palette.bg}F2` }}
     >
-      {/* Palette toggle sits above everything else, on every page */}
-      <PaletteToggle />
+      {/* Event-type bar sits above everything else, on every page */}
+      <EventTypeBar />
 
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <button onClick={() => go("/")} className="group text-left">
@@ -35,13 +35,7 @@ export default function SiteHeader({ current, navigate, nav }) {
 
         <nav className="hidden items-center gap-9 md:flex">
           {nav.map(({ label, path }) => {
-            const active =
-              (current === "home" && path === "/") ||
-              (current === "decor" && path === "/decor") ||
-              (current === "activities" && path === "/activities") ||
-              (current === "collections" && path === "/collections") ||
-              (current === "how-it-works" && path === "/how-it-works") ||
-              (current === "package-builder" && path === "/package-builder");
+            const active = path === "/" ? current === "home" : current === path.slice(1);
             return (
               <button
                 key={path}

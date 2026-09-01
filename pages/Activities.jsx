@@ -78,7 +78,7 @@ export default function Activities({ navigate }) {
           <p className="mx-auto mt-3 max-w-lg font-[Jost] text-sm leading-7 text-[#DAD7C9]">
             Choose the activities that fit your crowd and let the rest of the package do the work.
           </p>
-          <button onClick={() => navigate("/reservations")} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-white">
+          <button onClick={() => navigate("/package-builder")} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-white">
             VIEW PACKAGES
           </button>
         </div>
