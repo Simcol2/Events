@@ -18,6 +18,9 @@ import {
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
 import babyTriviaPhoto from "./media/babytrivia.png";
+import kindnessStationPhoto from "./media/file_00000000dcd4822fb648d37e9526b4b3.png";
+import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.png";
+import wallPuzzleEngagementPhoto from "./media/file_00000000a204822f9ab953201c8b7043.png";
 import timeCapsulePhoto from "./media/timecapsul.png";
 import photoWallPhoto from "./media/featurewall.png";
 import lilRootsPhoto from "./media/lilroots.png";
@@ -104,10 +107,10 @@ export const MAIN_PACKAGE_ITEMS = [
           "Guests write little notes of encouragement for a stranger to find and take home, a small act of kindness carried out into the world in your honor.",
       },
       babyShower: {
-        name: "Hello, Stranger Kindness Station",
-        tagline: "Kindness starts small, but it changes everything.",
+        name: "Hello World Kindness Station",
+        tagline: "A little kindness can change someone's whole day.",
         description:
-          "Guests create little acts of kindness for strangers, carrying something positive out into the world in celebration of baby's arrival.",
+          "Guests pick a card, read a little reminder, and pass it on, carrying something positive out into the world in celebration of baby's arrival.",
       },
       milestoneBirthday: {
         name: "Kindness Corner",
@@ -135,8 +138,8 @@ export const MAIN_PACKAGE_ITEMS = [
       },
     },
     photos: {
-      default: null,
-      babyShower: null,
+      default: kindnessStationPhoto,
+      babyShower: kindnessStationPhoto,
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
@@ -328,19 +331,19 @@ export const MAIN_PACKAGE_ITEMS = [
           "A giant seasonal or family portrait puzzle guests gradually assemble throughout the celebration.",
       },
       specialMoment: {
-        name: "Custom Wall Puzzle",
-        tagline: "Help us put it together.",
+        name: "Put Together",
+        tagline: "Your love. Your people. One beautiful picture.",
         description:
-          "A giant custom portrait puzzle guests gradually assemble throughout the day, built entirely around your moment.",
+          "A giant portrait puzzle of the two of you, guests gradually assemble it throughout the celebration, a keepsake made by the people who celebrate your love.",
       },
     },
     photos: {
-      default: null,
-      babyShower: null,
-      milestoneBirthday: null,
+      default: wallPuzzleBabyPhoto,
+      babyShower: wallPuzzleBabyPhoto,
+      milestoneBirthday: wallPuzzleBabyPhoto,
       birthday: null,
       holiday: null,
-      specialMoment: null,
+      specialMoment: wallPuzzleEngagementPhoto,
     },
   },
   {
