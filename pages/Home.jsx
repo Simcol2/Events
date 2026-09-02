@@ -126,6 +126,8 @@ export default function Home({ navigate }) {
     [eventTypeId]
   );
 
+  const guessArrivalAddon = ADDONS.find((a) => a.id === "guessArrival");
+
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
       <section
@@ -252,6 +254,49 @@ export default function Home({ navigate }) {
       </section>
 
       {/* ═══════════════════════════════════════
+          GUESS THE ARRIVAL DAY — featured up top, not buried
+          ═══════════════════════════════════════ */}
+      {guessArrivalAddon && (
+        <section style={{ background: palette.surface, padding: "48px 40px", borderBottom: `1px solid ${palette.line}` }}>
+          <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-center sm:flex-row sm:gap-10 sm:text-left">
+            <img
+              src={guessArrivalAddon.photoUrl}
+              alt="Guess the Arrival Day prediction website"
+              className="w-full flex-shrink-0 sm:w-[180px]"
+              style={{ borderRadius: "10px", border: `1px solid ${palette.line}` }}
+            />
+            <div>
+              <p
+                className="text-xs font-semibold tracking-[0.3em]"
+                style={{ ...fonts.bodyFont, color: palette.gold }}
+              >
+                ALSO AVAILABLE
+              </p>
+              <h2
+                className="mt-2 text-2xl font-semibold sm:text-3xl"
+                style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+              >
+                {guessArrivalAddon.name}
+              </h2>
+              <p
+                className="mt-2 text-base leading-relaxed"
+                style={{ ...fonts.bodyFont, color: palette.ink }}
+              >
+                {guessArrivalAddon.description}
+              </p>
+              <button
+                onClick={() => navigate("/package-builder")}
+                className="mt-4 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] underline underline-offset-4"
+                style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+              >
+                ADD IT TO YOUR PACKAGE <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════
           WHO WE ARE — leads before anything else
           ═══════════════════════════════════════ */}
       <section style={{ background: palette.bg, padding: "80px 40px 40px" }}>
@@ -274,14 +319,15 @@ export default function Home({ navigate }) {
             style={{ ...fonts.bodyFont, color: palette.ink }}
           >
             We're not here to just drop off decor and pick it up the next
-            day. Guests leave a note at the kindness station, add a page to
-            the storybook, snap a photo for the wall. The styling goes back
-            to us; the puzzle, the storybook, and the sealed time capsule
-            go home with you.
+            day. Guests take a card at the kindness station, add a page to
+            the collaborative storybook, snap a photo and leave a voice
+            note for the time capsule. The styling goes back with us. The
+            framed puzzle, the collaborative storybook, and the sealed time
+            capsule go home with you.
           </p>
           <p
-            className="mx-auto mt-4 max-w-xl text-base leading-7"
-            style={{ ...fonts.bodyFont, color: palette.muted }}
+            className="mx-auto mt-4 max-w-xl text-lg leading-7"
+            style={{ ...fonts.bodyFont, color: palette.ink }}
           >
             We specialize in interactive pieces that double as your decor
             and your keepsakes, built around baby showers and first

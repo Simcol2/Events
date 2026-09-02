@@ -57,39 +57,39 @@ export const MAIN_PACKAGE_ITEMS = [
     copy: {
       default: {
         name: "Picture This",
-        tagline: "Snap it. Print it. Keep it.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the celebration and add it to your custom photo display, a growing, hands-on keepsake everyone helps build.",
+          "Guests snap a photo and leave a written note or a quick voice recording about a favourite memory. Both go into the time capsule to look back on someday.",
       },
       babyShower: {
         name: "Picture This",
-        tagline: "Snap it. Print it. Keep it.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the shower and add it to your custom photo display. At the end of the day, everything goes into baby's time capsule to discover someday.",
+          "Guests snap a photo and write a note or record a quick voice message about their favourite time or story with Mom and Dad, so baby can see what their parents were like when they grow up. Both go into the time capsule to discover someday.",
       },
       milestoneBirthday: {
         name: "Picture This: Their Year in Review",
-        tagline: "Capture the year that flew by.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests take photos throughout the party and add them to a custom display celebrating everything about the year that just happened.",
+          "Guests snap a photo and write a note or record a quick voice message about their favourite story of the birthday kiddo this year. Both go into the time capsule to look back on someday.",
       },
       birthday: {
         name: "Picture This",
-        tagline: "Snap it. Print it. Keep it.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the party and add it to a custom photo display, a keepsake of everyone who came to celebrate.",
+          "Guests snap a photo and leave a note or a quick voice message with their favourite story about the guest of honor. Both go into the time capsule to keep.",
       },
       holiday: {
         name: "Picture This",
-        tagline: "Capture the season.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print and pin up their favourite photos from the celebration, building a shared display of the season together.",
+          "Guests snap a photo and leave a note or a quick voice message with a favourite holiday memory of the person you're celebrating. Both go into the time capsule to open again next season.",
       },
       specialMoment: {
         name: "Picture This",
-        tagline: "Every moment, captured.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the day and add it to a custom display, a keepsake built by everyone who was there.",
+          "Guests snap a photo and leave a note or a quick voice message with a favourite memory of this moment. Both go into the time capsule to keep.",
       },
     },
     photos: {
@@ -107,39 +107,39 @@ export const MAIN_PACKAGE_ITEMS = [
     copy: {
       default: {
         name: "Kindness Station",
-        tagline: "Be kind. Pass it on.",
+        tagline: "Take one. Pass it on.",
         description:
-          "Guests write little notes of encouragement for a stranger to find and take home, a small act of kindness carried out into the world in your honor.",
+          "Guests take a card of encouragement to carry out into the world, a small act of kindness done in your honor. Add an optional $5 gift card to any note for a pay it forward surprise.",
       },
       babyShower: {
         name: "Hello World Kindness Station",
         tagline: "A little kindness can change someone's whole day.",
         description:
-          "Guests pick a card, read a little reminder, and pass it on, carrying something positive out into the world in celebration of baby's arrival.",
+          "Guests take a card, read a little reminder, and carry it out into the world in celebration of baby's arrival. Add an optional $5 gift card to any note for a pay it forward surprise.",
       },
       milestoneBirthday: {
         name: "Kindness Corner",
         tagline: "Teaching kindness, one birthday at a time.",
         description:
-          "In honor of the birthday, guests leave a kind note for a stranger to find, a sweet little tradition that can grow with your little one every year.",
+          "In honor of the birthday, guests take a kindness card to carry out into the world, a sweet little tradition that can grow with your little one every year. Add an optional $5 gift card for a pay it forward surprise.",
       },
       birthday: {
         name: "Kindness Station",
-        tagline: "Be kind. Pass it on.",
+        tagline: "Take one. Pass it on.",
         description:
-          "Guests write a small note of kindness for a stranger to find later, turning the party into something that reaches beyond the room.",
+          "Guests take a card of kindness to carry out into the world, turning the party into something that reaches beyond the room. Add an optional $5 gift card for a pay it forward surprise.",
       },
       holiday: {
         name: "Season of Kindness Station",
         tagline: "Spread a little extra this season.",
         description:
-          "Guests write notes of kindness for strangers to find, sharing the spirit of the season with people outside the room.",
+          "Guests take a card of kindness to carry out into the world, sharing the spirit of the season with people outside the room. Add an optional $5 gift card for a pay it forward surprise.",
       },
       specialMoment: {
         name: "Kindness Station",
         tagline: "A little kindness, for someone else.",
         description:
-          "Guests leave a small note of kindness for a stranger to find, a quiet way of marking the occasion that reaches beyond your guest list.",
+          "Guests take a card of kindness to carry out into the world, a quiet way of marking the occasion that reaches beyond your guest list. Add an optional $5 gift card for a pay it forward surprise.",
       },
     },
     photos: {
@@ -364,37 +364,37 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Photos, stories, and sweet little memories from the people who celebrated with you, sealed up and saved for the future.",
+          "Every photo, note, and voice recording from Picture This gets sealed inside, ready to open again in the future.",
       },
       babyShower: {
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Photos, stories, and sweet little memories from the people who celebrated baby before they ever knew them. Sealed up and saved for the future.",
+          "Every photo, note, and voice message from Picture This gets sealed inside: stories about Mom and Dad from the people who celebrated baby before they ever knew them, saved for the future.",
       },
       milestoneBirthday: {
         name: "The World at 18 Time Capsule",
         tagline: "What will the world look like when they turn 18?",
         description:
-          "Guests make predictions about the world and leave a message for your little one's future self, sealed up and opened together on their 18th birthday.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, along with guest predictions about the world, opened together on their 18th birthday.",
       },
       birthday: {
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Guests leave a note, a memory, or a message for the future, sealed up and saved to open again on a birthday down the road.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again on a birthday down the road.",
       },
       holiday: {
         name: "Time Capsule",
         tagline: "A moment from this year, saved for next.",
         description:
-          "Guests leave a note or memory from this year's celebration, sealed up to open again next holiday season.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again next holiday season.",
       },
       specialMoment: {
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Photos, stories, and sweet little memories from everyone who was there, sealed up and saved for the future.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again in the future.",
       },
     },
     photos: {
