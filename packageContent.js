@@ -340,8 +340,13 @@ export const MAIN_PACKAGE_ITEMS = [
       },
     },
     photos: {
-      default: wallPuzzleBabyPhoto,
-      babyShower: wallPuzzleBabyPhoto,
+      // No bump/ultrasound photo exists yet for the baby-shower variant —
+      // showing the toddler portrait there doesn't make sense (there's no
+      // baby to photograph yet at a shower), so it stays null ("photo
+      // coming soon") until a real one is supplied. The toddler portrait
+      // is only correct for the 1st-3rd-birthday variant.
+      default: null,
+      babyShower: null,
       milestoneBirthday: wallPuzzleBabyPhoto,
       birthday: null,
       holiday: null,

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Heart, Sparkles } from "lucide-react";
+import { ArrowRight, Heart, Sparkles, PackageCheck, Truck, Users, Gift } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import FeatureCard from "../components/FeatureCard";
@@ -176,6 +176,21 @@ export default function Home({ navigate }) {
         >
           <RotatingHeadline fonts={fonts} />
 
+          <p
+            style={{
+              ...fonts.bodyFont,
+              maxWidth: "620px",
+              margin: "0 auto",
+              color: "#FDF6EEE6",
+              fontSize: "clamp(15px, 2vw, 18px)",
+              lineHeight: 1.6,
+            }}
+          >
+            Interactive keepsake experiences for baby showers and first
+            birthdays across Toronto and the GTA. We deliver and style, or
+            you pick up — either way, you keep the memories.
+          </p>
+
           <div
             style={{
               display: "flex",
@@ -251,25 +266,66 @@ export default function Home({ navigate }) {
             className="mt-3 text-4xl font-semibold sm:text-5xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
-            We facilitate experiences, memories, and kindness.
+            Rent the experience. Keep the memories.
           </h2>
           <p
             className="mx-auto mt-5 max-w-xl text-lg leading-8"
             style={{ ...fonts.bodyFont, color: palette.ink }}
           >
-            We're not here to just drop off decor and pick it up the next day.
-            Every piece is designed so your guests actually participate,
-            leaving behind a note, a page, a photo, or a memory, so the day
-            keeps giving back long after it's over.
+            We're not here to just drop off decor and pick it up the next
+            day. Guests leave a note at the kindness station, add a page to
+            the storybook, snap a photo for the wall. The styling goes back
+            to us — the puzzle, the storybook, and the sealed time capsule
+            go home with you.
           </p>
           <p
             className="mx-auto mt-4 max-w-xl text-base leading-7"
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
-            We specialize in baby showers and 1st–3rd birthdays, and we
-            customize every package for other special moments too, including
-            birthdays, holidays, or anything worth celebrating.
+            We specialize in baby showers and 1st–3rd birthdays, and
+            customize every package for other milestones too — holidays,
+            engagements, or anything worth celebrating.
           </p>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          HOW IT WORKS — compact strip, logistics up front
+          ═══════════════════════════════════════ */}
+      <section style={{ background: `${palette.primary}0D`, padding: "48px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto" }}>
+          <div className="grid gap-6 sm:grid-cols-4">
+            {[
+              { icon: PackageCheck, title: "Pick your package", body: "Choose your event type and build it out with any add-ons." },
+              { icon: Truck, title: "We deliver, or you pick up", body: "Book a facilitator to set up and style everything, or pick up your box yourself." },
+              { icon: Users, title: "Guests play", body: "Everyone leaves a note, a page, or a photo behind." },
+              { icon: Gift, title: "We collect, you keep the memories", body: "The styling comes back to us. The keepsakes go home with you." },
+            ].map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.title} className="text-center sm:text-left">
+                  <div
+                    className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl sm:mx-0"
+                    style={{ background: `${palette.accent}1F` }}
+                  >
+                    <Icon size={20} color={palette.accent} strokeWidth={1.8} />
+                  </div>
+                  <p
+                    className="mt-3 text-sm font-semibold"
+                    style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+                  >
+                    {i + 1}. {step.title}
+                  </p>
+                  <p
+                    className="mt-1.5 text-sm leading-relaxed"
+                    style={{ ...fonts.bodyFont, color: palette.muted }}
+                  >
+                    {step.body}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -337,17 +393,30 @@ export default function Home({ navigate }) {
 
                 <p
                   style={{
+                    ...fonts.displayFont,
+                    margin: "18px 0 0",
+                    color: palette.gold,
+                    fontSize: "2.75rem",
+                    fontWeight: 700,
+                    lineHeight: 1,
+                  }}
+                >
+                  ${MADE_FOR_MEMORIES_PRICE}
+                </p>
+
+                <p
+                  style={{
                     ...fonts.bodyFont,
                     maxWidth: "500px",
-                    margin: "28px 0 0",
+                    margin: "18px 0 0",
                     color: palette.ink,
                     fontSize: "18px",
                     lineHeight: 1.7,
                   }}
                 >
-                  Seven signature pieces for your {eventType.label.toLowerCase()},
-                  starting at ${MADE_FOR_MEMORIES_PRICE}. Every piece is built to
-                  get guests involved, not just looking at decor.
+                  Seven signature pieces for your {eventType.label.toLowerCase()}.
+                  Every piece is built to get guests involved, not just
+                  looking at decor.
                 </p>
               </div>
 
