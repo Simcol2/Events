@@ -1,5 +1,11 @@
 {
   "rewrites": [
+    { "source": "/decor", "destination": "/decor/index.html" },
+    { "source": "/activities", "destination": "/activities/index.html" },
+    { "source": "/design", "destination": "/design/index.html" },
+    { "source": "/how-it-works", "destination": "/how-it-works/index.html" },
+    { "source": "/package-builder", "destination": "/package-builder/index.html" },
+    { "source": "/past-events", "destination": "/past-events/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
