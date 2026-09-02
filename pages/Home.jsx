@@ -127,6 +127,7 @@ export default function Home({ navigate }) {
   );
 
   const guessArrivalAddon = ADDONS.find((a) => a.id === "guessArrival");
+  const [showArrivalModal, setShowArrivalModal] = useState(false);
 
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
@@ -252,49 +253,6 @@ export default function Home({ navigate }) {
           </div>
         </div>
       </section>
-
-      {/* ═══════════════════════════════════════
-          GUESS THE ARRIVAL DAY — featured up top, not buried
-          ═══════════════════════════════════════ */}
-      {guessArrivalAddon && (
-        <section style={{ background: palette.surface, padding: "48px 40px", borderBottom: `1px solid ${palette.line}` }}>
-          <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-center sm:flex-row sm:gap-10 sm:text-left">
-            <img
-              src={guessArrivalAddon.photoUrl}
-              alt="Guess the Arrival Day prediction website"
-              className="w-full flex-shrink-0 sm:w-[180px]"
-              style={{ borderRadius: "10px", border: `1px solid ${palette.line}` }}
-            />
-            <div>
-              <p
-                className="text-xs font-semibold tracking-[0.3em]"
-                style={{ ...fonts.bodyFont, color: palette.gold }}
-              >
-                ALSO AVAILABLE
-              </p>
-              <h2
-                className="mt-2 text-2xl font-semibold sm:text-3xl"
-                style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-              >
-                {guessArrivalAddon.name}
-              </h2>
-              <p
-                className="mt-2 text-base leading-relaxed"
-                style={{ ...fonts.bodyFont, color: palette.ink }}
-              >
-                {guessArrivalAddon.description}
-              </p>
-              <button
-                onClick={() => navigate("/package-builder")}
-                className="mt-4 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] underline underline-offset-4"
-                style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-              >
-                ADD IT TO YOUR PACKAGE <ArrowRight size={14} />
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ═══════════════════════════════════════
           WHO WE ARE — leads before anything else
@@ -515,6 +473,92 @@ export default function Home({ navigate }) {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════
+          GUESS THE ARRIVAL DAY — featured, click for details
+          ═══════════════════════════════════════ */}
+      {guessArrivalAddon && (
+        <section style={{ background: palette.surface, padding: "48px 40px", borderBottom: `1px solid ${palette.line}` }}>
+          <button
+            onClick={() => setShowArrivalModal(true)}
+            className="mx-auto block w-full max-w-2xl text-center"
+          >
+            <p
+              className="text-xs font-semibold tracking-[0.3em]"
+              style={{ ...fonts.bodyFont, color: palette.gold }}
+            >
+              ALSO AVAILABLE
+            </p>
+            <h2
+              className="mt-2 text-2xl font-semibold sm:text-3xl"
+              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+            >
+              Want your guests guessing where Mom will be when she goes
+              into labor?
+            </h2>
+            <p
+              className="mt-3 text-sm font-semibold tracking-[0.1em] underline underline-offset-4"
+              style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+            >
+              SEE HOW GUESS THE ARRIVAL DAY WORKS
+            </p>
+          </button>
+        </section>
+      )}
+
+      {showArrivalModal && guessArrivalAddon && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8"
+          style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Guess the Arrival Day"
+          onClick={() => setShowArrivalModal(false)}
+        >
+          <div
+            className="relative w-full max-w-md overflow-hidden rounded-2xl p-8 text-center"
+            style={{ background: palette.surface }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowArrivalModal(false)}
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full"
+              style={{ color: palette.muted }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <img
+              src={guessArrivalAddon.photoUrl}
+              alt="Guess the Arrival Day prediction website"
+              className="mx-auto w-full max-w-[220px]"
+              style={{ background: "transparent" }}
+            />
+            <h2
+              className="mt-5 text-2xl font-semibold"
+              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+            >
+              {guessArrivalAddon.name}
+            </h2>
+            <p
+              className="mt-3 text-sm leading-relaxed"
+              style={{ ...fonts.bodyFont, color: palette.ink }}
+            >
+              {guessArrivalAddon.description}
+            </p>
+            <button
+              onClick={() => {
+                setShowArrivalModal(false);
+                navigate("/package-builder");
+              }}
+              className="mt-6 inline-flex items-center gap-2 rounded-sm px-6 py-3 text-xs font-semibold tracking-[0.15em] text-white"
+              style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+            >
+              ADD IT TO YOUR PACKAGE <ArrowRight size={14} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ═══════════════════════════════════════
           ADD-ONS
