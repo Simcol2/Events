@@ -474,38 +474,6 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          GUESS THE ARRIVAL DAY — featured, click for details
-          ═══════════════════════════════════════ */}
-      {guessArrivalAddon && (
-        <section style={{ background: palette.surface, padding: "48px 40px", borderBottom: `1px solid ${palette.line}` }}>
-          <button
-            onClick={() => setShowArrivalModal(true)}
-            className="mx-auto block w-full max-w-2xl text-center"
-          >
-            <p
-              className="text-xs font-semibold tracking-[0.3em]"
-              style={{ ...fonts.bodyFont, color: palette.gold }}
-            >
-              ALSO AVAILABLE
-            </p>
-            <h2
-              className="mt-2 text-2xl font-semibold sm:text-3xl"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-            >
-              Want your guests guessing where Mom will be when she goes
-              into labor?
-            </h2>
-            <p
-              className="mt-3 text-sm font-semibold tracking-[0.1em] underline underline-offset-4"
-              style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-            >
-              SEE HOW GUESS THE ARRIVAL DAY WORKS
-            </p>
-          </button>
-        </section>
-      )}
-
       {showArrivalModal && guessArrivalAddon && (
         <div
           className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8"
@@ -592,16 +560,51 @@ export default function Home({ navigate }) {
           <div className="grid gap-6 sm:grid-cols-3">
             {ADDONS.slice(0, 3).map((a, i) => (
               <Reveal key={a.id} delay={i * 80}>
-                <FeatureCard
-                  icon={a.icon}
-                  name={a.name}
-                  tagline={a.tagline}
-                  description={a.description}
-                  photoKey={a.id}
-                  photoUrl={a.photoUrl}
-                  fit={a.fit}
-                  priceLabel={`+$${a.price}`}
-                />
+                {a.id === "guessArrival" ? (
+                  <button
+                    onClick={() => setShowArrivalModal(true)}
+                    className="flex h-full w-full flex-col rounded-xl p-5 text-left shadow-sm"
+                    style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
+                  >
+                    <div className="mb-2 flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg"
+                          style={{ background: `${palette.accent}1F` }}
+                        >
+                          <a.icon size={18} color={palette.accent} strokeWidth={1.8} />
+                        </div>
+                        <h3 className="text-lg font-bold leading-tight" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                          {a.name}
+                        </h3>
+                      </div>
+                      <span className="flex-shrink-0 text-sm font-bold" style={{ ...fonts.displayFont, color: palette.accent }}>
+                        +${a.price}
+                      </span>
+                    </div>
+                    <p className="flex-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                      Want your guests guessing where Mom will be when she
+                      goes into labor?
+                    </p>
+                    <p
+                      className="mt-3 text-xs font-semibold tracking-[0.1em] underline underline-offset-4"
+                      style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+                    >
+                      SEE HOW IT WORKS
+                    </p>
+                  </button>
+                ) : (
+                  <FeatureCard
+                    icon={a.icon}
+                    name={a.name}
+                    tagline={a.tagline}
+                    description={a.description}
+                    photoKey={a.id}
+                    photoUrl={a.photoUrl}
+                    fit={a.fit}
+                    priceLabel={`+$${a.price}`}
+                  />
+                )}
               </Reveal>
             ))}
           </div>
