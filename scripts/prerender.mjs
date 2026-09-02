@@ -1,9 +1,16 @@
-// Runs after `vite build`. Crawls the already-built site with a headless
-// browser and writes the fully-rendered HTML for each route back into
-// dist/, so search engines, AI tools, and link-preview bots (none of which
-// execute JavaScript) see real content instead of the empty <div id="root">
-// shell. Real browsers still get the exact same interactive React app —
-// client JS replaces this static markup the moment it mounts.
+// MANUAL/DEV USE ONLY — run with `npm run prerender` after `npm run build`,
+// whenever page content changes, then commit the updated prerendered/
+// folder. This does NOT run during the Vercel build (see
+// scripts/copy-prerendered.mjs for that): Vercel's build sandbox can't
+// reliably launch headless Chromium, so snapshots are generated ahead of
+// time here instead and just copied into dist/ at deploy time.
+//
+// Crawls the already-built site with a headless browser and writes the
+// fully-rendered HTML for each route into prerendered/, so search engines,
+// AI tools, and link-preview bots (none of which execute JavaScript) see
+// real content instead of the empty <div id="root"> shell. Real browsers
+// still get the exact same interactive React app — client JS replaces this
+// static markup the moment it mounts.
 import { preview } from "vite";
 import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -30,7 +37,7 @@ async function run() {
     await page.waitForTimeout(1000);
     const html = await page.content();
 
-    const outDir = route === "/" ? "dist" : path.join("dist", route.slice(1));
+    const outDir = route === "/" ? "prerendered" : path.join("prerendered", route.slice(1));
     await mkdir(outDir, { recursive: true });
     await writeFile(path.join(outDir, "index.html"), html, "utf-8");
     console.log(`Prerendered ${route === "/" ? "/" : route} -> ${path.join(outDir, "index.html")}`);
