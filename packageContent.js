@@ -23,6 +23,9 @@ import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.p
 import wallPuzzleEngagementPhoto from "./media/file_00000000a204822f9ab953201c8b7043.png";
 import ohBabyBlocksPhoto from "./media/oh-baby-blocks-tablescape.png";
 import ohBabyTrayPhoto from "./media/oh-sweet-baby-tray.png";
+import centerpieceThanksgivingPhoto from "./media/centerpiece-thanksgiving.png";
+import centerpieceChristmasPhoto from "./media/centerpiece-christmas.png";
+import centerpieceSpecialMomentPhoto from "./media/centerpiece-special-moment.png";
 import timeCapsulePhoto from "./media/timecapsul.png";
 import photoWallPhoto from "./media/featurewall.png";
 import lilRootsPhoto from "./media/lilroots.png";
@@ -234,9 +237,9 @@ export const MAIN_PACKAGE_ITEMS = [
       },
       specialMoment: {
         name: "Custom Centerpiece",
-        tagline: "A centerpiece with a little history.",
+        tagline: "Simple, elegant, unforgettable.",
         description:
-          "A custom display featuring photos that matter to your moment, with space to serve your favourite treats.",
+          "A custom candle and floral centerpiece designed around your colour palette, set at the centre of your table.",
       },
     },
     photos: {
@@ -244,8 +247,8 @@ export const MAIN_PACKAGE_ITEMS = [
       babyShower: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
       milestoneBirthday: null,
       birthday: null,
-      holiday: null,
-      specialMoment: null,
+      holiday: [centerpieceThanksgivingPhoto, centerpieceChristmasPhoto],
+      specialMoment: [centerpieceSpecialMomentPhoto],
     },
   },
   {

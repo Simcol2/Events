@@ -188,7 +188,7 @@ export default function Home({ navigate }) {
           >
             Interactive keepsake experiences for baby showers and first
             birthdays across Toronto and the GTA. We deliver and style, or
-            you pick up — either way, you keep the memories.
+            you pick up. Either way, you keep the memories.
           </p>
 
           <div
@@ -275,7 +275,7 @@ export default function Home({ navigate }) {
             We're not here to just drop off decor and pick it up the next
             day. Guests leave a note at the kindness station, add a page to
             the storybook, snap a photo for the wall. The styling goes back
-            to us — the puzzle, the storybook, and the sealed time capsule
+            to us; the puzzle, the storybook, and the sealed time capsule
             go home with you.
           </p>
           <p
@@ -283,7 +283,7 @@ export default function Home({ navigate }) {
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
             We specialize in baby showers and 1st–3rd birthdays, and
-            customize every package for other milestones too — holidays,
+            customize every package for other milestones too: holidays,
             engagements, or anything worth celebrating.
           </p>
         </div>
