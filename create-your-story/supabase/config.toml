@@ -1,0 +1,16 @@
+# Minimal Supabase CLI project config for this sub-app. Replace project_id
+# with your actual project ref after `supabase link --project-ref <ref>`
+# (or just run `supabase init` here to regenerate a full default config).
+#
+# Functions are left on the default verify_jwt = true: the client always
+# calls them via supabase.functions.invoke(), which attaches either the
+# signed-in host's access token or the anon key automatically, so the
+# gateway-level check never gets in the way. Host-only functions additionally
+# verify ownership themselves inside (_shared/auth.ts requireEventOwner).
+project_id = "create-your-story"
+
+[api]
+enabled = true
+
+[db]
+port = 54322

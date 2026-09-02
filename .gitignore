@@ -3,3 +3,5 @@ dist/
 .vite/
 .cache/
 .DS_Store
+.env
+.env.local
