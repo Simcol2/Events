@@ -17,6 +17,11 @@ export default function Decor({ navigate }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!supabase) {
+      setError("The decor catalog isn't connected yet. Check back soon.");
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     async function load() {
       setLoading(true);

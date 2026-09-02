@@ -86,7 +86,7 @@ export default function PackageBuilder() {
                 tagline={item.tagline}
                 description={item.description}
                 photoKey={item.id}
-                photoUrl={item.photoUrl}
+                photoUrls={item.photoUrls}
                 priceLabel="Included"
               />
             ))}
@@ -95,7 +95,7 @@ export default function PackageBuilder() {
 
         {/* Add-ons — build your own */}
         <div className="mb-14">
-          <SectionTitle palette={palette} fonts={fonts}>Build Your Own — Add Any Upgrades</SectionTitle>
+          <SectionTitle palette={palette} fonts={fonts}>Build Your Own: Add Any Upgrades</SectionTitle>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {ADDONS.map((a) => (
               <FeatureCard

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import ValuePropBar from "./components/ValuePropBar";
 import EventTypePicker from "./components/EventTypePicker";
 import { EventTypeProvider, useEventType } from "./EventTypeContext";
 
@@ -68,6 +69,7 @@ function AppRoutes() {
   return (
     <>
       <SiteHeader current={current} navigate={navigate} nav={NAV} />
+      <ValuePropBar />
       {component}
       <SiteFooter navigate={navigate} />
       <EventTypePicker />

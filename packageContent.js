@@ -18,6 +18,14 @@ import {
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
 import babyTriviaPhoto from "./media/babytrivia.png";
+import kindnessStationPhoto from "./media/file_00000000dcd4822fb648d37e9526b4b3.png";
+import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.png";
+import wallPuzzleEngagementPhoto from "./media/file_00000000a204822f9ab953201c8b7043.png";
+import ohBabyBlocksPhoto from "./media/oh-baby-blocks-tablescape.png";
+import ohBabyTrayPhoto from "./media/oh-sweet-baby-tray.png";
+import centerpieceThanksgivingPhoto from "./media/centerpiece-thanksgiving.png";
+import centerpieceChristmasPhoto from "./media/centerpiece-christmas.png";
+import centerpieceSpecialMomentPhoto from "./media/centerpiece-special-moment.png";
 import timeCapsulePhoto from "./media/timecapsul.png";
 import photoWallPhoto from "./media/featurewall.png";
 import lilRootsPhoto from "./media/lilroots.png";
@@ -49,39 +57,39 @@ export const MAIN_PACKAGE_ITEMS = [
     copy: {
       default: {
         name: "Picture This",
-        tagline: "Snap it. Print it. Keep it.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the celebration and add it to your custom photo display — a growing, hands-on keepsake everyone helps build.",
+          "Guests snap a photo and leave a written note or a quick voice recording about a favourite memory. Both go into the time capsule to look back on someday.",
       },
       babyShower: {
         name: "Picture This",
-        tagline: "Snap it. Print it. Keep it.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the shower and add it to your custom photo display. At the end of the day, everything goes into baby's time capsule to discover someday.",
+          "Guests snap a photo and write a note or record a quick voice message about their favourite time or story with Mom and Dad, so baby can see what their parents were like when they grow up. Both go into the time capsule to discover someday.",
       },
       milestoneBirthday: {
         name: "Picture This: Their Year in Review",
-        tagline: "Capture the year that flew by.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests take photos throughout the party and add them to a custom display celebrating everything about the year that just happened.",
+          "Guests snap a photo and write a note or record a quick voice message about their favourite story of the birthday kiddo this year. Both go into the time capsule to look back on someday.",
       },
       birthday: {
         name: "Picture This",
-        tagline: "Snap it. Print it. Keep it.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the party and add it to a custom photo display — a keepsake of everyone who came to celebrate.",
+          "Guests snap a photo and leave a note or a quick voice message with their favourite story about the guest of honor. Both go into the time capsule to keep.",
       },
       holiday: {
         name: "Picture This",
-        tagline: "Capture the season.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print and pin up their favourite photos from the celebration, building a shared display of the season together.",
+          "Guests snap a photo and leave a note or a quick voice message with a favourite holiday memory of the person you're celebrating. Both go into the time capsule to open again next season.",
       },
       specialMoment: {
         name: "Picture This",
-        tagline: "Every moment, captured.",
+        tagline: "Snap a photo. Share a memory.",
         description:
-          "Guests print their favourite photo from the day and add it to a custom display — a keepsake built by everyone who was there.",
+          "Guests snap a photo and leave a note or a quick voice message with a favourite memory of this moment. Both go into the time capsule to keep.",
       },
     },
     photos: {
@@ -99,44 +107,44 @@ export const MAIN_PACKAGE_ITEMS = [
     copy: {
       default: {
         name: "Kindness Station",
-        tagline: "Be kind. Pass it on.",
+        tagline: "Take one. Pass it on.",
         description:
-          "Guests write little notes of encouragement for a stranger to find and take home — a small act of kindness carried out into the world in your honor.",
+          "Guests take a card of encouragement to carry out into the world, a small act of kindness done in your honor. Add an optional $5 gift card to any note for a pay it forward surprise.",
       },
       babyShower: {
-        name: "Hello, Stranger Kindness Station",
-        tagline: "Kindness starts small, but it changes everything.",
+        name: "Hello World Kindness Station",
+        tagline: "A little kindness can change someone's whole day.",
         description:
-          "Guests create little acts of kindness for strangers, carrying something positive out into the world in celebration of baby's arrival.",
+          "Guests take a card, read a little reminder, and carry it out into the world in celebration of baby's arrival. Add an optional $5 gift card to any note for a pay it forward surprise.",
       },
       milestoneBirthday: {
         name: "Kindness Corner",
         tagline: "Teaching kindness, one birthday at a time.",
         description:
-          "In honor of the birthday, guests leave a kind note for a stranger to find — a sweet little tradition that can grow with your little one every year.",
+          "In honor of the birthday, guests take a kindness card to carry out into the world, a sweet little tradition that can grow with your little one every year. Add an optional $5 gift card for a pay it forward surprise.",
       },
       birthday: {
         name: "Kindness Station",
-        tagline: "Be kind. Pass it on.",
+        tagline: "Take one. Pass it on.",
         description:
-          "Guests write a small note of kindness for a stranger to find later, turning the party into something that reaches beyond the room.",
+          "Guests take a card of kindness to carry out into the world, turning the party into something that reaches beyond the room. Add an optional $5 gift card for a pay it forward surprise.",
       },
       holiday: {
         name: "Season of Kindness Station",
         tagline: "Spread a little extra this season.",
         description:
-          "Guests write notes of kindness for strangers to find, sharing the spirit of the season with people outside the room.",
+          "Guests take a card of kindness to carry out into the world, sharing the spirit of the season with people outside the room. Add an optional $5 gift card for a pay it forward surprise.",
       },
       specialMoment: {
         name: "Kindness Station",
         tagline: "A little kindness, for someone else.",
         description:
-          "Guests leave a small note of kindness for a stranger to find — a quiet way of marking the occasion that reaches beyond your guest list.",
+          "Guests take a card of kindness to carry out into the world, a quiet way of marking the occasion that reaches beyond your guest list. Add an optional $5 gift card for a pay it forward surprise.",
       },
     },
     photos: {
-      default: null,
-      babyShower: null,
+      default: kindnessStationPhoto,
+      babyShower: kindnessStationPhoto,
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
@@ -151,37 +159,37 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Their Story Book",
         tagline: "Every guest becomes part of the story.",
         description:
-          "Each guest contributes a page — a memory, a wish, a little drawing — to a keepsake storybook that becomes part of the story you're celebrating.",
+          "Each guest contributes a page (a memory, a wish, a little drawing) to a keepsake storybook that becomes part of the story you're celebrating.",
       },
       babyShower: {
         name: "First Story Book",
         tagline: "The story starts before they even arrive.",
         description:
-          "Every guest becomes one of baby's story friends and contributes a page — a doodle, a wish, something they hope baby learns — to a keepsake storybook that begins their very first adventure.",
+          "Every guest becomes one of baby's story friends and contributes a page (a doodle, a wish, something they hope baby learns) to a keepsake storybook that begins their very first adventure.",
       },
       milestoneBirthday: {
         name: "Their Big Adventure",
         tagline: "Guests write the next chapter.",
         description:
-          "Every guest adds a page to a growing storybook — a memory, a lesson, a little piece of this year's adventure — building a keepsake you'll add to for every birthday to come.",
+          "Every guest adds a page to a growing storybook (a memory, a lesson, a little piece of this year's adventure), building a keepsake you'll add to for every birthday to come.",
       },
       birthday: {
         name: "Their Story So Far",
         tagline: "A page from everyone who came to celebrate.",
         description:
-          "Every guest adds a page to a keepsake storybook — a memory, a wish, or a little note — building something to keep long after the party ends.",
+          "Every guest adds a page to a keepsake storybook (a memory, a wish, or a little note), building something to keep long after the party ends.",
       },
       holiday: {
         name: "Our Holiday Story",
         tagline: "A page for every guest, a story for every year.",
         description:
-          "Every guest adds a page about this year's celebration — a memory, a wish, a little tradition — building a storybook you can add to each season.",
+          "Every guest adds a page about this year's celebration (a memory, a wish, a little tradition), building a storybook you can add to each season.",
       },
       specialMoment: {
         name: "Our Story Together",
         tagline: "A page from everyone who was there.",
         description:
-          "Every guest contributes a page — a memory, a wish, a little drawing — to a keepsake storybook built entirely around this moment.",
+          "Every guest contributes a page (a memory, a wish, a little drawing) to a keepsake storybook built entirely around this moment.",
       },
     },
     photos: {
@@ -204,7 +212,7 @@ export const MAIN_PACKAGE_ITEMS = [
           "A custom display featuring photos from before, with space to serve your favourite treats at the centre of it all.",
       },
       babyShower: {
-        name: "Oh Baby Centerpiece",
+        name: "Oh Baby Decor",
         tagline: "A centerpiece with a little history.",
         description:
           "A custom wooden display featuring childhood photos of Mom and Dad, with space to serve your favourite shower treats.",
@@ -229,18 +237,18 @@ export const MAIN_PACKAGE_ITEMS = [
       },
       specialMoment: {
         name: "Custom Centerpiece",
-        tagline: "A centerpiece with a little history.",
+        tagline: "Simple, elegant, unforgettable.",
         description:
-          "A custom display featuring photos that matter to your moment, with space to serve your favourite treats.",
+          "A custom candle and floral centerpiece designed around your colour palette, set at the centre of your table.",
       },
     },
     photos: {
-      default: ohBabyCenterPhoto,
-      babyShower: ohBabyCenterPhoto,
+      default: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
+      babyShower: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
       milestoneBirthday: null,
       birthday: null,
-      holiday: null,
-      specialMoment: null,
+      holiday: [centerpieceThanksgivingPhoto, centerpieceChristmasPhoto],
+      specialMoment: [centerpieceSpecialMomentPhoto],
     },
   },
   {
@@ -301,7 +309,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Custom Wall Puzzle",
         tagline: "Help us put it together.",
         description:
-          "A giant portrait puzzle guests gradually assemble throughout the celebration — piece by piece, together — becoming a keepsake to hang afterward.",
+          "A giant portrait puzzle guests gradually assemble throughout the celebration, piece by piece, together, becoming a keepsake to hang afterward.",
       },
       babyShower: {
         name: "Put Baby Together",
@@ -319,7 +327,7 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Custom Wall Puzzle",
         tagline: "Help us put it together.",
         description:
-          "A giant portrait puzzle guests gradually assemble throughout the party — a keepsake built by everyone who came.",
+          "A giant portrait puzzle guests gradually assemble throughout the party, a keepsake built by everyone who came.",
       },
       holiday: {
         name: "Custom Wall Puzzle",
@@ -328,19 +336,24 @@ export const MAIN_PACKAGE_ITEMS = [
           "A giant seasonal or family portrait puzzle guests gradually assemble throughout the celebration.",
       },
       specialMoment: {
-        name: "Custom Wall Puzzle",
-        tagline: "Help us put it together.",
+        name: "Put Together",
+        tagline: "Your love. Your people. One beautiful picture.",
         description:
-          "A giant custom portrait puzzle guests gradually assemble throughout the day, built entirely around your moment.",
+          "A giant portrait puzzle of the two of you, guests gradually assemble it throughout the celebration, a keepsake made by the people who celebrate your love.",
       },
     },
     photos: {
+      // No bump/ultrasound photo exists yet for the baby-shower variant —
+      // showing the toddler portrait there doesn't make sense (there's no
+      // baby to photograph yet at a shower), so it stays null ("photo
+      // coming soon") until a real one is supplied. The toddler portrait
+      // is only correct for the 1st-3rd-birthday variant.
       default: null,
       babyShower: null,
-      milestoneBirthday: null,
+      milestoneBirthday: wallPuzzleBabyPhoto,
       birthday: null,
       holiday: null,
-      specialMoment: null,
+      specialMoment: wallPuzzleEngagementPhoto,
     },
   },
   {
@@ -351,37 +364,37 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Photos, stories, and sweet little memories from the people who celebrated with you, sealed up and saved for the future.",
+          "Every photo, note, and voice recording from Picture This gets sealed inside, ready to open again in the future.",
       },
       babyShower: {
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Photos, stories, and sweet little memories from the people who celebrated baby before they ever knew them. Sealed up and saved for the future.",
+          "Every photo, note, and voice message from Picture This gets sealed inside: stories about Mom and Dad from the people who celebrated baby before they ever knew them, saved for the future.",
       },
       milestoneBirthday: {
         name: "The World at 18 Time Capsule",
         tagline: "What will the world look like when they turn 18?",
         description:
-          "Guests make predictions about the world and leave a message for your little one's future self — sealed up and opened together on their 18th birthday.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, along with guest predictions about the world, opened together on their 18th birthday.",
       },
       birthday: {
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Guests leave a note, a memory, or a message for the future — sealed up and saved to open again on a birthday down the road.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again on a birthday down the road.",
       },
       holiday: {
         name: "Time Capsule",
         tagline: "A moment from this year, saved for next.",
         description:
-          "Guests leave a note or memory from this year's celebration, sealed up to open again next holiday season.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again next holiday season.",
       },
       specialMoment: {
         name: "Time Capsule",
         tagline: "A little piece of today, saved for tomorrow.",
         description:
-          "Photos, stories, and sweet little memories from everyone who was there, sealed up and saved for the future.",
+          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again in the future.",
       },
     },
     photos: {
@@ -395,12 +408,17 @@ export const MAIN_PACKAGE_ITEMS = [
   },
 ];
 
-// Resolves one package item's copy + photo for the active event type,
-// falling back to `default` for anything without an explicit override.
+// Resolves one package item's copy + photo(s) for the active event type,
+// falling back to `default` for anything without an explicit override. A
+// photo entry can be a single image or an array of images; either way this
+// always returns a normalized `photoUrls` array (empty when there's no
+// photo yet), which PhotoSlot turns into a crossfading slideshow when it
+// has more than one image.
 export function resolvePackageItem(item, eventTypeId) {
   const copy = item.copy[eventTypeId] || item.copy.default;
-  const photoUrl = item.photos[eventTypeId] ?? item.photos.default ?? null;
-  return { id: item.id, icon: item.icon, photoUrl, ...copy };
+  const raw = item.photos[eventTypeId] ?? item.photos.default ?? null;
+  const photoUrls = (Array.isArray(raw) ? raw : raw ? [raw] : []).filter(Boolean);
+  return { id: item.id, icon: item.icon, photoUrls, ...copy };
 }
 
 // Optional upgrades layered on top of the fixed package via the Package
@@ -412,7 +430,7 @@ export const ADDONS = [
     name: "Guess the Arrival Day",
     tagline: "When will baby make their grand entrance?",
     description:
-      "Guests make their best guess on a personalized online game — the date, the time, and even what Mom will be doing when it all begins.",
+      "Guests make their best guess on a personalized online game: the date, the time, and even what Mom will be doing when it all begins.",
     price: 150,
     photoUrl: arrivalPhoto,
     fit: "contain",

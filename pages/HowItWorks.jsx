@@ -4,13 +4,13 @@ import { usePalette } from "../PaletteContext";
 
 const STEPS = [
   { icon: Calendar, title: "Choose Your Date", body: "Pick the date of your celebration and let's get the planning party started!" },
-  { icon: Palette, title: "Choose Your Palette or Theme", body: "Tell us your vibe and we'll help bring it to life — modern, playful, elegant, or bold." },
+  { icon: Palette, title: "Choose Your Palette or Theme", body: "Tell us your vibe and we'll help bring it to life: modern, playful, elegant, or bold." },
   { icon: PackageCheck, title: "Choose Your Package & Add-Ons", body: "Build your perfect experience and add any extras that make it even more special." },
   { icon: ShieldCheck, title: "Pay Deposit & Security Deposit", body: "Lock in your date with a deposit. The security deposit holds your goodies safe and sound." },
   { icon: Mail, title: "Submit Info & Photos", body: "Send over the details and photos we need to customize everything just for you." },
-  { icon: PackageOpen, title: "Pick Up Your Rental Box", body: "Swing by and pick up everything 24 hours before your event. Easy and convenient!" },
+  { icon: PackageOpen, title: "Pick Up or Book a Facilitator", body: "Swing by and pick up your rental box 24 hours before your event, or book an event facilitator to deliver, set up, and style everything for you." },
   { icon: Gift, title: "Enjoy Your Event!", body: "Have the best time making memories. We've taken care of all the details." },
-  { icon: Undo2, title: "Drop Off 24 Hours After", body: "Return everything within 24 hours after your event and we'll release your damage deposit." },
+  { icon: Undo2, title: "Drop Off or We Handle It", body: "Return everything within 24 hours after your event and we'll release your damage deposit, or if you booked a facilitator, we'll take care of pickup and breakdown for you." },
 ];
 
 export default function HowItWorks() {

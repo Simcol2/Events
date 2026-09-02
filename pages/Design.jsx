@@ -40,7 +40,7 @@ export default function Design({ navigate }) {
             className="mx-auto mt-4 max-w-xl text-sm leading-7"
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
-            These are visual design themes for your package — colors, tone, and
+            These are visual design themes for your package: colors, tone, and
             style. What's included in your package is decided by the type of
             event you're planning, not by the look you pick here. Choose a
             theme below to preview it across the whole site.

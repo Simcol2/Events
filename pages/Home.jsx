@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Heart, Sparkles } from "lucide-react";
+import { ArrowRight, Heart, Sparkles, PackageCheck, Truck, Users, Gift } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import FeatureCard from "../components/FeatureCard";
@@ -55,7 +55,7 @@ const HERO_LINES = [
   "A Time Capsule Your Guests Actually Fill.",
   "Balloons Die. Memories Last Forever.",
   "Curated Décor. Real Keepsakes. Zero Stress.",
-  "Your Guests Don't Just Show Up—They Leave Something Real.",
+  "Your Guests Don't Just Show Up. They Leave Something Real.",
   "The Celebration That Gets Better After It Ends.",
   "Pick a Date. Pick a Vibe. We Handle the Rest.",
 ];
@@ -66,7 +66,7 @@ function RotatingHeadline({ fonts }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % HERO_LINES.length);
-    }, 3500);
+    }, 5000);
 
     return () => clearInterval(timer);
   }, []);
@@ -99,8 +99,8 @@ function RotatingHeadline({ fonts }) {
             lineHeight: 1.1,
             color: "#FDF6EE",
             opacity: i === index ? 1 : 0,
-            transform: i === index ? "translateY(0)" : "translateY(14px)",
-            transition: "opacity 600ms ease, transform 600ms cubic-bezier(.22,1,.36,1)",
+            transform: i === index ? "translateY(0)" : "translateY(18px)",
+            transition: "opacity 1100ms ease, transform 1100ms cubic-bezier(.22,1,.36,1)",
             textShadow: "0 2px 24px rgba(0,0,0,0.45)",
             pointerEvents: "none",
             textAlign: "center",
@@ -125,6 +125,9 @@ export default function Home({ navigate }) {
     () => MAIN_PACKAGE_ITEMS.map((item) => resolvePackageItem(item, eventTypeId)),
     [eventTypeId]
   );
+
+  const guessArrivalAddon = ADDONS.find((a) => a.id === "guessArrival");
+  const [showArrivalModal, setShowArrivalModal] = useState(false);
 
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
@@ -175,6 +178,22 @@ export default function Home({ navigate }) {
           }}
         >
           <RotatingHeadline fonts={fonts} />
+
+          <p
+            style={{
+              ...fonts.bodyFont,
+              maxWidth: "620px",
+              margin: "0 auto",
+              color: "#FDF6EEE6",
+              fontSize: "clamp(15px, 2vw, 18px)",
+              lineHeight: 1.6,
+            }}
+          >
+            Interactive pieces for baby showers, first birthdays, and any
+            celebration across Toronto and the GTA. We deliver and style, or
+            you pick up. Either way, every piece is both your decor and
+            your keepsake.
+          </p>
 
           <div
             style={{
@@ -251,25 +270,68 @@ export default function Home({ navigate }) {
             className="mt-3 text-4xl font-semibold sm:text-5xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
-            We facilitate experiences, memories, and kindness.
+            Every piece is decor. Every piece is a keepsake.
           </h2>
           <p
             className="mx-auto mt-5 max-w-xl text-lg leading-8"
             style={{ ...fonts.bodyFont, color: palette.ink }}
           >
-            We're not here to just drop off decor and pick it up the next day.
-            Every piece is designed so your guests actually participate —
-            leaving behind a note, a page, a photo, a memory — so the day
-            keeps giving back long after it's over.
+            We're not here to just drop off decor and pick it up the next
+            day. Guests take a card at the kindness station, add a page to
+            the collaborative storybook, snap a photo and leave a voice
+            note for the time capsule. The styling goes back with us. The
+            framed puzzle, the collaborative storybook, and the sealed time
+            capsule go home with you.
           </p>
           <p
-            className="mx-auto mt-4 max-w-xl text-base leading-7"
-            style={{ ...fonts.bodyFont, color: palette.muted }}
+            className="mx-auto mt-4 max-w-xl text-lg leading-7"
+            style={{ ...fonts.bodyFont, color: palette.ink }}
           >
-            We specialize in baby showers and 1st–3rd birthdays, and we
-            customize every package for other special moments too — birthdays,
-            holidays, or anything worth celebrating.
+            We specialize in interactive pieces that double as your decor
+            and your keepsakes, built around baby showers and first
+            birthdays, and just as easily customized for any celebration
+            worth marking.
           </p>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          HOW IT WORKS — compact strip, logistics up front
+          ═══════════════════════════════════════ */}
+      <section style={{ background: `${palette.primary}0D`, padding: "48px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto" }}>
+          <div className="grid gap-6 sm:grid-cols-4">
+            {[
+              { icon: PackageCheck, title: "Pick your package", body: "Choose your event type and build it out with any add-ons." },
+              { icon: Truck, title: "We deliver, or you pick up", body: "Book a facilitator to set up and style everything, or pick up your box yourself." },
+              { icon: Users, title: "Guests play", body: "Everyone leaves a note, a page, or a photo behind." },
+              { icon: Gift, title: "We collect, you keep the keepsakes", body: "The styling comes back to us. The keepsakes go home with you." },
+            ].map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.title} className="text-center sm:text-left">
+                  <div
+                    className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl sm:mx-0"
+                    style={{ background: `${palette.accent}1F` }}
+                  >
+                    <Icon size={20} color={palette.accent} strokeWidth={1.8} />
+                  </div>
+                  <p
+                    className="mt-3 text-sm font-semibold"
+                    style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+                  >
+                    {i + 1}. {step.title}
+                  </p>
+                  <p
+                    className="mt-1.5 text-sm leading-relaxed"
+                    style={{ ...fonts.bodyFont, color: palette.muted }}
+                  >
+                    {step.body}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -337,17 +399,30 @@ export default function Home({ navigate }) {
 
                 <p
                   style={{
+                    ...fonts.displayFont,
+                    margin: "18px 0 0",
+                    color: palette.gold,
+                    fontSize: "2.75rem",
+                    fontWeight: 700,
+                    lineHeight: 1,
+                  }}
+                >
+                  ${MADE_FOR_MEMORIES_PRICE}
+                </p>
+
+                <p
+                  style={{
                     ...fonts.bodyFont,
                     maxWidth: "500px",
-                    margin: "28px 0 0",
+                    margin: "18px 0 0",
                     color: palette.ink,
                     fontSize: "18px",
                     lineHeight: 1.7,
                   }}
                 >
-                  Seven signature pieces for your {eventType.label.toLowerCase()},
-                  starting at ${MADE_FOR_MEMORIES_PRICE}. Every piece is built to
-                  get guests involved, not just looking at decor.
+                  Seven signature pieces for your {eventType.label.toLowerCase()}.
+                  Every piece is built to get guests involved, not just
+                  looking at decor.
                 </p>
               </div>
 
@@ -391,13 +466,67 @@ export default function Home({ navigate }) {
                   tagline={item.tagline}
                   description={item.description}
                   photoKey={item.id}
-                  photoUrl={item.photoUrl}
+                  photoUrls={item.photoUrls}
                 />
               </Reveal>
             ))}
           </div>
         </div>
       </section>
+
+      {showArrivalModal && guessArrivalAddon && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8"
+          style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Guess the Arrival Day"
+          onClick={() => setShowArrivalModal(false)}
+        >
+          <div
+            className="relative w-full max-w-md overflow-hidden rounded-2xl p-8 text-center"
+            style={{ background: palette.surface }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowArrivalModal(false)}
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full"
+              style={{ color: palette.muted }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <img
+              src={guessArrivalAddon.photoUrl}
+              alt="Guess the Arrival Day prediction website"
+              className="mx-auto w-full max-w-[220px]"
+              style={{ background: "transparent" }}
+            />
+            <h2
+              className="mt-5 text-2xl font-semibold"
+              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+            >
+              {guessArrivalAddon.name}
+            </h2>
+            <p
+              className="mt-3 text-sm leading-relaxed"
+              style={{ ...fonts.bodyFont, color: palette.ink }}
+            >
+              {guessArrivalAddon.description}
+            </p>
+            <button
+              onClick={() => {
+                setShowArrivalModal(false);
+                navigate("/package-builder");
+              }}
+              className="mt-6 inline-flex items-center gap-2 rounded-sm px-6 py-3 text-xs font-semibold tracking-[0.15em] text-white"
+              style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+            >
+              ADD IT TO YOUR PACKAGE <ArrowRight size={14} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ═══════════════════════════════════════
           ADD-ONS
@@ -431,16 +560,51 @@ export default function Home({ navigate }) {
           <div className="grid gap-6 sm:grid-cols-3">
             {ADDONS.slice(0, 3).map((a, i) => (
               <Reveal key={a.id} delay={i * 80}>
-                <FeatureCard
-                  icon={a.icon}
-                  name={a.name}
-                  tagline={a.tagline}
-                  description={a.description}
-                  photoKey={a.id}
-                  photoUrl={a.photoUrl}
-                  fit={a.fit}
-                  priceLabel={`+$${a.price}`}
-                />
+                {a.id === "guessArrival" ? (
+                  <button
+                    onClick={() => setShowArrivalModal(true)}
+                    className="flex h-full w-full flex-col rounded-xl p-5 text-left shadow-sm"
+                    style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
+                  >
+                    <div className="mb-2 flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg"
+                          style={{ background: `${palette.accent}1F` }}
+                        >
+                          <a.icon size={18} color={palette.accent} strokeWidth={1.8} />
+                        </div>
+                        <h3 className="text-lg font-bold leading-tight" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                          {a.name}
+                        </h3>
+                      </div>
+                      <span className="flex-shrink-0 text-sm font-bold" style={{ ...fonts.displayFont, color: palette.accent }}>
+                        +${a.price}
+                      </span>
+                    </div>
+                    <p className="flex-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                      Want your guests guessing where Mom will be when she
+                      goes into labor?
+                    </p>
+                    <p
+                      className="mt-3 text-xs font-semibold tracking-[0.1em] underline underline-offset-4"
+                      style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+                    >
+                      SEE HOW IT WORKS
+                    </p>
+                  </button>
+                ) : (
+                  <FeatureCard
+                    icon={a.icon}
+                    name={a.name}
+                    tagline={a.tagline}
+                    description={a.description}
+                    photoKey={a.id}
+                    photoUrl={a.photoUrl}
+                    fit={a.fit}
+                    priceLabel={`+$${a.price}`}
+                  />
+                )}
               </Reveal>
             ))}
           </div>
