@@ -186,9 +186,10 @@ export default function Home({ navigate }) {
               lineHeight: 1.6,
             }}
           >
-            Interactive keepsake experiences for baby showers and first
-            birthdays across Toronto and the GTA. We deliver and style, or
-            you pick up. Either way, you keep the memories.
+            Interactive pieces for baby showers, first birthdays, and any
+            celebration across Toronto and the GTA. We deliver and style, or
+            you pick up. Either way, every piece is both your decor and
+            your keepsake.
           </p>
 
           <div
@@ -266,7 +267,7 @@ export default function Home({ navigate }) {
             className="mt-3 text-4xl font-semibold sm:text-5xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
-            Rent the experience. Keep the memories.
+            Every piece is decor. Every piece is a keepsake.
           </h2>
           <p
             className="mx-auto mt-5 max-w-xl text-lg leading-8"
@@ -282,9 +283,10 @@ export default function Home({ navigate }) {
             className="mx-auto mt-4 max-w-xl text-base leading-7"
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
-            We specialize in baby showers and 1st–3rd birthdays, and
-            customize every package for other milestones too: holidays,
-            engagements, or anything worth celebrating.
+            We specialize in interactive pieces that double as your decor
+            and your keepsakes, built around baby showers and first
+            birthdays, and just as easily customized for any celebration
+            worth marking.
           </p>
         </div>
       </section>
@@ -299,7 +301,7 @@ export default function Home({ navigate }) {
               { icon: PackageCheck, title: "Pick your package", body: "Choose your event type and build it out with any add-ons." },
               { icon: Truck, title: "We deliver, or you pick up", body: "Book a facilitator to set up and style everything, or pick up your box yourself." },
               { icon: Users, title: "Guests play", body: "Everyone leaves a note, a page, or a photo behind." },
-              { icon: Gift, title: "We collect, you keep the memories", body: "The styling comes back to us. The keepsakes go home with you." },
+              { icon: Gift, title: "We collect, you keep the keepsakes", body: "The styling comes back to us. The keepsakes go home with you." },
             ].map((step, i) => {
               const Icon = step.icon;
               return (
