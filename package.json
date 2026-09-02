@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && (node scripts/prerender.mjs || echo 'Prerendering skipped, deploying the plain SPA build instead.')",
+    "build": "vite build && node scripts/copy-prerendered.mjs",
+    "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
