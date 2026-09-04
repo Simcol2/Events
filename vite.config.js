@@ -11,6 +11,11 @@ import react from "@vitejs/plugin-react";
 // on a sub-route would get a blank, non-interactive page.
 export default {
   plugins: [react()],
+  server: {
+    host: true,
+    allowedHosts: true,
+    port: 5173,
+  },
   build: {
     rollupOptions: {
       output: {
