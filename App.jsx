@@ -8,6 +8,7 @@ import EventDatePicker from "./components/EventDatePicker";
 import { EventTypeProvider, useEventType } from "./EventTypeContext";
 import { EventDateProvider } from "./EventDateContext";
 import { PackageProvider } from "./PackageContext";
+import { CartProvider } from "./CartContext";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
@@ -16,11 +17,15 @@ import Design from "./pages/Design";
 import HowItWorks from "./pages/HowItWorks";
 import PackageBuilder from "./pages/PackageBuilder";
 import DisplayOptions from "./pages/DisplayOptions";
+import Gifts from "./pages/Gifts";
+import Catering from "./pages/Catering";
 import PastEvents from "./pages/PastEvents";
 
 const NAV = [
   { label: "Home", path: "/" },
   { label: "Decor", path: "/decor" },
+  { label: "Gifts", path: "/gifts" },
+  { label: "Catering", path: "/catering" },
   { label: "Activities", path: "/activities" },
   { label: "Design & Themes", path: "/design" },
   { label: "How It Works", path: "/how-it-works" },
@@ -62,6 +67,8 @@ function AppRoutes() {
   const routeMap = {
     "/": { component: <Home navigate={navigate} />, current: "home" },
     "/decor": { component: <Decor navigate={navigate} />, current: "decor" },
+    "/gifts": { component: <Gifts navigate={navigate} />, current: "gifts" },
+    "/catering": { component: <Catering navigate={navigate} />, current: "catering" },
     "/activities": { component: <Activities navigate={navigate} />, current: "activities" },
     "/design": { component: <Design navigate={navigate} />, current: "design" },
     "/how-it-works": { component: <HowItWorks navigate={navigate} />, current: "how-it-works" },
@@ -89,7 +96,9 @@ export default function App() {
     <EventTypeProvider>
       <EventDateProvider>
         <PackageProvider>
-          <AppRoutes />
+          <CartProvider>
+            <AppRoutes />
+          </CartProvider>
         </PackageProvider>
       </EventDateProvider>
     </EventTypeProvider>
