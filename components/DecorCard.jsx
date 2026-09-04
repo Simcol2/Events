@@ -6,12 +6,18 @@ function firstPhoto(photos) {
   return typeof first === "string" ? first : first?.url || null;
 }
 
-export default function DecorCard({ item }) {
+// Gift wrap and disposables are purchase-only by business rule, enforced
+// here rather than relying only on the sheet leaving rental_price blank.
+const PURCHASE_ONLY_CATEGORIES = ["gift_wrap", "disposables"];
+
+export default function DecorCard({ item, onRent, onBuy }) {
   const photo = firstPhoto(item.photos);
-  const unavailable = (item.quantity_owned ?? 0) <= 0;
+  const outOfStock = (item.quantity_owned ?? 0) <= 0;
+  const isPurchasable = item.purchase_price != null;
+  const isRentable = item.rental_price != null && !PURCHASE_ONLY_CATEGORIES.includes(item.category);
 
   return (
-    <article className={`group overflow-hidden bg-white ${unavailable ? "opacity-60" : ""}`}>
+    <article className={`group overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}>
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
         {photo ? (
           <img
@@ -24,9 +30,9 @@ export default function DecorCard({ item }) {
             <span className="font-[Jost] text-[10px] tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
           </div>
         )}
-        {unavailable && (
+        {outOfStock && (
           <div className="absolute left-3 top-3 bg-[#FAF6ED]/95 px-3 py-1.5 font-[Jost] text-[9px] font-semibold tracking-[0.16em] text-[#7B7464]">
-            CURRENTLY BOOKED
+            OUT OF STOCK
           </div>
         )}
       </div>
@@ -41,13 +47,45 @@ export default function DecorCard({ item }) {
         {item.size && (
           <div className="mt-2 font-[Jost] text-[10px] text-[#8C846F]">{item.size}</div>
         )}
-        <div className="mt-3 flex items-end justify-between border-t border-[#E4DCC8] pt-3">
-          <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
-            {item.rental_price != null ? `$${item.rental_price} / EVENT` : "INQUIRE"}
-          </span>
-          <span className="font-[Jost] text-[9px] tracking-[0.08em] text-[#9C947F]">
-            {unavailable ? "UNAVAILABLE" : `${item.quantity_owned ?? 0} AVAILABLE`}
-          </span>
+
+        <div className="mt-3 space-y-2 border-t border-[#E4DCC8] pt-3">
+          {isPurchasable && (
+            <div className="flex items-end justify-between">
+              <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
+                BUY ${item.purchase_price}
+              </span>
+              {outOfStock ? (
+                <span className="font-[Jost] text-[9px] tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
+              ) : (
+                <button
+                  onClick={() => onBuy?.(item)}
+                  className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
+                >
+                  {item.quantity_owned} AVAILABLE - INQUIRE
+                </button>
+              )}
+            </div>
+          )}
+
+          {isRentable && !outOfStock && (
+            <div className="flex items-end justify-between">
+              <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
+                RENT ${item.rental_price} / EVENT
+              </span>
+              <button
+                onClick={() => onRent?.(item)}
+                className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
+              >
+                CHECK DATES
+              </button>
+            </div>
+          )}
+
+          {!isPurchasable && !isRentable && (
+            <div className="flex items-end justify-between">
+              <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">INQUIRE</span>
+            </div>
+          )}
         </div>
       </div>
     </article>

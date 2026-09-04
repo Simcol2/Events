@@ -3,10 +3,26 @@ import { Search } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import SectionHeading from "../components/SectionHeading";
 import DecorCard from "../components/DecorCard";
+import RentalRequestModal from "../components/RentalRequestModal";
+import { useEventDate } from "../EventDateContext";
 
 function normalize(value) {
   return String(value || "").toLowerCase().trim();
 }
+
+// Fixed buyer-facing categories - replaces whatever ad hoc text happens to
+// be in the sheet's category column. The stored value in Supabase must be
+// one of these ids (enforced by a check constraint), the label is display
+// only.
+const CATEGORIES = [
+  { id: "all", label: "All" },
+  { id: "table", label: "Table" },
+  { id: "wall", label: "Wall/Floor" },
+  { id: "keepsakes_gifts", label: "Keepsakes & Gifts" },
+  { id: "disposables", label: "Disposables" },
+  { id: "stationery", label: "Stationery" },
+  { id: "gift_wrap", label: "Gift Wrap" },
+];
 
 export default function Decor({ navigate }) {
   const [items, setItems] = useState([]);
@@ -15,6 +31,8 @@ export default function Decor({ navigate }) {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [request, setRequest] = useState(null); // { item, requestType } | null
+  const { requestEventDate } = useEventDate();
 
   useEffect(() => {
     if (!supabase) {
@@ -41,11 +59,6 @@ export default function Decor({ navigate }) {
     return () => { cancelled = true; };
   }, []);
 
-  const categories = useMemo(
-    () => ["all", ...new Set(items.map((i) => normalize(i.category)).filter(Boolean))],
-    [items]
-  );
-
   const visible = useMemo(() => {
     const q = normalize(query);
     return items.filter((item) => {
@@ -59,6 +72,17 @@ export default function Decor({ navigate }) {
       return matchesCategory && matchesGender && matchesSearch;
     });
   }, [items, category, gender, query]);
+
+  // The event date prompt (if needed) resolves before the rental modal ever
+  // opens, so RentalRequestModal can assume it already has one to default
+  // pickup/drop-off from.
+  const handleRent = async (item) => {
+    const date = await requestEventDate();
+    if (!date) return;
+    setRequest({ item, requestType: "rental" });
+  };
+
+  const handleBuy = (item) => setRequest({ item, requestType: "purchase" });
 
   return (
     <div>
@@ -75,15 +99,15 @@ export default function Decor({ navigate }) {
       <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
         <div className="flex flex-col gap-4 border-b border-[#E4DCC8] pb-7 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-x-6 gap-y-3">
-            {categories.map((cat) => (
+            {CATEGORIES.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setCategory(cat)}
+                key={cat.id}
+                onClick={() => setCategory(cat.id)}
                 className={`border-b pb-2 font-[Jost] text-[10px] font-semibold tracking-[0.16em] transition ${
-                  category === cat ? "border-[#B8935A] text-[#4E5A44]" : "border-transparent text-[#8C846F] hover:text-[#4E5A44]"
+                  category === cat.id ? "border-[#B8935A] text-[#4E5A44]" : "border-transparent text-[#8C846F] hover:text-[#4E5A44]"
                 }`}
               >
-                {cat === "all" ? "ALL" : cat.toUpperCase()}
+                {cat.label.toUpperCase()}
               </button>
             ))}
           </div>
@@ -120,9 +144,19 @@ export default function Decor({ navigate }) {
             <p className="py-20 text-center font-[Jost] text-sm text-[#A69C7E]">Nothing matches that search yet.</p>
           )}
           <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {visible.map((item) => <DecorCard key={item.id} item={item} />)}
+            {visible.map((item) => (
+              <DecorCard key={item.id} item={item} onRent={handleRent} onBuy={handleBuy} />
+            ))}
           </div>
         </div>
+
+        {request && (
+          <RentalRequestModal
+            item={request.item}
+            requestType={request.requestType}
+            onClose={() => setRequest(null)}
+          />
+        )}
 
         <div className="mt-20 border-t border-[#E4DCC8] pt-7 text-center">
           <p className="font-[Jost] text-[10px] tracking-[0.18em] text-[#8C846F]">

@@ -4,7 +4,9 @@ import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import ValuePropBar from "./components/ValuePropBar";
 import EventTypePicker from "./components/EventTypePicker";
+import EventDatePicker from "./components/EventDatePicker";
 import { EventTypeProvider, useEventType } from "./EventTypeContext";
+import { EventDateProvider } from "./EventDateContext";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
@@ -73,6 +75,7 @@ function AppRoutes() {
       {component}
       <SiteFooter navigate={navigate} />
       <EventTypePicker />
+      <EventDatePicker />
     </>
   );
 }
@@ -80,7 +83,9 @@ function AppRoutes() {
 export default function App() {
   return (
     <EventTypeProvider>
-      <AppRoutes />
+      <EventDateProvider>
+        <AppRoutes />
+      </EventDateProvider>
     </EventTypeProvider>
   );
 }
