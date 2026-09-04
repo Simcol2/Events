@@ -29,7 +29,7 @@ const TAGS = [
   { id: "disposables", label: "Disposables" },
   { id: "stationery", label: "Stationery" },
   { id: "gift wrap", label: "Gift Wrap" },
-  { id: "baby shower", label: "Baby Shower" },
+  { id: "showers", label: "Showers" },
   { id: "baby", label: "Baby" },
   { id: "holidays/events", label: "Holidays/Events" },
   { id: "activities", label: "Activities" },
