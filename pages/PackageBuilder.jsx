@@ -77,6 +77,24 @@ function StepNav({ step, setStep, palette, fonts }) {
   );
 }
 
+// Games and experiences get "VIEW ACTIVITY" on their detail button, decor
+// pieces and logistical add-ons get the more generic "VIEW MORE".
+const ACTIVITY_TYPE_IDS = new Set([
+  "pictureThis",
+  "kindnessStation",
+  "storybook",
+  "babyTrivia",
+  "wallPuzzle",
+  "timeCapsule",
+  "babyNaptimeRelay",
+  "priceIsRight",
+  "photoChallenge",
+  "guessArrival",
+]);
+function viewMoreLabelFor(id) {
+  return ACTIVITY_TYPE_IDS.has(id) ? "VIEW ACTIVITY" : "VIEW MORE";
+}
+
 function normalizePhotos(photos) {
   if (!Array.isArray(photos)) return [];
   return photos.map((p) => (typeof p === "string" ? p : p?.url)).filter(Boolean);
@@ -116,6 +134,7 @@ function resolveSetupItem(id, eventTypeId, decorCatalog) {
       description: addon.description,
       photoUrls: addon.photoUrl ? [addon.photoUrl] : [],
       addonPrice: SETUP_ADDON_PRICE_OVERRIDES[id] ?? addon.price ?? SETUP_ADDON_PRICE,
+      details: addon.details,
     };
   }
   return null;
@@ -353,6 +372,8 @@ export default function PackageBuilder() {
                     priceLabel={included ? "Included" : isAddon ? `+$${item.addonPrice}` : undefined}
                     selected={included || isAddon}
                     onClick={() => handleSetup1Click(item.id)}
+                    details={item.details}
+                    viewMoreLabel={viewMoreLabelFor(item.id)}
                   />
                 );
               })}
@@ -382,6 +403,8 @@ export default function PackageBuilder() {
                     priceLabel={included ? "Included" : isAddon ? `+$${item.addonPrice}` : undefined}
                     selected={included || isAddon}
                     onClick={() => handleSetup2Click(item.id)}
+                    details={item.details}
+                    viewMoreLabel={viewMoreLabelFor(item.id)}
                   />
                 );
               })}
@@ -421,6 +444,7 @@ export default function PackageBuilder() {
                   priceLabel={k.upgradePrice > 0 ? `+$${k.upgradePrice}` : "Included"}
                   selected={keepsakeId === k.id}
                   onClick={() => setKeepsakeId(k.id)}
+                  details={k.details}
                 />
               ))}
             </div>
@@ -449,6 +473,8 @@ export default function PackageBuilder() {
                     priceLabel={`+$${item.addonPrice}`}
                     selected={setupAddonIds.includes(id)}
                     onClick={() => toggleSetupAddon(id)}
+                    details={item.details}
+                    viewMoreLabel={viewMoreLabelFor(id)}
                   />
                 );
               })}
@@ -465,6 +491,7 @@ export default function PackageBuilder() {
                   priceLabel={`+$${a.price}`}
                   selected={selectedAddonIds.includes(a.id)}
                   onClick={() => toggleAddon(a.id)}
+                  details={a.details}
                 />
               ))}
               {digitalAddons.map((a) => {
@@ -482,6 +509,7 @@ export default function PackageBuilder() {
                     priceLabel={`+$${a.price}`}
                     selected={digitalIds.includes(a.id)}
                     onClick={disabled ? undefined : () => toggleDigital(a.id)}
+                    details={a.details}
                   />
                 );
               })}
@@ -494,6 +522,8 @@ export default function PackageBuilder() {
                   priceLabel={`+$${CUSTOM_STORY_BOOK_PRICE}`}
                   selected={digitalIds.includes("customStoryBook")}
                   onClick={() => toggleDigital("customStoryBook")}
+                  details={resolvePackageItem(storybookItem, eventTypeId).details}
+                  viewMoreLabel="VIEW ACTIVITY"
                 />
               )}
             </div>
@@ -518,6 +548,7 @@ export default function PackageBuilder() {
                   photoUrl={d.photoUrl}
                   selected={displayId === d.id}
                   onClick={() => selectDisplay(d.id)}
+                  details={d.details}
                 />
               ))}
             </div>

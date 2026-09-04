@@ -1,18 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { usePalette } from "../PaletteContext";
 import PhotoSlot from "./PhotoSlot";
+import ItemDetailPopup from "./ItemDetailPopup";
 
 // Used for Essentials features, add-ons, and keepsakes alike. `priceLabel`
 // is optional (e.g. "+$350" or "$10/guest") and renders as a badge next to
-// the name when present.
-export default function FeatureCard({ icon: Icon, name, tagline, description, photoKey, photoUrl, photoUrls, fit, priceLabel, selected, onClick }) {
+// the name when present. `details`, when passed, adds a "View More" (or
+// custom `viewMoreLabel`) button that opens a popup with a fuller
+// breakdown - kept as a real nested <button>, so the card itself is a
+// styled <div> with button-like keyboard behavior rather than an actual
+// <button>, since a button can't contain another button.
+export default function FeatureCard({
+  icon: Icon,
+  name,
+  tagline,
+  description,
+  photoKey,
+  photoUrl,
+  photoUrls,
+  fit,
+  priceLabel,
+  selected,
+  onClick,
+  details,
+  viewMoreLabel = "VIEW MORE",
+}) {
   const { palette, fonts } = usePalette();
-  const Wrapper = onClick ? "button" : "div";
+  const [showDetail, setShowDetail] = useState(false);
+  const clickable = Boolean(onClick);
 
   return (
-    <Wrapper
+    <div
       onClick={onClick}
-      className={`text-left rounded-xl overflow-hidden shadow-sm flex flex-col w-full ${onClick ? "transition-all" : ""}`}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onKeyDown={
+        clickable
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
+      className={`text-left rounded-xl overflow-hidden shadow-sm flex flex-col w-full ${clickable ? "cursor-pointer transition-all" : ""}`}
       style={{
         background: palette.surface,
         border: selected ? `2px solid ${palette.accent}` : `1px solid ${palette.line}`,
@@ -44,7 +76,23 @@ export default function FeatureCard({ icon: Icon, name, tagline, description, ph
         <p className="text-sm leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
           {description}
         </p>
+        {details && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDetail(true);
+            }}
+            className="mt-3 self-start text-xs font-semibold tracking-[0.08em] underline underline-offset-4"
+            style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+          >
+            {viewMoreLabel}
+          </button>
+        )}
       </div>
-    </Wrapper>
+
+      {showDetail && (
+        <ItemDetailPopup name={name} tagline={tagline} details={details} onClose={() => setShowDetail(false)} />
+      )}
+    </div>
   );
 }

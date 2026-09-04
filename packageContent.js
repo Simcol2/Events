@@ -106,6 +106,20 @@ export const MAIN_PACKAGE_ITEMS = [
       holiday: null,
       specialMoment: null,
     },
+    details: {
+      summary: "A photo wall guests build together. Every photo comes with a note or voice memo, all sealed in the Time Capsule.",
+      howItWorks: [
+        "Guests snap a photo at the event.",
+        "They write a short note or record a quick voice memo.",
+        "Both get clipped to the display wall.",
+        "Everything gets sealed inside the Time Capsule to open later.",
+      ],
+      goodToKnow: [
+        "Setup takes about 10 minutes.",
+        "Works for any group size.",
+        "Pairs with the Digital Photo Album for an online copy too.",
+      ],
+    },
   },
   {
     id: "kindnessStation",
@@ -155,6 +169,19 @@ export const MAIN_PACKAGE_ITEMS = [
       birthday: null,
       holiday: null,
       specialMoment: null,
+    },
+    details: {
+      summary: "A simple take one, give one card station. Guests grab a card of encouragement and carry a small act of kindness back into the world.",
+      howItWorks: [
+        "Guests approach the station and pick a card.",
+        "Each card has a short kindness prompt to complete.",
+        "An optional $5 gift card can be added to any note.",
+        "Guests take their card home as a reminder to pass it on.",
+      ],
+      goodToKnow: [
+        "No setup needed beyond the display.",
+        "Great for guests of all ages.",
+      ],
     },
   },
   {
@@ -206,6 +233,19 @@ export const MAIN_PACKAGE_ITEMS = [
       holiday: null,
       specialMoment: null,
     },
+    details: {
+      summary: "A shared keepsake storybook. Every guest fills one page, and the finished book becomes something you keep forever.",
+      howItWorks: [
+        "Guests are handed a blank page from the book.",
+        "They fill it with a memory, a wish, or a doodle.",
+        "Pages get collected and bound into one storybook.",
+        "You keep the finished book after the event.",
+      ],
+      goodToKnow: [
+        "Takes about 2 minutes per guest.",
+        "Comes in as an add-on if it's not one of your included picks.",
+      ],
+    },
   },
   {
     id: "ohBabyCenterpiece",
@@ -256,6 +296,19 @@ export const MAIN_PACKAGE_ITEMS = [
       holiday: [centerpieceThanksgivingPhoto, centerpieceChristmasPhoto],
       specialMoment: [centerpieceSpecialMomentPhoto],
     },
+    details: {
+      summary: "A custom centerpiece built around real photos. Doubles as your dessert table's main feature.",
+      howItWorks: [
+        "Send us the photos you want featured.",
+        "We design the centerpiece around them.",
+        "It arrives ready to set up on your table.",
+        "Serve treats right alongside it.",
+      ],
+      goodToKnow: [
+        "Photos are due at least 2 weeks before your event.",
+        "Design changes with the season and occasion.",
+      ],
+    },
   },
   {
     id: "babyTrivia",
@@ -305,6 +358,19 @@ export const MAIN_PACKAGE_ITEMS = [
       birthday: null,
       holiday: null,
       specialMoment: null,
+    },
+    details: {
+      summary: "A custom trivia round built entirely around the people you're celebrating.",
+      howItWorks: [
+        "Send us up to 15 questions about the guest of honor.",
+        "We turn them into a printed card pack.",
+        "Guests answer individually or in teams.",
+        "Whoever scores highest wins bragging rights.",
+      ],
+      goodToKnow: [
+        "Takes about 15 minutes to play.",
+        "Answer key included so anyone can host it.",
+      ],
     },
   },
   {
@@ -361,6 +427,19 @@ export const MAIN_PACKAGE_ITEMS = [
       holiday: null,
       specialMoment: wallPuzzleEngagementPhoto,
     },
+    details: {
+      summary: "A giant portrait puzzle guests build together, piece by piece, throughout the celebration.",
+      howItWorks: [
+        "We turn your photo into a large format puzzle.",
+        "It's set out at the start of the event.",
+        "Guests add pieces whenever they pass by.",
+        "The finished portrait becomes a keepsake to hang.",
+      ],
+      goodToKnow: [
+        "Needs a flat surface and a bit of table space.",
+        "Usually finishes by the end of the event.",
+      ],
+    },
   },
   {
     id: "timeCapsule",
@@ -411,6 +490,19 @@ export const MAIN_PACKAGE_ITEMS = [
       holiday: null,
       specialMoment: null,
     },
+    details: {
+      summary: "A sealed keepsake box that holds everything from Picture This, ready to open again in the future.",
+      howItWorks: [
+        "Photos, notes, and voice memos go in throughout the event.",
+        "The box is sealed at the end of the celebration.",
+        "You choose when it gets opened again.",
+        "Everyone who contributed becomes part of that memory.",
+      ],
+      goodToKnow: [
+        "Pairs with Picture This, but works as a standalone keepsake too.",
+        "Comes with a suggested open date tag.",
+      ],
+    },
   },
 ];
 
@@ -424,7 +516,7 @@ export function resolvePackageItem(item, eventTypeId) {
   const copy = item.copy[eventTypeId] || item.copy.default;
   const raw = item.photos[eventTypeId] ?? item.photos.default ?? null;
   const photoUrls = (Array.isArray(raw) ? raw : raw ? [raw] : []).filter(Boolean);
-  return { id: item.id, icon: item.icon, photoUrls, ...copy };
+  return { id: item.id, icon: item.icon, photoUrls, details: item.details, ...copy };
 }
 
 // Setup items that don't already exist as one of the 7 MAIN_PACKAGE_ITEMS
@@ -446,6 +538,19 @@ export const SETUP_ONLY_ITEMS = [
       },
     },
     photos: { default: null },
+    details: {
+      summary: "A three station relay race testing who can actually survive bedtime.",
+      howItWorks: [
+        "Guests race through bottle chug, diaper change, and lullaby stations.",
+        "Each stage has to be completed correctly to score.",
+        "Fastest total time wins.",
+        "Great for teams or solo racers.",
+      ],
+      goodToKnow: [
+        "Takes about 10 minutes per group.",
+        "Needs a small clear space to run.",
+      ],
+    },
   },
   {
     id: "priceIsRight",
@@ -459,6 +564,19 @@ export const SETUP_ONLY_ITEMS = [
       },
     },
     photos: { default: null },
+    details: {
+      summary: "A pricing guessing game built around real baby gear and registry items.",
+      howItWorks: [
+        "Guests see a list of real baby items.",
+        "They guess the price of each one.",
+        "Closest guess without going over wins the round.",
+        "Play individually or in teams.",
+      ],
+      goodToKnow: [
+        "Takes about 15 minutes to play.",
+        "Prices are pulled from Mom's actual registry when possible.",
+      ],
+    },
   },
   {
     id: "photoChallenge",
@@ -472,6 +590,19 @@ export const SETUP_ONLY_ITEMS = [
       },
     },
     photos: { default: null },
+    details: {
+      summary: "A scavenger hunt style photo game where every guest gets a secret assignment.",
+      howItWorks: [
+        "Each guest receives a hidden photo challenge.",
+        "They find their moment and snap the photo.",
+        "They scan a QR code to upload it.",
+        "Every photo lands in one shared album by the end.",
+      ],
+      goodToKnow: [
+        "Runs the whole length of the event.",
+        "No app download needed, just a phone camera.",
+      ],
+    },
   },
 ];
 
@@ -517,6 +648,19 @@ export const ADDONS = [
     price: 150,
     photoUrl: arrivalPhoto,
     fit: "contain",
+    details: {
+      summary: "An online guessing game for when baby will actually arrive.",
+      howItWorks: [
+        "We build a private, personalized guessing page.",
+        "Guests submit the date, time, and even what Mom might be doing.",
+        "The page updates live once labor starts.",
+        "Winner gets bragging rights when baby arrives.",
+      ],
+      goodToKnow: [
+        "Link works on any phone or computer.",
+        "Stays live until baby actually arrives.",
+      ],
+    },
   },
   {
     id: "pictureThisDigitalAlbum",
@@ -526,6 +670,19 @@ export const ADDONS = [
     description:
       "Every photo from Picture This also lands in a private digital album guests can keep adding to and revisit anytime, on top of the physical display.",
     price: 150,
+    details: {
+      summary: "A digital twin of your Picture This display. Every photo lands online too, not just on the wall.",
+      howItWorks: [
+        "Every photo taken for Picture This is also saved digitally.",
+        "Guests get a link to the private album.",
+        "Anyone can revisit or add to it after the event.",
+        "No extra step required from guests.",
+      ],
+      goodToKnow: [
+        "Only available if Picture This is part of your package.",
+        "Album stays accessible after the event ends.",
+      ],
+    },
   },
   {
     id: "nurseryRhyme",
@@ -536,6 +693,19 @@ export const ADDONS = [
       "We turn your story into a one-of-a-kind rhyme, beautifully printed and framed as part of the decor.",
     price: 175,
     photoUrl: nurseryRhymePhoto,
+    details: {
+      summary: "Your love story, turned into a custom rhyme and framed as part of your decor.",
+      howItWorks: [
+        "Share your story with us.",
+        "We write a custom rhyme around it.",
+        "It's professionally printed and framed.",
+        "It arrives ready to display at your event.",
+      ],
+      goodToKnow: [
+        "Takes about 1 to 2 weeks to produce.",
+        "Frame style matches your event's theme.",
+      ],
+    },
   },
   {
     id: "welcomeSign",
@@ -546,6 +716,19 @@ export const ADDONS = [
       "A custom welcome sign designed around your theme and ready to greet your guests as they arrive.",
     price: 125,
     photoUrl: welcomeSignPhoto,
+    details: {
+      summary: "A custom welcome sign that greets your guests the moment they walk in.",
+      howItWorks: [
+        "Tell us your theme and wording.",
+        "We design a sign to match.",
+        "It's printed and framed for you.",
+        "It's ready to set up at your entrance.",
+      ],
+      goodToKnow: [
+        "Ready within about a week.",
+        "Comes with a stand, no extra hardware needed.",
+      ],
+    },
   },
   {
     id: "photoWall",
@@ -556,6 +739,19 @@ export const ADDONS = [
       "Turn your photo display into a full feature moment with balloons, florals, fabric, and statement details designed to coordinate with your celebration.",
     price: 350,
     photoUrl: photoWallPhoto,
+    details: {
+      summary: "Turns your photo display into a full feature moment with balloons, florals, and fabric.",
+      howItWorks: [
+        "We design the wall around your existing display piece.",
+        "Balloons, florals, and fabric are added to match your theme.",
+        "It's installed on site before your event starts.",
+        "Guests get a full backdrop, not just a display.",
+      ],
+      goodToKnow: [
+        "Setup happens the day of your event.",
+        "Pairs well with Picture This or the Custom Wall Puzzle.",
+      ],
+    },
   },
   {
     id: "voiceNotes",
@@ -565,6 +761,19 @@ export const ADDONS = [
     description:
       "Guests can record a little message, memory, or story to be discovered years from now. Each recording becomes part of the time capsule.",
     price: 300,
+    details: {
+      summary: "Lets guests record a short voice message that becomes part of your Time Capsule.",
+      howItWorks: [
+        "A simple recorder is set up at the event.",
+        "Guests press record and leave a message.",
+        "Recordings are saved and sealed with the Time Capsule.",
+        "You can listen back whenever you open it.",
+      ],
+      goodToKnow: [
+        "No app or sign up needed for guests.",
+        "Recordings are yours to keep permanently.",
+      ],
+    },
   },
   {
     id: "digitalAlbum",
@@ -574,6 +783,19 @@ export const ADDONS = [
     description:
       "Your photos live in a private digital album you can keep adding to. Guests can tap and view the collection with a simple NFC touch.",
     price: 100,
+    details: {
+      summary: "A private digital photo album guests can tap into and add to, using a simple NFC touch.",
+      howItWorks: [
+        "We set up an NFC tap point at your event.",
+        "Guests tap their phone to open the album instantly.",
+        "They can view existing photos or add their own.",
+        "The album stays live after the event ends.",
+      ],
+      goodToKnow: [
+        "Works with any modern smartphone, no app needed.",
+        "You keep access to the album permanently.",
+      ],
+    },
   },
 ];
 
@@ -598,6 +820,19 @@ export const KEEPSAKES = [
     upgradePrice: 0,
     includedGuestCount: 25,
     overagePricePerGuest: 4,
+    details: {
+      summary: "A cute, ready made popcorn kit paired with a gourmet treat for every guest.",
+      howItWorks: [
+        "Kits are custom wrapped to match your event.",
+        "Each one includes popcorn plus a gourmet treat.",
+        "They're set out or handed to guests as they leave.",
+        "Included free for your first set of guests.",
+      ],
+      goodToKnow: [
+        "No setup needed, arrives ready to hand out.",
+        "Extra guests beyond your included count are billed per guest.",
+      ],
+    },
   },
   {
     id: "lilRoots",
@@ -610,6 +845,19 @@ export const KEEPSAKES = [
     includedGuestCount: 25,
     overagePricePerGuest: 13,
     photoUrl: lilRootsPhoto,
+    details: {
+      summary: "A planted seedling in a keepsake jar, paired with a gourmet treat. A gift that keeps growing.",
+      howItWorks: [
+        "Each jar comes planted and ready to grow.",
+        "A gourmet treat is paired alongside it.",
+        "Jars are custom labeled for your event.",
+        "Guests take them home to plant and grow.",
+      ],
+      goodToKnow: [
+        "Needs sunlight and water like any seedling.",
+        "Applies to your included guest count, extra guests billed per guest.",
+      ],
+    },
   },
   {
     id: "grownFolksLootBags",
@@ -621,6 +869,19 @@ export const KEEPSAKES = [
     upgradePrice: 0,
     includedGuestCount: 10,
     overagePricePerGuest: 6,
+    details: {
+      summary: "An individually wrapped dessert treat for every guest, straight from our own dessert line.",
+      howItWorks: [
+        "Treats are selected from our dessert menu.",
+        "Each one is individually wrapped for guests.",
+        "They're set out or handed out at your event.",
+        "Included free for your first set of guests.",
+      ],
+      goodToKnow: [
+        "Extra guests beyond your included count are billed per guest.",
+        "Ask about swapping in a specific dessert flavor.",
+      ],
+    },
   },
 ];
 
@@ -636,6 +897,19 @@ export const DISPLAYS = [
     description:
       "A bold geometric frame in black and gold, 6 feet by 4 feet and free-standing, with your own custom text taking center stage. This is the piece guests walk in and photograph first.",
     photoUrl: "https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/blackandgolddisplay.png",
+    details: {
+      summary: "A bold black and gold geometric frame, 6 feet by 4 feet, built to be the first thing guests photograph.",
+      howItWorks: [
+        "Share the custom text you want on the center panel.",
+        "We build and bring the display to your event.",
+        "It's set up free standing, no mounting needed.",
+        "You choose self setup or professional install.",
+      ],
+      goodToKnow: [
+        "Needs about 6 feet of wall or floor space.",
+        "Setup pricing is separate, see Setup Pricing below.",
+      ],
+    },
   },
   {
     id: "archedIridescent",
@@ -645,6 +919,19 @@ export const DISPLAYS = [
     description:
       "A free-standing arched display that lights up the room, dressed in color draping that matches your theme. Just needs a nearby outlet, we bring the extension cords.",
     photoUrl: "https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/iradescentlight.png",
+    details: {
+      summary: "A glowing arched display with color draping that matches your theme.",
+      howItWorks: [
+        "Tell us your event colors.",
+        "We drape the arch to match your theme.",
+        "It's set up free standing near a power outlet.",
+        "It lights up for the full length of your event.",
+      ],
+      goodToKnow: [
+        "Needs a nearby outlet, extension cords included.",
+        "Setup pricing is separate, see Setup Pricing below.",
+      ],
+    },
   },
 ];
 

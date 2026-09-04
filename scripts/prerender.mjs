@@ -34,11 +34,13 @@ async function run() {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  // Skip the "what are you planning?" picker so every prerendered snapshot
-  // shows real page content (default event type) instead of the modal.
+  // Skip the "what are you planning?" picker and the Package Builder's
+  // event date gate, so every prerendered snapshot shows real page content
+  // instead of a modal or gate screen.
   await page.addInitScript(() => {
     localStorage.setItem("asliceofg-event-type-chosen", "1");
     localStorage.setItem("asliceofg-event-type-id", "babyShower");
+    localStorage.setItem("asliceofg-event-date", "2026-06-15");
   });
 
   for (const route of ROUTES) {
