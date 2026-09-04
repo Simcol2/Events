@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 function firstPhoto(photos) {
   if (!photos || !Array.isArray(photos) || !photos.length) return null;
@@ -23,20 +24,36 @@ export function getItemFlags(item) {
   return { tags, outOfStock, isPurchasable, isRentable };
 }
 
-export default function DecorCard({ item, onRent, onBuy, onOpenDetail }) {
-  const photo = firstPhoto(item.photos);
-  const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
+// `variants`, when passed, is every catalog row sharing the same
+// variant_group (e.g. the Large and Small rows for the same candle
+// holders). The card shows one shared photo/price/name area driven by
+// whichever variant is currently selected in the dropdown, instead of a
+// separate card per row. `groupName` is the shared display name (the
+// variant_group value) used in place of the individual row's own name.
+export default function DecorCard({ item, variants, groupName, onRent, onBuy, onOpenDetail }) {
+  const hasVariants = Array.isArray(variants) && variants.length > 1;
+  const [selectedId, setSelectedId] = useState(item.id);
+  // Native <select> values are always strings, but item ids are numeric
+  // (bigint from Supabase), so this compares both sides as strings rather
+  // than risking a silent type-mismatch miss on strict equality.
+  const active = hasVariants
+    ? variants.find((v) => String(v.id) === String(selectedId)) || variants[0]
+    : item;
+
+  const photo = firstPhoto(active.photos);
+  const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(active);
+  const displayName = hasVariants ? groupName || active.name : active.name;
 
   return (
     <article
-      onClick={() => onOpenDetail?.(item)}
+      onClick={() => onOpenDetail?.(active)}
       className={`group cursor-pointer overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
     >
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
         {photo ? (
           <img
             src={photo}
-            alt={item.name}
+            alt={displayName}
             className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.025]"
           />
         ) : (
@@ -56,17 +73,34 @@ export default function DecorCard({ item, onRent, onBuy, onOpenDetail }) {
           {tags.length ? tags.join(" · ") : "Decor"}
         </div>
         <h3 className="mt-1 font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">
-          {item.name}
+          {displayName}
         </h3>
-        {item.size && (
-          <div className="mt-2 font-[Jost] text-[10px] text-[#8C846F]">{item.size}</div>
+        {active.size && (
+          <div className="mt-2 font-[Jost] text-[10px] text-[#8C846F]">{active.size}</div>
+        )}
+
+        {hasVariants && (
+          <div className="relative mt-3" onClick={(e) => e.stopPropagation()}>
+            <select
+              value={selectedId}
+              onChange={(e) => setSelectedId(e.target.value)}
+              className="w-full appearance-none border border-[#D8D0BC] bg-white px-3 py-2 font-[Jost] text-xs text-[#3A342A] outline-none focus:border-[#4E5A44]"
+            >
+              {variants.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.variant_label || v.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={13} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#8C846F]" />
+          </div>
         )}
 
         <div className="mt-3 space-y-2 border-t border-[#E4DCC8] pt-3">
           {isPurchasable && (
             <div className="flex items-end justify-between">
               <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
-                BUY ${item.purchase_price}
+                BUY ${active.purchase_price}
               </span>
               {outOfStock ? (
                 <span className="font-[Jost] text-[9px] tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
@@ -74,11 +108,11 @@ export default function DecorCard({ item, onRent, onBuy, onOpenDetail }) {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onBuy?.(item);
+                    onBuy?.(active);
                   }}
                   className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
                 >
-                  {item.quantity_owned} AVAILABLE - INQUIRE
+                  {active.quantity_owned} AVAILABLE - INQUIRE
                 </button>
               )}
             </div>
@@ -87,12 +121,12 @@ export default function DecorCard({ item, onRent, onBuy, onOpenDetail }) {
           {isRentable && !outOfStock && (
             <div className="flex items-end justify-between">
               <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
-                RENT ${item.rental_price} / EVENT
+                RENT ${active.rental_price} / EVENT
               </span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onRent?.(item);
+                  onRent?.(active);
                 }}
                 className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
               >

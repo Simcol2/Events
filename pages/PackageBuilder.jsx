@@ -1,9 +1,11 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { Users, X, Package } from "lucide-react";
+import { Users, X, Package, CalendarDays } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { useEventDate } from "../EventDateContext";
 import { supabase } from "../supabaseClient";
 import FeatureCard from "../components/FeatureCard";
+import PackageRequestModal from "../components/PackageRequestModal";
 import {
   MAIN_PACKAGE_ITEMS,
   SETUP_ONLY_ITEMS,
@@ -122,9 +124,12 @@ function resolveSetupItem(id, eventTypeId, decorCatalog) {
 export default function PackageBuilder() {
   const { palette, fonts } = usePalette();
   const { eventTypeId, eventType } = useEventType();
+  const { hasEventDate, requestEventDate } = useEventDate();
 
   const [step, setStep] = useState("setup1");
   const [decorCatalog, setDecorCatalog] = useState([]);
+  const [notice, setNotice] = useState("");
+  const [showRequestModal, setShowRequestModal] = useState(false);
 
   // One shared array for any Setup pool item bought as a paid add-on,
   // whichever step it was clicked from - keeps an item from ever being
@@ -155,9 +160,24 @@ export default function PackageBuilder() {
     };
   }, []);
 
-  // Clicking a Setup item always selects it somehow: as one of that step's
-  // 3 free included picks if there's room, otherwise it automatically
-  // becomes a paid add-on instead of being blocked.
+  // The event date needs to be on file before anyone starts building, so
+  // availability checks against it actually mean something. Prompts once,
+  // right away, if it isn't set yet.
+  useEffect(() => {
+    if (!hasEventDate) requestEventDate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(""), 3500);
+    return () => clearTimeout(timer);
+  }, [notice]);
+
+  // Clicking an already-selected item removes it. Clicking a new one fills
+  // an included slot if there's room; once a step's 3 included slots are
+  // full, further items are only added as paid add-ons from the Add-Ons
+  // step, not from here - clicking a new one here just shows a notice.
   const makeSetupHandler = (includedIds, setIncludedIds) => (id) => {
     if (includedIds.includes(id)) {
       setIncludedIds((prev) => prev.filter((x) => x !== id));
@@ -168,10 +188,10 @@ export default function PackageBuilder() {
       return;
     }
     if (includedIds.length >= SETUP_INCLUDED_COUNT) {
-      setSetupAddonIds((prev) => [...prev, id]);
-    } else {
-      setIncludedIds((prev) => [...prev, id]);
+      setNotice("Please remove one of your options to add this option.");
+      return;
     }
+    setIncludedIds((prev) => [...prev, id]);
   };
   const handleSetup1Click = makeSetupHandler(setupIncludedIds1, setSetupIncludedIds1);
   const handleSetup2Click = makeSetupHandler(setupIncludedIds2, setSetupIncludedIds2);
@@ -261,6 +281,36 @@ export default function PackageBuilder() {
     ...setupAddonIds.map((id) => ({ id, included: false })),
   ];
 
+  const stepIndex = STEPS.findIndex((s) => s.id === step);
+  const isLastStep = stepIndex === STEPS.length - 1;
+  const goToNextStep = () => {
+    if (!isLastStep) setStep(STEPS[stepIndex + 1].id);
+  };
+  const displayIncomplete = Boolean(displayId) && !displaySetupId;
+
+  if (!hasEventDate) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
+        <div className="max-w-md text-center">
+          <CalendarDays className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.gold }} />
+          <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+            Let's start with your date.
+          </h1>
+          <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            We check everything in your package against your event date before you build it, so we need that first.
+          </p>
+          <button
+            onClick={() => requestEventDate()}
+            className="mt-6 rounded-full px-8 py-3 text-xs font-semibold tracking-widest text-white"
+            style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+          >
+            CHOOSE YOUR EVENT DATE
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pb-32" style={{ background: palette.bg, color: palette.ink }}>
       <div className="px-6 py-14 text-center" style={{ background: palette.primaryDeep }}>
@@ -285,8 +335,8 @@ export default function PackageBuilder() {
           <div>
             <SectionTitle palette={palette} fonts={fonts}>Choose Your Setup</SectionTitle>
             <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              {setupIncludedIds1.length} of {SETUP_INCLUDED_COUNT} included free. Anything beyond that becomes a paid
-              add-on at its own price.
+              {setupIncludedIds1.length} of {SETUP_INCLUDED_COUNT} included free. Want more than 3? Add the rest as
+              add-ons in Step 4.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {step1Items.map((item) => {
@@ -531,6 +581,15 @@ export default function PackageBuilder() {
         )}
       </div>
 
+      {notice && (
+        <div
+          className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-5 py-3 text-xs font-semibold tracking-wide text-white shadow-lg"
+          style={{ ...fonts.bodyFont, background: palette.ink }}
+        >
+          {notice}
+        </div>
+      )}
+
       {/* Sticky total */}
       <div className="fixed bottom-0 left-0 right-0 px-6 py-4" style={{ background: palette.surface, borderTop: `1px solid ${palette.line}` }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
@@ -539,14 +598,22 @@ export default function PackageBuilder() {
             <p className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>${total.toLocaleString()}</p>
           </div>
           <button
-            disabled={Boolean(displayId) && !displaySetupId}
+            disabled={isLastStep && displayIncomplete}
+            onClick={isLastStep ? () => setShowRequestModal(true) : goToNextStep}
             className="px-6 py-3 rounded-full text-xs font-semibold tracking-widest text-white disabled:opacity-30"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
-            CONTINUE TO DATE
+            {isLastStep ? "REQUEST THIS PACKAGE" : "NEXT"}
           </button>
         </div>
       </div>
+
+      {showRequestModal && (
+        <PackageRequestModal
+          total={total}
+          onClose={() => setShowRequestModal(false)}
+        />
+      )}
     </div>
   );
 }

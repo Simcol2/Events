@@ -100,6 +100,27 @@ export default function Decor({ navigate }) {
   const toggleTag = (id) =>
     setSelectedTags((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]));
 
+  // Rows sharing a variant_group (e.g. the Large and Small rows for the
+  // same candle holders) render as one card with a dropdown instead of a
+  // separate card each. Order follows the first variant's position in the
+  // already-sorted list, so the page doesn't jump around alphabetically.
+  const groupedVisible = useMemo(() => {
+    const seen = new Set();
+    const result = [];
+    for (const item of visible) {
+      const key = item.variant_group?.trim();
+      if (!key) {
+        result.push({ key: item.id, item, variants: null });
+        continue;
+      }
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const variants = visible.filter((i) => i.variant_group?.trim() === key);
+      result.push({ key, item: variants[0], variants, groupName: key });
+    }
+    return result;
+  }, [visible]);
+
   // The event date prompt (if needed) resolves before the rental modal ever
   // opens, so RentalRequestModal can assume it already has one to default
   // pickup/drop-off from.
@@ -188,8 +209,16 @@ export default function Decor({ navigate }) {
             <p className="py-20 text-center font-[Jost] text-sm text-[#A69C7E]">Nothing matches that search yet.</p>
           )}
           <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {visible.map((item) => (
-              <DecorCard key={item.id} item={item} onRent={handleRent} onBuy={handleBuy} onOpenDetail={setDetailItem} />
+            {groupedVisible.map((entry) => (
+              <DecorCard
+                key={entry.key}
+                item={entry.item}
+                variants={entry.variants}
+                groupName={entry.groupName}
+                onRent={handleRent}
+                onBuy={handleBuy}
+                onOpenDetail={setDetailItem}
+              />
             ))}
           </div>
         </div>
