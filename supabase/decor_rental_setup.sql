@@ -145,3 +145,28 @@ alter table public.items add column if not exists tags text[] not null default '
 -- Tag filtering is an array-containment check (does this item have any of
 -- the selected tags), which a GIN index is built for.
 create index if not exists items_tags_idx on public.items using gin (tags);
+
+-- ── 5. Bug fix: missing unique constraint on name ────────────────────────
+-- Code.gs's sync has always assumed items.name is unique (it upserts with
+-- on_conflict=name), but that constraint was never actually created here.
+-- Without it, Supabase silently falls back to a plain insert on every sync
+-- run instead of updating the existing row - every sync has been creating
+-- a fresh duplicate of every item. Dedup first (keeping the highest id per
+-- name, since duplicates are just repeated inserts of the same sheet row
+-- and the newest one reflects the most recent sheet state, including
+-- columns like tags that didn't exist yet on earlier inserts), then add
+-- the constraint so this can't happen again.
+delete from public.items a
+using public.items b
+where a.name = b.name
+  and a.id < b.id;
+
+alter table public.items
+  add constraint items_name_unique unique (name);
+
+-- The "Experiences" sheet syncs through the same upsert_() function in
+-- Code.gs, so it likely has the exact same duplicate problem. Check
+-- public.experiences for duplicate names before deciding how to dedup it -
+-- confirm what its id column actually is (sequential vs uuid) first, since
+-- "keep the highest id" only reliably means "most recent" for a
+-- sequential id.
