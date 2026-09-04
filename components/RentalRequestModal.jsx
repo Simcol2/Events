@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useEventDate } from "../EventDateContext";
+import RentalCalendar from "./RentalCalendar";
 
 const MAX_INCLUDED_DAYS = 3;
 
@@ -110,7 +111,7 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
       aria-label={isRental ? "Request to rent" : "Request to purchase"}
     >
       <div
-        className="relative w-full max-w-md rounded-2xl bg-[#FAF6ED] px-6 py-8 sm:px-8"
+        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[#FAF6ED] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
@@ -147,27 +148,18 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
 
             {isRental && (
               <div className="mt-5 space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <label className="block">
-                    <span className="mb-1 block font-[Jost] text-[10px] tracking-[0.1em] text-[#8C846F]">PICKUP</span>
-                    <input
-                      type="date"
-                      value={pickup}
-                      onChange={(e) => setPickup(e.target.value)}
-                      className={inputClass}
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-1 block font-[Jost] text-[10px] tracking-[0.1em] text-[#8C846F]">DROP-OFF</span>
-                    <input
-                      type="date"
-                      value={dropoff}
-                      min={pickup || undefined}
-                      onChange={(e) => setDropoff(e.target.value)}
-                      className={inputClass}
-                    />
-                  </label>
-                </div>
+                <p className="font-[Jost] text-[10px] tracking-[0.1em] text-[#8C846F]">
+                  {pickup && dropoff ? `PICKUP ${pickup} · DROP-OFF ${dropoff}` : "SELECT PICKUP, THEN DROP-OFF"}
+                </p>
+                <RentalCalendar
+                  itemId={item.id}
+                  pickup={pickup}
+                  dropoff={pickup === dropoff ? "" : dropoff}
+                  onSelectRange={(p, d) => {
+                    setPickup(p);
+                    setDropoff(d);
+                  }}
+                />
 
                 {overLimit && (
                   <p className="rounded-sm bg-[#FBF1E4] px-3 py-2 font-[Jost] text-xs leading-5 text-[#8A6B3A]">

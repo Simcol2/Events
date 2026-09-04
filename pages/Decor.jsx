@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import SectionHeading from "../components/SectionHeading";
 import DecorCard from "../components/DecorCard";
+import DecorDetailModal from "../components/DecorDetailModal";
 import RentalRequestModal from "../components/RentalRequestModal";
 import { useEventDate } from "../EventDateContext";
 
@@ -54,6 +55,7 @@ export default function Decor({ navigate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [request, setRequest] = useState(null); // { item, requestType } | null
+  const [detailItem, setDetailItem] = useState(null);
   const { requestEventDate } = useEventDate();
 
   useEffect(() => {
@@ -104,10 +106,14 @@ export default function Decor({ navigate }) {
   const handleRent = async (item) => {
     const date = await requestEventDate();
     if (!date) return;
+    setDetailItem(null);
     setRequest({ item, requestType: "rental" });
   };
 
-  const handleBuy = (item) => setRequest({ item, requestType: "purchase" });
+  const handleBuy = (item) => {
+    setDetailItem(null);
+    setRequest({ item, requestType: "purchase" });
+  };
 
   return (
     <div>
@@ -122,27 +128,32 @@ export default function Decor({ navigate }) {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
-        <div className="flex flex-col gap-4 border-b border-[#E4DCC8] pb-7">
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => setSelectedTags([])}
-              className={`px-3 py-2 font-[Jost] text-[9px] font-medium tracking-[0.14em] ${
-                selectedTags.length === 0 ? "bg-[#4E5A44] text-white" : "border border-[#D8D0BC] text-[#716B5C]"
-              }`}
-            >
-              ALL
-            </button>
-            {TAGS.map((tag) => (
-              <button
-                key={tag.id}
-                onClick={() => toggleTag(tag.id)}
-                className={`px-3 py-2 font-[Jost] text-[9px] font-medium tracking-[0.14em] ${
-                  selectedTags.includes(tag.id) ? "bg-[#4E5A44] text-white" : "border border-[#D8D0BC] text-[#716B5C]"
-                }`}
-              >
-                {tag.label.toUpperCase()}
-              </button>
-            ))}
+        <div className="flex flex-col gap-5 border-b border-[#E4DCC8] pb-7">
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <span className="font-[Jost] text-[10px] font-semibold tracking-[0.16em] text-[#4E5A44]">FILTER BY TAG</span>
+              {selectedTags.length > 0 && (
+                <button
+                  onClick={() => setSelectedTags([])}
+                  className="font-[Jost] text-[10px] font-medium tracking-[0.1em] text-[#8C846F] underline underline-offset-4"
+                >
+                  CLEAR ALL
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 lg:grid-cols-4">
+              {TAGS.map((tag) => (
+                <label key={tag.id} className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedTags.includes(tag.id)}
+                    onChange={() => toggleTag(tag.id)}
+                    className="h-3.5 w-3.5 accent-[#4E5A44]"
+                  />
+                  <span className="font-[Jost] text-[11px] tracking-[0.04em] text-[#5C5645]">{tag.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -178,10 +189,20 @@ export default function Decor({ navigate }) {
           )}
           <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((item) => (
-              <DecorCard key={item.id} item={item} onRent={handleRent} onBuy={handleBuy} />
+              <DecorCard key={item.id} item={item} onRent={handleRent} onBuy={handleBuy} onOpenDetail={setDetailItem} />
             ))}
           </div>
         </div>
+
+        {detailItem && !request && (
+          <DecorDetailModal
+            item={detailItem}
+            onClose={() => setDetailItem(null)}
+            onRent={handleRent}
+            onBuy={handleBuy}
+            navigate={navigate}
+          />
+        )}
 
         {request && (
           <RentalRequestModal

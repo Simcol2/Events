@@ -12,20 +12,26 @@ function firstPhoto(photos) {
 // hand.
 const PURCHASE_ONLY_TAGS = ["gift wrap", "disposables"];
 
-function displayTags(item) {
-  return Array.isArray(item.tags) ? item.tags.filter(Boolean) : [];
-}
-
-export default function DecorCard({ item, onRent, onBuy }) {
-  const photo = firstPhoto(item.photos);
+// Shared by DecorCard and DecorDetailModal so the purchase-only rule and
+// the tag list only live in one place.
+export function getItemFlags(item) {
+  const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean) : [];
   const outOfStock = (item.quantity_owned ?? 0) <= 0;
   const isPurchasable = item.purchase_price != null;
-  const tags = displayTags(item);
   const isPurchaseOnly = tags.some((t) => PURCHASE_ONLY_TAGS.includes(String(t).toLowerCase().trim()));
   const isRentable = item.rental_price != null && !isPurchaseOnly;
+  return { tags, outOfStock, isPurchasable, isRentable };
+}
+
+export default function DecorCard({ item, onRent, onBuy, onOpenDetail }) {
+  const photo = firstPhoto(item.photos);
+  const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
 
   return (
-    <article className={`group overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}>
+    <article
+      onClick={() => onOpenDetail?.(item)}
+      className={`group cursor-pointer overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
+    >
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
         {photo ? (
           <img
@@ -66,7 +72,10 @@ export default function DecorCard({ item, onRent, onBuy }) {
                 <span className="font-[Jost] text-[9px] tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
               ) : (
                 <button
-                  onClick={() => onBuy?.(item)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onBuy?.(item);
+                  }}
                   className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
                 >
                   {item.quantity_owned} AVAILABLE - INQUIRE
@@ -81,7 +90,10 @@ export default function DecorCard({ item, onRent, onBuy }) {
                 RENT ${item.rental_price} / EVENT
               </span>
               <button
-                onClick={() => onRent?.(item)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRent?.(item);
+                }}
                 className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
               >
                 CHECK DATES

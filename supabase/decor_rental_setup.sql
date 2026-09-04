@@ -81,6 +81,39 @@ $$;
 
 grant execute on function public.get_item_availability(uuid, date, date) to anon, authenticated;
 
+-- Per-day availability across a range, for rendering a calendar grid (which
+-- days are bookable vs fully booked) without exposing raw item_requests
+-- rows. Same overlap logic as get_item_availability, evaluated once per day
+-- in the range instead of once for the whole range.
+create or replace function public.get_item_availability_calendar(
+  p_item_id uuid,
+  p_start date,
+  p_end date
+)
+returns table (day date, available integer)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select
+    d::date as day,
+    greatest(
+      (select quantity_owned from public.items where id = p_item_id) - coalesce((
+        select sum(quantity)
+        from public.item_requests
+        where item_id = p_item_id
+          and status <> 'cancelled'
+          and pickup_date <= d::date
+          and dropoff_date >= d::date
+      ), 0),
+      0
+    ) as available
+  from generate_series(p_start, p_end, interval '1 day') as d;
+$$;
+
+grant execute on function public.get_item_availability_calendar(uuid, date, date) to anon, authenticated;
+
 -- ── 3. Centerpiece consolidation cleanup ─────────────────────────────────
 -- Run only AFTER the "Decor Items" sheet rows have been renamed/merged and
 -- re-synced successfully. The sync matches Supabase rows by name, so
