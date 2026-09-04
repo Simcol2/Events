@@ -1,11 +1,11 @@
--- Decor rental/purchase request system, plus the fixed category taxonomy.
+-- Decor rental/purchase request system, plus the tags column that replaces
+-- the old single category.
 --
--- Run this once in the Supabase SQL editor, in this order. Steps 1 and 2 are
--- independent of the catalog data and safe to run any time. Steps 3 and 4
--- depend on the "Decor Items" Google Sheet having already been updated and
--- re-synced (see the plan for the exact row renames and category values) -
--- running them earlier will either delete rows you still want, or fail on
--- the first row still holding an old free-text category.
+-- Run this once in the Supabase SQL editor, in this order. Steps 1, 2, and 4
+-- are independent of the catalog data and safe to run any time. Step 3
+-- depends on the "Decor Items" Google Sheet having already been updated and
+-- re-synced with the renamed/merged centerpiece rows - running it earlier
+-- deletes rows you still want.
 
 -- ── 1. Unified placeholder request table ────────────────────────────────
 -- Covers both a rental request and a purchase inquiry with one table.
@@ -96,13 +96,19 @@ where name in (
   'Centerpiece Serving Dish (Large)'
 );
 
--- ── 4. Fixed category taxonomy ───────────────────────────────────────────
--- Run only AFTER every row in items has been updated to one of these six
--- values (via the sheet + sync) - otherwise this fails on the first row
--- still holding an old free-text category. Values are plain, readable
--- words on purpose (matches what the site's category filter uses and what
--- someone would naturally type into the sheet) - case-insensitive so a
--- capitalized "Wall/Floor" typed by hand still passes.
-alter table public.items
-  add constraint items_category_check
-  check (lower(category) in ('table', 'wall/floor', 'keepsakes & gifts', 'disposables', 'stationery', 'gift wrap'));
+-- ── 4. Tags replace category/category_2 ──────────────────────────────────
+-- An item can belong to more than one tag at once (a centerpiece can be
+-- Table, Baby Shower, and Holidays/Events together), which a single
+-- category column can't express. category and category_2 are left in
+-- place (unread by the app from here on) rather than dropped, in case
+-- there's ever a reason to look back at the old data.
+--
+-- Drop the old single-category constraint - it no longer reflects how
+-- items are classified.
+alter table public.items drop constraint if exists items_category_check;
+
+alter table public.items add column if not exists tags text[] not null default '{}';
+
+-- Tag filtering is an array-containment check (does this item have any of
+-- the selected tags), which a GIN index is built for.
+create index if not exists items_tags_idx on public.items using gin (tags);

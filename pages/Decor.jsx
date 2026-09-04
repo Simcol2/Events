@@ -10,26 +10,45 @@ function normalize(value) {
   return String(value || "").toLowerCase().trim();
 }
 
-// Fixed buyer-facing categories - replaces whatever ad hoc text happens to
-// be in the sheet's category column. `id` is the exact text typed into the
-// sheet's category column (matched case-insensitively, see normalize()
-// above and the check constraint in supabase/decor_rental_setup.sql) -
-// kept as plain, readable words on purpose so whoever fills in a new sheet
-// row can tell what to type without a lookup table. `label` is what shows
-// on the site's filter button, which can read a little differently.
-const CATEGORIES = [
-  { id: "all", label: "All" },
+// Fixed, buyer-facing tag list. `id` is the exact text typed into the
+// sheet's tags column (matched case-insensitively) - kept as plain,
+// readable words on purpose so whoever fills in a new sheet row can tell
+// what to type without a lookup table. `label` is what shows on the
+// site's filter button, which can read a little differently (e.g.
+// "wall/floor" in the sheet, "Wall & Floor" on the button). An item can
+// carry any number of these at once - a centerpiece can be Table, Baby
+// Shower, and Holidays/Events together.
+//
+// "rent" and "purchase" are not typed into the sheet - they're derived
+// automatically from whether rental_price/purchase_price is set, so they
+// can never go stale. See itemTags() below.
+const TAGS = [
   { id: "table", label: "Table" },
   { id: "wall/floor", label: "Wall & Floor" },
   { id: "keepsakes & gifts", label: "Keepsakes & Gifts" },
   { id: "disposables", label: "Disposables" },
   { id: "stationery", label: "Stationery" },
   { id: "gift wrap", label: "Gift Wrap" },
+  { id: "baby shower", label: "Baby Shower" },
+  { id: "baby", label: "Baby" },
+  { id: "holidays/events", label: "Holidays/Events" },
+  { id: "activities", label: "Activities" },
+  { id: "dessert items", label: "Dessert Items" },
+  { id: "rent", label: "Rent" },
+  { id: "purchase", label: "Purchase" },
 ];
+
+function itemTags(item) {
+  const sheetTags = Array.isArray(item.tags) ? item.tags.map(normalize) : [];
+  const derived = [];
+  if (item.rental_price != null) derived.push("rent");
+  if (item.purchase_price != null) derived.push("purchase");
+  return [...sheetTags, ...derived];
+}
 
 export default function Decor({ navigate }) {
   const [items, setItems] = useState([]);
-  const [category, setCategory] = useState("all");
+  const [selectedTags, setSelectedTags] = useState([]);
   const [gender, setGender] = useState("all");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -50,7 +69,6 @@ export default function Decor({ navigate }) {
         .from("items")
         .select("*")
         .eq("active", true)
-        .order("category", { ascending: true })
         .order("name", { ascending: true });
 
       if (cancelled) return;
@@ -65,16 +83,20 @@ export default function Decor({ navigate }) {
   const visible = useMemo(() => {
     const q = normalize(query);
     return items.filter((item) => {
-      const matchesCategory = category === "all" || normalize(item.category) === category;
+      const tags = itemTags(item);
+      const matchesTags = selectedTags.length === 0 || selectedTags.some((t) => tags.includes(t));
       const matchesGender = gender === "all" || normalize(item.gender) === gender;
       const matchesSearch =
         !q ||
         normalize(item.name).includes(q) ||
         normalize(item.description).includes(q) ||
-        normalize(item.category).includes(q);
-      return matchesCategory && matchesGender && matchesSearch;
+        tags.some((t) => t.includes(q));
+      return matchesTags && matchesGender && matchesSearch;
     });
-  }, [items, category, gender, query]);
+  }, [items, selectedTags, gender, query]);
+
+  const toggleTag = (id) =>
+    setSelectedTags((prev) => (prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]));
 
   // The event date prompt (if needed) resolves before the rental modal ever
   // opens, so RentalRequestModal can assume it already has one to default
@@ -100,17 +122,25 @@ export default function Decor({ navigate }) {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
-        <div className="flex flex-col gap-4 border-b border-[#E4DCC8] pb-7 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-x-6 gap-y-3">
-            {CATEGORIES.map((cat) => (
+        <div className="flex flex-col gap-4 border-b border-[#E4DCC8] pb-7">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setSelectedTags([])}
+              className={`px-3 py-2 font-[Jost] text-[9px] font-medium tracking-[0.14em] ${
+                selectedTags.length === 0 ? "bg-[#4E5A44] text-white" : "border border-[#D8D0BC] text-[#716B5C]"
+              }`}
+            >
+              ALL
+            </button>
+            {TAGS.map((tag) => (
               <button
-                key={cat.id}
-                onClick={() => setCategory(cat.id)}
-                className={`border-b pb-2 font-[Jost] text-[10px] font-semibold tracking-[0.16em] transition ${
-                  category === cat.id ? "border-[#B8935A] text-[#4E5A44]" : "border-transparent text-[#8C846F] hover:text-[#4E5A44]"
+                key={tag.id}
+                onClick={() => toggleTag(tag.id)}
+                className={`px-3 py-2 font-[Jost] text-[9px] font-medium tracking-[0.14em] ${
+                  selectedTags.includes(tag.id) ? "bg-[#4E5A44] text-white" : "border border-[#D8D0BC] text-[#716B5C]"
                 }`}
               >
-                {cat.label.toUpperCase()}
+                {tag.label.toUpperCase()}
               </button>
             ))}
           </div>

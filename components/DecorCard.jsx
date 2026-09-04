@@ -8,17 +8,21 @@ function firstPhoto(photos) {
 
 // Gift wrap and disposables are purchase-only by business rule, enforced
 // here rather than relying only on the sheet leaving rental_price blank.
-// Matched case-insensitively since the sheet's category column is typed by
+// Matched case-insensitively since the sheet's tags column is typed by
 // hand.
-const PURCHASE_ONLY_CATEGORIES = ["gift wrap", "disposables"];
+const PURCHASE_ONLY_TAGS = ["gift wrap", "disposables"];
+
+function displayTags(item) {
+  return Array.isArray(item.tags) ? item.tags.filter(Boolean) : [];
+}
 
 export default function DecorCard({ item, onRent, onBuy }) {
   const photo = firstPhoto(item.photos);
   const outOfStock = (item.quantity_owned ?? 0) <= 0;
   const isPurchasable = item.purchase_price != null;
-  const isRentable =
-    item.rental_price != null &&
-    !PURCHASE_ONLY_CATEGORIES.includes(String(item.category || "").toLowerCase().trim());
+  const tags = displayTags(item);
+  const isPurchaseOnly = tags.some((t) => PURCHASE_ONLY_TAGS.includes(String(t).toLowerCase().trim()));
+  const isRentable = item.rental_price != null && !isPurchaseOnly;
 
   return (
     <article className={`group overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}>
@@ -43,7 +47,7 @@ export default function DecorCard({ item, onRent, onBuy }) {
 
       <div className="px-1 pb-3 pt-4">
         <div className="font-[Jost] text-[9px] font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
-          {item.category || "Decor"}
+          {tags.length ? tags.join(" · ") : "Decor"}
         </div>
         <h3 className="mt-1 font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">
           {item.name}
