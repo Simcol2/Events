@@ -1,6 +1,7 @@
 import React from "react";
-import { X } from "lucide-react";
+import { X, Check, Plus } from "lucide-react";
 import { getItemFlags } from "./DecorCard";
+import { usePackage } from "../PackageContext";
 
 function photoList(photos) {
   if (!Array.isArray(photos)) return [];
@@ -9,13 +10,17 @@ function photoList(photos) {
 
 // Full detail view opened by clicking a decor card - same Buy/Rent actions
 // as the card itself, just with room for the description and every photo,
-// plus a route into the package builder for anyone who wants more than one
-// piece. "Add to package" (attaching this specific item to a package in
-// progress) isn't built yet - that needs the package builder to accept
-// items from the catalog first, which is a separate piece of work.
+// plus "Add to Package" (carried into the package builder via
+// PackageContext) and a route to the package builder itself.
 export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigate }) {
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
   const photos = photoList(item.photos);
+  const { addToPackage, removeFromPackage, isInPackage } = usePackage();
+  const inPackage = isInPackage(item.id);
+  // Packages are day-of-event pieces, so rent takes priority when an item
+  // supports both - purchase is still available separately via the BUY
+  // button above.
+  const packageRequestType = isRentable ? "rental" : isPurchasable ? "purchase" : null;
 
   return (
     <div
@@ -103,9 +108,26 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
             )}
           </div>
 
+          {packageRequestType && !outOfStock && (
+            <button
+              onClick={() =>
+                inPackage ? removeFromPackage(item.id) : addToPackage(item.id, packageRequestType)
+              }
+              className="mt-4 flex w-full items-center justify-center gap-1.5 border py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em]"
+              style={{
+                borderColor: inPackage ? "#4E5A44" : "#D8D0BC",
+                color: inPackage ? "#4E5A44" : "#716B5C",
+                background: inPackage ? "#F1F4EC" : "transparent",
+              }}
+            >
+              {inPackage ? <Check size={13} /> : <Plus size={13} />}
+              {inPackage ? "ADDED TO PACKAGE - REMOVE" : "ADD TO PACKAGE"}
+            </button>
+          )}
+
           <button
             onClick={() => navigate?.("/package-builder")}
-            className="mt-6 w-full border border-[#B8935A] py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]"
+            className="mt-3 w-full border border-[#B8935A] py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]"
           >
             BUILD YOUR PACKAGE
           </button>

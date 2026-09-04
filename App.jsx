@@ -7,6 +7,7 @@ import EventTypePicker from "./components/EventTypePicker";
 import EventDatePicker from "./components/EventDatePicker";
 import { EventTypeProvider, useEventType } from "./EventTypeContext";
 import { EventDateProvider } from "./EventDateContext";
+import { PackageProvider } from "./PackageContext";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
@@ -84,7 +85,9 @@ export default function App() {
   return (
     <EventTypeProvider>
       <EventDateProvider>
-        <AppRoutes />
+        <PackageProvider>
+          <AppRoutes />
+        </PackageProvider>
       </EventDateProvider>
     </EventTypeProvider>
   );

@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from "react";
-import { Users } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Users, X } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { usePackage } from "../PackageContext";
+import { supabase } from "../supabaseClient";
 import FeatureCard from "../components/FeatureCard";
 import {
   MAIN_PACKAGE_ITEMS,
@@ -24,9 +26,11 @@ function SectionTitle({ children, palette, fonts }) {
 export default function PackageBuilder() {
   const { palette, fonts } = usePalette();
   const { eventTypeId, eventType } = useEventType();
+  const { items: packageItems, removeFromPackage } = usePackage();
   const [selectedAddonIds, setSelectedAddonIds] = useState([]);
   const [keepsakeId, setKeepsakeId] = useState(null);
   const [guestCount, setGuestCount] = useState(DEFAULT_GUEST_COUNT);
+  const [decorItems, setDecorItems] = useState([]);
 
   const toggleAddon = (id) =>
     setSelectedAddonIds((prev) => (prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]));
@@ -36,13 +40,49 @@ export default function PackageBuilder() {
     [eventTypeId]
   );
 
+  // Decor items added from the catalog (see DecorDetailModal's "Add to
+  // Package") - fetched fresh here so prices and photos stay live rather
+  // than trusting whatever was cached when they were added.
+  useEffect(() => {
+    if (!supabase || packageItems.length === 0) {
+      setDecorItems([]);
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from("items")
+      .select("*")
+      .in("id", packageItems.map((p) => p.itemId))
+      .then(({ data, error }) => {
+        if (cancelled || error) return;
+        setDecorItems(data || []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [packageItems]);
+
+  const addedPieces = useMemo(
+    () =>
+      packageItems
+        .map((p) => {
+          const item = decorItems.find((d) => d.id === p.itemId);
+          if (!item) return null;
+          const price = p.requestType === "rental" ? item.rental_price : item.purchase_price;
+          return { ...p, item, price: price ?? 0 };
+        })
+        .filter(Boolean),
+    [packageItems, decorItems]
+  );
+
   const total = useMemo(() => {
     let sum = MADE_FOR_MEMORIES_PRICE;
     sum += selectedAddonIds.reduce((s, id) => s + (ADDONS.find((a) => a.id === id)?.price || 0), 0);
     const keepsake = KEEPSAKES.find((k) => k.id === keepsakeId);
     if (keepsake) sum += keepsake.pricePerGuest * guestCount;
+    sum += addedPieces.reduce((s, p) => s + p.price, 0);
     return sum;
-  }, [selectedAddonIds, keepsakeId, guestCount]);
+  }, [selectedAddonIds, keepsakeId, guestCount, addedPieces]);
 
   return (
     <div className="min-h-screen pb-32" style={{ background: palette.bg, color: palette.ink }}>
@@ -74,6 +114,38 @@ export default function PackageBuilder() {
             The seven signature pieces below, included every time. Add any upgrades below to make it your own.
           </p>
         </div>
+
+        {addedPieces.length > 0 && (
+          <div className="mb-14">
+            <SectionTitle palette={palette} fonts={fonts}>Your Added Pieces</SectionTitle>
+            <div className="space-y-3">
+              {addedPieces.map((p) => (
+                <div
+                  key={p.itemId}
+                  className="flex items-center justify-between rounded-xl p-4"
+                  style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
+                >
+                  <div>
+                    <p className="text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                      {p.item.name}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {p.requestType === "rental" ? "Rent" : "Purchase"} · ${p.price}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => removeFromPackage(p.itemId)}
+                    className="flex h-8 w-8 items-center justify-center rounded-full"
+                    style={{ color: palette.muted }}
+                    aria-label={`Remove ${p.item.name}`}
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mb-14">
           <SectionTitle palette={palette} fonts={fonts}>What's Included</SectionTitle>
