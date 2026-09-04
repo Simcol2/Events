@@ -80,7 +80,7 @@ export default function DisplayOptions({ navigate }) {
             className="px-8 py-3 rounded-full text-xs font-semibold tracking-widest text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
-            BUILD YOUR PACKAGE
+            BUILD MY EXPERIENCE
           </button>
         </div>
       </div>

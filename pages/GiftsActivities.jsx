@@ -284,7 +284,7 @@ export default function GiftsActivities({ navigate }) {
                     onClick={() => navigate("/package-builder")}
                     className="flex items-center gap-1.5 rounded-full border border-[#4E5A44] px-4 py-2 font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44]"
                   >
-                    BUILD YOUR PACKAGE
+                    BUILD MY EXPERIENCE
                   </button>
                 </div>
               </div>

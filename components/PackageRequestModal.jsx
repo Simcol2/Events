@@ -80,7 +80,7 @@ export default function PackageRequestModal({ total, onClose }) {
           </div>
         ) : (
           <>
-            <p className="font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#B8935A]">REQUEST THIS PACKAGE</p>
+            <p className="font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#B8935A]">REQUEST MY EXPERIENCE</p>
             <h2 className="mt-1 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
               ${total.toLocaleString()} total
             </h2>

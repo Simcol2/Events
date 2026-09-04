@@ -51,7 +51,7 @@ export default function PastEvents({ navigate }) {
             className="inline-flex items-center gap-3 px-7 py-3.5 text-[10px] font-semibold tracking-[0.2em] text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
-            BUILD YOUR PACKAGE <ArrowRight size={15} />
+            BUILD MY EXPERIENCE <ArrowRight size={15} />
           </button>
         </div>
       </section>

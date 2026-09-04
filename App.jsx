@@ -25,7 +25,7 @@ const NAV = [
   { label: "Decor", path: "/decor" },
   { label: "Gifts & Activities", path: "/gifts-activities" },
   { label: "Catering", path: "/catering" },
-  { label: "Build Your Package", path: "/package-builder" },
+  { label: "Build My Experience", path: "/package-builder" },
   { label: "Display Options", path: "/display-options" },
   { label: "Past Events", path: "/past-events" },
 ];

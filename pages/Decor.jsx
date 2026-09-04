@@ -246,7 +246,7 @@ export default function Decor({ navigate }) {
             WANT TO BUILD A PACKAGE AROUND THESE PIECES?
           </p>
           <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]">
-            BUILD YOUR PACKAGE
+            BUILD MY EXPERIENCE
           </button>
         </div>
       </section>

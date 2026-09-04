@@ -337,7 +337,7 @@ export default function PackageBuilder() {
           A CURATED {eventType.label.toUpperCase()} EXPERIENCE
         </p>
         <h1 className="mt-2 text-5xl sm:text-6xl font-semibold" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>
-          Build Your Package.
+          Build My Experience.
         </h1>
         <p className="mt-1 text-2xl italic" style={{ ...fonts.scriptFont, color: palette.accent }}>
           {PACKAGE_NAME}, made your own.
@@ -634,7 +634,7 @@ export default function PackageBuilder() {
             className="px-6 py-3 rounded-full text-xs font-semibold tracking-widest text-white disabled:opacity-30"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
-            {isLastStep ? "REQUEST THIS PACKAGE" : "NEXT"}
+            {isLastStep ? "REQUEST MY EXPERIENCE" : "NEXT"}
           </button>
         </div>
       </div>

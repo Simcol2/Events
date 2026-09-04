@@ -13,6 +13,9 @@ import {
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
+import wallPuzzleEngagementPhoto from "../media/file_00000000a204822f9ab953201c8b7043.png";
+import babyTriviaPhoto from "../media/babytrivia.png";
+import nurseryRhymePhoto from "../media/poem.png";
 
 /* ─── Scroll reveal wrapper ─── */
 function Reveal({ children, className = "", delay = 0 }) {
@@ -50,69 +53,235 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
-/* ─── Hero rotating text ─── */
-const HERO_LINES = [
-  "A Time Capsule Your Guests Actually Fill.",
-  "Balloons Die. Memories Last Forever.",
-  "Curated Décor. Real Keepsakes. Zero Stress.",
-  "Your Guests Don't Just Show Up. They Leave Something Real.",
-  "The Celebration That Gets Better After It Ends.",
-  "Pick a Date. Pick a Vibe. We Handle the Rest.",
+/* ─── Hero: 5 states, each its own image, headline, copy, and CTA ─── */
+const HERO_CTA_LABEL = "BUILD MY EXPERIENCE";
+
+const HERO_STATES = [
+  {
+    image: essentialsImage,
+    headline: "Your guests don't just attend. They leave something behind.",
+    supporting:
+      "Interactive event experiences that turn your baby shower, first birthday, or celebration into memories you can actually keep.",
+    secondaryLabel: "Explore the experiences",
+    secondaryTarget: "/gifts-activities",
+  },
+  {
+    image: heroFullBleed,
+    headline: "A time capsule your guests actually fill.",
+    supporting:
+      "Photos, stories, wishes, and little pieces of the day come together to create something you'll treasure long after the celebration ends.",
+    secondaryLabel: "See how it works",
+    secondaryTarget: "/how-it-works",
+  },
+  {
+    image: wallPuzzleEngagementPhoto,
+    headline: "Not just decor. Something your guests can create.",
+    supporting:
+      "Beautiful pieces designed to get everyone involved, then become keepsakes you can take home.",
+    secondaryLabel: "Explore the experiences",
+    secondaryTarget: "/gifts-activities",
+  },
+  {
+    image: babyTriviaPhoto,
+    headline: "The celebration that gets better after it ends.",
+    supporting:
+      "Your guests play, write, photograph, tell stories, and leave something meaningful behind for you to keep.",
+    secondaryLabel: "See it in action",
+    secondaryTarget: "/how-it-works",
+  },
+  {
+    image: nurseryRhymePhoto,
+    headline: "Give your guests something to do. Give yourself something to keep.",
+    supporting:
+      "Interactive experiences for baby showers, first birthdays, and celebrations designed around the people who make them special.",
+    secondaryLabel: "Find your perfect experience",
+    secondaryTarget: "/gifts-activities",
+  },
 ];
 
-function RotatingHeadline({ fonts }) {
+function Hero({ fonts, palette, navigate }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % HERO_LINES.length);
-    }, 5000);
-
+      setIndex((prev) => (prev + 1) % HERO_STATES.length);
+    }, 6500);
     return () => clearInterval(timer);
   }, []);
 
+  const current = HERO_STATES[index];
+
   return (
-    <div
-      className="relative mx-auto w-full"
+    <section
       style={{
-        minHeight: "clamp(5.5rem, 13vw, 9rem)",
-        marginBottom: "1.5rem",
-        maxWidth: "100%",
+        position: "relative",
+        width: "100%",
+        minHeight: "100svh",
+        overflow: "hidden",
+        isolation: "isolate",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {HERO_LINES.map((line, i) => (
-        <h1
-          key={line}
+      {HERO_STATES.map((state, i) => (
+        <img
+          key={state.image}
+          src={state.image}
+          alt=""
           style={{
-            ...fonts.displayFont,
             position: "absolute",
             inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+            opacity: i === index ? 1 : 0,
+            transition: "opacity 1400ms ease",
+          }}
+        />
+      ))}
+
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          background:
+            "linear-gradient(180deg, rgba(25,15,20,.82) 0%, rgba(25,15,20,.68) 38%, rgba(25,15,20,.38) 72%, rgba(25,15,20,.18) 100%)",
+        }}
+      />
+
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          width: "100%",
+          maxWidth: "1000px",
+          margin: "0 auto",
+          padding: "120px 32px 80px",
+          textAlign: "center",
+        }}
+      >
+        <div
+          className="relative mx-auto w-full"
+          style={{ minHeight: "clamp(5.5rem, 13vw, 9rem)", marginBottom: "1.5rem", maxWidth: "100%" }}
+        >
+          {HERO_STATES.map((state, i) => (
+            <h1
+              key={state.headline}
+              style={{
+                ...fonts.displayFont,
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0 10px",
+                margin: 0,
+                width: "100%",
+                maxWidth: "100%",
+                fontSize: "clamp(2rem, 5vw, 4.2rem)",
+                fontWeight: 500,
+                lineHeight: 1.1,
+                color: "#FDF6EE",
+                opacity: i === index ? 1 : 0,
+                transform: i === index ? "translateY(0)" : "translateY(18px)",
+                transition: "opacity 1100ms ease, transform 1100ms cubic-bezier(.22,1,.36,1)",
+                textShadow: "0 2px 24px rgba(0,0,0,0.45)",
+                pointerEvents: "none",
+                textAlign: "center",
+                whiteSpace: "normal",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}
+            >
+              {state.headline}
+            </h1>
+          ))}
+        </div>
+
+        <div className="relative mx-auto w-full" style={{ minHeight: "clamp(4.5rem, 11vw, 7rem)", maxWidth: "100%" }}>
+          {HERO_STATES.map((state, i) => (
+            <p
+              key={state.supporting}
+              style={{
+                ...fonts.bodyFont,
+                position: "absolute",
+                inset: 0,
+                maxWidth: "620px",
+                margin: "0 auto",
+                color: "#FDF6EEE6",
+                fontSize: "clamp(15px, 2vw, 18px)",
+                lineHeight: 1.6,
+                opacity: i === index ? 1 : 0,
+                transition: "opacity 1100ms ease",
+                pointerEvents: "none",
+              }}
+            >
+              {state.supporting}
+            </p>
+          ))}
+        </div>
+
+        <div
+          style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "0 10px",
-            margin: 0,
+            flexWrap: "wrap",
+            gap: "20px",
             width: "100%",
-            maxWidth: "100%",
-            fontSize: "clamp(2rem, 5vw, 4.2rem)",
-            fontWeight: 500,
-            lineHeight: 1.1,
-            color: "#FDF6EE",
-            opacity: i === index ? 1 : 0,
-            transform: i === index ? "translateY(0)" : "translateY(18px)",
-            transition: "opacity 1100ms ease, transform 1100ms cubic-bezier(.22,1,.36,1)",
-            textShadow: "0 2px 24px rgba(0,0,0,0.45)",
-            pointerEvents: "none",
-            textAlign: "center",
-            whiteSpace: "normal",
-            overflowWrap: "anywhere",
-            wordBreak: "break-word",
+            marginTop: "32px",
           }}
         >
-          {line}
-        </h1>
-      ))}
-    </div>
+          <button
+            onClick={() => navigate("/package-builder")}
+            style={{
+              ...fonts.bodyFont,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "12px",
+              padding: "16px 28px",
+              border: "0",
+              borderRadius: "2px",
+              background: palette.primaryDeep,
+              color: "#FFFFFF",
+              fontSize: "14px",
+              fontWeight: 600,
+              letterSpacing: "0.1em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {HERO_CTA_LABEL}
+            <ArrowRight size={17} />
+          </button>
+
+          <button
+            onClick={() => navigate(current.secondaryTarget)}
+            style={{
+              ...fonts.bodyFont,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "16px 10px",
+              border: "0",
+              background: "transparent",
+              color: "#FFFFFF",
+              fontSize: "14px",
+              fontWeight: 600,
+              letterSpacing: "0.1em",
+              textDecoration: "underline",
+              textUnderlineOffset: "4px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {current.secondaryLabel}
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -131,181 +300,90 @@ export default function Home({ navigate }) {
 
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
-      <section
-        style={{
-          position: "relative",
-          width: "100%",
-          minHeight: "100svh",
-          overflow: "hidden",
-          isolation: "isolate",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <img
-          src={heroFullBleed}
-          alt="Event styling"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            zIndex: 0,
-          }}
-        />
-
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 1,
-            background:
-              "linear-gradient(180deg, rgba(25,15,20,.82) 0%, rgba(25,15,20,.68) 38%, rgba(25,15,20,.38) 72%, rgba(25,15,20,.18) 100%)",
-          }}
-        />
-
-        <div
-          style={{
-            position: "relative",
-            zIndex: 2,
-            width: "100%",
-            maxWidth: "1000px",
-            margin: "0 auto",
-            padding: "120px 32px 80px",
-            textAlign: "center",
-          }}
-        >
-          <RotatingHeadline fonts={fonts} />
-
-          <p
-            style={{
-              ...fonts.bodyFont,
-              maxWidth: "620px",
-              margin: "0 auto",
-              color: "#FDF6EEE6",
-              fontSize: "clamp(15px, 2vw, 18px)",
-              lineHeight: 1.6,
-            }}
-          >
-            Interactive pieces for baby showers, first birthdays, and any
-            celebration across Toronto and the GTA. We deliver and style, or
-            you pick up. Either way, every piece is both your decor and
-            your keepsake.
-          </p>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              gap: "20px",
-              width: "100%",
-              marginTop: "32px",
-            }}
-          >
-            <button
-              onClick={() => navigate("/package-builder")}
-              style={{
-                ...fonts.bodyFont,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "12px",
-                padding: "16px 28px",
-                border: "0",
-                borderRadius: "2px",
-                background: palette.primaryDeep,
-                color: "#FFFFFF",
-                fontSize: "14px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                whiteSpace: "nowrap",
-              }}
-            >
-              BUILD YOUR PACKAGE
-              <ArrowRight size={17} />
-            </button>
-
-            <button
-              onClick={() => navigate("/how-it-works")}
-              style={{
-                ...fonts.bodyFont,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "16px 10px",
-                border: "0",
-                background: "transparent",
-                color: "#FFFFFF",
-                fontSize: "14px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textDecoration: "underline",
-                textUnderlineOffset: "4px",
-                whiteSpace: "nowrap",
-              }}
-            >
-              SEE HOW IT WORKS
-            </button>
-          </div>
-        </div>
-      </section>
+      <Hero fonts={fonts} palette={palette} navigate={navigate} />
 
       {/* ═══════════════════════════════════════
-          WHO WE ARE — leads before anything else
+          WHAT MAKES US DIFFERENT - leads before anything else
           ═══════════════════════════════════════ */}
       <section style={{ background: palette.bg, padding: "80px 40px 40px" }}>
         <div style={{ width: "100%", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-          <Heart className="mx-auto" size={22} strokeWidth={1.2} style={{ color: palette.gold }} />
+          <Sparkles className="mx-auto" size={22} strokeWidth={1.2} style={{ color: palette.gold }} />
           <p
             className="mt-4 text-xs font-semibold tracking-[0.3em]"
             style={{ ...fonts.bodyFont, color: palette.gold }}
           >
-            NOT YOUR TYPICAL RENTAL COMPANY
+            NOT JUST DECOR
           </p>
           <h2
             className="mt-3 text-4xl font-semibold sm:text-5xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
-            Every piece is decor. Every piece is a keepsake.
+            Your guests actually get to be part of it.
           </h2>
           <p
             className="mx-auto mt-5 max-w-xl text-lg leading-8"
             style={{ ...fonts.bodyFont, color: palette.ink }}
           >
-            We're not here to just drop off decor and pick it up the next
-            day. Guests take a card at the kindness station, add a page to
-            the collaborative storybook, snap a photo and leave a voice
-            note for the time capsule. The styling goes back with us. The
-            framed puzzle, the collaborative storybook, and the sealed time
-            capsule go home with you.
+            We create interactive event experiences designed to get your
+            guests involved. They write, play, take photos, share stories,
+            make memories, and create something together.
           </p>
           <p
             className="mx-auto mt-4 max-w-xl text-lg leading-7"
             style={{ ...fonts.bodyFont, color: palette.ink }}
           >
-            We specialize in interactive pieces that double as your decor
-            and your keepsakes, built around baby showers and first
-            birthdays, and just as easily customized for any celebration
-            worth marking.
+            And when the celebration is over, you don't just pack away the
+            decor. <strong style={{ color: palette.primaryDeep }}>You keep the memories.</strong>
           </p>
+        </div>
+
+        <div
+          className="mx-auto mt-14 grid gap-8 sm:grid-cols-3"
+          style={{ width: "100%", maxWidth: "900px" }}
+        >
+          {[
+            { icon: Users, title: "Guests participate", body: "Activities designed to get people talking, laughing, creating, and connecting." },
+            { icon: Heart, title: "Guests contribute", body: "Photos, stories, wishes, messages, and little moments that become part of your celebration." },
+            { icon: Gift, title: "You keep it", body: "Finished pieces become meaningful keepsakes you can display, revisit, and treasure." },
+          ].map((f) => {
+            const Icon = f.icon;
+            return (
+              <div key={f.title} className="text-center">
+                <div
+                  className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl"
+                  style={{ background: `${palette.accent}1F` }}
+                >
+                  <Icon size={20} color={palette.accent} strokeWidth={1.8} />
+                </div>
+                <p className="mt-3 text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                  {f.title}
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  {f.body}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
       {/* ═══════════════════════════════════════
           HOW IT WORKS — compact strip, logistics up front
           ═══════════════════════════════════════ */}
-      <section style={{ background: `${palette.primary}0D`, padding: "48px 40px" }}>
+      <section style={{ background: `${palette.primary}0D`, padding: "56px 40px 48px" }}>
         <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto" }}>
+          <h2
+            className="mb-10 text-center text-3xl font-semibold sm:text-4xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            From setup to keepsake.
+          </h2>
           <div className="grid gap-6 sm:grid-cols-4">
             {[
-              { icon: PackageCheck, title: "Pick your package", body: "Choose your event type and build it out with any add-ons." },
-              { icon: Truck, title: "We deliver, or you pick up", body: "Book a facilitator to set up and style everything, or pick up your box yourself." },
-              { icon: Users, title: "Guests play", body: "Everyone leaves a note, a page, or a photo behind." },
-              { icon: Gift, title: "We collect, you keep the keepsakes", body: "The styling comes back to us. The keepsakes go home with you." },
+              { icon: PackageCheck, title: "Choose your experience", body: "Pick the interactive pieces that fit your celebration, your guests, and the memories you want to create." },
+              { icon: Truck, title: "We deliver and style", body: "Choose the setup option that works for your event. We can deliver, or you can pick up your package." },
+              { icon: Users, title: "Your guests participate", body: "During the celebration, your guests become part of the experience. They write, play, create, photograph, and leave something behind." },
+              { icon: Gift, title: "You keep the memories", body: "When the party is over, the experience doesn't have to be. Your finished pieces become keepsakes from the day." },
             ].map((step, i) => {
               const Icon = step.icon;
               return (
@@ -545,7 +623,7 @@ export default function Home({ navigate }) {
                 className="mt-3 text-4xl font-semibold sm:text-5xl"
                 style={{ ...fonts.displayFont, color: palette.primaryDeep }}
               >
-                Build your own package
+                Build your own experience
               </h2>
               <p
                 className="mt-3 text-lg"
@@ -616,7 +694,7 @@ export default function Home({ navigate }) {
                 className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
                 style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
               >
-                BUILD YOUR PACKAGE <ArrowRight size={17} />
+                BUILD MY EXPERIENCE <ArrowRight size={17} />
               </button>
             </div>
           </Reveal>

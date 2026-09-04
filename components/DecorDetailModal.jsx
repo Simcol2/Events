@@ -114,7 +114,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
             onClick={() => navigate?.("/package-builder")}
             className="mt-3 w-full border border-[#B8935A] py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]"
           >
-            BUILD YOUR PACKAGE
+            BUILD MY EXPERIENCE
           </button>
         </div>
       </div>
