@@ -14,11 +14,14 @@ import {
   CUSTOM_STORY_BOOK_PRICE,
   MADE_FOR_MEMORIES_PRICE,
   DEFAULT_GUEST_COUNT,
+  INCLUDED_GUEST_COUNT,
   PACKAGE_NAME,
   INCLUDED_ACTIVITY_COUNT,
   INCLUDED_DECOR_COUNT,
   ACTIVITY_ADDON_PRICE,
   EXCLUSIVE_ACTIVITY_PAIR,
+  DISPLAYS,
+  DISPLAY_SETUP_OPTIONS,
   resolvePackageItem,
 } from "../packageContent";
 
@@ -27,6 +30,7 @@ const STEPS = [
   { id: "activities", label: "Choose Activities" },
   { id: "addons", label: "Select Add-Ons" },
   { id: "digital", label: "Digital Upgrades" },
+  { id: "display", label: "Choose a Display" },
 ];
 
 function SectionTitle({ children, palette, fonts }) {
@@ -95,8 +99,10 @@ export default function PackageBuilder() {
   const [addonActivityIds, setAddonActivityIds] = useState([]);
   const [selectedAddonIds, setSelectedAddonIds] = useState([]);
   const [digitalIds, setDigitalIds] = useState([]);
-  const [keepsakeId, setKeepsakeId] = useState(null);
+  const [keepsakeId, setKeepsakeId] = useState("readyToPop");
   const [guestCount, setGuestCount] = useState(DEFAULT_GUEST_COUNT);
+  const [displayId, setDisplayId] = useState(null);
+  const [displaySetupId, setDisplaySetupId] = useState(null);
 
   useEffect(() => {
     if (!supabase) return;
@@ -160,6 +166,15 @@ export default function PackageBuilder() {
   const toggleDigital = (id) =>
     setDigitalIds((prev) => (prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]));
 
+  const selectDisplay = (id) => {
+    if (displayId === id) {
+      setDisplayId(null);
+      setDisplaySetupId(null);
+      return;
+    }
+    setDisplayId(id);
+  };
+
   const toggleDecor = (item) => {
     if (isInPackage(item.id)) {
       removeFromPackage(item.id);
@@ -180,6 +195,12 @@ export default function PackageBuilder() {
   const hasPictureThis = includedActivityIds.includes("pictureThis") || addonActivityIds.includes("pictureThis");
   const hasStorybook = includedActivityIds.includes("storybook");
 
+  const keepsake = KEEPSAKES.find((k) => k.id === keepsakeId) || KEEPSAKES[0];
+  const overageGuests = Math.max(0, guestCount - INCLUDED_GUEST_COUNT);
+  const keepsakePrice = keepsake.upgradePrice + overageGuests * keepsake.overagePricePerGuest;
+  const displaySetup = DISPLAY_SETUP_OPTIONS.find((s) => s.id === displaySetupId);
+  const displayPrice = displayId && displaySetup ? displaySetup.price : 0;
+
   const total = useMemo(() => {
     let sum = MADE_FOR_MEMORIES_PRICE;
     sum += decorOveragePrice;
@@ -189,11 +210,11 @@ export default function PackageBuilder() {
       if (id === "customStoryBook") return s + CUSTOM_STORY_BOOK_PRICE;
       return s + (digitalAddons.find((a) => a.id === id)?.price || 0);
     }, 0);
-    const keepsake = KEEPSAKES.find((k) => k.id === keepsakeId);
-    if (keepsake) sum += keepsake.pricePerGuest * guestCount;
+    sum += keepsakePrice;
+    sum += displayPrice;
     return sum;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [decorOveragePrice, addonActivityIds, selectedAddonIds, digitalIds, keepsakeId, guestCount]);
+  }, [decorOveragePrice, addonActivityIds, selectedAddonIds, digitalIds, keepsakePrice, displayPrice]);
 
   return (
     <div className="min-h-screen pb-32" style={{ background: palette.bg, color: palette.ink }}>
@@ -360,9 +381,58 @@ export default function PackageBuilder() {
           </div>
         )}
 
+        {step === "display" && (
+          <div>
+            <SectionTitle palette={palette} fonts={fonts}>Choose a Display</SectionTitle>
+            <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Displays aren't included in any package - they're always an add-on. Both cost the same, price depends
+              only on the setup option below.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-6 mb-8">
+              {DISPLAYS.map((d) => (
+                <FeatureCard
+                  key={d.id}
+                  icon={d.icon}
+                  name={d.name}
+                  tagline={d.tagline}
+                  description={d.description}
+                  selected={displayId === d.id}
+                  onClick={() => selectDisplay(d.id)}
+                />
+              ))}
+            </div>
+            {displayId && (
+              <>
+                <p className="text-sm mb-4 font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                  Setup option
+                </p>
+                <div className="grid sm:grid-cols-2 gap-6">
+                  {DISPLAY_SETUP_OPTIONS.map((s) => (
+                    <FeatureCard
+                      key={s.id}
+                      icon={Package}
+                      name={s.label}
+                      description={s.description}
+                      priceLabel={`$${s.price}`}
+                      selected={displaySetupId === s.id}
+                      onClick={() => setDisplaySetupId(s.id)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {/* Guest keepsake + guest count - always available regardless of step */}
         <div className="mt-14">
           <SectionTitle palette={palette} fonts={fonts}>Choose Your Guest Keepsake</SectionTitle>
+          <p className="text-sm mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            The first {INCLUDED_GUEST_COUNT} guests are included with Ready to Pop at no extra charge. Upgrading to
+            Lil Roots for those same {INCLUDED_GUEST_COUNT} guests is a flat +${KEEPSAKES.find((k) => k.id === "lilRoots")?.upgradePrice}.
+            Beyond {INCLUDED_GUEST_COUNT} guests, it's ${KEEPSAKES.find((k) => k.id === "readyToPop")?.overagePricePerGuest}/guest for Ready to
+            Pop or ${KEEPSAKES.find((k) => k.id === "lilRoots")?.overagePricePerGuest}/guest for Lil Roots.
+          </p>
           <div className="flex items-center gap-2 mb-5">
             <Users size={16} color={palette.muted} />
             <label className="text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>Guest count</label>
@@ -385,7 +455,7 @@ export default function PackageBuilder() {
                 description={k.description}
                 photoKey={k.id}
                 photoUrl={k.photoUrl}
-                priceLabel={`$${k.pricePerGuest}/guest`}
+                priceLabel={k.upgradePrice > 0 ? `+$${k.upgradePrice}` : "Included"}
                 selected={keepsakeId === k.id}
                 onClick={() => setKeepsakeId(k.id)}
               />
@@ -434,7 +504,7 @@ export default function PackageBuilder() {
             <p className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>${total.toLocaleString()}</p>
           </div>
           <button
-            disabled={!keepsakeId}
+            disabled={Boolean(displayId) && !displaySetupId}
             className="px-6 py-3 rounded-full text-xs font-semibold tracking-widest text-white disabled:opacity-30"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >

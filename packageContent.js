@@ -14,6 +14,8 @@ import {
   Smartphone,
   PartyPopper,
   Sprout,
+  Frame,
+  LampCeiling,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -522,24 +524,69 @@ export const DIGITAL_ADDON_IDS = ["guessArrival", "pictureThisDigitalAlbum"];
 // Placeholder - update once a real price is set.
 export const CUSTOM_STORY_BOOK_PRICE = 75;
 
+// Every package includes a guest gift for the first 25 guests at no extra
+// charge (Ready to Pop by default). Lil Roots is a flat-price upgrade over
+// that same included count, not a per-guest swap. Guests beyond the
+// included count are billed per guest, at a different rate for each gift,
+// regardless of which one was chosen.
+export const INCLUDED_GUEST_COUNT = 25;
+
 export const KEEPSAKES = [
   {
     id: "readyToPop",
     icon: PartyPopper,
     name: "Ready to Pop",
-    tagline: "A little something to take home.",
+    tagline: "Included with your package.",
     description:
       "A cute, custom wrapped popcorn kit paired with a gourmet treat. Designed to match your celebration and give guests a little thank you they can actually enjoy.",
-    pricePerGuest: 10,
+    upgradePrice: 0,
+    overagePricePerGuest: 4,
   },
   {
     id: "lilRoots",
     icon: Sprout,
     name: "Lil Roots",
-    tagline: "A little something is growing.",
+    tagline: "Upgrade your guest gift.",
     description:
       "A planted seedling in a beautifully wrapped keepsake jar, paired with a gourmet treat. A tiny reminder of the people everyone came to celebrate.",
-    pricePerGuest: 15,
+    upgradePrice: 225,
+    overagePricePerGuest: 13,
     photoUrl: lilRootsPhoto,
+  },
+];
+
+// Backdrop/display setups - never included in a package, always an add-on.
+// Both displays cost the same regardless of which one is chosen; price
+// only depends on the setup option below.
+export const DISPLAYS = [
+  {
+    id: "blackGoldGeometric",
+    icon: Frame,
+    name: "Black and Gold Geometric Display",
+    tagline: "6 ft x 4 ft, free-standing.",
+    description: "Custom text on the center panel. Free-standing, 6 feet by 4 feet.",
+  },
+  {
+    id: "archedIridescent",
+    icon: LampCeiling,
+    name: "Arched Iridescent Light Up Display",
+    tagline: "Free-standing, with color draping to match your theme.",
+    description:
+      "Light-up arched display with your choice of color draping to match your theme. Free-standing. Requires a nearby outlet - extension cords are included.",
+  },
+];
+
+export const DISPLAY_SETUP_OPTIONS = [
+  {
+    id: "diy",
+    label: "Self Setup",
+    price: 500,
+    description: "Easy to follow instructions included. All floral arrangements come already arranged.",
+  },
+  {
+    id: "professional",
+    label: "Professional Install and Removal",
+    price: 750,
+    description: "We handle setup and takedown for you.",
   },
 ];
