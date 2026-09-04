@@ -8,13 +8,17 @@ function firstPhoto(photos) {
 
 // Gift wrap and disposables are purchase-only by business rule, enforced
 // here rather than relying only on the sheet leaving rental_price blank.
-const PURCHASE_ONLY_CATEGORIES = ["gift_wrap", "disposables"];
+// Matched case-insensitively since the sheet's category column is typed by
+// hand.
+const PURCHASE_ONLY_CATEGORIES = ["gift wrap", "disposables"];
 
 export default function DecorCard({ item, onRent, onBuy }) {
   const photo = firstPhoto(item.photos);
   const outOfStock = (item.quantity_owned ?? 0) <= 0;
   const isPurchasable = item.purchase_price != null;
-  const isRentable = item.rental_price != null && !PURCHASE_ONLY_CATEGORIES.includes(item.category);
+  const isRentable =
+    item.rental_price != null &&
+    !PURCHASE_ONLY_CATEGORIES.includes(String(item.category || "").toLowerCase().trim());
 
   return (
     <article className={`group overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}>

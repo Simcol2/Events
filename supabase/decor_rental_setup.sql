@@ -98,8 +98,11 @@ where name in (
 
 -- ── 4. Fixed category taxonomy ───────────────────────────────────────────
 -- Run only AFTER every row in items has been updated to one of these six
--- lowercase values (via the sheet + sync) - otherwise this fails on the
--- first row still holding an old free-text category.
+-- values (via the sheet + sync) - otherwise this fails on the first row
+-- still holding an old free-text category. Values are plain, readable
+-- words on purpose (matches what the site's category filter uses and what
+-- someone would naturally type into the sheet) - case-insensitive so a
+-- capitalized "Wall/Floor" typed by hand still passes.
 alter table public.items
   add constraint items_category_check
-  check (category in ('table', 'wall', 'keepsakes_gifts', 'disposables', 'stationery', 'gift_wrap'));
+  check (lower(category) in ('table', 'wall/floor', 'keepsakes & gifts', 'disposables', 'stationery', 'gift wrap'));

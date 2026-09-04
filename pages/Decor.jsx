@@ -11,17 +11,20 @@ function normalize(value) {
 }
 
 // Fixed buyer-facing categories - replaces whatever ad hoc text happens to
-// be in the sheet's category column. The stored value in Supabase must be
-// one of these ids (enforced by a check constraint), the label is display
-// only.
+// be in the sheet's category column. `id` is the exact text typed into the
+// sheet's category column (matched case-insensitively, see normalize()
+// above and the check constraint in supabase/decor_rental_setup.sql) -
+// kept as plain, readable words on purpose so whoever fills in a new sheet
+// row can tell what to type without a lookup table. `label` is what shows
+// on the site's filter button, which can read a little differently.
 const CATEGORIES = [
   { id: "all", label: "All" },
   { id: "table", label: "Table" },
-  { id: "wall", label: "Wall & Floor" },
-  { id: "keepsakes_gifts", label: "Keepsakes & Gifts" },
+  { id: "wall/floor", label: "Wall & Floor" },
+  { id: "keepsakes & gifts", label: "Keepsakes & Gifts" },
   { id: "disposables", label: "Disposables" },
   { id: "stationery", label: "Stationery" },
-  { id: "gift_wrap", label: "Gift Wrap" },
+  { id: "gift wrap", label: "Gift Wrap" },
 ];
 
 export default function Decor({ navigate }) {
