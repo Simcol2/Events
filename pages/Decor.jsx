@@ -17,7 +17,7 @@ function normalize(value) {
 const CATEGORIES = [
   { id: "all", label: "All" },
   { id: "table", label: "Table" },
-  { id: "wall", label: "Wall/Floor" },
+  { id: "wall", label: "Wall & Floor" },
   { id: "keepsakes_gifts", label: "Keepsakes & Gifts" },
   { id: "disposables", label: "Disposables" },
   { id: "stationery", label: "Stationery" },
