@@ -16,6 +16,10 @@ import {
   Sprout,
   Frame,
   LampCeiling,
+  Tag,
+  Aperture,
+  Moon,
+  Gift,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -423,29 +427,85 @@ export function resolvePackageItem(item, eventTypeId) {
   return { id: item.id, icon: item.icon, photoUrls, ...copy };
 }
 
-// The base package includes 3 activities, chosen from this pool (plus 3
-// decor pieces, chosen from the live Decor catalog rather than a fixed
-// list - see PackageBuilder). Reuses MAIN_PACKAGE_ITEMS' copy/photos so
-// resolvePackageItem() works the same way for these.
-export const ACTIVITY_IDS = ["pictureThis", "kindnessStation", "storybook", "babyTrivia", "wallPuzzle"];
-export const ACTIVITIES = MAIN_PACKAGE_ITEMS.filter((item) => ACTIVITY_IDS.includes(item.id));
+// Setup items that don't already exist as one of the 7 MAIN_PACKAGE_ITEMS
+// (those stay Home.jsx's "seven signature pieces" preview, unchanged) or as
+// an ADDONS entry. Same copy/photos shape as MAIN_PACKAGE_ITEMS so
+// resolvePackageItem() works the same way for these. No per-event-type
+// copy yet, just `default` - can be filled in later per event type the
+// same way the other pieces are.
+export const SETUP_ONLY_ITEMS = [
+  {
+    id: "babyNaptimeRelay",
+    icon: Moon,
+    copy: {
+      default: {
+        name: "Baby Naptime Relay",
+        tagline: "Three stations. One sleepy baby.",
+        description:
+          "Race through three stations: bottle chug, diaper change, and sing the lullaby. Your lullaby is assigned to you. Sing it correctly to earn your points, finish the course as fast as possible, and prove you have what it takes to survive bedtime. Fastest caregiver wins.",
+      },
+    },
+    photos: { default: null },
+  },
+  {
+    id: "priceIsRight",
+    icon: Tag,
+    copy: {
+      default: {
+        name: "The Price Is Right",
+        tagline: "Think you know what babies cost?",
+        description:
+          "From diapers and detergent to strollers and everything Mom actually registered for, put your pricing skills to the test. Guess the price. Guess where it's cheaper. Guess what Mom bought. Rack up the points, play solo or team up with friends.",
+      },
+    },
+    photos: { default: null },
+  },
+  {
+    id: "photoChallenge",
+    icon: Aperture,
+    copy: {
+      default: {
+        name: "The Photo Challenge",
+        tagline: "Capture the moments Mom will want to remember.",
+        description:
+          "Each guest gets a secret photo challenge with one goal: capture a picture of Mom that fits the assignment. Scan the QR code and add it to the shared album. By the end of the celebration, Mom has a whole album of memories from the people who came to celebrate her.",
+      },
+    },
+    photos: { default: null },
+  },
+];
 
-export const INCLUDED_ACTIVITY_COUNT = 3;
-export const INCLUDED_DECOR_COUNT = 3;
+// The base package includes 3 setup picks in Step 1, then 3 more in Step 2,
+// both chosen from this fixed, curated list rather than the live Decor
+// catalog (the one exception is centerpieceLarge, which is pulled from the
+// live catalog by name - see CENTERPIECE_LARGE_CATALOG_NAME). Four items
+// appear in both step lists on purpose: picking one in Step 1 removes it
+// from Step 2's options, so nothing gets picked twice.
+export const SETUP_STEP_1_IDS = ["pictureThis", "centerpieceLarge", "kindnessStation", "babyTrivia", "babyNaptimeRelay", "priceIsRight"];
+export const SETUP_STEP_2_IDS = ["guessArrival", "timeCapsule", "wallPuzzle", "centerpieceLarge", "kindnessStation", "babyTrivia", "babyNaptimeRelay", "photoChallenge", "nurseryRhyme"];
 
-// Placeholder - update once real per-activity add-on pricing is set.
-export const ACTIVITY_ADDON_PRICE = 75;
+export const SETUP_INCLUDED_COUNT = 3;
 
-// Picture This and the Story Book Generator can't both be free picks among
-// the 3 included activities - wanting both means the second one becomes a
-// paid add-on instead.
-export const EXCLUSIVE_ACTIVITY_PAIR = ["pictureThis", "storybook"];
+// Default price when a setup pool item is picked beyond the included 6.
+// Some items have their own real price instead of this default - see
+// SETUP_ADDON_PRICE_OVERRIDES.
+export const SETUP_ADDON_PRICE = 75;
+export const SETUP_ADDON_PRICE_OVERRIDES = {
+  guessArrival: 150,
+  nurseryRhyme: 175,
+};
+
+// The exact live-catalog item name centerpieceLarge is matched against.
+export const CENTERPIECE_LARGE_CATALOG_NAME = "Customizable Serving Dish (Center Piece) - Large";
 
 // Optional upgrades layered on top of the fixed package via the Package
-// Builder's "build your own" flow. Placeholder pricing throughout.
-// guessArrival and pictureThisDigitalAlbum are tech/digital in nature and
-// only ever shown in the Package Builder's digital-upgrades step, not the
-// general add-ons list - see DIGITAL_ADDON_IDS below.
+// Builder's Add-Ons step. guessArrival and nurseryRhyme also live in the
+// Setup pool (see SETUP_STEP_1_IDS/SETUP_STEP_2_IDS above) as free-pick
+// candidates - when not chosen free, the Add-Ons step surfaces them at
+// their price here through the setup-pool-overflow mechanic instead of
+// rendering them twice. pictureThisDigitalAlbum is tech/digital in nature
+// and only enabled once Picture This is in the package - see
+// DIGITAL_ADDON_IDS below.
 export const ADDONS = [
   {
     id: "guessArrival",
@@ -517,20 +577,16 @@ export const ADDONS = [
   },
 ];
 
-// Shown only in the Package Builder's digital-upgrades step, not the
-// general add-ons list.
-export const DIGITAL_ADDON_IDS = ["guessArrival", "pictureThisDigitalAlbum"];
+// Gated on Picture This being in the package (free or paid) rather than
+// hidden entirely - see hasPictureThis in PackageBuilder.jsx.
+export const DIGITAL_ADDON_IDS = ["pictureThisDigitalAlbum"];
 
 // Placeholder - update once a real price is set.
 export const CUSTOM_STORY_BOOK_PRICE = 75;
 
-// Every package includes a guest gift for the first 25 guests at no extra
-// charge (Ready to Pop by default). Lil Roots is a flat-price upgrade over
-// that same included count, not a per-guest swap. Guests beyond the
-// included count are billed per guest, at a different rate for each gift,
-// regardless of which one was chosen.
-export const INCLUDED_GUEST_COUNT = 25;
-
+// Every package includes a guest gift. Each option has its own included
+// guest count and its own per-guest overage rate, both set independently
+// per gift, not shared across all three.
 export const KEEPSAKES = [
   {
     id: "readyToPop",
@@ -540,6 +596,7 @@ export const KEEPSAKES = [
     description:
       "A cute, custom wrapped popcorn kit paired with a gourmet treat. Designed to match your celebration and give guests a little thank you they can actually enjoy.",
     upgradePrice: 0,
+    includedGuestCount: 25,
     overagePricePerGuest: 4,
   },
   {
@@ -550,8 +607,20 @@ export const KEEPSAKES = [
     description:
       "A planted seedling in a beautifully wrapped keepsake jar, paired with a gourmet treat. A tiny reminder of the people everyone came to celebrate.",
     upgradePrice: 225,
+    includedGuestCount: 25,
     overagePricePerGuest: 13,
     photoUrl: lilRootsPhoto,
+  },
+  {
+    id: "grownFolksLootBags",
+    icon: Gift,
+    name: "Grown Folks Loot Bags",
+    tagline: "A sweet favor for every guest.",
+    description:
+      "Every guest goes home with their own individually wrapped treat from our dessert line, a little something sweet to remember the celebration by.",
+    upgradePrice: 0,
+    includedGuestCount: 10,
+    overagePricePerGuest: 6,
   },
 ];
 

@@ -1,35 +1,35 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Users, X, Package } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
-import { usePackage } from "../PackageContext";
 import { supabase } from "../supabaseClient";
 import FeatureCard from "../components/FeatureCard";
-import { getItemFlags } from "../components/DecorCard";
 import {
-  ACTIVITIES,
+  MAIN_PACKAGE_ITEMS,
+  SETUP_ONLY_ITEMS,
   ADDONS,
   KEEPSAKES,
   DIGITAL_ADDON_IDS,
   CUSTOM_STORY_BOOK_PRICE,
   MADE_FOR_MEMORIES_PRICE,
   DEFAULT_GUEST_COUNT,
-  INCLUDED_GUEST_COUNT,
   PACKAGE_NAME,
-  INCLUDED_ACTIVITY_COUNT,
-  INCLUDED_DECOR_COUNT,
-  ACTIVITY_ADDON_PRICE,
-  EXCLUSIVE_ACTIVITY_PAIR,
+  SETUP_STEP_1_IDS,
+  SETUP_STEP_2_IDS,
+  SETUP_INCLUDED_COUNT,
+  SETUP_ADDON_PRICE,
+  SETUP_ADDON_PRICE_OVERRIDES,
+  CENTERPIECE_LARGE_CATALOG_NAME,
   DISPLAYS,
   DISPLAY_SETUP_OPTIONS,
   resolvePackageItem,
 } from "../packageContent";
 
 const STEPS = [
-  { id: "decor", label: "Choose Decor" },
-  { id: "activities", label: "Choose Activities" },
+  { id: "setup1", label: "Choose Your Setup" },
+  { id: "setup2", label: "Choose More Setup" },
+  { id: "guestGift", label: "Choose a Guest Gift" },
   { id: "addons", label: "Select Add-Ons" },
-  { id: "digital", label: "Digital Upgrades" },
   { id: "display", label: "Choose a Display" },
 ];
 
@@ -75,28 +75,64 @@ function StepNav({ step, setStep, palette, fonts }) {
   );
 }
 
-function firstPhoto(photos) {
-  if (!Array.isArray(photos) || !photos.length) return null;
-  const first = photos[0];
-  return typeof first === "string" ? first : first?.url || null;
+function normalizePhotos(photos) {
+  if (!Array.isArray(photos)) return [];
+  return photos.map((p) => (typeof p === "string" ? p : p?.url)).filter(Boolean);
 }
 
-function defaultRequestType(item) {
-  const { isRentable, isPurchasable } = getItemFlags(item);
-  if (isRentable) return "rental";
-  if (isPurchasable) return "purchase";
+// Resolves any Setup pool id to a normalized render shape, whatever its
+// source: the live decor catalog (centerpieceLarge only), the fixed
+// MAIN_PACKAGE_ITEMS / SETUP_ONLY_ITEMS lists, or an ADDONS entry reused
+// as a free-pick candidate (guessArrival, nurseryRhyme). Returns null if
+// centerpieceLarge can't be found in the live catalog yet.
+function resolveSetupItem(id, eventTypeId, decorCatalog) {
+  if (id === "centerpieceLarge") {
+    const item = decorCatalog.find((d) => d.name === CENTERPIECE_LARGE_CATALOG_NAME);
+    if (!item) return null;
+    return {
+      id,
+      icon: Package,
+      name: item.name,
+      tagline: item.size || "",
+      description: item.description || "",
+      photoUrls: normalizePhotos(item.photos),
+      addonPrice: item.rental_price ?? item.purchase_price ?? SETUP_ADDON_PRICE,
+    };
+  }
+  const staticItem = MAIN_PACKAGE_ITEMS.find((m) => m.id === id) || SETUP_ONLY_ITEMS.find((m) => m.id === id);
+  if (staticItem) {
+    const resolved = resolvePackageItem(staticItem, eventTypeId);
+    return { ...resolved, addonPrice: SETUP_ADDON_PRICE_OVERRIDES[id] ?? SETUP_ADDON_PRICE };
+  }
+  const addon = ADDONS.find((a) => a.id === id);
+  if (addon) {
+    return {
+      id,
+      icon: addon.icon,
+      name: addon.name,
+      tagline: addon.tagline,
+      description: addon.description,
+      photoUrls: addon.photoUrl ? [addon.photoUrl] : [],
+      addonPrice: SETUP_ADDON_PRICE_OVERRIDES[id] ?? addon.price ?? SETUP_ADDON_PRICE,
+    };
+  }
   return null;
 }
 
 export default function PackageBuilder() {
   const { palette, fonts } = usePalette();
   const { eventTypeId, eventType } = useEventType();
-  const { items: packageItems, addToPackage, removeFromPackage, isInPackage } = usePackage();
 
-  const [step, setStep] = useState("decor");
+  const [step, setStep] = useState("setup1");
   const [decorCatalog, setDecorCatalog] = useState([]);
-  const [includedActivityIds, setIncludedActivityIds] = useState([]);
-  const [addonActivityIds, setAddonActivityIds] = useState([]);
+
+  // One shared array for any Setup pool item bought as a paid add-on,
+  // whichever step it was clicked from - keeps an item from ever being
+  // offered twice once it's accounted for.
+  const [setupIncludedIds1, setSetupIncludedIds1] = useState([]);
+  const [setupIncludedIds2, setSetupIncludedIds2] = useState([]);
+  const [setupAddonIds, setSetupAddonIds] = useState([]);
+
   const [selectedAddonIds, setSelectedAddonIds] = useState([]);
   const [digitalIds, setDigitalIds] = useState([]);
   const [keepsakeId, setKeepsakeId] = useState("readyToPop");
@@ -111,7 +147,6 @@ export default function PackageBuilder() {
       .from("items")
       .select("*")
       .eq("active", true)
-      .order("name", { ascending: true })
       .then(({ data, error }) => {
         if (!cancelled && !error) setDecorCatalog(data || []);
       });
@@ -120,44 +155,32 @@ export default function PackageBuilder() {
     };
   }, []);
 
-  const addedDecor = useMemo(
-    () =>
-      packageItems
-        .map((p) => {
-          const item = decorCatalog.find((d) => d.id === p.itemId);
-          if (!item) return null;
-          const price = p.requestType === "rental" ? item.rental_price : item.purchase_price;
-          return { ...p, item, price: price ?? 0 };
-        })
-        .filter(Boolean),
-    [packageItems, decorCatalog]
-  );
-  const includedDecor = addedDecor.slice(0, INCLUDED_DECOR_COUNT);
-  const extraDecor = addedDecor.slice(INCLUDED_DECOR_COUNT);
-  const decorOveragePrice = extraDecor.reduce((s, p) => s + p.price, 0);
-
-  // Clicking an activity always selects it somehow: as one of the 3 free
-  // included picks if there's room and no exclusivity conflict, otherwise
-  // it automatically becomes a paid add-on instead of being blocked.
-  const handleActivityClick = (id) => {
-    if (includedActivityIds.includes(id)) {
-      setIncludedActivityIds((prev) => prev.filter((a) => a !== id));
+  // Clicking a Setup item always selects it somehow: as one of that step's
+  // 3 free included picks if there's room, otherwise it automatically
+  // becomes a paid add-on instead of being blocked.
+  const makeSetupHandler = (includedIds, setIncludedIds) => (id) => {
+    if (includedIds.includes(id)) {
+      setIncludedIds((prev) => prev.filter((x) => x !== id));
       return;
     }
-    if (addonActivityIds.includes(id)) {
-      setAddonActivityIds((prev) => prev.filter((a) => a !== id));
+    if (setupAddonIds.includes(id)) {
+      setSetupAddonIds((prev) => prev.filter((x) => x !== id));
       return;
     }
-    const conflict = EXCLUSIVE_ACTIVITY_PAIR.includes(id)
-      ? EXCLUSIVE_ACTIVITY_PAIR.find((x) => x !== id)
-      : null;
-    const blocked =
-      includedActivityIds.length >= INCLUDED_ACTIVITY_COUNT || (conflict && includedActivityIds.includes(conflict));
-    if (blocked) {
-      setAddonActivityIds((prev) => [...prev, id]);
+    if (includedIds.length >= SETUP_INCLUDED_COUNT) {
+      setSetupAddonIds((prev) => [...prev, id]);
     } else {
-      setIncludedActivityIds((prev) => [...prev, id]);
+      setIncludedIds((prev) => [...prev, id]);
     }
+  };
+  const handleSetup1Click = makeSetupHandler(setupIncludedIds1, setSetupIncludedIds1);
+  const handleSetup2Click = makeSetupHandler(setupIncludedIds2, setSetupIncludedIds2);
+  const toggleSetupAddon = (id) =>
+    setSetupAddonIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  const removeSetupPick = (id) => {
+    if (setupIncludedIds1.includes(id)) return setSetupIncludedIds1((prev) => prev.filter((x) => x !== id));
+    if (setupIncludedIds2.includes(id)) return setSetupIncludedIds2((prev) => prev.filter((x) => x !== id));
+    if (setupAddonIds.includes(id)) return setSetupAddonIds((prev) => prev.filter((x) => x !== id));
   };
 
   const toggleAddon = (id) =>
@@ -175,36 +198,50 @@ export default function PackageBuilder() {
     setDisplayId(id);
   };
 
-  const toggleDecor = (item) => {
-    if (isInPackage(item.id)) {
-      removeFromPackage(item.id);
-      return;
-    }
-    const requestType = defaultRequestType(item);
-    if (requestType) addToPackage(item.id, requestType);
-  };
-
-  const nonDigitalAddons = ADDONS.filter((a) => !DIGITAL_ADDON_IDS.includes(a.id));
-  const digitalAddons = ADDONS.filter((a) => DIGITAL_ADDON_IDS.includes(a.id));
-  // Story Book Generator is only available as one of the 3 included
-  // activities or as the "Custom Story Book" digital upgrade below - never
-  // as a generic add-on, so it's left out of this list.
-  const remainingActivities = ACTIVITIES.filter(
-    (a) => !includedActivityIds.includes(a.id) && !addonActivityIds.includes(a.id) && a.id !== "storybook"
+  const step1Items = useMemo(
+    () => SETUP_STEP_1_IDS.map((id) => resolveSetupItem(id, eventTypeId, decorCatalog)).filter(Boolean),
+    [eventTypeId, decorCatalog]
   );
-  const hasPictureThis = includedActivityIds.includes("pictureThis") || addonActivityIds.includes("pictureThis");
-  const hasStorybook = includedActivityIds.includes("storybook");
+  const step2Items = useMemo(
+    () =>
+      SETUP_STEP_2_IDS.filter((id) => !setupIncludedIds1.includes(id) && !setupAddonIds.includes(id))
+        .map((id) => resolveSetupItem(id, eventTypeId, decorCatalog))
+        .filter(Boolean),
+    [eventTypeId, decorCatalog, setupIncludedIds1, setupAddonIds]
+  );
+  const allSetupIds = useMemo(
+    () => Array.from(new Set([...SETUP_STEP_1_IDS, ...SETUP_STEP_2_IDS])),
+    []
+  );
+  const remainingSetupIds = allSetupIds.filter(
+    (id) => !setupIncludedIds1.includes(id) && !setupIncludedIds2.includes(id) && !setupAddonIds.includes(id)
+  );
+
+  const hasPictureThis = setupIncludedIds1.includes("pictureThis") || setupAddonIds.includes("pictureThis");
+
+  const nonDigitalAddons = ADDONS.filter(
+    (a) => !DIGITAL_ADDON_IDS.includes(a.id) && a.id !== "guessArrival" && a.id !== "nurseryRhyme"
+  );
+  const digitalAddons = ADDONS.filter((a) => DIGITAL_ADDON_IDS.includes(a.id));
+
+  const setupOverageTotal = useMemo(
+    () =>
+      setupAddonIds.reduce((sum, id) => {
+        const resolved = resolveSetupItem(id, eventTypeId, decorCatalog);
+        return sum + (resolved?.addonPrice ?? SETUP_ADDON_PRICE);
+      }, 0),
+    [setupAddonIds, eventTypeId, decorCatalog]
+  );
 
   const keepsake = KEEPSAKES.find((k) => k.id === keepsakeId) || KEEPSAKES[0];
-  const overageGuests = Math.max(0, guestCount - INCLUDED_GUEST_COUNT);
+  const overageGuests = Math.max(0, guestCount - keepsake.includedGuestCount);
   const keepsakePrice = keepsake.upgradePrice + overageGuests * keepsake.overagePricePerGuest;
   const displaySetup = DISPLAY_SETUP_OPTIONS.find((s) => s.id === displaySetupId);
   const displayPrice = displayId && displaySetup ? displaySetup.price : 0;
 
   const total = useMemo(() => {
     let sum = MADE_FOR_MEMORIES_PRICE;
-    sum += decorOveragePrice;
-    sum += addonActivityIds.length * ACTIVITY_ADDON_PRICE;
+    sum += setupOverageTotal;
     sum += selectedAddonIds.reduce((s, id) => s + (nonDigitalAddons.find((a) => a.id === id)?.price || 0), 0);
     sum += digitalIds.reduce((s, id) => {
       if (id === "customStoryBook") return s + CUSTOM_STORY_BOOK_PRICE;
@@ -214,7 +251,15 @@ export default function PackageBuilder() {
     sum += displayPrice;
     return sum;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [decorOveragePrice, addonActivityIds, selectedAddonIds, digitalIds, keepsakePrice, displayPrice]);
+  }, [setupOverageTotal, selectedAddonIds, digitalIds, keepsakePrice, displayPrice]);
+
+  const storybookItem = MAIN_PACKAGE_ITEMS.find((m) => m.id === "storybook");
+
+  const summaryPicks = [
+    ...setupIncludedIds1.map((id) => ({ id, included: true })),
+    ...setupIncludedIds2.map((id) => ({ id, included: true })),
+    ...setupAddonIds.map((id) => ({ id, included: false })),
+  ];
 
   return (
     <div className="min-h-screen pb-32" style={{ background: palette.bg, color: palette.ink }}>
@@ -229,38 +274,35 @@ export default function PackageBuilder() {
           {PACKAGE_NAME}, made your own.
         </p>
         <p className="mt-4 text-xs tracking-widest" style={{ ...fonts.bodyFont, color: "#FFFFFF99" }}>
-          BASE PACKAGE ${MADE_FOR_MEMORIES_PRICE} - {INCLUDED_DECOR_COUNT} DECOR PIECES + {INCLUDED_ACTIVITY_COUNT} ACTIVITIES INCLUDED
+          BASE PACKAGE ${MADE_FOR_MEMORIES_PRICE} - {SETUP_INCLUDED_COUNT} + {SETUP_INCLUDED_COUNT} SETUP PIECES INCLUDED
         </p>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-12">
         <StepNav step={step} setStep={setStep} palette={palette} fonts={fonts} />
 
-        {step === "decor" && (
+        {step === "setup1" && (
           <div>
             <SectionTitle palette={palette} fonts={fonts}>Choose Your Setup</SectionTitle>
             <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              {includedDecor.length} of {INCLUDED_DECOR_COUNT} included free.{" "}
-              {extraDecor.length > 0 && `${extraDecor.length} beyond that at their normal price ($${decorOveragePrice}).`}{" "}
-              You can also add pieces directly from the Decor page - anything added there shows up here too.
+              {setupIncludedIds1.length} of {SETUP_INCLUDED_COUNT} included free. Anything beyond that becomes a paid
+              add-on at its own price.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {decorCatalog.map((item) => {
-                const inPkg = isInPackage(item.id);
-                const orderIndex = addedDecor.findIndex((p) => p.itemId === item.id);
-                const included = inPkg && orderIndex < INCLUDED_DECOR_COUNT;
-                const price = addedDecor.find((p) => p.itemId === item.id)?.price;
+              {step1Items.map((item) => {
+                const included = setupIncludedIds1.includes(item.id);
+                const isAddon = setupAddonIds.includes(item.id);
                 return (
                   <FeatureCard
                     key={item.id}
-                    icon={Package}
+                    icon={item.icon}
                     name={item.name}
-                    tagline={item.size || ""}
-                    description={item.description || ""}
-                    photoUrl={firstPhoto(item.photos)}
-                    priceLabel={inPkg ? (included ? "Included" : `+$${price}`) : defaultRequestType(item) ? `$${price ?? item.rental_price ?? item.purchase_price}` : "Inquire"}
-                    selected={inPkg}
-                    onClick={() => toggleDecor(item)}
+                    tagline={item.tagline}
+                    description={item.description}
+                    photoUrls={item.photoUrls}
+                    priceLabel={included ? "Included" : isAddon ? `+$${item.addonPrice}` : undefined}
+                    selected={included || isAddon}
+                    onClick={() => handleSetup1Click(item.id)}
                   />
                 );
               })}
@@ -268,33 +310,69 @@ export default function PackageBuilder() {
           </div>
         )}
 
-        {step === "activities" && (
+        {step === "setup2" && (
           <div>
-            <SectionTitle palette={palette} fonts={fonts}>Choose Your Activities</SectionTitle>
+            <SectionTitle palette={palette} fonts={fonts}>Choose More Setup</SectionTitle>
             <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              {includedActivityIds.length} of {INCLUDED_ACTIVITY_COUNT} included free. Picture This and the Story
-              Book Generator can't both be free picks - choosing both moves the second to a paid add-on
-              (+${ACTIVITY_ADDON_PRICE}).
+              {setupIncludedIds2.length} of {SETUP_INCLUDED_COUNT} included free. Anything you already picked in Step
+              1 won't show up here again.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ACTIVITIES.map((raw) => {
-                const activity = resolvePackageItem(raw, eventTypeId);
-                const included = includedActivityIds.includes(raw.id);
-                const isAddon = addonActivityIds.includes(raw.id);
+              {step2Items.map((item) => {
+                const included = setupIncludedIds2.includes(item.id);
+                const isAddon = setupAddonIds.includes(item.id);
                 return (
                   <FeatureCard
-                    key={raw.id}
-                    icon={activity.icon}
-                    name={activity.name}
-                    tagline={activity.tagline}
-                    description={activity.description}
-                    photoUrls={activity.photoUrls}
-                    priceLabel={included ? "Included" : isAddon ? `+$${ACTIVITY_ADDON_PRICE}` : undefined}
+                    key={item.id}
+                    icon={item.icon}
+                    name={item.name}
+                    tagline={item.tagline}
+                    description={item.description}
+                    photoUrls={item.photoUrls}
+                    priceLabel={included ? "Included" : isAddon ? `+$${item.addonPrice}` : undefined}
                     selected={included || isAddon}
-                    onClick={() => handleActivityClick(raw.id)}
+                    onClick={() => handleSetup2Click(item.id)}
                   />
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {step === "guestGift" && (
+          <div>
+            <SectionTitle palette={palette} fonts={fonts}>Choose a Guest Gift</SectionTitle>
+            <p className="text-sm mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Every package includes a guest gift. Each option has its own included guest count, guests beyond that
+              are billed per guest.
+            </p>
+            <div className="flex items-center gap-2 mb-5">
+              <Users size={16} color={palette.muted} />
+              <label className="text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>Guest count</label>
+              <input
+                type="number"
+                min={1}
+                value={guestCount}
+                onChange={(e) => setGuestCount(Math.max(1, Number(e.target.value) || 1))}
+                className="w-20 px-2 py-1 rounded-sm text-sm"
+                style={{ ...fonts.bodyFont, border: `1px solid ${palette.line}`, color: palette.ink }}
+              />
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {KEEPSAKES.map((k) => (
+                <FeatureCard
+                  key={k.id}
+                  icon={k.icon}
+                  name={k.name}
+                  tagline={`${k.tagline} Included for your first ${k.includedGuestCount} guests, then $${k.overagePricePerGuest}/guest after that.`}
+                  description={k.description}
+                  photoKey={k.id}
+                  photoUrl={k.photoUrl}
+                  priceLabel={k.upgradePrice > 0 ? `+$${k.upgradePrice}` : "Included"}
+                  selected={keepsakeId === k.id}
+                  onClick={() => setKeepsakeId(k.id)}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -303,22 +381,24 @@ export default function PackageBuilder() {
           <div>
             <SectionTitle palette={palette} fonts={fonts}>Select Add-Ons</SectionTitle>
             <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Anything from the decor catalog or activities beyond your included picks, plus extras like Voice Notes.
+              Anything from Setup beyond your included picks, plus extras like Voice Notes and the Digital Photo
+              Album.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {remainingActivities.map((raw) => {
-                const activity = resolvePackageItem(raw, eventTypeId);
+              {remainingSetupIds.map((id) => {
+                const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+                if (!item) return null;
                 return (
                   <FeatureCard
-                    key={raw.id}
-                    icon={activity.icon}
-                    name={activity.name}
-                    tagline={activity.tagline}
-                    description={activity.description}
-                    photoUrls={activity.photoUrls}
-                    priceLabel={`+$${ACTIVITY_ADDON_PRICE}`}
-                    selected={addonActivityIds.includes(raw.id)}
-                    onClick={() => handleActivityClick(raw.id)}
+                    key={id}
+                    icon={item.icon}
+                    name={item.name}
+                    tagline={item.tagline}
+                    description={item.description}
+                    photoUrls={item.photoUrls}
+                    priceLabel={`+$${item.addonPrice}`}
+                    selected={setupAddonIds.includes(id)}
+                    onClick={() => toggleSetupAddon(id)}
                   />
                 );
               })}
@@ -337,17 +417,6 @@ export default function PackageBuilder() {
                   onClick={() => toggleAddon(a.id)}
                 />
               ))}
-            </div>
-          </div>
-        )}
-
-        {step === "digital" && (
-          <div>
-            <SectionTitle palette={palette} fonts={fonts}>Upgrade Your Digital Experience</SectionTitle>
-            <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Tech extras, not included anywhere else in the package.
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {digitalAddons.map((a) => {
                 const disabled = a.id === "pictureThisDigitalAlbum" && !hasPictureThis;
                 return (
@@ -366,12 +435,12 @@ export default function PackageBuilder() {
                   />
                 );
               })}
-              {!hasStorybook && (
+              {storybookItem && (
                 <FeatureCard
-                  icon={ACTIVITIES.find((a) => a.id === "storybook")?.icon}
+                  icon={storybookItem.icon}
                   name="Custom Story Book"
-                  tagline="Didn't pick this as one of your 3 included activities? Add it here instead."
-                  description={resolvePackageItem(ACTIVITIES.find((a) => a.id === "storybook"), eventTypeId).description}
+                  tagline="Every guest contributes a page to a keepsake storybook."
+                  description={resolvePackageItem(storybookItem, eventTypeId).description}
                   priceLabel={`+$${CUSTOM_STORY_BOOK_PRICE}`}
                   selected={digitalIds.includes("customStoryBook")}
                   onClick={() => toggleDigital("customStoryBook")}
@@ -425,73 +494,38 @@ export default function PackageBuilder() {
           </div>
         )}
 
-        {/* Guest keepsake + guest count - always available regardless of step */}
-        <div className="mt-14">
-          <SectionTitle palette={palette} fonts={fonts}>Choose Your Guest Keepsake</SectionTitle>
-          <p className="text-sm mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            The first {INCLUDED_GUEST_COUNT} guests are included with Ready to Pop at no extra charge. Upgrading to
-            Lil Roots for those same {INCLUDED_GUEST_COUNT} guests is a flat +${KEEPSAKES.find((k) => k.id === "lilRoots")?.upgradePrice}.
-            Beyond {INCLUDED_GUEST_COUNT} guests, it's ${KEEPSAKES.find((k) => k.id === "readyToPop")?.overagePricePerGuest}/guest for Ready to
-            Pop or ${KEEPSAKES.find((k) => k.id === "lilRoots")?.overagePricePerGuest}/guest for Lil Roots.
-          </p>
-          <div className="flex items-center gap-2 mb-5">
-            <Users size={16} color={palette.muted} />
-            <label className="text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>Guest count</label>
-            <input
-              type="number"
-              min={1}
-              value={guestCount}
-              onChange={(e) => setGuestCount(Math.max(1, Number(e.target.value) || 1))}
-              className="w-20 px-2 py-1 rounded-sm text-sm"
-              style={{ ...fonts.bodyFont, border: `1px solid ${palette.line}`, color: palette.ink }}
-            />
-          </div>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {KEEPSAKES.map((k) => (
-              <FeatureCard
-                key={k.id}
-                icon={k.icon}
-                name={k.name}
-                tagline={k.tagline}
-                description={k.description}
-                photoKey={k.id}
-                photoUrl={k.photoUrl}
-                priceLabel={k.upgradePrice > 0 ? `+$${k.upgradePrice}` : "Included"}
-                selected={keepsakeId === k.id}
-                onClick={() => setKeepsakeId(k.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {addedDecor.length > 0 && (
+        {summaryPicks.length > 0 && (
           <div className="mt-14">
             <SectionTitle palette={palette} fonts={fonts}>Your Package So Far</SectionTitle>
             <div className="space-y-3">
-              {addedDecor.map((p, i) => (
-                <div
-                  key={p.itemId}
-                  className="flex items-center justify-between rounded-xl p-4"
-                  style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
-                >
-                  <div>
-                    <p className="text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
-                      {p.item.name}
-                    </p>
-                    <p className="text-xs mt-0.5" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                      {i < INCLUDED_DECOR_COUNT ? "Included" : `+$${p.price}`} · {p.requestType === "rental" ? "Rent" : "Purchase"}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => removeFromPackage(p.itemId)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full"
-                    style={{ color: palette.muted }}
-                    aria-label={`Remove ${p.item.name}`}
+              {summaryPicks.map(({ id, included }) => {
+                const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+                if (!item) return null;
+                return (
+                  <div
+                    key={id}
+                    className="flex items-center justify-between rounded-xl p-4"
+                    style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
                   >
-                    <X size={15} />
-                  </button>
-                </div>
-              ))}
+                    <div>
+                      <p className="text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                        {item.name}
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                        {included ? "Included" : `+$${item.addonPrice}`}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => removeSetupPick(id)}
+                      className="flex h-8 w-8 items-center justify-center rounded-full"
+                      style={{ color: palette.muted }}
+                      aria-label={`Remove ${item.name}`}
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

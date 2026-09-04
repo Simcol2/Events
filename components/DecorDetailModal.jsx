@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { X, Check, Plus } from "lucide-react";
+import { X } from "lucide-react";
 import { getItemFlags } from "./DecorCard";
-import { usePackage } from "../PackageContext";
 
 function photoList(photos) {
   if (!Array.isArray(photos)) return [];
@@ -10,18 +9,13 @@ function photoList(photos) {
 
 // Full detail view opened by clicking a decor card - same Buy/Rent actions
 // as the card itself, just with room for the description and every photo,
-// plus "Add to Package" (carried into the package builder via
-// PackageContext) and a route to the package builder itself.
+// plus a route to the package builder for anyone who wants this piece as
+// part of a curated package (Setup items there come from a fixed list, not
+// the live catalog, so this modal doesn't add straight to a package).
 export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigate }) {
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
   const photos = photoList(item.photos);
   const [activePhoto, setActivePhoto] = useState(0);
-  const { addToPackage, removeFromPackage, isInPackage } = usePackage();
-  const inPackage = isInPackage(item.id);
-  // Packages are day-of-event pieces, so rent takes priority when an item
-  // supports both - purchase is still available separately via the BUY
-  // button above.
-  const packageRequestType = isRentable ? "rental" : isPurchasable ? "purchase" : null;
 
   return (
     <div
@@ -115,23 +109,6 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
               <p className="font-[Jost] text-sm text-[#B8935A]">Contact us to inquire about this piece.</p>
             )}
           </div>
-
-          {packageRequestType && !outOfStock && (
-            <button
-              onClick={() =>
-                inPackage ? removeFromPackage(item.id) : addToPackage(item.id, packageRequestType)
-              }
-              className="mt-4 flex w-full items-center justify-center gap-1.5 border py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em]"
-              style={{
-                borderColor: inPackage ? "#4E5A44" : "#D8D0BC",
-                color: inPackage ? "#4E5A44" : "#716B5C",
-                background: inPackage ? "#F1F4EC" : "transparent",
-              }}
-            >
-              {inPackage ? <Check size={13} /> : <Plus size={13} />}
-              {inPackage ? "ADDED TO PACKAGE - REMOVE" : "ADD TO PACKAGE"}
-            </button>
-          )}
 
           <button
             onClick={() => navigate?.("/package-builder")}

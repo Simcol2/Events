@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { getItemFlags } from "../components/DecorCard";
 import { GROWN_FOLKS_LOOT_BAGS } from "../cateringContent";
-import { KEEPSAKES, INCLUDED_GUEST_COUNT } from "../packageContent";
+import { KEEPSAKES } from "../packageContent";
 import pictureThisPhoto from "../media/picturethis.png";
 import lilRootsPhoto from "../media/lilroots.png";
 
@@ -255,9 +255,9 @@ export default function GiftsActivities({ navigate }) {
 
         <h2 className="mb-2 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Guest Gifts</h2>
         <p className="mb-6 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
-          Every package comes with a guest gift for your first {INCLUDED_GUEST_COUNT} guests, choose which one when you build your package.
+          Every package includes a guest gift. Each option has its own included guest count, choose which one when you build your package.
         </p>
-        <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2">
+        <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {KEEPSAKES.map((k) => (
             <div key={k.id} className="overflow-hidden bg-white">
               <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
@@ -273,9 +273,12 @@ export default function GiftsActivities({ navigate }) {
                 <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{k.name}</h3>
                 <p className="mt-1 font-[Jost] text-[11px] italic text-[#B8935A]">{k.tagline}</p>
                 <p className="mt-2 font-[Jost] text-xs leading-5 text-[#5C5645]">{k.description}</p>
+                <p className="mt-2 font-[Jost] text-[10px] leading-4 text-[#A69C7E]">
+                  Included for your first {k.includedGuestCount} guests, then ${k.overagePricePerGuest}/guest after that.
+                </p>
                 <div className="mt-3 flex items-center justify-between border-t border-[#E4DCC8] pt-3">
                   <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
-                    {k.upgradePrice > 0 ? `+$${k.upgradePrice} upgrade` : "Included"}, then ${k.overagePricePerGuest}/guest
+                    {k.upgradePrice > 0 ? `+$${k.upgradePrice} upgrade` : "Included"}
                   </span>
                   <button
                     onClick={() => navigate("/package-builder")}
@@ -291,7 +294,8 @@ export default function GiftsActivities({ navigate }) {
 
         <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Grown Folks Loot Bags</h2>
         <p className="mb-6 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
-          Individually wrapped desserts, gift ready straight out of the box.
+          Individually wrapped desserts, gift ready straight out of the box. Buying one for someone special? These
+          are it. Want them for every guest at your event instead, that's the Grown Folks Loot Bags guest gift above.
         </p>
         <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {GROWN_FOLKS_LOOT_BAGS.map((g) => (
