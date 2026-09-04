@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { X, Check, Plus } from "lucide-react";
 import { getItemFlags } from "./DecorCard";
 import { usePackage } from "../PackageContext";
@@ -15,6 +15,7 @@ function photoList(photos) {
 export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigate }) {
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
   const photos = photoList(item.photos);
+  const [activePhoto, setActivePhoto] = useState(0);
   const { addToPackage, removeFromPackage, isInPackage } = usePackage();
   const inPackage = isInPackage(item.id);
   // Packages are day-of-event pieces, so rent takes priority when an item
@@ -44,7 +45,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
 
         <div className="relative aspect-square bg-[#EEE9DC] sm:aspect-auto">
           {photos.length ? (
-            <img src={photos[0]} alt={item.name} className="h-full w-full object-cover" />
+            <img src={photos[activePhoto] || photos[0]} alt={item.name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center">
               <span className="font-[Jost] text-[10px] tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
@@ -53,12 +54,19 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
           {photos.length > 1 && (
             <div className="flex gap-2 overflow-x-auto p-3 sm:absolute sm:bottom-0 sm:left-0 sm:right-0">
               {photos.map((src, i) => (
-                <img
+                <button
                   key={i}
-                  src={src}
-                  alt=""
-                  className="h-14 w-14 flex-shrink-0 rounded-sm border border-white object-cover"
-                />
+                  type="button"
+                  onClick={() => setActivePhoto(i)}
+                  className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm"
+                  style={{
+                    border: i === activePhoto ? "2px solid #4E5A44" : "2px solid #FFFFFF",
+                    opacity: i === activePhoto ? 1 : 0.75,
+                  }}
+                  aria-label={`View photo ${i + 1}`}
+                >
+                  <img src={src} alt="" className="h-full w-full object-cover" />
+                </button>
               ))}
             </div>
           )}
