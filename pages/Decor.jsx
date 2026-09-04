@@ -31,7 +31,7 @@ const TAGS = [
   { id: "gift wrap", label: "Gift Wrap" },
   { id: "showers", label: "Showers" },
   { id: "baby", label: "Baby" },
-  { id: "holidays/events", label: "Holidays/Events" },
+  { id: "birthdays/holidays", label: "Birthdays/Holidays" },
   { id: "activities", label: "Activities" },
   { id: "dessert items", label: "Dessert Items" },
   { id: "rent", label: "Rent" },
