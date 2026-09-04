@@ -421,8 +421,29 @@ export function resolvePackageItem(item, eventTypeId) {
   return { id: item.id, icon: item.icon, photoUrls, ...copy };
 }
 
+// The base package includes 3 activities, chosen from this pool (plus 3
+// decor pieces, chosen from the live Decor catalog rather than a fixed
+// list - see PackageBuilder). Reuses MAIN_PACKAGE_ITEMS' copy/photos so
+// resolvePackageItem() works the same way for these.
+export const ACTIVITY_IDS = ["pictureThis", "kindnessStation", "storybook", "babyTrivia", "wallPuzzle"];
+export const ACTIVITIES = MAIN_PACKAGE_ITEMS.filter((item) => ACTIVITY_IDS.includes(item.id));
+
+export const INCLUDED_ACTIVITY_COUNT = 3;
+export const INCLUDED_DECOR_COUNT = 3;
+
+// Placeholder - update once real per-activity add-on pricing is set.
+export const ACTIVITY_ADDON_PRICE = 75;
+
+// Picture This and the Story Book Generator can't both be free picks among
+// the 3 included activities - wanting both means the second one becomes a
+// paid add-on instead.
+export const EXCLUSIVE_ACTIVITY_PAIR = ["pictureThis", "storybook"];
+
 // Optional upgrades layered on top of the fixed package via the Package
 // Builder's "build your own" flow. Placeholder pricing throughout.
+// guessArrival and pictureThisDigitalAlbum are tech/digital in nature and
+// only ever shown in the Package Builder's digital-upgrades step, not the
+// general add-ons list - see DIGITAL_ADDON_IDS below.
 export const ADDONS = [
   {
     id: "guessArrival",
@@ -434,6 +455,15 @@ export const ADDONS = [
     price: 150,
     photoUrl: arrivalPhoto,
     fit: "contain",
+  },
+  {
+    id: "pictureThisDigitalAlbum",
+    icon: Smartphone,
+    name: "Digital Photo Album",
+    tagline: "An upgrade to the Picture This activity.",
+    description:
+      "Every photo from Picture This also lands in a private digital album guests can keep adding to and revisit anytime, on top of the physical display.",
+    price: 150,
   },
   {
     id: "nurseryRhyme",
@@ -484,6 +514,13 @@ export const ADDONS = [
     price: 100,
   },
 ];
+
+// Shown only in the Package Builder's digital-upgrades step, not the
+// general add-ons list.
+export const DIGITAL_ADDON_IDS = ["guessArrival", "pictureThisDigitalAlbum"];
+
+// Placeholder - update once a real price is set.
+export const CUSTOM_STORY_BOOK_PRICE = 75;
 
 export const KEEPSAKES = [
   {
