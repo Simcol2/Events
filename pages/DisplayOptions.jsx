@@ -25,7 +25,7 @@ export default function DisplayOptions({ navigate }) {
 
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
         <p className="mx-auto mb-10 max-w-2xl text-center text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
-          Displays aren't included in any package, they're always an add-on you choose when building your package.
+          The centerpiece every camera finds first. Pick your display, then bring it into your package when you build it.
         </p>
         <div className="grid gap-6 sm:grid-cols-2">
           {DISPLAYS.map((d) => (
@@ -35,6 +35,7 @@ export default function DisplayOptions({ navigate }) {
               name={d.name}
               tagline={d.tagline}
               description={d.description}
+              photoUrl={d.photoUrl}
             />
           ))}
         </div>
@@ -44,7 +45,7 @@ export default function DisplayOptions({ navigate }) {
             Setup Pricing
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-center text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            Same price for either display above, based only on which setup option you choose.
+            Either display, same price. You're just choosing how hands-on you want to be on setup day.
           </p>
           <div className="grid gap-6 sm:grid-cols-2">
             {DISPLAY_SETUP_OPTIONS.map((s) => (

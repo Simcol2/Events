@@ -645,15 +645,15 @@ export default function Home({ navigate }) {
               className="mx-auto mt-5 max-w-lg text-lg leading-8"
               style={{ ...fonts.bodyFont, color: `${palette.bg}DD` }}
             >
-              Looking for a specific color palette or design theme instead of
-              building from scratch?
+              Browse the full decor collection and start pulling together the
+              pieces that fit your celebration.
             </p>
             <button
-              onClick={() => navigate("/design")}
+              onClick={() => navigate("/decor")}
               className="mt-7 inline-flex items-center gap-3 border-2 px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:bg-white/10"
               style={{ ...fonts.bodyFont, borderColor: palette.gold }}
             >
-              BROWSE DESIGN & THEMES <ArrowRight size={17} />
+              BROWSE THE COLLECTION <ArrowRight size={17} />
             </button>
           </Reveal>
         </div>

@@ -16,7 +16,16 @@ import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const ROUTES = ["/", "/decor", "/activities", "/design", "/how-it-works", "/package-builder", "/past-events"];
+const ROUTES = [
+  "/",
+  "/how-it-works",
+  "/decor",
+  "/gifts-activities",
+  "/catering",
+  "/package-builder",
+  "/display-options",
+  "/past-events",
+];
 
 async function run() {
   const server = await preview({ preview: { port: 4173, strictPort: false } });

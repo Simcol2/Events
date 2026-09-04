@@ -12,23 +12,19 @@ import { CartProvider } from "./CartContext";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
-import Activities from "./pages/Activities";
-import Design from "./pages/Design";
+import GiftsActivities from "./pages/GiftsActivities";
 import HowItWorks from "./pages/HowItWorks";
 import PackageBuilder from "./pages/PackageBuilder";
 import DisplayOptions from "./pages/DisplayOptions";
-import Gifts from "./pages/Gifts";
 import Catering from "./pages/Catering";
 import PastEvents from "./pages/PastEvents";
 
 const NAV = [
   { label: "Home", path: "/" },
-  { label: "Decor", path: "/decor" },
-  { label: "Gifts", path: "/gifts" },
-  { label: "Catering", path: "/catering" },
-  { label: "Activities", path: "/activities" },
-  { label: "Design & Themes", path: "/design" },
   { label: "How It Works", path: "/how-it-works" },
+  { label: "Decor", path: "/decor" },
+  { label: "Gifts & Activities", path: "/gifts-activities" },
+  { label: "Catering", path: "/catering" },
   { label: "Build Your Package", path: "/package-builder" },
   { label: "Display Options", path: "/display-options" },
   { label: "Past Events", path: "/past-events" },
@@ -67,10 +63,8 @@ function AppRoutes() {
   const routeMap = {
     "/": { component: <Home navigate={navigate} />, current: "home" },
     "/decor": { component: <Decor navigate={navigate} />, current: "decor" },
-    "/gifts": { component: <Gifts navigate={navigate} />, current: "gifts" },
+    "/gifts-activities": { component: <GiftsActivities navigate={navigate} />, current: "gifts-activities" },
     "/catering": { component: <Catering navigate={navigate} />, current: "catering" },
-    "/activities": { component: <Activities navigate={navigate} />, current: "activities" },
-    "/design": { component: <Design navigate={navigate} />, current: "design" },
     "/how-it-works": { component: <HowItWorks navigate={navigate} />, current: "how-it-works" },
     "/package-builder": { component: <PackageBuilder navigate={navigate} />, current: "package-builder" },
     "/display-options": { component: <DisplayOptions navigate={navigate} />, current: "display-options" },

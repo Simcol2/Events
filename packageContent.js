@@ -563,16 +563,19 @@ export const DISPLAYS = [
     id: "blackGoldGeometric",
     icon: Frame,
     name: "Black and Gold Geometric Display",
-    tagline: "6 ft x 4 ft, free-standing.",
-    description: "Custom text on the center panel. Free-standing, 6 feet by 4 feet.",
+    tagline: "Sleek lines, statement presence.",
+    description:
+      "A bold geometric frame in black and gold, 6 feet by 4 feet and free-standing, with your own custom text taking center stage. This is the piece guests walk in and photograph first.",
+    photoUrl: "https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/blackandgolddisplay.png",
   },
   {
     id: "archedIridescent",
     icon: LampCeiling,
     name: "Arched Iridescent Light Up Display",
-    tagline: "Free-standing, with color draping to match your theme.",
+    tagline: "Glowing, dreamy, unmistakably yours.",
     description:
-      "Light-up arched display with your choice of color draping to match your theme. Free-standing. Requires a nearby outlet - extension cords are included.",
+      "A free-standing arched display that lights up the room, dressed in color draping that matches your theme. Just needs a nearby outlet, we bring the extension cords.",
+    photoUrl: "https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/iradescentlight.png",
   },
 ];
 
@@ -581,12 +584,12 @@ export const DISPLAY_SETUP_OPTIONS = [
     id: "diy",
     label: "Self Setup",
     price: 500,
-    description: "Easy to follow instructions included. All floral arrangements come already arranged.",
+    description: "You bring the energy, we bring easy to follow instructions and floral arrangements that arrive already arranged. Setup takes minutes, not stress.",
   },
   {
     id: "professional",
     label: "Professional Install and Removal",
     price: 750,
-    description: "We handle setup and takedown for you.",
+    description: "Sit back and let us handle it. We arrive, install, and remove your display start to finish, so the only thing on your to do list is showing up.",
   },
 ];

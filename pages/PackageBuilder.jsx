@@ -385,8 +385,8 @@ export default function PackageBuilder() {
           <div>
             <SectionTitle palette={palette} fonts={fonts}>Choose a Display</SectionTitle>
             <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Displays aren't included in any package - they're always an add-on. Both cost the same, price depends
-              only on the setup option below.
+              Give your celebration a showstopper backdrop. This is an add-on to any package, same price either way,
+              you just pick the setup that fits below.
             </p>
             <div className="grid sm:grid-cols-2 gap-6 mb-8">
               {DISPLAYS.map((d) => (
@@ -396,6 +396,7 @@ export default function PackageBuilder() {
                   name={d.name}
                   tagline={d.tagline}
                   description={d.description}
+                  photoUrl={d.photoUrl}
                   selected={displayId === d.id}
                   onClick={() => selectDisplay(d.id)}
                 />
