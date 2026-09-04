@@ -14,7 +14,7 @@
 -- else in this schema needs to change for that.
 create table if not exists public.item_requests (
   id uuid primary key default gen_random_uuid(),
-  item_id uuid not null references public.items (id),
+  item_id bigint not null references public.items (id),
   request_type text not null check (request_type in ('rental', 'purchase')),
   pickup_date date,
   dropoff_date date,
@@ -56,7 +56,7 @@ create policy item_requests_insert on public.item_requests
 -- availability reads it directly elsewhere and is not date-scoped, only
 -- rentals are.
 create or replace function public.get_item_availability(
-  p_item_id uuid,
+  p_item_id bigint,
   p_pickup date,
   p_dropoff date
 )
@@ -79,14 +79,14 @@ as $$
   );
 $$;
 
-grant execute on function public.get_item_availability(uuid, date, date) to anon, authenticated;
+grant execute on function public.get_item_availability(bigint, date, date) to anon, authenticated;
 
 -- Per-day availability across a range, for rendering a calendar grid (which
 -- days are bookable vs fully booked) without exposing raw item_requests
 -- rows. Same overlap logic as get_item_availability, evaluated once per day
 -- in the range instead of once for the whole range.
 create or replace function public.get_item_availability_calendar(
-  p_item_id uuid,
+  p_item_id bigint,
   p_start date,
   p_end date
 )
@@ -112,7 +112,7 @@ as $$
   from generate_series(p_start, p_end, interval '1 day') as d;
 $$;
 
-grant execute on function public.get_item_availability_calendar(uuid, date, date) to anon, authenticated;
+grant execute on function public.get_item_availability_calendar(bigint, date, date) to anon, authenticated;
 
 -- ── 3. Centerpiece consolidation cleanup ─────────────────────────────────
 -- Run only AFTER the "Decor Items" sheet rows have been renamed/merged and
