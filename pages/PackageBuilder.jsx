@@ -238,7 +238,7 @@ export default function PackageBuilder() {
 
         {step === "decor" && (
           <div>
-            <SectionTitle palette={palette} fonts={fonts}>Choose Your Decor</SectionTitle>
+            <SectionTitle palette={palette} fonts={fonts}>Choose Your Setup</SectionTitle>
             <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               {includedDecor.length} of {INCLUDED_DECOR_COUNT} included free.{" "}
               {extraDecor.length > 0 && `${extraDecor.length} beyond that at their normal price ($${decorOveragePrice}).`}{" "}

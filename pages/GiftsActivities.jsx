@@ -4,14 +4,17 @@ import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { getItemFlags } from "../components/DecorCard";
 import { GROWN_FOLKS_LOOT_BAGS } from "../cateringContent";
+import { KEEPSAKES, INCLUDED_GUEST_COUNT } from "../packageContent";
 import pictureThisPhoto from "../media/picturethis.png";
 import lilRootsPhoto from "../media/lilroots.png";
 
 // Crossfades between a shot of the Picture This activity and the Lil Roots
-// guest gift, since this page covers both halves of the business.
+// guest gift, since this page covers both halves of the business. Each
+// photo gets its own focal point since the Lil Roots jar's label sits low
+// in the frame and gets lost under a plain center crop.
 const HERO_PHOTOS = [
-  { src: pictureThisPhoto, alt: "Picture This guest activity" },
-  { src: lilRootsPhoto, alt: "Lil Roots guest gift" },
+  { src: pictureThisPhoto, alt: "Picture This guest activity", focus: "center" },
+  { src: lilRootsPhoto, alt: "Lil Roots guest gift", focus: "center 78%" },
 ];
 
 const ACTIVITIES = [
@@ -196,7 +199,7 @@ export default function GiftsActivities({ navigate }) {
                 src={photo.src}
                 alt={photo.alt}
                 className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
-                style={{ opacity: i === heroIndex ? 1 : 0 }}
+                style={{ opacity: i === heroIndex ? 1 : 0, objectPosition: photo.focus }}
               />
             ))}
           </div>
@@ -248,6 +251,42 @@ export default function GiftsActivities({ navigate }) {
             <ShoppingBag size={16} />
             CART ({cartCount})
           </div>
+        </div>
+
+        <h2 className="mb-2 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Guest Gifts</h2>
+        <p className="mb-6 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
+          Every package comes with a guest gift for your first {INCLUDED_GUEST_COUNT} guests, choose which one when you build your package.
+        </p>
+        <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2">
+          {KEEPSAKES.map((k) => (
+            <div key={k.id} className="overflow-hidden bg-white">
+              <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
+                {k.photoUrl ? (
+                  <img src={k.photoUrl} alt={k.name} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    <span className="font-[Jost] text-[10px] tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+                  </div>
+                )}
+              </div>
+              <div className="px-1 pb-3 pt-4">
+                <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{k.name}</h3>
+                <p className="mt-1 font-[Jost] text-[11px] italic text-[#B8935A]">{k.tagline}</p>
+                <p className="mt-2 font-[Jost] text-xs leading-5 text-[#5C5645]">{k.description}</p>
+                <div className="mt-3 flex items-center justify-between border-t border-[#E4DCC8] pt-3">
+                  <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
+                    {k.upgradePrice > 0 ? `+$${k.upgradePrice} upgrade` : "Included"}, then ${k.overagePricePerGuest}/guest
+                  </span>
+                  <button
+                    onClick={() => navigate("/package-builder")}
+                    className="flex items-center gap-1.5 rounded-full border border-[#4E5A44] px-4 py-2 font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44]"
+                  >
+                    BUILD YOUR PACKAGE
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Grown Folks Loot Bags</h2>
