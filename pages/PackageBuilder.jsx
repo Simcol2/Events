@@ -81,7 +81,6 @@ const ACTIVITY_TYPE_IDS = new Set([
   "babyNaptimeRelay",
   "priceIsRight",
   "photoChallenge",
-  "babyPredictions",
   "guessArrival",
 ]);
 function viewMoreLabelFor(id) {

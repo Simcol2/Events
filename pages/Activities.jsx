@@ -11,7 +11,7 @@ import arrivalPhoto from "../media/web_arrival.png";
 const HERO_PHOTOS = [
   { src: pictureThisPhoto, alt: "Picture This guest activity", focus: "center" },
   { src: kindnessStationPhoto, alt: "Kindness Station guest activity", focus: "center" },
-  { src: arrivalPhoto, alt: "Guess the Arrival Day guest activity", focus: "center" },
+  { src: arrivalPhoto, alt: "Guess the Arrival guest activity", focus: "center" },
 ];
 
 // Same two buckets and the same supporting copy as the Package Builder's

@@ -681,7 +681,7 @@ export default function Home({ navigate }) {
           style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
           role="dialog"
           aria-modal="true"
-          aria-label="Guess the Arrival Day"
+          aria-label="Guess the Arrival"
           onClick={() => setShowArrivalModal(false)}
         >
           <div
@@ -699,7 +699,7 @@ export default function Home({ navigate }) {
             </button>
             <img
               src={guessArrivalAddon.photoUrl}
-              alt="Guess the Arrival Day prediction website"
+              alt="Guess the Arrival personalized guessing page"
               className="mx-auto w-full max-w-[220px]"
               style={{ background: "transparent" }}
             />
@@ -709,6 +709,12 @@ export default function Home({ navigate }) {
             >
               {guessArrivalAddon.name}
             </h2>
+            <p
+              className="mt-1.5 text-sm font-semibold italic"
+              style={{ ...fonts.bodyFont, color: palette.accent }}
+            >
+              {guessArrivalAddon.tagline}
+            </p>
             <p
               className="mt-3 text-sm leading-relaxed"
               style={{ ...fonts.bodyFont, color: palette.ink }}
@@ -784,8 +790,8 @@ export default function Home({ navigate }) {
                       </span>
                     </div>
                     <p className="flex-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                      Want your guests guessing where Mom will be when she
-                      goes into labor?
+                      Your own private, personalized digital shower experience. Guests get their own page to guess
+                      the date, the time, and more, then watch the live board update as the big day gets closer.
                     </p>
                     <p
                       className="mt-3 text-xs font-semibold tracking-[0.1em] underline underline-offset-4"

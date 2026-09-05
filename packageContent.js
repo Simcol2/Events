@@ -20,7 +20,6 @@ import {
   Aperture,
   Moon,
   Gift,
-  Lightbulb,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -592,32 +591,6 @@ export const SETUP_ONLY_ITEMS = [
     },
   },
   {
-    id: "babyPredictions",
-    icon: Lightbulb,
-    copy: {
-      default: {
-        name: "Baby Predictions",
-        tagline: "Who do you think baby will become?",
-        description:
-          "Guests make predictions about baby's future, from personality and interests to first words, future hobbies, and the little things they think will make baby uniquely themselves.",
-      },
-    },
-    photos: { default: null },
-    details: {
-      summary: "A prediction card for every guest, capturing what everyone imagined for baby before they got to know who baby would become.",
-      howItWorks: [
-        "Guests fill out a prediction card during the celebration.",
-        "They guess baby's personality, interests, and future hobbies.",
-        "Cards are collected and kept for the family.",
-        "You get to compare notes as baby grows up.",
-      ],
-      goodToKnow: [
-        "Takes about 5 minutes per guest.",
-        "Pairs well with the Time Capsule.",
-      ],
-    },
-  },
-  {
     id: "photoChallenge",
     icon: Aperture,
     copy: {
@@ -665,7 +638,7 @@ export const SETUP_ONLY_ITEMS = [
 // Baby Shower is the only event type with two 3-pick pools; every other
 // event type uses a single 4-pick pool plus the separate Playful Add-On
 // step (see PLAYFUL_ADDON_IDS below).
-export const PLAY_CONNECT_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight", "kindnessStation", "babyPredictions"];
+export const PLAY_CONNECT_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight", "kindnessStation"];
 export const CREATE_KEEP_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "nurseryRhyme"];
 export const ENGAGEMENT_POOL_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
 export const NEUTRAL_POOL_IDS = ["pictureThis", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
@@ -722,24 +695,27 @@ export const ADDONS = [
   {
     id: "guessArrival",
     icon: Sparkles,
-    name: "Guess the Arrival Day",
-    tagline: "When will baby make their grand entrance?",
+    name: "Guess the Arrival",
+    tagline: "The baby shower game that keeps going after the shower.",
     description:
-      "Guests make their best guess on a personalized online game: the date, the time, and even what Mom will be doing when it all begins.",
-    price: 150,
+      "Your own private digital baby shower experience, personalized down to the colours. Every guest gets their own page to guess the date, the time, where Mom will be, and who she'll be with, then watches the live board update as everyone else weighs in. You get a private host dashboard to manage it all and reveal who got closest when baby actually arrives.",
+    price: 149,
     photoUrl: arrivalPhoto,
     fit: "contain",
     details: {
-      summary: "An online guessing game for when baby will actually arrive.",
+      summary: "Your own private digital baby shower experience, built around one question: when will baby actually arrive?",
       howItWorks: [
-        "We build a private, personalized guessing page.",
-        "Guests submit the date, time, and even what Mom might be doing.",
-        "The page updates live once labor starts.",
-        "Winner gets bragging rights when baby arrives.",
+        "Every guest gets their own link to a personalized Guess the Arrival page, branded with baby's name, your shower colours, and a custom hero image.",
+        "They guess the date, the time, where Mom will be when labor begins, and who she'll be with, plus an optional private message just for Mom.",
+        "The live guessing board shows every guest's answers in real time, so everyone can see how they stack up.",
+        "Guests can sign up for email reminders as the due date gets closer.",
+        "You get a private host dashboard to manage every guess, enter the real arrival date, and reveal the winner with a crowning moment once baby is here.",
       ],
       goodToKnow: [
-        "Link works on any phone or computer.",
-        "Stays live until baby actually arrives.",
+        "Fully personalized: baby's name, parents' names, due date, a custom welcome message, and even your own page name, never a generic third-party website.",
+        "Add optional trivia or extra guessing games to keep guests engaged all the way through the reveal.",
+        "Works on any phone or computer, no app to download.",
+        "Stays live from the shower until the actual reveal.",
       ],
     },
   },
