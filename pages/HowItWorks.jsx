@@ -82,7 +82,7 @@ export default function HowItWorks() {
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
         <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
         <Sparkles className="absolute bottom-8 left-10 opacity-40" size={16} color={palette.gold} />
-        <p className="text-xs font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+        <p className="text-sm font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A SLICE OF G EVENTS
         </p>
         <h1 className="mt-3 text-5xl sm:text-6xl font-bold" style={{ ...fonts.displayFont, color: palette.gold }}>
@@ -114,7 +114,7 @@ export default function HowItWorks() {
                 <h3 className="text-lg font-bold leading-tight" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
                   {item.q}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                <p className="mt-2 text-base leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
                   {item.a}
                 </p>
               </div>

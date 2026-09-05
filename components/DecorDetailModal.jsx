@@ -42,7 +42,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
             <img src={photos[activePhoto] || photos[0]} alt={item.name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <span className="font-[Jost] text-[10px] tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+              <span className="font-[Jost] text-xs tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
             </div>
           )}
           {photos.length > 1 && (
@@ -67,25 +67,25 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
         </div>
 
         <div className="px-6 py-8 sm:px-8">
-          <div className="font-[Jost] text-[9px] font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
+          <div className="font-[Jost] text-xs font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
             {tags.length ? tags.join(" · ") : "Decor"}
           </div>
           <h2 className="mt-1 font-['Cormorant_Garamond'] text-3xl font-semibold text-[#4E5A44]">{item.name}</h2>
-          {item.size && <div className="mt-2 font-[Jost] text-xs text-[#8C846F]">{item.size}</div>}
+          {item.size && <div className="mt-2 font-[Jost] text-sm text-[#8C846F]">{item.size}</div>}
           {item.description && (
-            <p className="mt-4 font-[Jost] text-sm leading-6 text-[#5C5645]">{item.description}</p>
+            <p className="mt-4 font-[Jost] text-base leading-6 text-[#5C5645]">{item.description}</p>
           )}
 
           <div className="mt-6 space-y-3 border-t border-[#E4DCC8] pt-5">
             {isPurchasable && (
               <div className="flex items-center justify-between">
-                <span className="font-[Jost] text-sm font-medium text-[#B8935A]">BUY ${item.purchase_price}</span>
+                <span className="font-[Jost] text-base font-medium text-[#B8935A]">BUY ${item.purchase_price}</span>
                 {outOfStock ? (
-                  <span className="font-[Jost] text-[10px] tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
+                  <span className="font-[Jost] text-xs tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
                 ) : (
                   <button
                     onClick={() => onBuy?.(item)}
-                    className="rounded-full bg-[#4E5A44] px-5 py-2.5 font-[Jost] text-[10px] font-semibold tracking-[0.16em] text-white"
+                    className="rounded-full bg-[#4E5A44] px-5 py-2.5 font-[Jost] text-xs font-semibold tracking-[0.16em] text-white"
                   >
                     PURCHASE
                   </button>
@@ -95,10 +95,10 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
 
             {isRentable && !outOfStock && (
               <div className="flex items-center justify-between">
-                <span className="font-[Jost] text-sm font-medium text-[#B8935A]">RENT ${item.rental_price} / EVENT</span>
+                <span className="font-[Jost] text-base font-medium text-[#B8935A]">RENT ${item.rental_price} / EVENT</span>
                 <button
                   onClick={() => onRent?.(item)}
-                  className="rounded-full border border-[#4E5A44] px-5 py-2.5 font-[Jost] text-[10px] font-semibold tracking-[0.16em] text-[#4E5A44]"
+                  className="rounded-full border border-[#4E5A44] px-5 py-2.5 font-[Jost] text-xs font-semibold tracking-[0.16em] text-[#4E5A44]"
                 >
                   CHECK DATES
                 </button>
@@ -106,13 +106,13 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
             )}
 
             {!isPurchasable && !isRentable && (
-              <p className="font-[Jost] text-sm text-[#B8935A]">Contact us to inquire about this piece.</p>
+              <p className="font-[Jost] text-base text-[#B8935A]">Contact us to inquire about this piece.</p>
             )}
           </div>
 
           <button
             onClick={() => navigate?.("/package-builder")}
-            className="mt-3 w-full border border-[#B8935A] py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]"
+            className="mt-3 w-full border border-[#B8935A] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]"
           >
             BUILD MY EXPERIENCE
           </button>

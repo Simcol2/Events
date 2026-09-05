@@ -4,16 +4,16 @@ import { supabase } from "../supabaseClient";
 import { useEventDate } from "../EventDateContext";
 
 const inputClass =
-  "w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Jost] text-sm text-[#3A342A] outline-none focus:border-[#4E5A44]";
+  "w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Jost] text-base text-[#3A342A] outline-none focus:border-[#4E5A44]";
 
 function LineRow({ label, price }) {
   return (
     <div className="flex items-center justify-between gap-3 py-1">
-      <span className="font-[Jost] text-xs text-[#5C5645]">{label}</span>
+      <span className="font-[Jost] text-sm text-[#5C5645]">{label}</span>
       {price > 0 ? (
-        <span className="font-[Jost] text-xs font-medium text-[#8C846F]">+${price.toLocaleString()}</span>
+        <span className="font-[Jost] text-sm font-medium text-[#8C846F]">+${price.toLocaleString()}</span>
       ) : (
-        <span className="font-[Jost] text-xs font-medium text-[#8C846F]">Included</span>
+        <span className="font-[Jost] text-sm font-medium text-[#8C846F]">Included</span>
       )}
     </div>
   );
@@ -85,37 +85,37 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
         {submitted ? (
           <div className="pt-4 text-center">
             <h2 className="font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Request received</h2>
-            <p className="mx-auto mt-3 max-w-xs font-[Jost] text-sm leading-6 text-[#8C846F]">
+            <p className="mx-auto mt-3 max-w-xs font-[Jost] text-base leading-6 text-[#8C846F]">
               We'll confirm availability for everything in your experience and follow up by email to arrange
               payment.
             </p>
             <button
               onClick={onClose}
-              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-[11px] font-semibold tracking-[0.2em] text-white"
+              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white"
             >
               CLOSE
             </button>
           </div>
         ) : (
           <>
-            <p className="font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#B8935A]">YOUR EXPERIENCE IS READY</p>
+            <p className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#B8935A]">YOUR EXPERIENCE IS READY</p>
             <h2 className="mt-1 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
               {summary?.eventTypeLabel}
             </h2>
             {eventDate && (
-              <p className="mt-1 font-[Jost] text-xs text-[#8C846F]">For your event on {eventDate}</p>
+              <p className="mt-1 font-[Jost] text-sm text-[#8C846F]">For your event on {eventDate}</p>
             )}
 
             {summary && (
               <div className="mt-5 space-y-4 border-t border-[#E4DCC8] pt-4">
                 <div>
-                  <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">STARTING PRICE</p>
+                  <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">STARTING PRICE</p>
                   <LineRow label={summary.eventTypeLabel} price={summary.startingPrice} />
                 </div>
 
                 {summary.experiences?.length > 0 && (
                   <div>
-                    <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">EXPERIENCES</p>
+                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">EXPERIENCES</p>
                     {summary.experiences.map((e) => (
                       <LineRow key={e.name} label={e.name} price={e.included ? 0 : e.price} />
                     ))}
@@ -124,14 +124,14 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
 
                 {summary.servingDish && (
                   <div>
-                    <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">MAKE IT YOURS</p>
+                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">MAKE IT YOURS</p>
                     <LineRow label={summary.servingDish.name} price={summary.servingDish.price} />
                   </div>
                 )}
 
                 {summary.playful?.length > 0 && (
                   <div>
-                    <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">PLAYFUL ADD-ONS</p>
+                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">PLAYFUL ADD-ONS</p>
                     {summary.playful.map((p) => (
                       <LineRow key={p.name} label={p.name} price={p.price} />
                     ))}
@@ -140,14 +140,14 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
 
                 {summary.guestGift && (
                   <div>
-                    <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">GUEST GIFT</p>
+                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">GUEST GIFT</p>
                     <LineRow label={summary.guestGift.name} price={summary.guestGift.price} />
                   </div>
                 )}
 
                 {summary.addons?.length > 0 && (
                   <div>
-                    <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">ADD-ONS</p>
+                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">ADD-ONS</p>
                     {summary.addons.map((a) => (
                       <LineRow key={a.name} label={a.name} price={a.price} />
                     ))}
@@ -156,14 +156,14 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
 
                 {summary.serviceStyle && (
                   <div>
-                    <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">SERVICE</p>
+                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">SERVICE</p>
                     <LineRow label={summary.serviceStyle.name} price={summary.serviceStyle.price} />
                   </div>
                 )}
 
                 {summary.display && (
                   <div>
-                    <p className="font-[Jost] text-[10px] font-semibold tracking-[0.15em] text-[#4E5A44]">MEMORY DISPLAY</p>
+                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">MEMORY DISPLAY</p>
                     <LineRow
                       label={summary.display.setup ? `${summary.display.name} - ${summary.display.setup}` : summary.display.name}
                       price={summary.display.price}
@@ -172,11 +172,11 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
                 )}
 
                 <div className="border-t border-[#E4DCC8] pt-3">
-                  <div className="flex items-center justify-between font-[Jost] text-xs text-[#8C846F]">
+                  <div className="flex items-center justify-between font-[Jost] text-sm text-[#8C846F]">
                     <span>Subtotal</span>
                     <span>${subtotal?.toLocaleString()}</span>
                   </div>
-                  <div className="mt-1 flex items-center justify-between font-[Jost] text-xs text-[#8C846F]">
+                  <div className="mt-1 flex items-center justify-between font-[Jost] text-sm text-[#8C846F]">
                     <span>HST (13%)</span>
                     <span>${hst?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
@@ -188,7 +188,7 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
               </div>
             )}
 
-            <p className="mt-5 font-[Jost] text-xs leading-5 text-[#8C846F]">
+            <p className="mt-5 font-[Jost] text-sm leading-5 text-[#8C846F]">
               Submit your experience and we'll review the details and help you take the next step.
             </p>
 
@@ -215,12 +215,12 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
               />
             </div>
 
-            {submitError && <p className="mt-3 font-[Jost] text-xs text-red-700">{submitError}</p>}
+            {submitError && <p className="mt-3 font-[Jost] text-sm text-red-700">{submitError}</p>}
 
             <button
               disabled={!canSubmit}
               onClick={handleSubmit}
-              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-[11px] font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
               {submitting ? "SENDING..." : "REQUEST MY EXPERIENCE"}
             </button>

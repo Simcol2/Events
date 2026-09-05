@@ -22,7 +22,7 @@ export default function SiteHeader({ current, navigate, nav }) {
 
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <button onClick={() => go("/")} className="group text-left">
-          <div className="font-[Jost] text-[9px] font-semibold tracking-[0.42em]" style={{ color: palette.gold }}>
+          <div className="font-[Jost] text-xs font-semibold tracking-[0.42em]" style={{ color: palette.gold }}>
             A SLICE OF G
           </div>
           <div
@@ -41,7 +41,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                 <button
                   key={path}
                   onClick={() => go(path)}
-                  className="rounded-full px-5 py-2.5 font-[Jost] text-[11px] font-semibold tracking-[0.2em] text-white transition-transform hover:-translate-y-0.5"
+                  className="rounded-full px-5 py-2.5 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white transition-transform hover:-translate-y-0.5"
                   style={{ background: palette.primaryDeep }}
                 >
                   {label.toUpperCase()}
@@ -52,7 +52,7 @@ export default function SiteHeader({ current, navigate, nav }) {
               <button
                 key={path}
                 onClick={() => go(path)}
-                className="relative py-2 font-[Jost] text-[11px] font-medium tracking-[0.2em] transition-colors"
+                className="relative py-2 font-[Jost] text-xs font-medium tracking-[0.2em] transition-colors"
                 style={{ color: active ? palette.primaryDeep : palette.muted }}
               >
                 {label.toUpperCase()}
@@ -84,7 +84,7 @@ export default function SiteHeader({ current, navigate, nav }) {
               <button
                 key={path}
                 onClick={() => go(path)}
-                className={cta ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-[11px] font-semibold tracking-[0.22em] text-white" : "py-4 text-left font-[Jost] text-[11px] font-medium tracking-[0.22em]"}
+                className={cta ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-xs font-semibold tracking-[0.22em] text-white" : "py-4 text-left font-[Jost] text-xs font-medium tracking-[0.22em]"}
                 style={cta ? { background: palette.primaryDeep } : { borderBottom: `1px solid ${palette.line}CC`, color: palette.primaryDeep }}
               >
                 {label.toUpperCase()}

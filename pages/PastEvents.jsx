@@ -65,14 +65,14 @@ export default function PastEvents({ navigate }) {
                       style={{ background: `${palette.primary}0D`, border: `1.5px dashed ${palette.line}` }}
                     >
                       <ImagePlus size={20} color={palette.muted} />
-                      <span className="px-4 text-center text-xs" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      <span className="px-4 text-center text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
                         Photo coming soon
                       </span>
                     </div>
-                    <p className="mt-3 text-xs font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                    <p className="mt-3 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                       {beat.label}
                     </p>
-                    <p className="mt-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                    <p className="mt-1 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
                       {beat.body}
                     </p>
                   </div>
@@ -83,12 +83,12 @@ export default function PastEvents({ navigate }) {
         </div>
 
         <div className="mt-20 text-center" style={{ borderTop: `1px solid ${palette.line}`, paddingTop: "40px" }}>
-          <p className="text-sm mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+          <p className="text-base mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
             Want your celebration featured here next?
           </p>
           <button
             onClick={() => navigate("/package-builder")}
-            className="inline-flex items-center gap-3 px-7 py-3.5 text-[10px] font-semibold tracking-[0.2em] text-white"
+            className="inline-flex items-center gap-3 px-7 py-3.5 text-xs font-semibold tracking-[0.2em] text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
             BUILD MY EXPERIENCE <ArrowRight size={15} />

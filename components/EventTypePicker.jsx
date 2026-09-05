@@ -73,7 +73,7 @@ export default function EventTypePicker() {
         <div className="px-6 pb-8 pt-10 text-center sm:px-12">
           <Heart className="mx-auto" size={22} strokeWidth={1.4} style={{ color: palette.gold }} />
           <p
-            className="mt-4 text-[10px] font-semibold tracking-[0.3em]"
+            className="mt-4 text-xs font-semibold tracking-[0.3em]"
             style={{ ...fonts.bodyFont, color: palette.gold }}
           >
             LET'S START WITH THE CELEBRATION
@@ -85,7 +85,7 @@ export default function EventTypePicker() {
             What are you celebrating?
           </h2>
           <p
-            className="mx-auto mt-3 max-w-md text-sm leading-6"
+            className="mx-auto mt-3 max-w-md text-base leading-6"
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
             Choose your event and we'll show you the experiences designed for it.
@@ -118,7 +118,7 @@ export default function EventTypePicker() {
 
           <button
             onClick={closePicker}
-            className="mt-7 text-xs font-semibold tracking-[0.15em] underline underline-offset-4"
+            className="mt-7 text-sm font-semibold tracking-[0.15em] underline underline-offset-4"
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
             NOT SURE YET? SKIP FOR NOW

@@ -16,14 +16,14 @@ export default function EventTypeBar() {
       style={{ background: palette.primaryDeep }}
     >
       <span
-        className="text-[10px] tracking-[0.15em]"
+        className="text-xs tracking-[0.15em]"
         style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}
       >
         PLANNING A <strong style={{ color: palette.gold }}>{eventType.shortLabel.toUpperCase()}</strong>?
       </span>
       <button
         onClick={openPicker}
-        className="text-[10px] font-semibold tracking-[0.15em] underline underline-offset-4"
+        className="text-xs font-semibold tracking-[0.15em] underline underline-offset-4"
         style={{ ...fonts.bodyFont, color: "#FFFFFF" }}
       >
         CHANGE

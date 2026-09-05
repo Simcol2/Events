@@ -27,6 +27,8 @@ import babyTriviaPhoto from "./media/babytrivia.png";
 import kindnessStationPhoto from "./media/file_00000000dcd4822fb648d37e9526b4b3.png";
 import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.png";
 import wallPuzzleShowerPhoto from "./media/wallpuzzle-babyshower.png";
+import wallPuzzleShowerFramedPhoto from "./media/wallpuzzle-babyshower-framed.png";
+import nurseryRhymeKeepsakePhoto from "./media/nurseryrhyme-keepsake.png";
 import wallPuzzleEngagementPhoto from "./media/file_00000000a204822f9ab953201c8b7043.png";
 import ohBabyBlocksPhoto from "./media/oh-baby-blocks-tablescape.png";
 import ohBabyTrayPhoto from "./media/oh-sweet-baby-tray.png";
@@ -356,43 +358,43 @@ export const MAIN_PACKAGE_ITEMS = [
         name: "Custom Wall Puzzle",
         tagline: "Help us put it together.",
         description:
-          "A giant portrait puzzle guests gradually assemble throughout the celebration, piece by piece, together, becoming a keepsake to hang afterward.",
+          "A giant portrait puzzle guests gradually assemble throughout the celebration, piece by piece, together. A smaller framed print of the finished piece becomes your keepsake, and you're welcome to keep the full-size assembled puzzle too.",
       },
       babyShower: {
         name: "Put Baby Together",
         tagline: "Everyone adds a piece. Together, you create baby.",
         description:
-          "A giant portrait of baby becomes an interactive puzzle that guests work together to complete throughout the shower. The finished artwork becomes a keepsake that can live on in baby's nursery.",
+          "A giant portrait of baby becomes an interactive puzzle that guests work together to complete throughout the shower. A smaller framed print of the finished piece becomes baby's keepsake for the nursery, and you're welcome to keep the full-size assembled puzzle too.",
       },
       engagement: {
         name: "Custom Wall Puzzle",
         tagline: "Everyone adds a piece. Together, you create the picture.",
         description:
-          "A meaningful photo becomes an interactive puzzle that guests assemble throughout the celebration. The finished piece becomes wall art for the home.",
+          "A meaningful photo becomes an interactive puzzle that guests assemble throughout the celebration. A smaller framed print of the finished piece becomes wall art for the home, and you're welcome to keep the full-size assembled puzzle too.",
       },
       milestoneBirthday: {
         name: "Piece By Piece",
         tagline: "A portrait guests build together.",
         description:
-          "A giant portrait puzzle guests gradually assemble throughout the party, becoming a one-of-a-kind keepsake to hang afterward.",
+          "A giant portrait puzzle guests gradually assemble throughout the party. A smaller framed print of the finished piece becomes a one-of-a-kind keepsake, and you're welcome to keep the full-size assembled puzzle too.",
       },
       birthday: {
         name: "Custom Wall Puzzle",
         tagline: "Help us put it together.",
         description:
-          "A giant portrait puzzle guests gradually assemble throughout the party, a keepsake built by everyone who came.",
+          "A giant portrait puzzle guests gradually assemble throughout the party. A smaller framed print of the finished piece becomes a keepsake built by everyone who came, and you're welcome to keep the full-size assembled puzzle too.",
       },
       holiday: {
         name: "Custom Wall Puzzle",
         tagline: "A picture worth piecing together.",
         description:
-          "A giant seasonal or family portrait puzzle guests gradually assemble throughout the celebration.",
+          "A giant seasonal or family portrait puzzle guests gradually assemble throughout the celebration. A smaller framed print of the finished piece becomes your keepsake, and you're welcome to keep the full-size assembled puzzle too.",
       },
       specialMoment: {
         name: "Put Together",
         tagline: "Your love. Your people. One beautiful picture.",
         description:
-          "A giant portrait puzzle of the two of you, guests gradually assemble it throughout the celebration, a keepsake made by the people who celebrate your love.",
+          "A giant portrait puzzle of the two of you, guests gradually assemble it throughout the celebration. A smaller framed print of the finished piece becomes a keepsake made by the people who celebrate your love, and you're welcome to keep the full-size assembled puzzle too.",
       },
     },
     photos: {
@@ -402,7 +404,7 @@ export const MAIN_PACKAGE_ITEMS = [
       // baby portrait rather than a real one (there's no baby to photograph
       // yet).
       default: null,
-      babyShower: wallPuzzleShowerPhoto,
+      babyShower: [wallPuzzleShowerPhoto, wallPuzzleShowerFramedPhoto],
       engagement: null,
       milestoneBirthday: wallPuzzleBabyPhoto,
       birthday: null,
@@ -418,9 +420,9 @@ export const MAIN_PACKAGE_ITEMS = [
         "Guests decorate, create, or contribute individual pieces.",
         "Once assembled, the pieces become one completed artwork the family keeps.",
       ],
-      whatsIncluded: ["Art materials", "Individual guest pieces", "Assembly/display materials", "Instructions", "Finished display setup"],
+      whatsIncluded: ["Art materials", "Individual guest pieces", "Assembly/display materials", "Instructions", "A smaller framed print of the finished piece", "Finished display setup"],
       whatGuestsDo: "Create their individual contribution and add it to the larger piece.",
-      whatTheFamilyKeeps: "The completed collaborative artwork.",
+      whatTheFamilyKeeps: "A smaller framed print of the finished piece, made to keep. The full-size assembled puzzle is yours to keep too, if you'd like it.",
       personalization: ["Baby's name", "Colours", "Theme", "Custom artwork concept", "Custom wording"],
       spaceRequired: "Medium tabletop/work area.",
       approximateDuration: "10-30 minutes depending on group size.",
@@ -704,7 +706,7 @@ export function resolveExperienceItem(id, eventTypeId) {
       name: addon.name,
       tagline: addon.tagline,
       description: addon.description,
-      photoUrls: addon.photoUrl ? [addon.photoUrl] : [],
+      photoUrls: addon.photoUrls || (addon.photoUrl ? [addon.photoUrl] : []),
       details: addon.details,
     };
   }
@@ -819,24 +821,25 @@ export const ADDONS = [
     name: "Custom Art Piece",
     tagline: "A piece of art that holds a story only you could tell.",
     description:
-      "A custom framed piece created from the photos, lyrics, or words that matter most. It becomes meaningful decor during the celebration and a permanent keepsake afterward.",
+      "A custom framed piece made ahead of time from the photos, lyrics, or words that matter most. It's displayed as decor during the celebration, then becomes a gift for Mom to keep afterward.",
     price: 175,
     photoUrl: nurseryRhymePhoto,
+    photoUrls: [nurseryRhymePhoto, nurseryRhymeKeepsakePhoto],
     details: {
-      stats: { bestFor: "Design-conscious and sentimental hosts", length: "Throughout event", guests: "Everyone", createsKeepsake: "Yes", energy: 3 },
-      whatItIs: "A collaborative guest art experience designed around the family's event, style, and story.",
+      stats: { bestFor: "Design-conscious and sentimental hosts", length: "Throughout event", guests: "On display for everyone", createsKeepsake: "Yes", energy: 1 },
+      whatItIs: "A custom-made art piece, created ahead of the event from the photos, lyrics, or words that matter most to you.",
       howItWorks: [
-        "Share the photos, lyrics, or words that matter most to you.",
-        "We design a custom piece around them.",
-        "Guests contribute to the shared artwork through a guided creative activity.",
-        "It's professionally printed and framed, ready to display at your event.",
+        "The host submits the photos, lyrics, or words that matter most, ahead of the event.",
+        "We design and create a custom piece around them.",
+        "It arrives ready before your celebration and is displayed as part of your decor.",
+        "Afterward, it's a keepsake gift for Mom to take home.",
       ],
-      whatsIncluded: ["Custom art concept", "Materials", "Guest participation components", "Instructions", "Display materials"],
-      whatGuestsDo: "Add their individual contribution to the artwork.",
-      whatTheFamilyKeeps: "The completed original artwork.",
+      whatsIncluded: ["Custom art concept", "Materials", "Professional printing and framing", "Display setup at your event"],
+      whatGuestsDo: "Enjoy it as part of the event's decor.",
+      whatTheFamilyKeeps: "The finished piece itself, a gift for Mom that doubles as decor for the celebration.",
       personalization: ["Artwork style", "Colours", "Theme", "Names", "Date", "Custom wording"],
-      spaceRequired: "Medium tabletop/work area.",
-      approximateDuration: "Available throughout the event.",
+      spaceRequired: "Wall or tabletop display space.",
+      approximateDuration: "Displayed throughout the event.",
       optionalAddOns: ["Premium framing", "Larger artwork", "Custom illustration"],
     },
   },

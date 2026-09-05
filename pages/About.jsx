@@ -11,7 +11,7 @@ export default function About({ navigate }) {
     <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
         <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
-        <p className="text-xs font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+        <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           ABOUT
         </p>
         <h1 className="mx-auto mt-3 max-w-2xl text-4xl sm:text-5xl font-bold leading-tight" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>
@@ -45,7 +45,7 @@ export default function About({ navigate }) {
         <div className="mt-12 text-center">
           <button
             onClick={() => navigate("/package-builder")}
-            className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+            className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
             BUILD MY EXPERIENCE

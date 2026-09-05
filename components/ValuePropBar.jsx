@@ -15,7 +15,7 @@ export default function ValuePropBar() {
       style={{ background: palette.surface, borderBottom: `1px solid ${palette.line}` }}
     >
       <span
-        className="text-[10px] sm:text-[11px] font-semibold tracking-[0.18em]"
+        className="text-xs sm:text-xs font-semibold tracking-[0.18em]"
         style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
       >
         INTERACTIVE GUEST EXPERIENCES
@@ -24,7 +24,7 @@ export default function ValuePropBar() {
         &middot;
       </span>
       <span
-        className="text-[10px] sm:text-[11px] font-semibold tracking-[0.18em]"
+        className="text-xs sm:text-xs font-semibold tracking-[0.18em]"
         style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
       >
         CUSTOM KEEPSAKES

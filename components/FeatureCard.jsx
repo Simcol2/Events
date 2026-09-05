@@ -15,13 +15,13 @@ function CardStats({ stats, palette, fonts }) {
   return (
     <div className="mb-2 space-y-0.5" style={{ ...fonts.bodyFont }}>
       {rows.map(([label, value]) => (
-        <p key={label} className="text-xs">
+        <p key={label} className="text-sm">
           <span className="font-semibold" style={{ color: palette.primaryDeep }}>{label}:</span>{" "}
           <span style={{ color: palette.muted }}>{value}</span>
         </p>
       ))}
       {stats.energy > 0 && (
-        <p className="text-xs">
+        <p className="text-sm">
           <span className="font-semibold" style={{ color: palette.primaryDeep }}>Energy:</span>{" "}
           <span style={{ color: palette.accent, letterSpacing: "0.05em" }}>
             {"★".repeat(Math.max(0, Math.min(5, stats.energy)))}
@@ -95,15 +95,15 @@ export default function FeatureCard({
             </h3>
           </div>
           {priceLabel && (
-            <span className="text-sm font-bold flex-shrink-0" style={{ ...fonts.displayFont, color: palette.accent }}>
+            <span className="text-base font-bold flex-shrink-0" style={{ ...fonts.displayFont, color: palette.accent }}>
               {priceLabel}
             </span>
           )}
         </div>
-        <p className="text-sm italic mb-2" style={{ ...fonts.bodyFont, color: palette.muted }}>
+        <p className="text-base italic mb-2" style={{ ...fonts.bodyFont, color: palette.muted }}>
           {tagline}
         </p>
-        <p className="text-sm leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
+        <p className="text-base leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
           {description}
         </p>
         <CardStats stats={details?.stats} palette={palette} fonts={fonts} />
@@ -113,7 +113,7 @@ export default function FeatureCard({
               e.stopPropagation();
               setShowDetail(true);
             }}
-            className="mt-3 self-start text-xs font-semibold tracking-[0.08em] underline underline-offset-4"
+            className="mt-3 self-start text-sm font-semibold tracking-[0.08em] underline underline-offset-4"
             style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
           >
             {viewMoreLabel}

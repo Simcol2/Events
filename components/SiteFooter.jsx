@@ -17,7 +17,7 @@ function NewsletterSignup({ palette, fonts }) {
 
   if (submitted) {
     return (
-      <p className="mt-4 text-sm" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+      <p className="mt-4 text-base" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
         Thanks, you're on the list.
       </p>
     );
@@ -31,12 +31,12 @@ function NewsletterSignup({ palette, fonts }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Your email"
-        className="w-full rounded-sm border bg-transparent px-3 py-2.5 text-sm outline-none"
+        className="w-full rounded-sm border bg-transparent px-3 py-2.5 text-base outline-none"
         style={{ ...fonts.bodyFont, borderColor: palette.line, color: palette.ink }}
       />
       <button
         type="submit"
-        className="flex-shrink-0 rounded-sm px-4 py-2.5 text-xs font-semibold tracking-[0.15em] text-white"
+        className="flex-shrink-0 rounded-sm px-4 py-2.5 text-sm font-semibold tracking-[0.15em] text-white"
         style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
       >
         JOIN
@@ -53,7 +53,7 @@ export default function SiteFooter({ navigate }) {
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
         <div className="grid gap-10 md:grid-cols-[1.2fr_.7fr_.7fr_.9fr]">
           <div>
-            <div className="text-xs font-semibold tracking-[0.4em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.4em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
               A SLICE OF G
             </div>
             <div className="mt-1 text-4xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
@@ -62,7 +62,7 @@ export default function SiteFooter({ navigate }) {
             <p className="mt-4 max-w-md text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Interactive event experiences that become keepsakes. You bring the people, we create the experience.
             </p>
-            <div className="mt-5 space-y-2 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <div className="mt-5 space-y-2 text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
               <div className="flex items-center gap-2">
                 <MapPin size={14} color={palette.gold} />
                 Toronto & the GTA
@@ -75,7 +75,7 @@ export default function SiteFooter({ navigate }) {
           </div>
 
           <div>
-            <div className="text-xs font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
               EXPLORE
             </div>
             <div className="mt-4 space-y-3 text-base" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
@@ -92,7 +92,7 @@ export default function SiteFooter({ navigate }) {
           </div>
 
           <div>
-            <div className="text-xs font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
               MORE
             </div>
             <div className="mt-4 space-y-3 text-base" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
@@ -102,17 +102,17 @@ export default function SiteFooter({ navigate }) {
           </div>
 
           <div>
-            <div className="text-xs font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
               STAY IN THE LOOP
             </div>
-            <p className="mt-4 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="mt-4 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               New experiences, seasonal ideas, and the occasional offer.
             </p>
             <NewsletterSignup palette={palette} fonts={fonts} />
           </div>
         </div>
 
-        <div className="mt-12 pt-5 text-xs tracking-[0.12em]" style={{ ...fonts.bodyFont, color: palette.muted, borderTop: `1px solid ${palette.line}` }}>
+        <div className="mt-12 pt-5 text-sm tracking-[0.12em]" style={{ ...fonts.bodyFont, color: palette.muted, borderTop: `1px solid ${palette.line}` }}>
           © {new Date().getFullYear()} A Slice of G Events
         </div>
       </div>

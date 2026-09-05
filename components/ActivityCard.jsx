@@ -10,7 +10,7 @@ export default function ActivityCard({ activity, number, featured = false }) {
         </div>
 
         <div>
-          <div className="font-[Jost] text-[9px] font-semibold tracking-[0.22em] text-[#B8935A]">
+          <div className="font-[Jost] text-xs font-semibold tracking-[0.22em] text-[#B8935A]">
             {activity.tagline}
           </div>
           <h2 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-none text-[#4E5A44]">
@@ -19,14 +19,14 @@ export default function ActivityCard({ activity, number, featured = false }) {
           <div className="mt-2 font-['Cormorant_Garamond'] text-xl italic text-[#817A68]">
             {activity.subtitle}
           </div>
-          <p className="mt-4 max-w-2xl font-[Jost] text-sm leading-7 text-[#5C5645]">
+          <p className="mt-4 max-w-2xl font-[Jost] text-base leading-7 text-[#5C5645]">
             {activity.description}
           </p>
 
           {activity.stations && (
             <div className="mt-5 flex flex-wrap gap-2">
               {activity.stations.map((station) => (
-                <span key={station} className="border border-[#CFC7B1] px-3 py-1.5 font-[Jost] text-[9px] tracking-[0.12em] text-[#68775F]">
+                <span key={station} className="border border-[#CFC7B1] px-3 py-1.5 font-[Jost] text-xs tracking-[0.12em] text-[#68775F]">
                   {station.toUpperCase()}
                 </span>
               ))}

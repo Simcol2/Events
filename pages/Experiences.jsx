@@ -17,10 +17,10 @@ function ExperienceCard({ item, palette, fonts }) {
           {item.name}
         </h3>
       </div>
-      <p className="mt-2 text-sm italic" style={{ ...fonts.bodyFont, color: palette.gold }}>
+      <p className="mt-2 text-base italic" style={{ ...fonts.bodyFont, color: palette.gold }}>
         {item.tagline}
       </p>
-      <p className="mt-2 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+      <p className="mt-2 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
         {item.description}
       </p>
     </div>
@@ -41,7 +41,7 @@ export default function Experiences({ navigate }) {
     <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
         <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
-        <p className="text-xs font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+        <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           EXPERIENCES
         </p>
         <h1 className="mt-3 text-4xl sm:text-6xl font-bold" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>
@@ -59,7 +59,7 @@ export default function Experiences({ navigate }) {
             <h2 className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
               {poolStep.label}
             </h2>
-            <p className="mt-1 mb-6 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="mt-1 mb-6 text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
               {poolStep.supportingCopy}
             </p>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -77,7 +77,7 @@ export default function Experiences({ navigate }) {
             <h2 className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
               Want Something Playful?
             </h2>
-            <p className="mt-1 mb-6 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="mt-1 mb-6 text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Add a game that gets everyone talking, laughing, and competing. Each playful add-on is +${PLAYFUL_ADDON_PRICE}.
             </p>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -93,7 +93,7 @@ export default function Experiences({ navigate }) {
         <div className="mt-4 text-center">
           <button
             onClick={() => navigate("/package-builder")}
-            className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+            className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
             BUILD MY EXPERIENCE <ArrowRight size={17} />

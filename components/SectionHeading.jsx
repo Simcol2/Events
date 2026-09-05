@@ -6,7 +6,7 @@ export default function SectionHeading({ eyebrow, title, subtitle, align = "cent
   return (
     <div className={centered ? "text-center" : "text-left"}>
       {eyebrow && (
-        <div className="font-[Jost] text-[10px] font-semibold tracking-[0.34em] text-[#B8935A]">
+        <div className="font-[Jost] text-xs font-semibold tracking-[0.34em] text-[#B8935A]">
           {eyebrow.toUpperCase()}
         </div>
       )}
@@ -19,7 +19,7 @@ export default function SectionHeading({ eyebrow, title, subtitle, align = "cent
         <span className="h-px w-10 bg-[#B8935A]" />
       </div>
       {subtitle && (
-        <p className={`mt-5 max-w-2xl font-[Jost] text-sm leading-7 text-[#716B5C] ${centered ? "mx-auto" : ""}`}>
+        <p className={`mt-5 max-w-2xl font-[Jost] text-base leading-7 text-[#716B5C] ${centered ? "mx-auto" : ""}`}>
           {subtitle}
         </p>
       )}

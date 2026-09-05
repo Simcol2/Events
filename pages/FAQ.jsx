@@ -64,7 +64,7 @@ function FAQItem({ item, palette, fonts }) {
         />
       </button>
       {open && (
-        <p className="pb-5 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+        <p className="pb-5 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
           {item.a}
         </p>
       )}
@@ -79,7 +79,7 @@ export default function FAQ() {
     <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
         <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
-        <p className="text-xs font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+        <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           FREQUENTLY ASKED QUESTIONS
         </p>
         <h1 className="mt-3 text-4xl sm:text-5xl font-bold" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>

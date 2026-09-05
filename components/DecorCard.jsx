@@ -67,25 +67,25 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="font-[Jost] text-[10px] tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+            <span className="font-[Jost] text-xs tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
           </div>
         )}
         {outOfStock && (
-          <div className="absolute left-3 top-3 bg-[#FAF6ED]/95 px-3 py-1.5 font-[Jost] text-[9px] font-semibold tracking-[0.16em] text-[#7B7464]">
+          <div className="absolute left-3 top-3 bg-[#FAF6ED]/95 px-3 py-1.5 font-[Jost] text-xs font-semibold tracking-[0.16em] text-[#7B7464]">
             OUT OF STOCK
           </div>
         )}
       </div>
 
       <div className="px-1 pb-3 pt-4">
-        <div className="font-[Jost] text-[9px] font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
+        <div className="font-[Jost] text-xs font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
           {tags.length ? tags.join(" · ") : "Decor"}
         </div>
         <h3 className="mt-1 font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">
           {displayName}
         </h3>
         {active.size && (
-          <div className="mt-2 font-[Jost] text-[10px] text-[#8C846F]">{active.size}</div>
+          <div className="mt-2 font-[Jost] text-xs text-[#8C846F]">{active.size}</div>
         )}
 
         {hasVariants && (
@@ -93,7 +93,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
             <select
               value={selectedId}
               onChange={(e) => setSelectedId(e.target.value)}
-              className="w-full appearance-none border border-[#D8D0BC] bg-white px-3 py-2 font-[Jost] text-xs text-[#3A342A] outline-none focus:border-[#4E5A44]"
+              className="w-full appearance-none border border-[#D8D0BC] bg-white px-3 py-2 font-[Jost] text-sm text-[#3A342A] outline-none focus:border-[#4E5A44]"
             >
               {variants.map((v) => (
                 <option key={v.id} value={v.id}>
@@ -108,18 +108,18 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
         <div className="mt-3 space-y-2 border-t border-[#E4DCC8] pt-3">
           {isPurchasable && (
             <div className="flex items-end justify-between">
-              <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
+              <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">
                 BUY ${active.purchase_price}
               </span>
               {outOfStock ? (
-                <span className="font-[Jost] text-[9px] tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
+                <span className="font-[Jost] text-xs tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
               ) : (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onBuy?.(active);
                   }}
-                  className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
+                  className="font-[Jost] text-xs font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
                 >
                   {active.quantity_owned} AVAILABLE - INQUIRE
                 </button>
@@ -129,7 +129,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
 
           {isRentable && !outOfStock && (
             <div className="flex items-end justify-between">
-              <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">
+              <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">
                 RENT ${active.rental_price} / EVENT
               </span>
               <button
@@ -137,7 +137,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
                   e.stopPropagation();
                   onRent?.(active);
                 }}
-                className="font-[Jost] text-[9px] font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
+                className="font-[Jost] text-xs font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
               >
                 CHECK DATES
               </button>
@@ -146,7 +146,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
 
           {!isPurchasable && !isRentable && (
             <div className="flex items-end justify-between">
-              <span className="font-[Jost] text-[11px] font-medium tracking-[0.08em] text-[#B8935A]">INQUIRE</span>
+              <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">INQUIRE</span>
             </div>
           )}
         </div>

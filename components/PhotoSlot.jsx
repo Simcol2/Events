@@ -60,7 +60,7 @@ export default function PhotoSlot({ photoKey, photoUrl, photoUrls, label, aspect
       style={{ background: `${palette.primary}0D`, borderBottom: `1.5px dashed ${palette.line}` }}
     >
       <ImagePlus size={20} color={palette.muted} />
-      <span className="text-xs text-center px-3" style={{ ...fonts.bodyFont, color: palette.muted }}>
+      <span className="text-sm text-center px-3" style={{ ...fonts.bodyFont, color: palette.muted }}>
         Photo coming soon
       </span>
     </div>

@@ -132,11 +132,11 @@ export default function Decor({ navigate }) {
         <div className="flex flex-col gap-5 border-b border-[#E4DCC8] pb-7">
           <div>
             <div className="mb-3 flex items-center justify-between">
-              <span className="font-[Jost] text-[10px] font-semibold tracking-[0.16em] text-[#4E5A44]">FILTER BY TAG</span>
+              <span className="font-[Jost] text-xs font-semibold tracking-[0.16em] text-[#4E5A44]">FILTER BY TAG</span>
               {selectedTags.length > 0 && (
                 <button
                   onClick={() => setSelectedTags([])}
-                  className="font-[Jost] text-[10px] font-medium tracking-[0.1em] text-[#8C846F] underline underline-offset-4"
+                  className="font-[Jost] text-xs font-medium tracking-[0.1em] text-[#8C846F] underline underline-offset-4"
                 >
                   CLEAR ALL
                 </button>
@@ -151,7 +151,7 @@ export default function Decor({ navigate }) {
                     onChange={() => toggleTag(tag.id)}
                     className="h-3.5 w-3.5 accent-[#4E5A44]"
                   />
-                  <span className="font-[Jost] text-[11px] tracking-[0.04em] text-[#5C5645]">{tag.label}</span>
+                  <span className="font-[Jost] text-xs tracking-[0.04em] text-[#5C5645]">{tag.label}</span>
                 </label>
               ))}
             </div>
@@ -162,7 +162,7 @@ export default function Decor({ navigate }) {
               <button
                 key={g}
                 onClick={() => setGender(g)}
-                className={`px-3 py-2 font-[Jost] text-[9px] font-medium tracking-[0.14em] ${
+                className={`px-3 py-2 font-[Jost] text-xs font-medium tracking-[0.14em] ${
                   gender === g ? "bg-[#4E5A44] text-white" : "border border-[#D8D0BC] text-[#716B5C]"
                 }`}
               >
@@ -178,15 +178,15 @@ export default function Decor({ navigate }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search the collection"
-            className="w-full border-b border-[#D8D0BC] bg-transparent py-3 pl-9 pr-3 font-[Jost] text-sm text-[#3A342A] outline-none placeholder:text-[#A69C7E] focus:border-[#4E5A44]"
+            className="w-full border-b border-[#D8D0BC] bg-transparent py-3 pl-9 pr-3 font-[Jost] text-base text-[#3A342A] outline-none placeholder:text-[#A69C7E] focus:border-[#4E5A44]"
           />
         </div>
 
         <div className="mt-10">
-          {loading && <p className="py-20 text-center font-[Jost] text-sm text-[#A69C7E]">Curating the collection…</p>}
-          {error && <p className="py-20 text-center font-[Jost] text-sm text-red-700">Couldn't load the collection: {error}</p>}
+          {loading && <p className="py-20 text-center font-[Jost] text-base text-[#A69C7E]">Curating the collection…</p>}
+          {error && <p className="py-20 text-center font-[Jost] text-base text-red-700">Couldn't load the collection: {error}</p>}
           {!loading && !error && visible.length === 0 && (
-            <p className="py-20 text-center font-[Jost] text-sm text-[#A69C7E]">Nothing matches that search yet.</p>
+            <p className="py-20 text-center font-[Jost] text-base text-[#A69C7E]">Nothing matches that search yet.</p>
           )}
           <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {groupedVisible.map((entry) => (
@@ -222,10 +222,10 @@ export default function Decor({ navigate }) {
         )}
 
         <div className="mt-20 border-t border-[#E4DCC8] pt-7 text-center">
-          <p className="font-[Jost] text-[10px] tracking-[0.18em] text-[#8C846F]">
+          <p className="font-[Jost] text-xs tracking-[0.18em] text-[#8C846F]">
             WANT AN EXPERIENCE YOUR GUESTS BECOME PART OF, NOT JUST A ROOM FULL OF DECOR?
           </p>
-          <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]">
+          <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]">
             BUILD MY EXPERIENCE
           </button>
         </div>

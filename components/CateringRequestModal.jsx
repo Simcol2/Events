@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 
 const inputClass =
-  "w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Jost] text-sm text-[#3A342A] outline-none focus:border-[#4E5A44]";
+  "w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Jost] text-base text-[#3A342A] outline-none focus:border-[#4E5A44]";
 
 // Bulk catering sizes don't have a fixed price (they're quoted per order),
 // so there's no cart to add these to. This is the clickable seam instead:
@@ -70,19 +70,19 @@ export default function CateringRequestModal({ itemName, sizes, initialSize, onC
         {submitted ? (
           <div className="pt-4 text-center">
             <h2 className="font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Order received</h2>
-            <p className="mx-auto mt-3 max-w-xs font-[Jost] text-sm leading-6 text-[#8C846F]">
+            <p className="mx-auto mt-3 max-w-xs font-[Jost] text-base leading-6 text-[#8C846F]">
               We'll follow up by email with pricing for {sizeLabel.toLowerCase()} of {itemName} and get your order confirmed.
             </p>
             <button
               onClick={onClose}
-              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-[11px] font-semibold tracking-[0.2em] text-white"
+              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white"
             >
               CLOSE
             </button>
           </div>
         ) : (
           <>
-            <p className="font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#B8935A]">ORDER YOUR CAKE</p>
+            <p className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#B8935A]">ORDER YOUR CAKE</p>
             <h2 className="mt-1 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">{itemName}</h2>
 
             <div className="mt-5 flex flex-wrap gap-2">
@@ -90,7 +90,7 @@ export default function CateringRequestModal({ itemName, sizes, initialSize, onC
                 <button
                   key={s.label}
                   onClick={() => setSizeLabel(s.label)}
-                  className="rounded-full px-4 py-2 font-[Jost] text-xs font-semibold tracking-wide"
+                  className="rounded-full px-4 py-2 font-[Jost] text-sm font-semibold tracking-wide"
                   style={{
                     background: sizeLabel === s.label ? "#4E5A44" : "transparent",
                     color: sizeLabel === s.label ? "#FFFFFF" : "#4E5A44",
@@ -103,13 +103,13 @@ export default function CateringRequestModal({ itemName, sizes, initialSize, onC
             </div>
 
             <div className="mt-5 flex items-center gap-3">
-              <label className="font-[Jost] text-xs font-semibold tracking-[0.1em] text-[#4E5A44]">QUANTITY</label>
+              <label className="font-[Jost] text-sm font-semibold tracking-[0.1em] text-[#4E5A44]">QUANTITY</label>
               <input
                 type="number"
                 min={1}
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
-                className="w-20 rounded-sm border border-[#D8D0BC] bg-white px-3 py-2 font-[Jost] text-sm text-[#3A342A] outline-none focus:border-[#4E5A44]"
+                className="w-20 rounded-sm border border-[#D8D0BC] bg-white px-3 py-2 font-[Jost] text-base text-[#3A342A] outline-none focus:border-[#4E5A44]"
               />
             </div>
 
@@ -136,12 +136,12 @@ export default function CateringRequestModal({ itemName, sizes, initialSize, onC
               />
             </div>
 
-            {submitError && <p className="mt-3 font-[Jost] text-xs text-red-700">{submitError}</p>}
+            {submitError && <p className="mt-3 font-[Jost] text-sm text-red-700">{submitError}</p>}
 
             <button
               disabled={!canSubmit}
               onClick={handleSubmit}
-              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-[11px] font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
               {submitting ? "SENDING..." : "REQUEST TO ORDER"}
             </button>

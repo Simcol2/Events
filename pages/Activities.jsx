@@ -84,7 +84,7 @@ function ActivityRow({ activity, number, featured = false }) {
           {String(number).padStart(2, "0")}
         </div>
         <div>
-          <div className="font-[Jost] text-[9px] font-semibold tracking-[0.22em] text-[#B8935A]">
+          <div className="font-[Jost] text-xs font-semibold tracking-[0.22em] text-[#B8935A]">
             {activity.tagline}
           </div>
           <h3 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-none text-[#4E5A44]">
@@ -93,13 +93,13 @@ function ActivityRow({ activity, number, featured = false }) {
           <div className="mt-2 font-['Cormorant_Garamond'] text-xl italic text-[#817A68]">
             {activity.subtitle}
           </div>
-          <p className="mt-4 max-w-2xl font-[Jost] text-sm leading-7 text-[#5C5645]">
+          <p className="mt-4 max-w-2xl font-[Jost] text-base leading-7 text-[#5C5645]">
             {activity.description}
           </p>
           {activity.stations && (
             <div className="mt-5 flex flex-wrap gap-2">
               {activity.stations.map((station) => (
-                <span key={station} className="border border-[#CFC7B1] px-3 py-1.5 font-[Jost] text-[9px] tracking-[0.12em] text-[#68775F]">
+                <span key={station} className="border border-[#CFC7B1] px-3 py-1.5 font-[Jost] text-xs tracking-[0.12em] text-[#68775F]">
                   {station.toUpperCase()}
                 </span>
               ))}
@@ -138,11 +138,11 @@ export default function Activities({ navigate }) {
             ))}
           </div>
           <div className="flex w-full flex-col justify-center px-5 py-10 sm:w-1/3 sm:px-8">
-            <p className="font-[Jost] text-[10px] font-semibold tracking-[0.3em] text-[#B8935A]">ACTIVITIES</p>
+            <p className="font-[Jost] text-xs font-semibold tracking-[0.3em] text-[#B8935A]">ACTIVITIES</p>
             <h1 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-[1.05] text-[#4E5A44] sm:text-[42px]">
               Games they'll play. Memories they'll keep.
             </h1>
-            <p className="mt-3 font-[Jost] text-sm leading-6 text-[#8C846F]">
+            <p className="mt-3 font-[Jost] text-base leading-6 text-[#8C846F]">
               Interactive activities that get every guest laughing, talking, and helping create something they'll keep. Choose the
               ones that fit your crowd when you build your experience.
             </p>
@@ -152,13 +152,13 @@ export default function Activities({ navigate }) {
 
       <section className="mx-auto max-w-5xl px-5 py-14 sm:px-8">
         <div className="mb-10 flex items-center justify-between">
-          <div className="font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]">SHOWER ACTIVITIES</div>
-          <div className="font-[Jost] text-[10px] tracking-[0.12em] text-[#A69C7E]">CUSTOMIZABLE FOR YOUR EVENT</div>
+          <div className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]">SHOWER ACTIVITIES</div>
+          <div className="font-[Jost] text-xs tracking-[0.12em] text-[#A69C7E]">CUSTOMIZABLE FOR YOUR EVENT</div>
         </div>
 
         <div className="mb-2">
           <h2 className="font-['Cormorant_Garamond'] text-3xl font-semibold text-[#4E5A44]">Play & Connect</h2>
-          <p className="mt-2 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
+          <p className="mt-2 max-w-2xl font-[Jost] text-base leading-6 text-[#8C846F]">
             Experiences that get your guests talking, laughing, competing, and connecting.
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function Activities({ navigate }) {
 
         <div className="mb-2 mt-16">
           <h2 className="font-['Cormorant_Garamond'] text-3xl font-semibold text-[#4E5A44]">Create & Keep</h2>
-          <p className="mt-2 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
+          <p className="mt-2 max-w-2xl font-[Jost] text-base leading-6 text-[#8C846F]">
             Experiences where your guests create something meaningful for you to keep.
           </p>
         </div>
@@ -188,10 +188,10 @@ export default function Activities({ navigate }) {
         <div className="mt-10 bg-[#4E5A44] px-7 py-10 text-center sm:px-12">
           <div className="font-[Parisienne] text-4xl text-[#D4BC91]">make it yours</div>
           <h2 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold text-[#FAF6ED]">Build your celebration.</h2>
-          <p className="mx-auto mt-3 max-w-lg font-[Jost] text-sm leading-7 text-[#DAD7C9]">
+          <p className="mx-auto mt-3 max-w-lg font-[Jost] text-base leading-7 text-[#DAD7C9]">
             Choose the activities that fit your crowd and let the rest of the experience do the work.
           </p>
-          <button onClick={() => navigate("/package-builder")} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-white">
+          <button onClick={() => navigate("/package-builder")} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white">
             BUILD MY EXPERIENCE
           </button>
         </div>

@@ -37,7 +37,7 @@ export default function EventDatePicker() {
         <h2 className="mt-4 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
           When is your event?
         </h2>
-        <p className="mx-auto mt-2 max-w-xs font-[Jost] text-sm leading-6 text-[#8C846F]">
+        <p className="mx-auto mt-2 max-w-xs font-[Jost] text-base leading-6 text-[#8C846F]">
           We use this to suggest pickup and drop-off dates for anything you rent. You can adjust those later.
         </p>
 
@@ -46,13 +46,13 @@ export default function EventDatePicker() {
           min={today}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          className="mt-6 w-full rounded-sm border border-[#D8D0BC] bg-white px-4 py-3 font-[Jost] text-sm text-[#3A342A] outline-none focus:border-[#4E5A44]"
+          className="mt-6 w-full rounded-sm border border-[#D8D0BC] bg-white px-4 py-3 font-[Jost] text-base text-[#3A342A] outline-none focus:border-[#4E5A44]"
         />
 
         <button
           disabled={!draft}
           onClick={() => chooseEventDate(draft)}
-          className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-[11px] font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+          className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
         >
           CONTINUE
         </button>

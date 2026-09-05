@@ -12,7 +12,7 @@ export default function DisplayOptions({ navigate }) {
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
         <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
         <Sparkles className="absolute bottom-8 left-10 opacity-40" size={16} color={palette.gold} />
-        <p className="text-xs font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+        <p className="text-sm font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A SLICE OF G EVENTS
         </p>
         <h1 className="mt-3 text-6xl sm:text-7xl font-bold" style={{ ...fonts.displayFont, color: palette.gold }}>
@@ -24,7 +24,7 @@ export default function DisplayOptions({ navigate }) {
       </div>
 
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
-        <p className="mx-auto mb-10 max-w-2xl text-center text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
+        <p className="mx-auto mb-10 max-w-2xl text-center text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
           The centerpiece every camera finds first. Pick your display, then bring it into your package when you build it.
         </p>
         <div className="grid gap-6 sm:grid-cols-2">
@@ -44,7 +44,7 @@ export default function DisplayOptions({ navigate }) {
           <h2 className="text-2xl font-semibold mb-2 text-center" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
             Setup Pricing
           </h2>
-          <p className="mx-auto mb-8 max-w-2xl text-center text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
+          <p className="mx-auto mb-8 max-w-2xl text-center text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
             Either display, same price. You're just choosing how hands-on you want to be on setup day.
           </p>
           <div className="grid gap-6 sm:grid-cols-2">
@@ -62,13 +62,13 @@ export default function DisplayOptions({ navigate }) {
                     ${s.price}
                   </span>
                 </div>
-                <p className="text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                <p className="text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
                   {s.description}
                 </p>
               </div>
             ))}
           </div>
-          <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
+          <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
             Self setup comes with easy to follow instructions, and all floral arrangements come already arranged.
             The light up display requires a nearby outlet, extension cords are included.
           </p>
@@ -77,7 +77,7 @@ export default function DisplayOptions({ navigate }) {
         <div className="mt-16 text-center">
           <button
             onClick={() => navigate("/package-builder")}
-            className="px-8 py-3 rounded-full text-xs font-semibold tracking-widest text-white"
+            className="px-8 py-3 rounded-full text-sm font-semibold tracking-widest text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
             BUILD MY EXPERIENCE

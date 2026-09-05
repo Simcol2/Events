@@ -46,11 +46,11 @@ function StepNav({ steps, step, setStep, palette, fonts }) {
           <React.Fragment key={s.id}>
             <button
               onClick={() => setStep(s.id)}
-              className="flex items-center gap-2 text-xs font-semibold tracking-widest"
+              className="flex items-center gap-2 text-sm font-semibold tracking-widest"
               style={{ ...fonts.bodyFont, color: active ? palette.primaryDeep : done ? palette.accent : palette.muted }}
             >
               <span
-                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] flex-shrink-0"
+                className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0"
                 style={{
                   background: active || done ? palette.accent : "transparent",
                   border: active || done ? "none" : `1px solid ${palette.line}`,
@@ -143,7 +143,7 @@ function resolveSetupItem(id, eventTypeId, decorCatalog) {
       name: addon.name,
       tagline: addon.tagline,
       description: addon.description,
-      photoUrls: addon.photoUrl ? [addon.photoUrl] : [],
+      photoUrls: addon.photoUrls || (addon.photoUrl ? [addon.photoUrl] : []),
       addonPrice: addon.price ?? SETUP_ADDON_PRICE,
       details: addon.details,
     };
@@ -359,12 +359,12 @@ export default function PackageBuilder() {
           <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
             Let's start with your date.
           </h1>
-          <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+          <p className="mt-3 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
             We check everything in your package against your event date before you build it, so we need that first.
           </p>
           <button
             onClick={() => requestEventDate()}
-            className="mt-6 rounded-full px-8 py-3 text-xs font-semibold tracking-widest text-white"
+            className="mt-6 rounded-full px-8 py-3 text-sm font-semibold tracking-widest text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
             CHOOSE YOUR EVENT DATE
@@ -377,7 +377,7 @@ export default function PackageBuilder() {
   return (
     <div className="min-h-screen pb-32" style={{ background: palette.bg, color: palette.ink }}>
       <div className="px-6 py-14 text-center" style={{ background: palette.primaryDeep }}>
-        <p className="text-xs tracking-[0.3em] font-semibold" style={{ ...fonts.bodyFont, color: palette.gold }}>
+        <p className="text-sm tracking-[0.3em] font-semibold" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A CURATED {eventType.label.toUpperCase()} EXPERIENCE
         </p>
         <h1 className="mt-2 text-5xl sm:text-6xl font-semibold" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>
@@ -386,7 +386,7 @@ export default function PackageBuilder() {
         <p className="mt-1 text-2xl italic" style={{ ...fonts.scriptFont, color: palette.accent }}>
           Choose the experiences that fit your celebration, your people, and the memories you want to make.
         </p>
-        <p className="mt-4 text-xs tracking-widest" style={{ ...fonts.bodyFont, color: "#FFFFFF99" }}>
+        <p className="mt-4 text-sm tracking-widest" style={{ ...fonts.bodyFont, color: "#FFFFFF99" }}>
           STARTING AT ${eventConfig.startingPrice.toLocaleString()} + HST
         </p>
       </div>
@@ -397,7 +397,7 @@ export default function PackageBuilder() {
         {currentStep.type === "pool" && (
           <div>
             <SectionTitle palette={palette} fonts={fonts}>{currentStep.label}</SectionTitle>
-            <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               {currentStep.supportingCopy} {(poolSelections[currentStep.id] || []).length} of {currentStep.chooseCount} selected.
               Want more? Add the rest as an Additional Keepsake Experience in Make It Yours.
             </p>
@@ -428,19 +428,19 @@ export default function PackageBuilder() {
         {currentStep.type === "guestGift" && (
           <div>
             <SectionTitle palette={palette} fonts={fonts}>Choose a Guest Gift</SectionTitle>
-            <p className="text-sm mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="text-base mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Send your guests home with a little something to remember the day by. Every package includes a guest
               gift, upgrade if you'd like something different.
             </p>
             <div className="flex items-center gap-2 mb-5">
               <Users size={16} color={palette.muted} />
-              <label className="text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>Guest count</label>
+              <label className="text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>Guest count</label>
               <input
                 type="number"
                 min={1}
                 value={guestCount}
                 onChange={(e) => setGuestCount(Math.max(1, Number(e.target.value) || 1))}
-                className="w-20 px-2 py-1 rounded-sm text-sm"
+                className="w-20 px-2 py-1 rounded-sm text-base"
                 style={{ ...fonts.bodyFont, border: `1px solid ${palette.line}`, color: palette.ink }}
               />
             </div>
@@ -468,7 +468,7 @@ export default function PackageBuilder() {
         {currentStep.type === "addons" && (
           <div>
             <SectionTitle palette={palette} fonts={fonts}>Make It Yours</SectionTitle>
-            <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Add the little details that make your experience feel like yours: another keepsake experience,
               customization, or a piece for the table.
             </p>
@@ -516,6 +516,7 @@ export default function PackageBuilder() {
                   description={a.description}
                   photoKey={a.id}
                   photoUrl={a.photoUrl}
+                  photoUrls={a.photoUrls}
                   fit={a.fit}
                   priceLabel={`+$${a.price}`}
                   selected={selectedAddonIds.includes(a.id)}
@@ -550,7 +551,7 @@ export default function PackageBuilder() {
         {currentStep.type === "playful" && (
           <div>
             <SectionTitle palette={palette} fonts={fonts}>Want Something Playful?</SectionTitle>
-            <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Add a game that gets everyone talking, laughing, and competing. Each playful add-on is +${PLAYFUL_ADDON_PRICE}.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -580,7 +581,7 @@ export default function PackageBuilder() {
         {currentStep.type === "service" && (
           <div>
             <SectionTitle palette={palette} fonts={fonts}>How Involved Do You Want to Be?</SectionTitle>
-            <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Self Setup is for Toronto pickup or Toronto drop-off. Need delivery? Please contact us.
             </p>
             <div className="grid sm:grid-cols-2 gap-6">
@@ -602,7 +603,7 @@ export default function PackageBuilder() {
         {currentStep.type === "display" && (
           <div>
             <SectionTitle palette={palette} fonts={fonts}>The Memory Display</SectionTitle>
-            <p className="text-sm mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Give the memories a place to shine. No Display is included at no extra charge, this is an optional
               upgrade you can add either way you set up your experience.
             </p>
@@ -623,7 +624,7 @@ export default function PackageBuilder() {
             </div>
             {displayId && (
               <>
-                <p className="text-sm mb-4 font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                <p className="text-base mb-4 font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
                   Setup option
                 </p>
                 <div className="grid sm:grid-cols-2 gap-6">
@@ -658,10 +659,10 @@ export default function PackageBuilder() {
                     style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
                   >
                     <div>
-                      <p className="text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                      <p className="text-base font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
                         {item.name}
                       </p>
-                      <p className="text-xs mt-0.5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      <p className="text-sm mt-0.5" style={{ ...fonts.bodyFont, color: palette.muted }}>
                         {included ? "Included" : `+$${item.addonPrice}`}
                       </p>
                     </div>
@@ -683,7 +684,7 @@ export default function PackageBuilder() {
 
       {notice && (
         <div
-          className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-5 py-3 text-xs font-semibold tracking-wide text-white shadow-lg"
+          className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-5 py-3 text-sm font-semibold tracking-wide text-white shadow-lg"
           style={{ ...fonts.bodyFont, background: palette.ink }}
         >
           {notice}
@@ -694,7 +695,7 @@ export default function PackageBuilder() {
       <div className="fixed bottom-0 left-0 right-0 px-6 py-4" style={{ background: palette.surface, borderTop: `1px solid ${palette.line}` }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
-            <p className="text-xs tracking-widest" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            <p className="text-sm tracking-widest" style={{ ...fonts.bodyFont, color: palette.muted }}>
               SUBTOTAL ${subtotal.toLocaleString()} + HST ${hst.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             <p className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
@@ -702,7 +703,7 @@ export default function PackageBuilder() {
           <button
             disabled={isLastStep && displayIncomplete}
             onClick={isLastStep ? () => setShowRequestModal(true) : goToNextStep}
-            className="px-6 py-3 rounded-full text-xs font-semibold tracking-widest text-white disabled:opacity-30"
+            className="px-6 py-3 rounded-full text-sm font-semibold tracking-widest text-white disabled:opacity-30"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
             {isLastStep ? "REQUEST MY EXPERIENCE" : "NEXT"}

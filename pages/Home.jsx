@@ -11,6 +11,7 @@ import essentialsImage from "../media/hero.png";
 import wallPuzzleEngagementPhoto from "../media/file_00000000a204822f9ab953201c8b7043.png";
 import babyTriviaPhoto from "../media/babytrivia.png";
 import nurseryRhymePhoto from "../media/poem.png";
+import flowerWallPhoto from "../media/flowerwall-notjustdecor.jpg";
 
 /* ─── Scroll reveal wrapper ─── */
 function Reveal({ children, className = "", delay = 0 }) {
@@ -207,7 +208,7 @@ function Hero({ fonts, palette, navigate }) {
                 maxWidth: "620px",
                 margin: "0 auto",
                 color: "#FDF6EEE6",
-                fontSize: "clamp(15px, 2vw, 18px)",
+                fontSize: "clamp(16px, 2.2vw, 20px)",
                 lineHeight: 1.6,
                 opacity: i === index ? 1 : 0,
                 transition: "opacity 1100ms ease",
@@ -312,10 +313,10 @@ export default function Home({ navigate }) {
             { title: "KEEP", body: "You take those memories home and get to revisit them long after the party ends." },
           ].map((f) => (
             <div key={f.title} className="text-center">
-              <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+              <p className="text-base font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                 {f.title}
               </p>
-              <p className="mt-2 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
+              <p className="mt-2 text-lg leading-relaxed" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
                 {f.body}
               </p>
             </div>
@@ -326,11 +327,23 @@ export default function Home({ navigate }) {
       {/* ═══════════════════════════════════════
           WHAT MAKES US DIFFERENT - leads before anything else
           ═══════════════════════════════════════ */}
-      <section style={{ background: palette.bg, padding: "80px 40px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+      <section style={{ position: "relative", background: palette.bg, padding: "80px 40px 40px", overflow: "hidden" }}>
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${flowerWallPhoto})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.16,
+          }}
+        />
+        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: palette.bg, opacity: 0.82 }} />
+        <div style={{ position: "relative", width: "100%", maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
           <Sparkles className="mx-auto" size={22} strokeWidth={1.2} style={{ color: palette.gold }} />
           <p
-            className="mt-4 text-xs font-semibold tracking-[0.3em]"
+            className="mt-4 text-sm font-semibold tracking-[0.3em]"
             style={{ ...fonts.bodyFont, color: palette.gold }}
           >
             NOT JUST DECOR
@@ -360,7 +373,7 @@ export default function Home({ navigate }) {
 
         <div
           className="mx-auto mt-14 grid gap-8 sm:grid-cols-3"
-          style={{ width: "100%", maxWidth: "900px" }}
+          style={{ position: "relative", width: "100%", maxWidth: "900px" }}
         >
           {[
             { icon: Users, title: "Guests participate", body: "Activities designed to get people talking, laughing, creating, and connecting." },
@@ -376,10 +389,10 @@ export default function Home({ navigate }) {
                 >
                   <Icon size={20} color={palette.accent} strokeWidth={1.8} />
                 </div>
-                <p className="mt-3 text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                <p className="mt-3 text-base font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
                   {f.title}
                 </p>
-                <p className="mt-1.5 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                <p className="mt-1.5 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
                   {f.body}
                 </p>
               </div>
@@ -417,13 +430,13 @@ export default function Home({ navigate }) {
                     <Icon size={20} color={palette.accent} strokeWidth={1.8} />
                   </div>
                   <p
-                    className="mt-3 text-sm font-semibold"
+                    className="mt-3 text-base font-semibold"
                     style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
                   >
                     {i + 1}. {step.title}
                   </p>
                   <p
-                    className="mt-1.5 text-sm leading-relaxed"
+                    className="mt-1.5 text-base leading-relaxed"
                     style={{ ...fonts.bodyFont, color: palette.muted }}
                   >
                     {step.body}
@@ -461,13 +474,13 @@ export default function Home({ navigate }) {
                   >
                     <Icon size={20} color={palette.accent} strokeWidth={1.8} />
                   </div>
-                  <p className="mt-3 text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                  <p className="mt-3 text-base font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
                     {f.title}
                   </p>
-                  <p className="mt-1 text-sm italic" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                  <p className="mt-1 text-base italic" style={{ ...fonts.bodyFont, color: palette.gold }}>
                     {f.hook}
                   </p>
-                  <p className="mt-2 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  <p className="mt-2 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
                     {f.body}
                   </p>
                 </div>
@@ -518,7 +531,7 @@ export default function Home({ navigate }) {
                     ...fonts.bodyFont,
                     margin: 0,
                     color: palette.gold,
-                    fontSize: "12px",
+                    fontSize: "14px",
                     fontWeight: 600,
                     letterSpacing: "0.3em",
                   }}
@@ -632,10 +645,10 @@ export default function Home({ navigate }) {
               <div className="overflow-hidden rounded-xl" style={{ aspectRatio: "4 / 3" }}>
                 <img src={babyTriviaPhoto} alt="Guests interacting at the celebration" className="h-full w-full object-cover" />
               </div>
-              <p className="mt-4 text-xs font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+              <p className="mt-4 text-sm font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                 AT THE PARTY
               </p>
-              <p className="mt-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+              <p className="mt-1 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
                 Guests interacting, laughing, writing, photographing, assembling, competing, and creating.
               </p>
             </Reveal>
@@ -643,10 +656,10 @@ export default function Home({ navigate }) {
               <div className="overflow-hidden rounded-xl" style={{ aspectRatio: "4 / 3" }}>
                 <img src={nurseryRhymePhoto} alt="A finished keepsake from the celebration" className="h-full w-full object-cover" />
               </div>
-              <p className="mt-4 text-xs font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+              <p className="mt-4 text-sm font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                 AFTER THE PARTY
               </p>
-              <p className="mt-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+              <p className="mt-1 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
                 The finished book, artwork, photos, notes, capsule, or display in the home or nursery.
               </p>
             </Reveal>
@@ -710,13 +723,13 @@ export default function Home({ navigate }) {
               {guessArrivalAddon.name}
             </h2>
             <p
-              className="mt-1.5 text-sm font-semibold italic"
+              className="mt-1.5 text-base font-semibold italic"
               style={{ ...fonts.bodyFont, color: palette.accent }}
             >
               {guessArrivalAddon.tagline}
             </p>
             <p
-              className="mt-3 text-sm leading-relaxed"
+              className="mt-3 text-base leading-relaxed"
               style={{ ...fonts.bodyFont, color: palette.ink }}
             >
               {guessArrivalAddon.description}
@@ -726,7 +739,7 @@ export default function Home({ navigate }) {
                 setShowArrivalModal(false);
                 navigate("/package-builder");
               }}
-              className="mt-6 inline-flex items-center gap-2 rounded-sm px-6 py-3 text-xs font-semibold tracking-[0.15em] text-white"
+              className="mt-6 inline-flex items-center gap-2 rounded-sm px-6 py-3 text-sm font-semibold tracking-[0.15em] text-white"
               style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
             >
               ADD IT TO MY EXPERIENCE <ArrowRight size={14} />
@@ -743,7 +756,7 @@ export default function Home({ navigate }) {
           <Reveal>
             <div className="mb-12 text-center">
               <p
-                className="text-xs font-semibold tracking-[0.3em]"
+                className="text-sm font-semibold tracking-[0.3em]"
                 style={{ ...fonts.bodyFont, color: palette.gold }}
               >
                 MAKE IT YOURS
@@ -785,16 +798,16 @@ export default function Home({ navigate }) {
                           {a.name}
                         </h3>
                       </div>
-                      <span className="flex-shrink-0 text-sm font-bold" style={{ ...fonts.displayFont, color: palette.accent }}>
+                      <span className="flex-shrink-0 text-base font-bold" style={{ ...fonts.displayFont, color: palette.accent }}>
                         +${a.price}
                       </span>
                     </div>
-                    <p className="flex-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                    <p className="flex-1 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
                       Your own private, personalized digital shower experience. Guests get their own page to guess
                       the date, the time, and more, then watch the live board update as the big day gets closer.
                     </p>
                     <p
-                      className="mt-3 text-xs font-semibold tracking-[0.1em] underline underline-offset-4"
+                      className="mt-3 text-sm font-semibold tracking-[0.1em] underline underline-offset-4"
                       style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
                     >
                       SEE HOW IT WORKS
@@ -820,7 +833,7 @@ export default function Home({ navigate }) {
             <div className="mt-12 text-center">
               <button
                 onClick={() => navigate("/package-builder")}
-                className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
                 style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
               >
                 BUILD MY EXPERIENCE <ArrowRight size={17} />
@@ -858,14 +871,14 @@ export default function Home({ navigate }) {
             <div className="mt-7 flex flex-wrap items-center justify-center gap-5">
               <button
                 onClick={() => navigate("/package-builder")}
-                className="inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                className="inline-flex items-center gap-3 rounded-sm px-7 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
                 style={{ ...fonts.bodyFont, background: palette.gold }}
               >
                 BUILD MY EXPERIENCE <ArrowRight size={17} />
               </button>
               <button
                 onClick={() => navigate("/experiences")}
-                className="text-sm font-semibold tracking-[0.1em] text-white underline underline-offset-4"
+                className="text-base font-semibold tracking-[0.1em] text-white underline underline-offset-4"
                 style={fonts.bodyFont}
               >
                 EXPLORE THE EXPERIENCES
