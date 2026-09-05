@@ -69,8 +69,8 @@ function StepNav({ steps, step, setStep, palette, fonts }) {
   );
 }
 
-// Games and experiences get "VIEW ACTIVITY" on their detail button, decor
-// pieces and logistical add-ons get the more generic "VIEW MORE".
+// Games and experiences get "VIEW EXPERIENCE →" on their detail button,
+// decor pieces and logistical add-ons get the more generic "VIEW MORE".
 const ACTIVITY_TYPE_IDS = new Set([
   "pictureThis",
   "kindnessStation",
@@ -82,9 +82,11 @@ const ACTIVITY_TYPE_IDS = new Set([
   "priceIsRight",
   "photoChallenge",
   "guessArrival",
+  "nurseryRhyme",
+  "voiceNotes",
 ]);
 function viewMoreLabelFor(id) {
-  return ACTIVITY_TYPE_IDS.has(id) ? "VIEW ACTIVITY" : "VIEW MORE";
+  return ACTIVITY_TYPE_IDS.has(id) ? "VIEW EXPERIENCE →" : "VIEW MORE";
 }
 
 function normalizePhotos(photos) {
@@ -566,7 +568,7 @@ export default function PackageBuilder() {
                     selected={playfulIds.includes(id)}
                     onClick={() => togglePlayful(id)}
                     details={item.details}
-                    viewMoreLabel="VIEW ACTIVITY"
+                    viewMoreLabel="VIEW EXPERIENCE →"
                   />
                 );
               })}
