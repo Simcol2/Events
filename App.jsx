@@ -12,7 +12,8 @@ import { CartProvider } from "./CartContext";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
-import GiftsActivities from "./pages/GiftsActivities";
+import Activities from "./pages/Activities";
+import Gifts from "./pages/Gifts";
 import HowItWorks from "./pages/HowItWorks";
 import Experiences from "./pages/Experiences";
 import About from "./pages/About";
@@ -30,7 +31,8 @@ const NAV = [
   { label: "How It Works", path: "/how-it-works" },
   { label: "Experiences", path: "/experiences" },
   { label: "Decor", path: "/decor" },
-  { label: "Gifts & Activities", path: "/gifts-activities" },
+  { label: "Activities", path: "/activities" },
+  { label: "Gifts", path: "/gifts" },
   { label: "Past Events", path: "/past-events" },
   { label: "About", path: "/about" },
   { label: "Build My Experience", path: "/package-builder", cta: true },
@@ -69,7 +71,8 @@ function AppRoutes() {
   const routeMap = {
     "/": { component: <Home navigate={navigate} />, current: "home" },
     "/decor": { component: <Decor navigate={navigate} />, current: "decor" },
-    "/gifts-activities": { component: <GiftsActivities navigate={navigate} />, current: "gifts-activities" },
+    "/activities": { component: <Activities navigate={navigate} />, current: "activities" },
+    "/gifts": { component: <Gifts navigate={navigate} />, current: "gifts" },
     "/catering": { component: <Catering navigate={navigate} />, current: "catering" },
     "/how-it-works": { component: <HowItWorks navigate={navigate} />, current: "how-it-works" },
     "/experiences": { component: <Experiences navigate={navigate} />, current: "experiences" },

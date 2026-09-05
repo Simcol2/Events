@@ -82,7 +82,8 @@ export default function SiteFooter({ navigate }) {
               <button onClick={() => navigate("/how-it-works")} className="block hover:opacity-70">How It Works</button>
               <button onClick={() => navigate("/experiences")} className="block hover:opacity-70">Experiences</button>
               <button onClick={() => navigate("/decor")} className="block hover:opacity-70">Decor Collection</button>
-              <button onClick={() => navigate("/gifts-activities")} className="block hover:opacity-70">Gifts & Activities</button>
+              <button onClick={() => navigate("/activities")} className="block hover:opacity-70">Activities</button>
+              <button onClick={() => navigate("/gifts")} className="block hover:opacity-70">Gifts</button>
               <button onClick={() => navigate("/past-events")} className="block hover:opacity-70">Past Events</button>
               <button onClick={() => navigate("/about")} className="block hover:opacity-70">About</button>
               <button onClick={() => navigate("/package-builder")} className="block hover:opacity-70">Build My Experience</button>
