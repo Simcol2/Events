@@ -12,13 +12,14 @@ const HERO_PHOTOS = [
   { src: kindnessStationPhoto, alt: "Kindness Station guest activity", focus: "center" },
 ];
 
-const ACTIVITIES = [
-  {
-    label: "Picture This",
-    tagline: "The moments you wish you could bottle up.",
-    subtitle: "Capture A Memory, Leave It Behind",
-    description: "Guests capture a photo and leave a handwritten note about their favourite time or story with Mom and Dad, so baby can see what their parents were like when they grow up. Both go into the time capsule to discover someday.",
-  },
+// Same two buckets and the same supporting copy as the Package Builder's
+// Baby Shower flow (see eventConfig.js's babyShower.steps), so a visitor
+// who reads this page and then builds their experience isn't met with an
+// unfamiliar structure. Items are grouped by nature - games and
+// competitions under Play & Connect, keepsake-making experiences under
+// Create & Keep - even for the two (Maternity Shot Challenge, Guess the
+// Arrival) that aren't part of the Package Builder's selectable pools.
+const PLAY_CONNECT = [
   {
     label: "Hello World Kindness Station",
     tagline: "A little kindness can change someone's whole day.",
@@ -30,18 +31,6 @@ const ACTIVITIES = [
     tagline: "Think you know what babies cost?",
     subtitle: "How Well Do You Know Baby?",
     description: "From diapers and detergent to strollers and all the things Mom actually registered for, put your pricing skills to the test. Guess the price. Guess where it's cheaper. Guess what Mom bought. Rack up the points. Play individually or team up with friends.",
-  },
-  {
-    label: "The Photo Challenge",
-    tagline: "Capture the moments Mom will want to remember.",
-    subtitle: "Capture Mom's Big Day",
-    description: "Each guest receives a secret photo challenge with one goal: capture a picture of Mom that fits the assignment. Scan the QR code and add it to the shared album. By the end of the shower, Mom has a whole album of memories from the people who celebrated with her.",
-  },
-  {
-    label: "The Maternity Shot Challenge",
-    tagline: "Can you fake the bump?",
-    subtitle: "Can You Fake the Bump?",
-    description: "Grab a pillow. Strike a pose. Convince us you're expecting. Guests compete to create the most convincing, ridiculous, glamorous or downright questionable maternity photo. Scan. Upload. Display. The photos appear on the big screen for everyone to see.",
   },
   {
     label: "Baby Trivia",
@@ -57,10 +46,31 @@ const ACTIVITIES = [
     stations: ["Bottle Chug", "Diaper Change", "Sing the Lullaby"],
   },
   {
+    label: "The Maternity Shot Challenge",
+    tagline: "Can you fake the bump?",
+    subtitle: "Can You Fake the Bump?",
+    description: "Grab a pillow. Strike a pose. Convince us you're expecting. Guests compete to create the most convincing, ridiculous, glamorous or downright questionable maternity photo. Scan. Upload. Display. The photos appear on the big screen for everyone to see.",
+  },
+  {
     label: "Guess the Arrival",
     tagline: "Everyone has a prediction. Only one can be right.",
     subtitle: "When Will Baby Make Their Grand Entrance?",
     description: "Guests enter their prediction for Baby's arrival date and time, guess Baby's name and leave a special private message for Mom. The experience continues after the shower with prediction updates, labour notifications and false alarms as the big day approaches.",
+  },
+];
+
+const CREATE_KEEP = [
+  {
+    label: "Picture This",
+    tagline: "The moments you wish you could bottle up.",
+    subtitle: "Capture A Memory, Leave It Behind",
+    description: "Guests capture a photo and leave a handwritten note about their favourite time or story with Mom and Dad, so baby can see what their parents were like when they grow up. Both go into the time capsule to discover someday.",
+  },
+  {
+    label: "The Photo Challenge",
+    tagline: "Capture the moments Mom will want to remember.",
+    subtitle: "Capture Mom's Big Day",
+    description: "Each guest receives a secret photo challenge with one goal: capture a picture of Mom that fits the assignment. Scan the QR code and add it to the shared album. By the end of the shower, Mom has a whole album of memories from the people who celebrated with her.",
   },
 ];
 
@@ -131,7 +141,7 @@ export default function Activities({ navigate }) {
               Games they'll play. Memories they'll keep.
             </h1>
             <p className="mt-3 font-[Jost] text-sm leading-6 text-[#8C846F]">
-              Interactive activities that get every guest laughing, talking, and leaving something behind. Choose the
+              Interactive activities that get every guest laughing, talking, and helping create something they'll keep. Choose the
               ones that fit your crowd when you build your experience.
             </p>
           </div>
@@ -144,13 +154,31 @@ export default function Activities({ navigate }) {
           <div className="font-[Jost] text-[10px] tracking-[0.12em] text-[#A69C7E]">CUSTOMIZABLE FOR YOUR EVENT</div>
         </div>
 
+        <div className="mb-2">
+          <h2 className="font-['Cormorant_Garamond'] text-3xl font-semibold text-[#4E5A44]">Play & Connect</h2>
+          <p className="mt-2 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
+            Experiences that get your guests talking, laughing, competing, and connecting.
+          </p>
+        </div>
         <div>
-          {ACTIVITIES.map((activity, index) => (
+          {PLAY_CONNECT.map((activity, index) => (
+            <ActivityRow key={activity.label} activity={activity} number={index + 1} />
+          ))}
+        </div>
+
+        <div className="mb-2 mt-16">
+          <h2 className="font-['Cormorant_Garamond'] text-3xl font-semibold text-[#4E5A44]">Create & Keep</h2>
+          <p className="mt-2 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
+            Experiences where your guests create something meaningful for you to keep.
+          </p>
+        </div>
+        <div>
+          {CREATE_KEEP.map((activity, index) => (
             <ActivityRow
               key={activity.label}
               activity={activity}
               number={index + 1}
-              featured={index === ACTIVITIES.length - 1}
+              featured={index === CREATE_KEEP.length - 1}
             />
           ))}
         </div>

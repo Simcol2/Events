@@ -4,6 +4,7 @@ import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { getItemFlags } from "../components/DecorCard";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
+import CartModal from "../components/CartModal";
 import { GROWN_FOLKS_LOOT_BAGS } from "../cateringContent";
 import { KEEPSAKES, resolveKeepsakeName } from "../packageContent";
 import { useEventType } from "../EventTypeContext";
@@ -73,8 +74,24 @@ export default function Gifts({ navigate }) {
   const [gifts, setGifts] = useState([]);
   const [giftsError, setGiftsError] = useState("");
   const [customizing, setCustomizing] = useState(null); // gift row | null
-  const { addToCart, removeFromCart, isInCart, cartCount } = useCart();
+  const [showCart, setShowCart] = useState(false);
+  const [checkoutStatus, setCheckoutStatus] = useState(null); // "success" | "cancelled" | null
+  const { addToCart, removeFromCart, isInCart, cartCount, clearCart } = useCart();
   const { eventTypeId } = useEventType();
+
+  // Stripe redirects back here with ?checkout=success or ?checkout=cancelled
+  // (see api/create-checkout-session.js's success_url/cancel_url). A
+  // successful payment means the cart it was holding is done - clear it so
+  // a page refresh doesn't look like nothing happened, and it can't be
+  // "paid for" a second time by mistake.
+  useEffect(() => {
+    const status = new URLSearchParams(window.location.search).get("checkout");
+    if (status !== "success" && status !== "cancelled") return;
+    setCheckoutStatus(status);
+    if (status === "success") clearCart();
+    window.history.replaceState({}, "", window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!supabase) {
@@ -146,26 +163,48 @@ export default function Gifts({ navigate }) {
             <div>
               <p className="font-[Jost] text-[10px] font-semibold tracking-[0.3em] text-[#B8935A]">GIFTS</p>
               <h1 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-[1.05] text-[#4E5A44] sm:text-[42px]">
-                Keepsakes and gifts worth taking home.
+                The games are played. The memories are made.
               </h1>
               <p className="mt-3 max-w-xl font-[Jost] text-sm leading-6 text-[#8C846F]">
-                Guest gifts, favors, and one-off keepsakes ready to add to your event or send someone special.
+                Take a lil something for the road. Guest gifts, favors, and one-off keepsakes ready to add to your
+                event or send someone special.
               </p>
             </div>
-            <div className="hidden items-center gap-2 font-[Jost] text-xs font-semibold tracking-[0.1em] text-[#4E5A44] sm:flex">
+            <button
+              onClick={() => setShowCart(true)}
+              className="hidden items-center gap-2 font-[Jost] text-xs font-semibold tracking-[0.1em] text-[#4E5A44] sm:flex"
+            >
               <ShoppingBag size={16} />
               CART ({cartCount})
-            </div>
+            </button>
           </div>
         </div>
       </section>
 
+      {checkoutStatus === "success" && (
+        <div className="mx-auto mt-6 max-w-7xl px-5 sm:px-8">
+          <div className="rounded-sm border border-[#B8935A] bg-[#F0F3EA] px-5 py-4 font-[Jost] text-sm text-[#4E5A44]">
+            Thank you, your payment went through. We'll follow up by email with the details.
+          </div>
+        </div>
+      )}
+      {checkoutStatus === "cancelled" && (
+        <div className="mx-auto mt-6 max-w-7xl px-5 sm:px-8">
+          <div className="rounded-sm border border-[#D8D0BC] bg-white px-5 py-4 font-[Jost] text-sm text-[#8C846F]">
+            Checkout was cancelled, your cart is still here whenever you're ready.
+          </div>
+        </div>
+      )}
+
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
         <div className="mb-6 flex items-center justify-between sm:hidden">
-          <div className="flex items-center gap-2 font-[Jost] text-xs font-semibold tracking-[0.1em] text-[#4E5A44]">
+          <button
+            onClick={() => setShowCart(true)}
+            className="flex items-center gap-2 font-[Jost] text-xs font-semibold tracking-[0.1em] text-[#4E5A44]"
+          >
             <ShoppingBag size={16} />
             CART ({cartCount})
-          </div>
+          </button>
         </div>
 
         <h2 className="mb-2 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Guest Gifts</h2>
@@ -286,6 +325,10 @@ export default function Gifts({ navigate }) {
           onClose={() => setCustomizing(null)}
           onAdd={handleAddCustomGift}
         />
+      )}
+
+      {showCart && (
+        <CartModal catalog={catalog} gifts={gifts} onClose={() => setShowCart(false)} />
       )}
     </div>
   );

@@ -1,10 +1,15 @@
 {
   "rewrites": [
+    { "source": "/how-it-works", "destination": "/how-it-works/index.html" },
+    { "source": "/experiences", "destination": "/experiences/index.html" },
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/faq", "destination": "/faq/index.html" },
     { "source": "/decor", "destination": "/decor/index.html" },
     { "source": "/activities", "destination": "/activities/index.html" },
-    { "source": "/design", "destination": "/design/index.html" },
-    { "source": "/how-it-works", "destination": "/how-it-works/index.html" },
+    { "source": "/gifts", "destination": "/gifts/index.html" },
+    { "source": "/catering", "destination": "/catering/index.html" },
     { "source": "/package-builder", "destination": "/package-builder/index.html" },
+    { "source": "/display-options", "destination": "/display-options/index.html" },
     { "source": "/past-events", "destination": "/past-events/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]

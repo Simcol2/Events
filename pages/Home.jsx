@@ -54,7 +54,7 @@ const HERO_CTA_LABEL = "BUILD MY EXPERIENCE";
 const HERO_STATES = [
   {
     image: essentialsImage,
-    headline: "Your guests don't just attend. They leave something behind.",
+    headline: "Your guests don't just attend. They help create something you'll keep.",
     supporting:
       "Interactive event experiences that turn your baby shower, first birthday, or celebration into memories you can actually keep.",
     secondaryLabel: "Explore the experiences",
@@ -404,7 +404,7 @@ export default function Home({ navigate }) {
               { icon: CalendarHeart, title: "Choose your event", body: "Tell us what you're celebrating. We'll show you the experiences designed for it." },
               { icon: PackageCheck, title: "Choose your experiences", body: "Pick the experiences that fit your people and the memories you want to make." },
               { icon: Truck, title: "We prepare everything", body: "Your selected experiences arrive prepared and ready. Choose Self Setup or let an Event Stylist handle everything." },
-              { icon: Users, title: "Your guests participate", body: "They play, create, photograph, write, share, laugh, and leave something behind." },
+              { icon: Users, title: "Your guests participate", body: "They play, photograph, write, share, laugh, and help create something you'll keep." },
               { icon: Gift, title: "You keep the memories", body: "When the celebration is over, what your guests created becomes part of your story." },
             ].map((step, i) => {
               const Icon = step.icon;

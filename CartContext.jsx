@@ -69,8 +69,12 @@ export function CartProvider({ children }) {
   };
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
+  // Called once the Gifts page sees ?checkout=success on return from
+  // Stripe - the cart it was holding has just been paid for.
+  const clearCart = () => setItems([]);
+
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, setQuantity, isInCart, cartCount }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, setQuantity, isInCart, cartCount, clearCart }}>
       {children}
     </CartContext.Provider>
   );

@@ -32,7 +32,7 @@ export default function About({ navigate }) {
           They assemble puzzles, fill time capsules, and leave pieces of themselves behind for you to keep.
         </p>
         <p className="mt-5 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-          <strong style={{ color: palette.primaryDeep }}>Your guests don't just attend. They leave something behind.</strong>{" "}
+          <strong style={{ color: palette.primaryDeep }}>Your guests don't just attend. They help create something you'll keep.</strong>{" "}
           That is the promise behind every experience we build, whether you're planning a baby shower, an
           engagement party, a birthday, or any celebration worth remembering.
         </p>
