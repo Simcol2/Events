@@ -29,6 +29,7 @@ import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.p
 import wallPuzzleShowerPhoto from "./media/wallpuzzle-babyshower.png";
 import wallPuzzleShowerFramedPhoto from "./media/wallpuzzle-babyshower-framed.png";
 import nurseryRhymeKeepsakePhoto from "./media/nurseryrhyme-keepsake.png";
+import grownFolksLootBagPhoto from "./media/grownfolkslootbag.png";
 import wallPuzzleEngagementPhoto from "./media/file_00000000a204822f9ab953201c8b7043.png";
 import ohBabyBlocksPhoto from "./media/oh-baby-blocks-tablescape.png";
 import ohBabyTrayPhoto from "./media/oh-sweet-baby-tray.png";
@@ -1015,6 +1016,7 @@ export const KEEPSAKES = [
     upgradePrice: 0,
     includedGuestCount: 10,
     overagePricePerGuest: 6,
+    photoUrl: grownFolksLootBagPhoto,
     details: {
       summary: "An individually wrapped dessert treat for every guest, straight from our own dessert line.",
       howItWorks: [
