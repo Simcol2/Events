@@ -22,6 +22,7 @@ import PackageBuilder from "./pages/PackageBuilder";
 import DisplayOptions from "./pages/DisplayOptions";
 import Catering from "./pages/Catering";
 import PastEvents from "./pages/PastEvents";
+import Admin from "./pages/Admin";
 
 // Nav order and the "primary CTA should be visually dominant" rule both
 // come from the Master Plan's navigation section - Catering and Display
@@ -68,6 +69,12 @@ function AppRoutes() {
   };
 
   const page = path.split("?")[0].replace(/\/+$/, "") || "/";
+
+  // Internal tool, not a customer-facing page - skip the nav/footer/event
+  // picker chrome entirely rather than routing it through routeMap below.
+  if (page === "/admin") {
+    return <Admin />;
+  }
 
   const routeMap = {
     "/": { component: <Home navigate={navigate} />, current: "home" },

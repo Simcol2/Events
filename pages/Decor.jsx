@@ -2,45 +2,25 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import SectionHeading from "../components/SectionHeading";
-import DecorCard from "../components/DecorCard";
+import DecorCard, { parseItemTags } from "../components/DecorCard";
 import DecorDetailModal from "../components/DecorDetailModal";
 import RentalRequestModal from "../components/RentalRequestModal";
 import { useEventDate } from "../EventDateContext";
+import { TAGS as CATALOG_TAGS } from "../decorTags";
 
 function normalize(value) {
   return String(value || "").toLowerCase().trim();
 }
 
-// Fixed, buyer-facing tag list. `id` is the exact text typed into the
-// sheet's tags column (matched case-insensitively) - kept as plain,
-// readable words on purpose so whoever fills in a new sheet row can tell
-// what to type without a lookup table. `label` is what shows on the
-// site's filter button, which can read a little differently (e.g.
-// "wall/floor" in the sheet, "Wall & Floor" on the button). An item can
-// carry any number of these at once - a centerpiece can be Table, Baby
-// Shower, and Holidays/Events together.
-//
-// "rent" and "purchase" are not typed into the sheet - they're derived
-// automatically from whether rental_price/purchase_price is set, so they
-// can never go stale. See itemTags() below.
-const TAGS = [
-  { id: "table", label: "Table" },
-  { id: "wall/floor", label: "Wall & Floor" },
-  { id: "keepsakes & gifts", label: "Keepsakes & Gifts" },
-  { id: "disposables", label: "Disposables" },
-  { id: "stationery", label: "Stationery" },
-  { id: "gift wrap", label: "Gift Wrap" },
-  { id: "showers", label: "Showers" },
-  { id: "baby", label: "Baby" },
-  { id: "birthdays/holidays", label: "Birthdays/Holidays" },
-  { id: "activities", label: "Activities" },
-  { id: "dessert items", label: "Dessert Items" },
-  { id: "rent", label: "Rent" },
-  { id: "purchase", label: "Purchase" },
-];
+// "rent" and "purchase" aren't stored tags - they're derived automatically
+// from whether rental_price/purchase_price is set, so they're added here
+// as filter-only options rather than living in the shared decorTags list
+// (which the admin form also uses, where they wouldn't make sense as a
+// checkbox).
+const TAGS = [...CATALOG_TAGS, { id: "rent", label: "Rent" }, { id: "purchase", label: "Purchase" }];
 
 function itemTags(item) {
-  const sheetTags = Array.isArray(item.tags) ? item.tags.map(normalize) : [];
+  const sheetTags = parseItemTags(item).map(normalize);
   const derived = [];
   if (item.rental_price != null) derived.push("rent");
   if (item.purchase_price != null) derived.push("purchase");

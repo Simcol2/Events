@@ -8,10 +8,25 @@ import PhotoCarousel from "./PhotoCarousel";
 // hand.
 const PURCHASE_ONLY_TAGS = ["gift wrap", "disposables"];
 
+// The `tags` column exists but the sheet-driven data entry workflow has
+// always populated the multi-value tag list into `category` instead (a
+// comma-separated string, e.g. "Table, Showers, Birthdays/Holidays") -
+// this is why filtering and the tag display both silently showed nothing
+// before. `tags` is checked first so a populated tags array (e.g. from
+// the admin page) always wins, but category is where the real data lives
+// today.
+export function parseItemTags(item) {
+  if (Array.isArray(item.tags) && item.tags.length) return item.tags.filter(Boolean);
+  if (typeof item.category === "string" && item.category.trim()) {
+    return item.category.split(",").map((t) => t.trim()).filter(Boolean);
+  }
+  return [];
+}
+
 // Shared by DecorCard and DecorDetailModal so the purchase-only rule and
 // the tag list only live in one place.
 export function getItemFlags(item) {
-  const tags = Array.isArray(item.tags) ? item.tags.filter(Boolean) : [];
+  const tags = parseItemTags(item);
   const outOfStock = (item.quantity_owned ?? 0) <= 0;
   const isPurchasable = item.purchase_price != null;
   const isPurchaseOnly = tags.some((t) => PURCHASE_ONLY_TAGS.includes(String(t).toLowerCase().trim()));
