@@ -5,7 +5,6 @@ import { useCart } from "../CartContext";
 import { getItemFlags } from "../components/DecorCard";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import CartModal from "../components/CartModal";
-import { GROWN_FOLKS_LOOT_BAGS } from "../cateringContent";
 import { KEEPSAKES, resolveKeepsakeName } from "../packageContent";
 import { useEventType } from "../EventTypeContext";
 
@@ -144,11 +143,6 @@ export default function Gifts({ navigate }) {
     else addToCart(item.id, "catalog");
   };
 
-  const toggleLootBag = (item) => {
-    if (isInCart(item.id, "dessert")) removeFromCart(item.id, "dessert");
-    else addToCart(item.id, "dessert");
-  };
-
   const handleAddCustomGift = (meta) => {
     if (!customizing) return;
     addToCart(customizing.id, "gift", meta);
@@ -278,25 +272,6 @@ export default function Gifts({ navigate }) {
           </>
         )}
         {giftsError && <p className="mb-14 font-[Jost] text-sm text-red-700">Couldn't load gifts: {giftsError}</p>}
-
-        <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Grown Folks Loot Bags</h2>
-        <p className="mb-6 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
-          Individually wrapped desserts, gift ready straight out of the box. Buying one for someone special? These
-          are it. Want them for every guest at your event instead, that's the Grown Folks Loot Bags guest gift above.
-        </p>
-        <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {GROWN_FOLKS_LOOT_BAGS.map((g) => (
-            <GiftTile
-              key={g.id}
-              name={g.name}
-              tagline={g.tagline}
-              description={g.description}
-              price={g.price}
-              inCart={isInCart(g.id, "dessert")}
-              onToggle={() => toggleLootBag(g)}
-            />
-          ))}
-        </div>
 
         <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Keepsakes & Gifts</h2>
         {loading && <p className="py-10 text-center font-[Jost] text-sm text-[#A69C7E]">Curating the collection...</p>}
