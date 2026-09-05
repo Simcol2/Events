@@ -5,25 +5,20 @@ import { useCart } from "../CartContext";
 import { getItemFlags } from "../components/DecorCard";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import CartModal from "../components/CartModal";
+import PhotoCarousel from "../components/PhotoCarousel";
 import { KEEPSAKES, resolveKeepsakeName } from "../packageContent";
 import { useEventType } from "../EventTypeContext";
-
-function firstPhoto(photos) {
-  if (!Array.isArray(photos) || !photos.length) return null;
-  const first = photos[0];
-  return typeof first === "string" ? first : first?.url || null;
-}
 
 // `onCustomize`, when passed, replaces the ADD TO CART / IN CART toggle
 // with a single CUSTOMIZE button - a customizable gift isn't a boolean
 // on/off pick, each customization is its own cart line (see
 // CustomizableGiftModal), so there's no single "in cart" state to show.
-function GiftTile({ name, tagline, description, photo, price, priceLabel, inCart, onToggle, onCustomize }) {
+function GiftTile({ name, tagline, description, photos, price, priceLabel, inCart, onToggle, onCustomize }) {
   return (
     <div className="overflow-hidden bg-white">
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
-        {photo ? (
-          <img src={photo} alt={name} className="h-full w-full object-cover" />
+        {photos && photos.length ? (
+          <PhotoCarousel photos={photos} alt={name} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center">
             <span className="font-[Jost] text-[10px] tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
@@ -257,7 +252,7 @@ export default function Gifts({ navigate }) {
                   name={g.name}
                   tagline={g.tagline}
                   description={g.description}
-                  photo={firstPhoto(g.photos)}
+                  photos={g.photos}
                   priceLabel={g.customizable ? `FROM $${g.price}` : `$${g.price}`}
                   onCustomize={g.customizable ? () => setCustomizing(g) : undefined}
                   inCart={!g.customizable && isInCart(g.id, "gift")}
@@ -285,7 +280,7 @@ export default function Gifts({ navigate }) {
               key={item.id}
               name={item.name}
               description={item.description}
-              photo={firstPhoto(item.photos)}
+              photos={item.photos}
               price={item.purchase_price}
               inCart={isInCart(item.id, "catalog")}
               onToggle={() => toggleCatalogGift(item)}

@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-
-function firstPhoto(photos) {
-  if (!photos || !Array.isArray(photos) || !photos.length) return null;
-  const first = photos[0];
-  return typeof first === "string" ? first : first?.url || null;
-}
+import PhotoCarousel from "./PhotoCarousel";
 
 // Gift wrap and disposables are purchase-only by business rule, enforced
 // here rather than relying only on the sheet leaving rental_price blank.
@@ -40,7 +35,6 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
     ? variants.find((v) => String(v.id) === String(selectedId)) || variants[0]
     : item;
 
-  const photo = firstPhoto(active.photos);
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(active);
   const displayName = hasVariants ? groupName || active.name : active.name;
 
@@ -50,9 +44,9 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
       className={`group cursor-pointer overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
     >
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
-        {photo ? (
-          <img
-            src={photo}
+        {active.photos && active.photos.length ? (
+          <PhotoCarousel
+            photos={active.photos}
             alt={displayName}
             className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.025]"
           />
