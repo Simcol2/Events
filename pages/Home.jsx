@@ -1,15 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Heart, Sparkles, PackageCheck, Truck, Users, Gift } from "lucide-react";
+import { ArrowRight, Heart, Sparkles, PackageCheck, Truck, Users, Gift, Package, Frame, CalendarHeart } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import FeatureCard from "../components/FeatureCard";
-import {
-  MAIN_PACKAGE_ITEMS,
-  ADDONS,
-  PACKAGE_NAME,
-  MADE_FOR_MEMORIES_PRICE,
-  resolvePackageItem,
-} from "../packageContent";
+import { getEventConfig } from "../eventConfig";
+import { ADDONS, resolveExperienceItem } from "../packageContent";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -63,7 +58,7 @@ const HERO_STATES = [
     supporting:
       "Interactive event experiences that turn your baby shower, first birthday, or celebration into memories you can actually keep.",
     secondaryLabel: "Explore the experiences",
-    secondaryTarget: "/gifts-activities",
+    secondaryTarget: "/experiences",
   },
   {
     image: heroFullBleed,
@@ -79,7 +74,7 @@ const HERO_STATES = [
     supporting:
       "Beautiful pieces designed to get everyone involved, then become keepsakes you can take home.",
     secondaryLabel: "Explore the experiences",
-    secondaryTarget: "/gifts-activities",
+    secondaryTarget: "/experiences",
   },
   {
     image: babyTriviaPhoto,
@@ -95,7 +90,7 @@ const HERO_STATES = [
     supporting:
       "Interactive experiences for baby showers, first birthdays, and celebrations designed around the people who make them special.",
     secondaryLabel: "Find your perfect experience",
-    secondaryTarget: "/gifts-activities",
+    secondaryTarget: "/experiences",
   },
 ];
 
@@ -289,11 +284,12 @@ function Hero({ fonts, palette, navigate }) {
 export default function Home({ navigate }) {
   const { palette, fonts } = usePalette();
   const { eventTypeId, eventType } = useEventType();
+  const eventConfig = useMemo(() => getEventConfig(eventTypeId), [eventTypeId]);
 
-  const resolvedItems = useMemo(
-    () => MAIN_PACKAGE_ITEMS.map((item) => resolvePackageItem(item, eventTypeId)),
-    [eventTypeId]
-  );
+  const resolvedItems = useMemo(() => {
+    const ids = Array.from(new Set(eventConfig.steps.filter((s) => s.type === "pool").flatMap((s) => s.poolIds)));
+    return ids.map((id) => resolveExperienceItem(id, eventTypeId)).filter(Boolean);
+  }, [eventConfig, eventTypeId]);
 
   const guessArrivalAddon = ADDONS.find((a) => a.id === "guessArrival");
   const [showArrivalModal, setShowArrivalModal] = useState(false);
@@ -301,6 +297,31 @@ export default function Home({ navigate }) {
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
       <Hero fonts={fonts} palette={palette} navigate={navigate} />
+
+      {/* ═══════════════════════════════════════
+          PARTICIPATE → CONTRIBUTE → KEEP - the brand spine, right below the hero
+          ═══════════════════════════════════════ */}
+      <section style={{ background: palette.primaryDeep, padding: "48px 40px" }}>
+        <div
+          className="mx-auto grid gap-8 sm:grid-cols-3"
+          style={{ width: "100%", maxWidth: "1000px" }}
+        >
+          {[
+            { title: "PARTICIPATE", body: "Guests play, create, laugh, connect, and become part of the celebration." },
+            { title: "CONTRIBUTE", body: "They leave photos, stories, wishes, messages, predictions, and pieces of themselves." },
+            { title: "KEEP", body: "You take those memories home and get to revisit them long after the party ends." },
+          ].map((f) => (
+            <div key={f.title} className="text-center">
+              <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                {f.title}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
+                {f.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* ═══════════════════════════════════════
           WHAT MAKES US DIFFERENT - leads before anything else
@@ -332,8 +353,8 @@ export default function Home({ navigate }) {
             className="mx-auto mt-4 max-w-xl text-lg leading-7"
             style={{ ...fonts.bodyFont, color: palette.ink }}
           >
-            And when the celebration is over, you don't just pack away the
-            decor. <strong style={{ color: palette.primaryDeep }}>You keep the memories.</strong>
+            And when the celebration is over, you don't just pack everything
+            away. <strong style={{ color: palette.primaryDeep }}>You keep the memories.</strong>
           </p>
         </div>
 
@@ -378,12 +399,13 @@ export default function Home({ navigate }) {
           >
             From setup to keepsake.
           </h2>
-          <div className="grid gap-6 sm:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-5">
             {[
-              { icon: PackageCheck, title: "Choose your experience", body: "Pick the interactive pieces that fit your celebration, your guests, and the memories you want to create." },
-              { icon: Truck, title: "We deliver and style", body: "Choose the setup option that works for your event. We can deliver, or you can pick up your package." },
-              { icon: Users, title: "Your guests participate", body: "During the celebration, your guests become part of the experience. They write, play, create, photograph, and leave something behind." },
-              { icon: Gift, title: "You keep the memories", body: "When the party is over, the experience doesn't have to be. Your finished pieces become keepsakes from the day." },
+              { icon: CalendarHeart, title: "Choose your event", body: "Tell us what you're celebrating. We'll show you the experiences designed for it." },
+              { icon: PackageCheck, title: "Choose your experiences", body: "Pick the experiences that fit your people and the memories you want to make." },
+              { icon: Truck, title: "We prepare everything", body: "Your selected experiences arrive prepared and ready. Choose Self Setup or let an Event Stylist handle everything." },
+              { icon: Users, title: "Your guests participate", body: "They play, create, photograph, write, share, laugh, and leave something behind." },
+              { icon: Gift, title: "You keep the memories", body: "When the celebration is over, what your guests created becomes part of your story." },
             ].map((step, i) => {
               const Icon = step.icon;
               return (
@@ -405,6 +427,48 @@ export default function Home({ navigate }) {
                     style={{ ...fonts.bodyFont, color: palette.muted }}
                   >
                     {step.body}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          HOW INVOLVED DO YOU WANT TO BE - service style, independent of Memory Display
+          ═══════════════════════════════════════ */}
+      <section style={{ background: palette.bg, padding: "64px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "1000px", margin: "0 auto" }}>
+          <h2
+            className="mb-10 text-center text-3xl font-semibold sm:text-4xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            How involved do you want to be?
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {[
+              { icon: Package, title: "Self Setup", hook: "You set the scene. We make it easy.", body: "Everything arrives prepared and ready for you to place and arrange." },
+              { icon: Sparkles, title: "Event Stylist", hook: "You don't lift a finger.", body: "We bring everything, set it up, style it, make sure every detail is ready, and take it all back when the celebration is over." },
+              { icon: Frame, title: "Memory Display", hook: "Give the memories a place to shine.", body: "Add a display and turn what your guests create into a beautiful focal point at the event." },
+            ].map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="rounded-xl p-6 text-center" style={{ background: palette.surface, border: `1px solid ${palette.line}` }}>
+                  <div
+                    className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl"
+                    style={{ background: `${palette.accent}1F` }}
+                  >
+                    <Icon size={20} color={palette.accent} strokeWidth={1.8} />
+                  </div>
+                  <p className="mt-3 text-sm font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                    {f.title}
+                  </p>
+                  <p className="mt-1 text-sm italic" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                    {f.hook}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                    {f.body}
                   </p>
                 </div>
               );
@@ -459,7 +523,7 @@ export default function Home({ navigate }) {
                     letterSpacing: "0.3em",
                   }}
                 >
-                  THE {PACKAGE_NAME.toUpperCase()} PACKAGE
+                  SIGNATURE EXPERIENCES
                 </p>
 
                 <h2
@@ -472,7 +536,7 @@ export default function Home({ navigate }) {
                     lineHeight: 0.95,
                   }}
                 >
-                  {PACKAGE_NAME}.
+                  Choose what your guests will remember.
                 </h2>
 
                 <p
@@ -485,7 +549,7 @@ export default function Home({ navigate }) {
                     lineHeight: 1,
                   }}
                 >
-                  ${MADE_FOR_MEMORIES_PRICE}
+                  Starting at ${eventConfig.startingPrice.toLocaleString()} + HST
                 </p>
 
                 <p
@@ -498,9 +562,9 @@ export default function Home({ navigate }) {
                     lineHeight: 1.7,
                   }}
                 >
-                  Seven signature pieces for your {eventType.label.toLowerCase()}.
-                  Every piece is built to get guests involved, not just
-                  looking at decor.
+                  Every event has its own story. That's why your experience
+                  changes with the celebration you're planning: a{" "}
+                  {eventType.label.toLowerCase()}.
                 </p>
               </div>
 
@@ -552,6 +616,65 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
+      {/* ═══════════════════════════════════════
+          SEE IT IN ACTION - at the party, then after the party
+          ═══════════════════════════════════════ */}
+      <section style={{ background: `${palette.primary}0D`, padding: "80px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto" }}>
+          <h2
+            className="mb-12 text-center text-3xl font-semibold sm:text-4xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            See what happens when your guests become part of the celebration.
+          </h2>
+          <div className="grid gap-8 sm:grid-cols-2">
+            <Reveal>
+              <div className="overflow-hidden rounded-xl" style={{ aspectRatio: "4 / 3" }}>
+                <img src={babyTriviaPhoto} alt="Guests interacting at the celebration" className="h-full w-full object-cover" />
+              </div>
+              <p className="mt-4 text-xs font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                AT THE PARTY
+              </p>
+              <p className="mt-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                Guests interacting, laughing, writing, photographing, assembling, competing, and creating.
+              </p>
+            </Reveal>
+            <Reveal delay={80}>
+              <div className="overflow-hidden rounded-xl" style={{ aspectRatio: "4 / 3" }}>
+                <img src={nurseryRhymePhoto} alt="A finished keepsake from the celebration" className="h-full w-full object-cover" />
+              </div>
+              <p className="mt-4 text-xs font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                AFTER THE PARTY
+              </p>
+              <p className="mt-1 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                The finished book, artwork, photos, notes, capsule, or display in the home or nursery.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          THE EXPERIENCE AFTER THE PARTY
+          ═══════════════════════════════════════ */}
+      <section style={{ background: palette.bg, padding: "80px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
+          <h2
+            className="text-3xl font-semibold sm:text-4xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            Because the best part can happen later.
+          </h2>
+          <p className="mt-5 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
+            The party lasts a few hours. The memories don't have to. Revisit the messages, photos, stories,
+            artwork, and little pieces of the people who were there.
+          </p>
+          <p className="mt-4 text-lg font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+            That is what makes an A Slice of G experience different.
+          </p>
+        </div>
+      </section>
+
       {showArrivalModal && guessArrivalAddon && (
         <div
           className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8"
@@ -600,7 +723,7 @@ export default function Home({ navigate }) {
               className="mt-6 inline-flex items-center gap-2 rounded-sm px-6 py-3 text-xs font-semibold tracking-[0.15em] text-white"
               style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
             >
-              ADD IT TO YOUR PACKAGE <ArrowRight size={14} />
+              ADD IT TO MY EXPERIENCE <ArrowRight size={14} />
             </button>
           </div>
         </div>
@@ -623,14 +746,14 @@ export default function Home({ navigate }) {
                 className="mt-3 text-4xl font-semibold sm:text-5xl"
                 style={{ ...fonts.displayFont, color: palette.primaryDeep }}
               >
-                Build your own experience
+                Make it yours.
               </h2>
               <p
                 className="mt-3 text-lg"
                 style={{ ...fonts.bodyFont, color: palette.ink }}
               >
-                Start with {PACKAGE_NAME}, then layer on any upgrades that fit
-                your celebration.
+                Build an experience around your celebration, your people, and the
+                memories you want to make.
               </p>
             </div>
           </Reveal>
@@ -717,22 +840,31 @@ export default function Home({ navigate }) {
               className="mt-5 text-4xl font-semibold sm:text-5xl"
               style={{ ...fonts.displayFont, color: "#FFFFFF" }}
             >
-              The vibe is in the details.
+              Your event is one day. Make the memories last longer.
             </h2>
             <p
               className="mx-auto mt-5 max-w-lg text-lg leading-8"
               style={{ ...fonts.bodyFont, color: `${palette.bg}DD` }}
             >
-              Browse the full decor collection and start pulling together the
-              pieces that fit your celebration.
+              Choose the experiences your guests will love and the keepsakes
+              you'll want to keep.
             </p>
-            <button
-              onClick={() => navigate("/decor")}
-              className="mt-7 inline-flex items-center gap-3 border-2 px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:bg-white/10"
-              style={{ ...fonts.bodyFont, borderColor: palette.gold }}
-            >
-              BROWSE THE COLLECTION <ArrowRight size={17} />
-            </button>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-5">
+              <button
+                onClick={() => navigate("/package-builder")}
+                className="inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                style={{ ...fonts.bodyFont, background: palette.gold }}
+              >
+                BUILD MY EXPERIENCE <ArrowRight size={17} />
+              </button>
+              <button
+                onClick={() => navigate("/experiences")}
+                className="text-sm font-semibold tracking-[0.1em] text-white underline underline-offset-4"
+                style={fonts.bodyFont}
+              >
+                EXPLORE THE EXPERIENCES
+              </button>
+            </div>
           </Reveal>
         </div>
       </section>

@@ -11,6 +11,11 @@ export const EVENT_TYPES = [
     shortLabel: "Baby Shower",
   },
   {
+    id: "engagement",
+    label: "Engagement Party",
+    shortLabel: "Engagement",
+  },
+  {
     id: "milestoneBirthday",
     label: "1st–3rd Birthday",
     shortLabel: "1st–3rd Birthday",

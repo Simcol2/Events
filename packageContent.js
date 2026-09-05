@@ -20,6 +20,7 @@ import {
   Aperture,
   Moon,
   Gift,
+  Lightbulb,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -39,22 +40,15 @@ import arrivalPhoto from "./media/web_arrival.png";
 import nurseryRhymePhoto from "./media/poem.png";
 import welcomeSignPhoto from "./media/welcomesign.png";
 
-export const PACKAGE_NAME = "Made for Memories";
-
-export const PACKAGE_INTRO = {
-  eyebrow: "THE MADE FOR MEMORIES PACKAGE",
-  title: "You bring the people. We bring the details.",
-  body: "Seven signature pieces, built around one idea: your guests shouldn't just show up, they should leave something behind. Then build it out with any upgrades that make it even more you.",
-};
-
-// Placeholder pricing — easy to swap once real numbers are set.
-export const MADE_FOR_MEMORIES_PRICE = 795;
+// Per-event pricing/pool/guest-gift/builder-step configuration now lives in
+// eventConfig.js (the "one experience, priced and shaped per event type"
+// architecture) - see EVENT_CONFIGS there for starting prices.
 export const DEFAULT_GUEST_COUNT = 30;
 
-// Every item in the fixed 7-piece package can read differently depending on
-// what's being celebrated. `copy.default` is the fallback used for any event
-// type without its own entry; `photos.default` is likewise the fallback
-// image. Photos are `null` until real event-specific photography is added —
+// Every experience item can read differently depending on what's being
+// celebrated. `copy.default` is the fallback used for any event type
+// without its own entry; `photos.default` is likewise the fallback image.
+// Photos are `null` until real event-specific photography is added -
 // PhotoSlot already renders a "Photo coming soon" placeholder for those.
 export const MAIN_PACKAGE_ITEMS = [
   {
@@ -63,61 +57,68 @@ export const MAIN_PACKAGE_ITEMS = [
     copy: {
       default: {
         name: "Picture This",
-        tagline: "Snap a photo. Share a memory.",
+        tagline: "The moments you wish you could bottle up.",
         description:
-          "Guests snap a photo and leave a written note or a quick voice recording about a favourite memory. Both go into the time capsule to look back on someday.",
+          "Guests capture a photo and leave a handwritten note about a favourite memory, moment, or story from the celebration. Both go into the time capsule to look back on someday.",
       },
       babyShower: {
         name: "Picture This",
-        tagline: "Snap a photo. Share a memory.",
+        tagline: "The moments you wish you could bottle up.",
         description:
-          "Guests snap a photo and write a note or record a quick voice message about their favourite time or story with Mom and Dad, so baby can see what their parents were like when they grow up. Both go into the time capsule to discover someday.",
+          "Guests capture a photo and leave a handwritten note about their favourite time or story with Mom and Dad, so baby can see what their parents were like when they grow up. Both go into the time capsule to discover someday.",
+      },
+      engagement: {
+        name: "Picture This",
+        tagline: "The moments you wish you could bottle up.",
+        description:
+          "Guests capture a photo and leave a handwritten note about a favourite memory or moment with the couple. Both go into the time capsule to discover someday.",
       },
       milestoneBirthday: {
         name: "Picture This: Their Year in Review",
-        tagline: "Snap a photo. Share a memory.",
+        tagline: "The moments you wish you could bottle up.",
         description:
-          "Guests snap a photo and write a note or record a quick voice message about their favourite story of the birthday kiddo this year. Both go into the time capsule to look back on someday.",
+          "Guests capture a photo and leave a handwritten note about their favourite story of the birthday kiddo this year. Both go into the time capsule to look back on someday.",
       },
       birthday: {
         name: "Picture This",
-        tagline: "Snap a photo. Share a memory.",
+        tagline: "The moments you wish you could bottle up.",
         description:
-          "Guests snap a photo and leave a note or a quick voice message with their favourite story about the guest of honor. Both go into the time capsule to keep.",
+          "Guests capture a photo and leave a handwritten note about their favourite story about the guest of honor. Both go into the time capsule to keep.",
       },
       holiday: {
         name: "Picture This",
-        tagline: "Snap a photo. Share a memory.",
+        tagline: "The moments you wish you could bottle up.",
         description:
-          "Guests snap a photo and leave a note or a quick voice message with a favourite holiday memory of the person you're celebrating. Both go into the time capsule to open again next season.",
+          "Guests capture a photo and leave a handwritten note about a favourite holiday memory of the person you're celebrating. Both go into the time capsule to open again next season.",
       },
       specialMoment: {
         name: "Picture This",
-        tagline: "Snap a photo. Share a memory.",
+        tagline: "The moments you wish you could bottle up.",
         description:
-          "Guests snap a photo and leave a note or a quick voice message with a favourite memory of this moment. Both go into the time capsule to keep.",
+          "Guests capture a photo and leave a handwritten note about a favourite memory of this moment. Both go into the time capsule to keep.",
       },
     },
     photos: {
       default: pictureThisPhoto,
       babyShower: pictureThisPhoto,
+      engagement: null,
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
       specialMoment: null,
     },
     details: {
-      summary: "A photo wall guests build together. Every photo comes with a note or voice memo, all sealed in the Time Capsule.",
+      summary: "A photo wall guests build together. Every photo comes with a handwritten note, all sealed in the Time Capsule.",
       howItWorks: [
         "Guests snap a photo at the event.",
-        "They write a short note or record a quick voice memo.",
+        "They write a short handwritten note.",
         "Both get clipped to the display wall.",
         "Everything gets sealed inside the Time Capsule to open later.",
       ],
       goodToKnow: [
         "Setup takes about 10 minutes.",
         "Works for any group size.",
-        "Pairs with the Digital Photo Album for an online copy too.",
+        "Want voice messages too? Add the Voice Notes upgrade.",
       ],
     },
   },
@@ -136,6 +137,12 @@ export const MAIN_PACKAGE_ITEMS = [
         tagline: "A little kindness can change someone's whole day.",
         description:
           "Guests take a card, read a little reminder, and carry it out into the world in celebration of baby's arrival. Add an optional $5 gift card to any note for a pay it forward surprise.",
+      },
+      engagement: {
+        name: "Kindness Station",
+        tagline: "A little kindness can change someone's whole day.",
+        description:
+          "Guests take a message and carry an act of kindness into the world in honour of the couple. Add an optional $5 gift card to any note for a pay it forward surprise.",
       },
       milestoneBirthday: {
         name: "Kindness Corner",
@@ -165,6 +172,7 @@ export const MAIN_PACKAGE_ITEMS = [
     photos: {
       default: kindnessStationPhoto,
       babyShower: kindnessStationPhoto,
+      engagement: null,
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
@@ -196,9 +204,15 @@ export const MAIN_PACKAGE_ITEMS = [
       },
       babyShower: {
         name: "First Story Book",
-        tagline: "The story starts before they even arrive.",
+        tagline: "Baby's first story, written by everyone who loves them.",
         description:
-          "Every guest becomes one of baby's story friends and contributes a page (a doodle, a wish, something they hope baby learns) to a keepsake storybook that begins their very first adventure.",
+          "Guests help create a one-of-a-kind illustrated story for baby by adding words, ideas, wishes, characters, memories, and little pieces of their imagination.",
+      },
+      engagement: {
+        name: "Our Story Book",
+        tagline: "A love story written by everyone who knows them.",
+        description:
+          "Guests contribute words, memories, wishes, and pieces of the couple's journey to create an illustrated keepsake.",
       },
       milestoneBirthday: {
         name: "Their Big Adventure",
@@ -228,6 +242,7 @@ export const MAIN_PACKAGE_ITEMS = [
     photos: {
       default: null,
       babyShower: null,
+      engagement: null,
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
@@ -248,81 +263,18 @@ export const MAIN_PACKAGE_ITEMS = [
     },
   },
   {
-    id: "ohBabyCenterpiece",
-    icon: Leaf,
-    copy: {
-      default: {
-        name: "Milestone Centerpiece",
-        tagline: "A centerpiece with a little history.",
-        description:
-          "A custom display featuring photos from before, with space to serve your favourite treats at the centre of it all.",
-      },
-      babyShower: {
-        name: "Oh Baby Decor",
-        tagline: "A centerpiece with a little history.",
-        description:
-          "A custom wooden display featuring childhood photos of Mom and Dad, with space to serve your favourite shower treats.",
-      },
-      milestoneBirthday: {
-        name: "Growing Up Centerpiece",
-        tagline: "A look back at how far they've come.",
-        description:
-          "A custom display featuring photos from their first years, with space to serve your favourite birthday treats at the centre of the table.",
-      },
-      birthday: {
-        name: "Birthday Centerpiece",
-        tagline: "A centerpiece worth celebrating.",
-        description:
-          "A custom display featuring photos of the guest of honor, with space to serve your favourite birthday treats.",
-      },
-      holiday: {
-        name: "Holiday Centerpiece",
-        tagline: "A centerpiece with a little history.",
-        description:
-          "A custom display featuring favourite holiday photos, with space to serve your favourite seasonal treats.",
-      },
-      specialMoment: {
-        name: "Custom Centerpiece",
-        tagline: "Simple, elegant, unforgettable.",
-        description:
-          "A custom candle and floral centerpiece designed around your colour palette, set at the centre of your table.",
-      },
-    },
-    photos: {
-      default: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
-      babyShower: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
-      milestoneBirthday: null,
-      birthday: null,
-      holiday: [centerpieceThanksgivingPhoto, centerpieceChristmasPhoto],
-      specialMoment: [centerpieceSpecialMomentPhoto],
-    },
-    details: {
-      summary: "A custom centerpiece built around real photos. Doubles as your dessert table's main feature.",
-      howItWorks: [
-        "Send us the photos you want featured.",
-        "We design the centerpiece around them.",
-        "It arrives ready to set up on your table.",
-        "Serve treats right alongside it.",
-      ],
-      goodToKnow: [
-        "Photos are due at least 2 weeks before your event.",
-        "Design changes with the season and occasion.",
-      ],
-    },
-  },
-  {
     id: "babyTrivia",
     icon: Brain,
     copy: {
       default: {
-        name: "Trivia Card Pack",
-        tagline: "How well do you really know them?",
+        name: "Know Them Best",
+        tagline: "Think you know them best? Let's see.",
         description:
-          "A playful round of trivia with up to 15 custom questions guests will love guessing about the people you're celebrating.",
+          "A custom trivia experience about the person or people you're celebrating. Guests answer questions, compare guesses, and compete to see who really knows them best.",
       },
       babyShower: {
         name: "Baby Trivia Card Pack",
-        tagline: "Think you know babies? Let's see.",
+        tagline: "Think you know baby? Let's see.",
         description:
           "A playful collection of baby and parent trivia for guests to test their knowledge. Add up to 15 custom questions all about Mom and Dad.",
       },
@@ -354,6 +306,7 @@ export const MAIN_PACKAGE_ITEMS = [
     photos: {
       default: babyTriviaPhoto,
       babyShower: babyTriviaPhoto,
+      engagement: null,
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
@@ -385,9 +338,15 @@ export const MAIN_PACKAGE_ITEMS = [
       },
       babyShower: {
         name: "Put Baby Together",
-        tagline: "Help us complete the picture.",
+        tagline: "Everyone adds a piece. Together, you create baby.",
         description:
-          "A giant portrait of baby is broken into puzzle pieces. Guests gradually assemble it throughout the shower, and the finished piece becomes a keepsake for the nursery.",
+          "A giant portrait of baby becomes an interactive puzzle that guests work together to complete throughout the shower. The finished artwork becomes a keepsake that can live on in baby's nursery.",
+      },
+      engagement: {
+        name: "Custom Wall Puzzle",
+        tagline: "Everyone adds a piece. Together, you create the picture.",
+        description:
+          "A meaningful photo becomes an interactive puzzle that guests assemble throughout the celebration. The finished piece becomes wall art for the home.",
       },
       milestoneBirthday: {
         name: "Piece By Piece",
@@ -422,6 +381,7 @@ export const MAIN_PACKAGE_ITEMS = [
       // is only correct for the 1st-3rd-birthday variant.
       default: null,
       babyShower: null,
+      engagement: null,
       milestoneBirthday: wallPuzzleBabyPhoto,
       birthday: null,
       holiday: null,
@@ -447,44 +407,51 @@ export const MAIN_PACKAGE_ITEMS = [
     copy: {
       default: {
         name: "Time Capsule",
-        tagline: "A little piece of today, saved for tomorrow.",
+        tagline: "Your guests fill it today. Your family opens it someday.",
         description:
-          "Every photo, note, and voice recording from Picture This gets sealed inside, ready to open again in the future.",
+          "Guests leave messages, wishes, predictions, memories, and photographs for the future, along with everything from Picture This, ready to open again years later.",
       },
       babyShower: {
         name: "Time Capsule",
-        tagline: "A little piece of today, saved for tomorrow.",
+        tagline: "Your guests fill it today. Your family opens it someday.",
         description:
-          "Every photo, note, and voice message from Picture This gets sealed inside: stories about Mom and Dad from the people who celebrated baby before they ever knew them, saved for the future.",
+          "Every photo and note from Picture This gets sealed inside, along with guest wishes and predictions: stories about Mom and Dad from the people who celebrated baby before they ever knew them, saved for the future.",
+      },
+      engagement: {
+        name: "Time Capsule",
+        tagline: "Your guests fill it today. You open it someday.",
+        description:
+          "Guests leave messages, wishes, predictions, and memories for the couple to open on an anniversary or future milestone.",
       },
       milestoneBirthday: {
         name: "The World at 18 Time Capsule",
         tagline: "What will the world look like when they turn 18?",
         description:
-          "Every photo, note, and voice message from Picture This gets sealed inside, along with guest predictions about the world, opened together on their 18th birthday.",
+          "Every photo and note from Picture This gets sealed inside, along with guest predictions about the world, opened together on their 18th birthday.",
       },
       birthday: {
         name: "Time Capsule",
-        tagline: "A little piece of today, saved for tomorrow.",
+        tagline: "Your guests fill it today. You open it someday.",
         description:
-          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again on a birthday down the road.",
+          "Every photo and note from Picture This gets sealed inside, ready to open again on a birthday down the road.",
       },
       holiday: {
         name: "Time Capsule",
         tagline: "A moment from this year, saved for next.",
         description:
-          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again next holiday season.",
+          "Every photo and note from Picture This gets sealed inside, ready to open again next holiday season.",
       },
       specialMoment: {
         name: "Time Capsule",
-        tagline: "A little piece of today, saved for tomorrow.",
+        tagline: "Your guests fill it today. You open it someday.",
         description:
-          "Every photo, note, and voice message from Picture This gets sealed inside, ready to open again in the future.",
+          "Every photo and note from Picture This gets sealed inside, ready to open again in the future.",
       },
     },
     photos: {
       default: timeCapsulePhoto,
       babyShower: timeCapsulePhoto,
+      engagement: null,
       milestoneBirthday: null,
       birthday: null,
       holiday: null,
@@ -493,7 +460,7 @@ export const MAIN_PACKAGE_ITEMS = [
     details: {
       summary: "A sealed keepsake box that holds everything from Picture This, ready to open again in the future.",
       howItWorks: [
-        "Photos, notes, and voice memos go in throughout the event.",
+        "Photos, notes, wishes, and predictions go in throughout the event.",
         "The box is sealed at the end of the celebration.",
         "You choose when it gets opened again.",
         "Everyone who contributed becomes part of that memory.",
@@ -505,6 +472,39 @@ export const MAIN_PACKAGE_ITEMS = [
     },
   },
 ];
+
+// The Customizable Serving Dish lives outside the experience pools entirely
+// (it's decor, not an interactive experience) - surfaced as its own card in
+// the Package Builder's Make It Yours step, priced live from the Supabase
+// decor catalog (see CENTERPIECE_LARGE_CATALOG_NAME / resolveSetupItem's
+// centerpieceLarge branch), not from this copy object.
+export const CUSTOM_SERVING_DISH = {
+  id: "centerpieceLarge",
+  icon: Leaf,
+  name: "Custom Serving Dish",
+  tagline: "A beautiful piece for the table, made just for the celebration.",
+  description:
+    "A custom display featuring photos from your celebration, with space to serve your favourite treats at the centre of it all.",
+  photos: {
+    default: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
+    babyShower: [ohBabyCenterPhoto, ohBabyBlocksPhoto, ohBabyTrayPhoto],
+    holiday: [centerpieceThanksgivingPhoto, centerpieceChristmasPhoto],
+    specialMoment: [centerpieceSpecialMomentPhoto],
+  },
+  details: {
+    summary: "A custom serving dish built around real photos. Doubles as your dessert table's main feature.",
+    howItWorks: [
+      "Send us the photos you want featured.",
+      "We design the piece around them.",
+      "It arrives ready to set up on your table.",
+      "Serve treats right alongside it.",
+    ],
+    goodToKnow: [
+      "Photos are due at least 2 weeks before your event.",
+      "Design changes with the season and occasion.",
+    ],
+  },
+};
 
 // Resolves one package item's copy + photo(s) for the active event type,
 // falling back to `default` for anything without an explicit override. A
@@ -519,18 +519,25 @@ export function resolvePackageItem(item, eventTypeId) {
   return { id: item.id, icon: item.icon, photoUrls, details: item.details, ...copy };
 }
 
-// Setup items that don't already exist as one of the 7 MAIN_PACKAGE_ITEMS
-// (those stay Home.jsx's "seven signature pieces" preview, unchanged) or as
-// an ADDONS entry. Same copy/photos shape as MAIN_PACKAGE_ITEMS so
-// resolvePackageItem() works the same way for these. No per-event-type
-// copy yet, just `default` - can be filled in later per event type the
-// same way the other pieces are.
+// Setup items that don't already exist as one of the MAIN_PACKAGE_ITEMS
+// (those stay Home.jsx's homepage preview, unchanged) or as an ADDONS entry.
+// Same copy/photos shape as MAIN_PACKAGE_ITEMS so resolvePackageItem() works
+// the same way for these. `default` copy is the event-neutral version used
+// for the Play & Connect pool (Baby Shower) and the "Want Something
+// Playful?" add-on step (every other event type); `babyShower` overrides it
+// with the baby-specific version where the two differ.
 export const SETUP_ONLY_ITEMS = [
   {
     id: "babyNaptimeRelay",
     icon: Moon,
     copy: {
       default: {
+        name: "The Challenge Course",
+        tagline: "Three stations. One challenge.",
+        description:
+          "Guests race through three themed stations, competing solo or in teams to finish the course the fastest.",
+      },
+      babyShower: {
         name: "Baby Naptime Relay",
         tagline: "Three stations. One sleepy baby.",
         description:
@@ -558,6 +565,12 @@ export const SETUP_ONLY_ITEMS = [
     copy: {
       default: {
         name: "The Price Is Right",
+        tagline: "Think you know what it costs?",
+        description:
+          "Guests guess prices, rack up points, and compete to see who has the sharpest eye for a deal.",
+      },
+      babyShower: {
+        name: "The Price Is Right",
         tagline: "Think you know what babies cost?",
         description:
           "From diapers and detergent to strollers and everything Mom actually registered for, put your pricing skills to the test. Guess the price. Guess where it's cheaper. Guess what Mom bought. Rack up the points, play solo or team up with friends.",
@@ -565,16 +578,42 @@ export const SETUP_ONLY_ITEMS = [
     },
     photos: { default: null },
     details: {
-      summary: "A pricing guessing game built around real baby gear and registry items.",
+      summary: "A pricing guessing game built around real gear and registry items.",
       howItWorks: [
-        "Guests see a list of real baby items.",
+        "Guests see a list of real items tied to the celebration.",
         "They guess the price of each one.",
         "Closest guess without going over wins the round.",
         "Play individually or in teams.",
       ],
       goodToKnow: [
         "Takes about 15 minutes to play.",
-        "Prices are pulled from Mom's actual registry when possible.",
+        "Prices are pulled from the real registry or shopping list when possible.",
+      ],
+    },
+  },
+  {
+    id: "babyPredictions",
+    icon: Lightbulb,
+    copy: {
+      default: {
+        name: "Baby Predictions",
+        tagline: "Who do you think baby will become?",
+        description:
+          "Guests make predictions about baby's future, from personality and interests to first words, future hobbies, and the little things they think will make baby uniquely themselves.",
+      },
+    },
+    photos: { default: null },
+    details: {
+      summary: "A prediction card for every guest, capturing what everyone imagined for baby before they got to know who baby would become.",
+      howItWorks: [
+        "Guests fill out a prediction card during the celebration.",
+        "They guess baby's personality, interests, and future hobbies.",
+        "Cards are collected and kept for the family.",
+        "You get to compare notes as baby grows up.",
+      ],
+      goodToKnow: [
+        "Takes about 5 minutes per guest.",
+        "Pairs well with the Time Capsule.",
       ],
     },
   },
@@ -584,9 +623,21 @@ export const SETUP_ONLY_ITEMS = [
     copy: {
       default: {
         name: "The Photo Challenge",
+        tagline: "Capture the moments they'll want to remember.",
+        description:
+          "Each guest gets a secret photo challenge with one goal: capture a picture that fits the assignment. Scan the QR code and add it to the shared album. By the end of the celebration, you have a whole album of memories from the people who came to celebrate.",
+      },
+      babyShower: {
+        name: "The Photo Challenge",
         tagline: "Capture the moments Mom will want to remember.",
         description:
           "Each guest gets a secret photo challenge with one goal: capture a picture of Mom that fits the assignment. Scan the QR code and add it to the shared album. By the end of the celebration, Mom has a whole album of memories from the people who came to celebrate her.",
+      },
+      engagement: {
+        name: "The Photo Challenge",
+        tagline: "Capture the moments they'll want to remember.",
+        description:
+          "Each guest receives a secret photo challenge focused on the couple. Scan the QR code and add it to the shared album. By the end of the celebration, the couple has an album seen through the eyes of the people who love them.",
       },
     },
     photos: { default: null },
@@ -606,37 +657,67 @@ export const SETUP_ONLY_ITEMS = [
   },
 ];
 
-// The base package includes 3 setup picks in Step 1, then 3 more in Step 2,
-// both chosen from this fixed, curated list rather than the live Decor
-// catalog (the one exception is centerpieceLarge, which is pulled from the
-// live catalog by name - see CENTERPIECE_LARGE_CATALOG_NAME). Four items
-// appear in both step lists on purpose: picking one in Step 1 removes it
-// from Step 2's options, so nothing gets picked twice.
-export const SETUP_STEP_1_IDS = ["pictureThis", "centerpieceLarge", "kindnessStation", "babyTrivia", "babyNaptimeRelay", "priceIsRight"];
-export const SETUP_STEP_2_IDS = ["guessArrival", "timeCapsule", "wallPuzzle", "centerpieceLarge", "kindnessStation", "babyTrivia", "babyNaptimeRelay", "photoChallenge", "nurseryRhyme"];
+// Experience pools, per event type. No id appears in more than one pool for
+// the same event, so an item is never offered twice. guessArrival isn't in
+// any pool - it stays a pure ADDONS upgrade (see the homepage's "Guess the
+// Arrival Day" modal).
+//
+// Baby Shower is the only event type with two 3-pick pools; every other
+// event type uses a single 4-pick pool plus the separate Playful Add-On
+// step (see PLAYFUL_ADDON_IDS below).
+export const PLAY_CONNECT_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight", "kindnessStation", "babyPredictions"];
+export const CREATE_KEEP_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "nurseryRhyme"];
+export const ENGAGEMENT_POOL_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
+export const NEUTRAL_POOL_IDS = ["pictureThis", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
 
-export const SETUP_INCLUDED_COUNT = 3;
+// Resolves any pool id's copy/photo for the active event type, whichever
+// list it lives in - MAIN_PACKAGE_ITEMS/SETUP_ONLY_ITEMS (event-aware
+// copy via resolvePackageItem) or an ADDONS entry reused as a free-pick
+// pool candidate (nurseryRhyme / Custom Art Piece). Used by the homepage's
+// Signature Experiences preview and the Experiences page - the Package
+// Builder has its own resolveSetupItem() that additionally handles the
+// live-catalog Custom Serving Dish, which never appears in a pool.
+export function resolveExperienceItem(id, eventTypeId) {
+  const staticItem = MAIN_PACKAGE_ITEMS.find((m) => m.id === id) || SETUP_ONLY_ITEMS.find((m) => m.id === id);
+  if (staticItem) return resolvePackageItem(staticItem, eventTypeId);
+  const addon = ADDONS.find((a) => a.id === id);
+  if (addon) {
+    return {
+      id,
+      icon: addon.icon,
+      name: addon.name,
+      tagline: addon.tagline,
+      description: addon.description,
+      photoUrls: addon.photoUrl ? [addon.photoUrl] : [],
+      details: addon.details,
+    };
+  }
+  return null;
+}
 
-// Default price when a setup pool item is picked beyond the included 6.
-// Some items have their own real price instead of this default - see
-// SETUP_ADDON_PRICE_OVERRIDES.
-export const SETUP_ADDON_PRICE = 75;
-export const SETUP_ADDON_PRICE_OVERRIDES = {
-  guessArrival: 150,
-  nurseryRhyme: 175,
-};
+// "Want Something Playful?" add-on step - Engagement, Birthday, Holiday, and
+// Special Moment builds only (Baby Shower already has Play & Connect).
+// Reuses the same items' event-neutral `default` copy (Know Them Best / The
+// Challenge Course / The Price Is Right).
+export const PLAYFUL_ADDON_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight"];
+export const PLAYFUL_ADDON_PRICE = 125;
+
+// Flat price for an "Additional Keepsake Experience" - any pool pick beyond
+// an event's included count. Addon-reuse items (nurseryRhyme / Custom Art
+// Piece) keep their own real `price` instead via resolveSetupItem's
+// fallback, matching the plan's allowance for product-specific pricing.
+export const SETUP_ADDON_PRICE = 125;
 
 // The exact live-catalog item name centerpieceLarge is matched against.
 export const CENTERPIECE_LARGE_CATALOG_NAME = "Customizable Serving Dish (Center Piece) - Large";
 
 // Optional upgrades layered on top of the fixed package via the Package
-// Builder's Add-Ons step. guessArrival and nurseryRhyme also live in the
-// Setup pool (see SETUP_STEP_1_IDS/SETUP_STEP_2_IDS above) as free-pick
-// candidates - when not chosen free, the Add-Ons step surfaces them at
-// their price here through the setup-pool-overflow mechanic instead of
-// rendering them twice. pictureThisDigitalAlbum is tech/digital in nature
-// and only enabled once Picture This is in the package - see
-// DIGITAL_ADDON_IDS below.
+// Builder's Make It Yours step. nurseryRhyme (Custom Art Piece) also lives
+// in CREATE_KEEP_IDS above as a free-pick candidate - when not chosen free,
+// Make It Yours surfaces it at its price here through the pool-overflow
+// mechanic instead of rendering it twice. pictureThisDigitalAlbum is
+// tech/digital in nature and only enabled once Picture This is in the
+// package - see DIGITAL_ADDON_IDS below.
 export const ADDONS = [
   {
     id: "guessArrival",
@@ -687,23 +768,24 @@ export const ADDONS = [
   {
     id: "nurseryRhyme",
     icon: Music,
-    name: "Custom Nursery Rhyme",
-    tagline: "A story about the two people who started it all.",
+    name: "Custom Art Piece",
+    tagline: "A piece of art that holds a story only you could tell.",
     description:
-      "We turn your story into a one-of-a-kind rhyme, beautifully printed and framed as part of the decor.",
+      "A custom framed piece created from the photos, lyrics, or words that matter most. It becomes meaningful decor during the celebration and a permanent keepsake afterward.",
     price: 175,
     photoUrl: nurseryRhymePhoto,
     details: {
-      summary: "Your love story, turned into a custom rhyme and framed as part of your decor.",
+      summary: "Your story, turned into a custom framed piece that doubles as decor and a permanent keepsake.",
       howItWorks: [
-        "Share your story with us.",
-        "We write a custom rhyme around it.",
+        "Share the photos, lyrics, or words that matter most to you.",
+        "We design a custom piece around them.",
         "It's professionally printed and framed.",
         "It arrives ready to display at your event.",
       ],
       goodToKnow: [
         "Takes about 1 to 2 weeks to produce.",
         "Frame style matches your event's theme.",
+        "Core Create & Keep experience for Baby Shower.",
       ],
     },
   },
@@ -803,9 +885,6 @@ export const ADDONS = [
 // hidden entirely - see hasPictureThis in PackageBuilder.jsx.
 export const DIGITAL_ADDON_IDS = ["pictureThisDigitalAlbum"];
 
-// Placeholder - update once a real price is set.
-export const CUSTOM_STORY_BOOK_PRICE = 75;
-
 // Every package includes a guest gift. Each option has its own included
 // guest count and its own per-guest overage rate, both set independently
 // per gift, not shared across all three.
@@ -814,6 +893,14 @@ export const KEEPSAKES = [
     id: "readyToPop",
     icon: PartyPopper,
     name: "Ready to Pop",
+    // The included guest gift keeps the same product but a different name
+    // per event type, matching the plan's naming rule (never a generic
+    // "Guest Gift"). See resolveKeepsakeName().
+    nameByEventType: {
+      babyShower: "Ready to Pop",
+      engagement: "They Popped the Question",
+      default: "A Little Something for the Road",
+    },
     tagline: "Included with your package.",
     description:
       "A cute, custom wrapped popcorn kit paired with a gourmet treat. Designed to match your celebration and give guests a little thank you they can actually enjoy.",
@@ -885,6 +972,14 @@ export const KEEPSAKES = [
   },
 ];
 
+// Resolves a guest gift's display name for the active event type, falling
+// back to its plain `name` for keepsakes without event-specific naming
+// (Lil Roots, Grown Folks Loot Bags).
+export function resolveKeepsakeName(keepsake, eventTypeId) {
+  if (!keepsake.nameByEventType) return keepsake.name;
+  return keepsake.nameByEventType[eventTypeId] || keepsake.nameByEventType.default;
+}
+
 // Backdrop/display setups - never included in a package, always an add-on.
 // Both displays cost the same regardless of which one is chosen; price
 // only depends on the setup option below.
@@ -935,17 +1030,43 @@ export const DISPLAYS = [
   },
 ];
 
+// Memory Display setup tiers. "No Display" is the implicit default
+// (no displayId chosen at all) so it isn't listed here - see
+// pages/PackageBuilder.jsx's display step.
 export const DISPLAY_SETUP_OPTIONS = [
   {
     id: "diy",
-    label: "Self Setup",
-    price: 500,
-    description: "You bring the energy, we bring easy to follow instructions and floral arrangements that arrive already arranged. Setup takes minutes, not stress.",
+    label: "Self-Styled Memory Display",
+    price: 150,
+    description: "Receive the display components and style the setup yourself.",
   },
   {
     id: "professional",
-    label: "Professional Install and Removal",
-    price: 750,
-    description: "Sit back and let us handle it. We arrive, install, and remove your display start to finish, so the only thing on your to do list is showing up.",
+    label: "Professionally Styled Memory Display",
+    price: 350,
+    description: "We'll design, arrange, and style the display so your interactive experiences and keepsakes have a beautiful focal point at the event.",
   },
 ];
+
+// How involved the customer wants to be, independent of the Memory Display
+// choice above - a customer can mix either service style with either
+// display tier. Self Setup is for Toronto pickup or Toronto drop-off;
+// delivery is handled by direct contact rather than a set fee.
+export const SERVICE_STYLE_OPTIONS = [
+  {
+    id: "self",
+    label: "Self Setup",
+    price: 0,
+    description:
+      "Everything arrives prepared and ready for you to place and arrange. Self Setup is for Toronto pickup or Toronto drop-off. Need delivery? Please contact us.",
+  },
+  {
+    id: "full",
+    label: "Event Stylist",
+    price: 395,
+    description:
+      "You don't lift a finger. We bring everything, set it up, style it, make sure every detail is ready, and take it all back when the celebration is over.",
+  },
+];
+
+export const HST_RATE = 0.13;

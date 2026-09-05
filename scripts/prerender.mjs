@@ -19,6 +19,9 @@ import path from "node:path";
 const ROUTES = [
   "/",
   "/how-it-works",
+  "/experiences",
+  "/about",
+  "/faq",
   "/decor",
   "/gifts-activities",
   "/catering",

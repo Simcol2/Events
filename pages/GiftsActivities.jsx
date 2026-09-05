@@ -4,7 +4,8 @@ import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { getItemFlags } from "../components/DecorCard";
 import { GROWN_FOLKS_LOOT_BAGS } from "../cateringContent";
-import { KEEPSAKES } from "../packageContent";
+import { KEEPSAKES, resolveKeepsakeName } from "../packageContent";
+import { useEventType } from "../EventTypeContext";
 import pictureThisPhoto from "../media/picturethis.png";
 import lilRootsPhoto from "../media/lilroots.png";
 
@@ -141,6 +142,7 @@ export default function GiftsActivities({ navigate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { addToCart, removeFromCart, isInCart, cartCount } = useCart();
+  const { eventTypeId } = useEventType();
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -255,14 +257,17 @@ export default function GiftsActivities({ navigate }) {
 
         <h2 className="mb-2 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Guest Gifts</h2>
         <p className="mb-6 max-w-2xl font-[Jost] text-sm leading-6 text-[#8C846F]">
-          Every package includes a guest gift. Each option has its own included guest count, choose which one when you build your package.
+          Send your guests home with a little something to remember the day by. Every experience includes a guest
+          gift, choose which one when you build your experience.
         </p>
         <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {KEEPSAKES.map((k) => (
+          {KEEPSAKES.map((k) => {
+            const name = resolveKeepsakeName(k, eventTypeId);
+            return (
             <div key={k.id} className="overflow-hidden bg-white">
               <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
                 {k.photoUrl ? (
-                  <img src={k.photoUrl} alt={k.name} className="h-full w-full object-cover" />
+                  <img src={k.photoUrl} alt={name} className="h-full w-full object-cover" />
                 ) : (
                   <div className="flex h-full items-center justify-center">
                     <span className="font-[Jost] text-[10px] tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
@@ -270,7 +275,7 @@ export default function GiftsActivities({ navigate }) {
                 )}
               </div>
               <div className="px-1 pb-3 pt-4">
-                <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{k.name}</h3>
+                <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{name}</h3>
                 <p className="mt-1 font-[Jost] text-[11px] italic text-[#B8935A]">{k.tagline}</p>
                 <p className="mt-2 font-[Jost] text-xs leading-5 text-[#5C5645]">{k.description}</p>
                 <p className="mt-2 font-[Jost] text-[10px] leading-4 text-[#A69C7E]">
@@ -289,7 +294,8 @@ export default function GiftsActivities({ navigate }) {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Grown Folks Loot Bags</h2>

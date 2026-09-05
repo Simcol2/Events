@@ -142,8 +142,8 @@ export default function Decor({ navigate }) {
         <div className="mx-auto max-w-7xl px-5 pb-14 pt-20 sm:px-8">
           <SectionHeading
             eyebrow="THE COLLECTION"
-            title="Decor worth remembering."
-            subtitle="Browse the pieces available for your celebration. Every item is selected to add something to the overall feeling, not just fill a table."
+            title="Beautiful enough for the room. Meaningful enough for the years after."
+            subtitle="Decor supports the experience, it doesn't replace it. Browse the pieces that create a cohesive, beautiful backdrop for the celebration your guests will actually take part in."
           />
         </div>
       </section>
@@ -243,7 +243,7 @@ export default function Decor({ navigate }) {
 
         <div className="mt-20 border-t border-[#E4DCC8] pt-7 text-center">
           <p className="font-[Jost] text-[10px] tracking-[0.18em] text-[#8C846F]">
-            WANT TO BUILD A PACKAGE AROUND THESE PIECES?
+            WANT AN EXPERIENCE YOUR GUESTS BECOME PART OF, NOT JUST A ROOM FULL OF DECOR?
           </p>
           <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-[10px] font-semibold tracking-[0.2em] text-[#4E5A44]">
             BUILD MY EXPERIENCE

@@ -14,20 +14,26 @@ import Home from "./pages/Home";
 import Decor from "./pages/Decor";
 import GiftsActivities from "./pages/GiftsActivities";
 import HowItWorks from "./pages/HowItWorks";
+import Experiences from "./pages/Experiences";
+import About from "./pages/About";
+import FAQ from "./pages/FAQ";
 import PackageBuilder from "./pages/PackageBuilder";
 import DisplayOptions from "./pages/DisplayOptions";
 import Catering from "./pages/Catering";
 import PastEvents from "./pages/PastEvents";
 
+// Nav order and the "primary CTA should be visually dominant" rule both
+// come from the Master Plan's navigation section - Catering and Display
+// Options stay live routes (linked from the footer and the Package
+// Builder's Memory Display step) without competing for top-level nav space.
 const NAV = [
-  { label: "Home", path: "/" },
   { label: "How It Works", path: "/how-it-works" },
+  { label: "Experiences", path: "/experiences" },
   { label: "Decor", path: "/decor" },
   { label: "Gifts & Activities", path: "/gifts-activities" },
-  { label: "Catering", path: "/catering" },
-  { label: "Build My Experience", path: "/package-builder" },
-  { label: "Display Options", path: "/display-options" },
   { label: "Past Events", path: "/past-events" },
+  { label: "About", path: "/about" },
+  { label: "Build My Experience", path: "/package-builder", cta: true },
 ];
 
 function getPath() {
@@ -66,6 +72,9 @@ function AppRoutes() {
     "/gifts-activities": { component: <GiftsActivities navigate={navigate} />, current: "gifts-activities" },
     "/catering": { component: <Catering navigate={navigate} />, current: "catering" },
     "/how-it-works": { component: <HowItWorks navigate={navigate} />, current: "how-it-works" },
+    "/experiences": { component: <Experiences navigate={navigate} />, current: "experiences" },
+    "/about": { component: <About navigate={navigate} />, current: "about" },
+    "/faq": { component: <FAQ navigate={navigate} />, current: "faq" },
     "/package-builder": { component: <PackageBuilder navigate={navigate} />, current: "package-builder" },
     "/display-options": { component: <DisplayOptions navigate={navigate} />, current: "display-options" },
     "/past-events": { component: <PastEvents navigate={navigate} />, current: "past-events" },

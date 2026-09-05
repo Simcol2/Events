@@ -76,20 +76,20 @@ export default function EventTypePicker() {
             className="mt-4 text-[10px] font-semibold tracking-[0.3em]"
             style={{ ...fonts.bodyFont, color: palette.gold }}
           >
-            LET'S GET STARTED
+            LET'S START WITH THE CELEBRATION
           </p>
           <h2
             className="mt-2 text-3xl font-semibold sm:text-4xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
-            What are you planning?
+            What are you celebrating?
           </h2>
           <p
             className="mx-auto mt-3 max-w-md text-sm leading-6"
             style={{ ...fonts.bodyFont, color: palette.muted }}
           >
-            We'll tailor the package and the details to fit your moment. You can
-            change this anytime.
+            Choose your event and we'll show you the experiences designed for it.
+            You can change this anytime.
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2">

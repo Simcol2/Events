@@ -34,8 +34,20 @@ export default function SiteHeader({ current, navigate, nav }) {
         </button>
 
         <nav className="hidden items-center gap-9 md:flex">
-          {nav.map(({ label, path }) => {
+          {nav.map(({ label, path, cta }) => {
             const active = path === "/" ? current === "home" : current === path.slice(1);
+            if (cta) {
+              return (
+                <button
+                  key={path}
+                  onClick={() => go(path)}
+                  className="rounded-full px-5 py-2.5 font-[Jost] text-[11px] font-semibold tracking-[0.2em] text-white transition-transform hover:-translate-y-0.5"
+                  style={{ background: palette.primaryDeep }}
+                >
+                  {label.toUpperCase()}
+                </button>
+              );
+            }
             return (
               <button
                 key={path}
@@ -68,12 +80,12 @@ export default function SiteHeader({ current, navigate, nav }) {
       {open && (
         <div className="px-5 py-4 md:hidden" style={{ borderTop: `1px solid ${palette.line}`, background: palette.bg }}>
           <nav className="mx-auto flex max-w-7xl flex-col">
-            {nav.map(({ label, path }) => (
+            {nav.map(({ label, path, cta }) => (
               <button
                 key={path}
                 onClick={() => go(path)}
-                className="py-4 text-left font-[Jost] text-[11px] font-medium tracking-[0.22em]"
-                style={{ borderBottom: `1px solid ${palette.line}CC`, color: palette.primaryDeep }}
+                className={cta ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-[11px] font-semibold tracking-[0.22em] text-white" : "py-4 text-left font-[Jost] text-[11px] font-medium tracking-[0.22em]"}
+                style={cta ? { background: palette.primaryDeep } : { borderBottom: `1px solid ${palette.line}CC`, color: palette.primaryDeep }}
               >
                 {label.toUpperCase()}
               </button>

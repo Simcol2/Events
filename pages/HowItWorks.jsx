@@ -1,21 +1,79 @@
 import React from "react";
-import { Calendar, Palette, PackageCheck, ShieldCheck, Mail, PackageOpen, Gift, Undo2, Sparkles } from "lucide-react";
+import {
+  CalendarHeart,
+  PackageCheck,
+  Users,
+  Gift,
+  Sparkles,
+  Truck,
+  Frame,
+  PartyPopper,
+  Send,
+} from "lucide-react";
 import { usePalette } from "../PaletteContext";
 
-const STEPS = [
-  { icon: Calendar, title: "Choose Your Date", body: "Pick the date of your celebration and let's get the planning party started!" },
-  { icon: Palette, title: "Choose Your Palette or Theme", body: "Tell us your vibe and we'll help bring it to life: modern, playful, elegant, or bold." },
-  { icon: PackageCheck, title: "Choose Your Package & Add-Ons", body: "Build your perfect experience and add any extras that make it even more special." },
-  { icon: ShieldCheck, title: "Pay Deposit & Security Deposit", body: "Lock in your date with a deposit. The security deposit holds your goodies safe and sound." },
-  { icon: Mail, title: "Submit Info & Photos", body: "Send over the details and photos we need to customize everything just for you." },
-  { icon: PackageOpen, title: "Pick Up or Book a Facilitator", body: "Swing by and pick up your rental box 24 hours before your event, or book an event facilitator to deliver, set up, and style everything for you." },
-  { icon: Gift, title: "Enjoy Your Event!", body: "Have the best time making memories. We've taken care of all the details." },
-  { icon: Undo2, title: "Drop Off or We Handle It", body: "Return everything within 24 hours after your event and we'll release your damage deposit, or if you booked a facilitator, we'll take care of pickup and breakdown for you." },
+// Section 34: answers the required questions quickly, built around the
+// core message "You bring the people. We create the experience."
+const QUESTIONS = [
+  {
+    icon: Sparkles,
+    q: "What is an A Slice of G experience?",
+    a: "Interactive event experiences that become keepsakes. Guests participate, contribute, and create something meaningful during the celebration, and you get to keep what they made.",
+  },
+  {
+    icon: CalendarHeart,
+    q: "How does the experience change by event type?",
+    a: "Choose your event first, Baby Shower, Engagement Party, Birthday, Holiday, or Special Moment, and the experiences, pricing, and guest gift you see are designed specifically for it.",
+  },
+  {
+    icon: PackageCheck,
+    q: "What happens at the event?",
+    a: "Your selected experiences arrive prepared and ready. Throughout the celebration, guests play, write, photograph, and create using them.",
+  },
+  {
+    icon: Users,
+    q: "What do guests actually do?",
+    a: "Depending on the experiences you choose, they play games, write notes, take photos, assemble puzzles, and leave messages and predictions behind.",
+  },
+  {
+    icon: Gift,
+    q: "What do I get to keep?",
+    a: "The keepsakes your guests create together: photos and notes, a finished storybook, assembled artwork, a filled time capsule, and more.",
+  },
+  {
+    icon: Truck,
+    q: "How do I receive everything?",
+    a: "Self Setup is for Toronto pickup or Toronto drop-off. Need delivery? Please contact us.",
+  },
+  {
+    icon: PackageCheck,
+    q: "What does Self Setup mean?",
+    a: "Everything arrives prepared and ready for you to place and arrange yourself.",
+  },
+  {
+    icon: Sparkles,
+    q: "What does an Event Stylist do?",
+    a: "You don't lift a finger. We bring everything, set it up, style it, make sure every detail is ready, and take it all back when the celebration is over.",
+  },
+  {
+    icon: Frame,
+    q: "Can I add a Memory Display?",
+    a: "Yes. The Memory Display is independent from your service choice, self-styled or professionally styled, giving your keepsakes and experiences a beautiful focal point.",
+  },
+  {
+    icon: PartyPopper,
+    q: "Can I add games?",
+    a: "Baby Shower builds already include Play & Connect games. Every other event type can add optional playful games in the builder for +$125 each.",
+  },
+  {
+    icon: Send,
+    q: "What happens after I submit the builder?",
+    a: "We review your experience request and follow up to confirm availability, event details, and payment.",
+  },
 ];
 
 export default function HowItWorks() {
   const { palette, fonts } = usePalette();
-  // Alternate two accent treatments across cards, matching the flyer's alternating badge colors.
   const badgeColors = [palette.accent, palette.primary];
 
   return (
@@ -27,45 +85,37 @@ export default function HowItWorks() {
         <p className="text-xs font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A SLICE OF G EVENTS
         </p>
-        <h1 className="mt-3 text-6xl sm:text-7xl font-bold" style={{ ...fonts.displayFont, color: palette.gold }}>
+        <h1 className="mt-3 text-5xl sm:text-6xl font-bold" style={{ ...fonts.displayFont, color: palette.gold }}>
           How It Works
         </h1>
         <p className="mt-4 text-2xl sm:text-3xl" style={{ ...fonts.scriptFont, color: "#FFFFFF" }}>
-          Simple, stress free, and so much fun!
+          You bring the people. We create the experience.
         </p>
       </div>
 
-      {/* Steps grid */}
+      {/* Questions grid */}
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map((step, i) => {
-            const Icon = step.icon;
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {QUESTIONS.map((item, i) => {
+            const Icon = item.icon;
             const badge = badgeColors[i % 2];
             return (
               <div
-                key={step.title}
+                key={item.q}
                 className="rounded-2xl p-6 shadow-sm flex flex-col"
                 style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                    style={{ background: palette.primaryDeep }}
-                  >
-                    {i + 1}
-                  </div>
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${badge}22` }}
-                  >
-                    <Icon size={26} color={badge} strokeWidth={1.8} />
-                  </div>
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 mb-4"
+                  style={{ background: `${badge}22` }}
+                >
+                  <Icon size={22} color={badge} strokeWidth={1.8} />
                 </div>
-                <h3 className="text-xl font-bold leading-tight" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-                  {step.title}
+                <h3 className="text-lg font-bold leading-tight" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                  {item.q}
                 </h3>
-                <p className="mt-2 text-base leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                  {step.body}
+                <p className="mt-2 text-sm leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                  {item.a}
                 </p>
               </div>
             );
