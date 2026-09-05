@@ -454,6 +454,7 @@ export default function PackageBuilder() {
                   description={k.description}
                   photoKey={k.id}
                   photoUrl={k.photoUrl}
+                  photoUrls={k.photoUrls}
                   priceLabel={k.upgradePrice > 0 ? `+$${k.upgradePrice}` : "Included"}
                   selected={keepsakeId === k.id}
                   onClick={() => setKeepsakeId(k.id)}

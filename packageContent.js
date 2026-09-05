@@ -26,6 +26,7 @@ import ohBabyCenterPhoto from "./media/ohbabycenter.png";
 import babyTriviaPhoto from "./media/babytrivia.png";
 import kindnessStationPhoto from "./media/file_00000000dcd4822fb648d37e9526b4b3.png";
 import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.png";
+import wallPuzzleShowerPhoto from "./media/wallpuzzle-babyshower.png";
 import wallPuzzleEngagementPhoto from "./media/file_00000000a204822f9ab953201c8b7043.png";
 import ohBabyBlocksPhoto from "./media/oh-baby-blocks-tablescape.png";
 import ohBabyTrayPhoto from "./media/oh-sweet-baby-tray.png";
@@ -38,6 +39,13 @@ import lilRootsPhoto from "./media/lilroots.png";
 import arrivalPhoto from "./media/web_arrival.png";
 import nurseryRhymePhoto from "./media/poem.png";
 import welcomeSignPhoto from "./media/welcomesign.png";
+import readyToPopPhoto from "./media/readytopop.png";
+import readyToPopPhoto2 from "./media/readytopop-2.jpg";
+import babyNaptimeRelayPhoto1 from "./media/babynaptimerelay-1.png";
+import babyNaptimeRelayPhoto2 from "./media/babynaptimerelay-2.jpg";
+import photoChallengeMomPhoto1 from "./media/photochallenge-mom-1.jpg";
+import photoChallengeMomPhoto2 from "./media/photochallenge-mom-2.png";
+import photoChallengePillowBumpPhoto from "./media/photochallenge-pillowbump.png";
 
 // Per-event pricing/pool/guest-gift/builder-step configuration now lives in
 // eventConfig.js (the "one experience, priced and shaped per event type"
@@ -388,13 +396,13 @@ export const MAIN_PACKAGE_ITEMS = [
       },
     },
     photos: {
-      // No bump/ultrasound photo exists yet for the baby-shower variant —
-      // showing the toddler portrait there doesn't make sense (there's no
-      // baby to photograph yet at a shower), so it stays null ("photo
-      // coming soon") until a real one is supplied. The toddler portrait
-      // is only correct for the 1st-3rd-birthday variant.
+      // The toddler portrait only makes sense for the 1st-3rd-birthday
+      // variant, so it's not reused for babyShower. babyShower gets its own
+      // photo instead, since a shower puzzle uses an illustrated/rendered
+      // baby portrait rather than a real one (there's no baby to photograph
+      // yet).
       default: null,
-      babyShower: null,
+      babyShower: wallPuzzleShowerPhoto,
       engagement: null,
       milestoneBirthday: wallPuzzleBabyPhoto,
       birthday: null,
@@ -566,7 +574,7 @@ export const SETUP_ONLY_ITEMS = [
           "Race through three stations: bottle chug, diaper change, and sing the lullaby. Your lullaby is assigned to you. Sing it correctly to earn your points, finish the course as fast as possible, and prove you have what it takes to survive bedtime. Fastest caregiver wins.",
       },
     },
-    photos: { default: null },
+    photos: { default: null, babyShower: [babyNaptimeRelayPhoto1, babyNaptimeRelayPhoto2] },
     details: {
       stats: { bestFor: "High-energy groups", length: "15-20 minutes", guests: "Teams", createsKeepsake: "No", energy: 5 },
       whatItIs: "A fast-paced relay designed to get guests laughing, competing, and fully involved.",
@@ -644,7 +652,7 @@ export const SETUP_ONLY_ITEMS = [
           "Each guest receives a secret photo challenge focused on the couple. Scan the QR code and add it to the shared album. By the end of the celebration, the couple has an album seen through the eyes of the people who love them.",
       },
     },
-    photos: { default: null },
+    photos: { default: null, babyShower: [photoChallengeMomPhoto1, photoChallengeMomPhoto2, photoChallengePillowBumpPhoto] },
     details: {
       stats: { bestFor: "Social, playful groups", length: "Throughout the event", guests: "Everyone", createsKeepsake: "Yes", energy: 4 },
       whatItIs: "A collection of photo challenges that encourage guests to capture funny, sweet, and unexpected moments throughout the celebration.",
@@ -954,6 +962,7 @@ export const KEEPSAKES = [
     upgradePrice: 0,
     includedGuestCount: 25,
     overagePricePerGuest: 4,
+    photoUrls: [readyToPopPhoto, readyToPopPhoto2],
     details: {
       summary: "A cute, ready made popcorn kit paired with a gourmet treat for every guest.",
       howItWorks: [
