@@ -33,6 +33,7 @@ const NAV = [
   { label: "Decor", path: "/decor" },
   { label: "Activities", path: "/activities" },
   { label: "Gifts", path: "/gifts" },
+  { label: "Catering", path: "/catering" },
   { label: "Past Events", path: "/past-events" },
   { label: "About", path: "/about" },
   { label: "Build My Experience", path: "/package-builder", cta: true },

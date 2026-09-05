@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import pictureThisPhoto from "../media/picturethis.png";
 import kindnessStationPhoto from "../media/file_00000000dcd4822fb648d37e9526b4b3.png";
+import arrivalPhoto from "../media/web_arrival.png";
 
 // Info page only - no shopping here, that's the separate Gifts page.
 // Picture This and Kindness Station are the two core experiences (they
@@ -10,6 +11,7 @@ import kindnessStationPhoto from "../media/file_00000000dcd4822fb648d37e9526b4b3
 const HERO_PHOTOS = [
   { src: pictureThisPhoto, alt: "Picture This guest activity", focus: "center" },
   { src: kindnessStationPhoto, alt: "Kindness Station guest activity", focus: "center" },
+  { src: arrivalPhoto, alt: "Guess the Arrival Day guest activity", focus: "center" },
 ];
 
 // Same two buckets and the same supporting copy as the Package Builder's
@@ -25,6 +27,12 @@ const PLAY_CONNECT = [
     tagline: "A little kindness can change someone's whole day.",
     subtitle: "Celebrate Baby By Being Kind",
     description: "Guests take a card, read a little reminder, and carry it out into the world in celebration of baby's arrival. Add an optional $5 gift card to any note for a pay it forward surprise.",
+  },
+  {
+    label: "Guess the Arrival",
+    tagline: "Everyone has a prediction. Only one can be right.",
+    subtitle: "When Will Baby Make Their Grand Entrance?",
+    description: "Guests enter their prediction for Baby's arrival date and time, guess Baby's name and leave a special private message for Mom. The experience continues after the shower with prediction updates, labour notifications and false alarms as the big day approaches.",
   },
   {
     label: "The Price Is Right",
@@ -50,12 +58,6 @@ const PLAY_CONNECT = [
     tagline: "Can you fake the bump?",
     subtitle: "Can You Fake the Bump?",
     description: "Grab a pillow. Strike a pose. Convince us you're expecting. Guests compete to create the most convincing, ridiculous, glamorous or downright questionable maternity photo. Scan. Upload. Display. The photos appear on the big screen for everyone to see.",
-  },
-  {
-    label: "Guess the Arrival",
-    tagline: "Everyone has a prediction. Only one can be right.",
-    subtitle: "When Will Baby Make Their Grand Entrance?",
-    description: "Guests enter their prediction for Baby's arrival date and time, guess Baby's name and leave a special private message for Mom. The experience continues after the shower with prediction updates, labour notifications and false alarms as the big day approaches.",
   },
 ];
 

@@ -84,6 +84,7 @@ export default function SiteFooter({ navigate }) {
               <button onClick={() => navigate("/decor")} className="block hover:opacity-70">Decor Collection</button>
               <button onClick={() => navigate("/activities")} className="block hover:opacity-70">Activities</button>
               <button onClick={() => navigate("/gifts")} className="block hover:opacity-70">Gifts</button>
+              <button onClick={() => navigate("/catering")} className="block hover:opacity-70">Catering</button>
               <button onClick={() => navigate("/past-events")} className="block hover:opacity-70">Past Events</button>
               <button onClick={() => navigate("/about")} className="block hover:opacity-70">About</button>
               <button onClick={() => navigate("/package-builder")} className="block hover:opacity-70">Build My Experience</button>
@@ -96,7 +97,6 @@ export default function SiteFooter({ navigate }) {
             </div>
             <div className="mt-4 space-y-3 text-base" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
               <button onClick={() => navigate("/faq")} className="block hover:opacity-70">FAQ</button>
-              <button onClick={() => navigate("/catering")} className="block hover:opacity-70">Catering</button>
               <button onClick={() => navigate("/display-options")} className="block hover:opacity-70">Display Options</button>
             </div>
           </div>
