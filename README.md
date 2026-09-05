@@ -59,13 +59,48 @@ Keep the reference copy up to date: whenever the live script in
 script.google.com is changed, copy the update back into this file (with the
 service role key blanked out before committing).
 
+## Admin page
+
+`/admin` is a password-protected internal page for managing the Gifts and
+Decor Items catalogs without touching Supabase or the Google Sheet
+directly: add, edit, delete, upload/reorder/delete photos (drag the one
+you want first, that's the cover photo everywhere on the site), manage
+decor tags as checkboxes, and manage a customizable gift's preset
+designs. It's deliberately not linked from the site's nav or footer,
+reachable only by typing the URL.
+
+**Required environment variables in Vercel** (Project Settings >
+Environment Variables), neither one prefixed with `VITE_` since that
+would bundle it into the public site's client-side code:
+
+- `ADMIN_PASSCODE`: whatever passcode you want to gate the page with. The
+  browser remembers it after the first successful entry (stored in
+  localStorage, not a real session), so it only needs to be typed in once
+  per device.
+- `SUPABASE_SERVICE_ROLE_KEY`: from Supabase > Project Settings > API. The
+  admin API routes (`api/admin-items.js`, `api/admin-gifts.js`,
+  `api/admin-upload.js`) use this to write past RLS - the public site
+  never sees this key, only the server-side functions do.
+
+Photo uploads go into the same `Photos from` Supabase Storage bucket every
+existing photo URL in this app already points to. The browser downsizes a
+photo to at most 1600px wide before uploading, both to stay comfortably
+under Vercel's request size limit and because nothing on the site
+displays anything larger.
+
+Since the admin page writes to Supabase directly, editing an item there
+and editing the same item's row in the Google Sheet afterward will
+conflict, whichever one syncs/loads last wins. Pick one source per item
+rather than switching back and forth.
+
 ## Repo layout
 
 - `pages/`: top-level routed pages
 - `components/`: shared UI components
 - `*Content.js` (`packageContent.js`, `cateringContent.js`, `eventConfig.js`):
   copy, pricing, and pool data for the site and the Package Builder
-- `api/`: Vercel serverless functions (Stripe checkout)
+- `api/`: Vercel serverless functions (Stripe checkout, and the
+  `admin-*`/`_adminAuth.js` routes behind the admin page above)
 - `supabase/`: SQL setup scripts, run once each in the Supabase SQL editor
 - `scripts/`: build-time and reference tooling (prerendering, the Google
   Apps Script reference copy above)
