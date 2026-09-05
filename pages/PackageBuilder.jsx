@@ -293,7 +293,7 @@ export default function PackageBuilder() {
     poolSteps.some((s) => (poolSelections[s.id] || []).includes("pictureThis")) || poolOverflowIds.includes("pictureThis");
 
   const nonDigitalAddons = ADDONS.filter(
-    (a) => !DIGITAL_ADDON_IDS.includes(a.id) && a.id !== "guessArrival" && a.id !== "nurseryRhyme"
+    (a) => !DIGITAL_ADDON_IDS.includes(a.id) && a.id !== "nurseryRhyme"
   );
   const digitalAddons = ADDONS.filter((a) => DIGITAL_ADDON_IDS.includes(a.id));
 
@@ -518,6 +518,7 @@ export default function PackageBuilder() {
                   selected={selectedAddonIds.includes(a.id)}
                   onClick={() => toggleAddon(a.id)}
                   details={a.details}
+                  viewMoreLabel={viewMoreLabelFor(a.id)}
                 />
               ))}
               {digitalAddons.map((a) => {
