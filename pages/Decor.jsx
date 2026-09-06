@@ -151,18 +151,22 @@ export default function Decor({ navigate }) {
                 </button>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3 lg:grid-cols-4">
-              {TAGS.map((tag) => (
-                <label key={tag.id} className="flex cursor-pointer items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedTags.includes(tag.id)}
-                    onChange={() => toggleTag(tag.id)}
-                    className="h-3.5 w-3.5 accent-[#4E5A44]"
-                  />
-                  <span className="font-[Jost] text-sm tracking-[0.04em] text-[#5C5645]">{tag.label}</span>
-                </label>
-              ))}
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {TAGS.map((tag) => {
+                const active = selectedTags.includes(tag.id);
+                return (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    onClick={() => toggleTag(tag.id)}
+                    className={`rounded-sm border px-4 py-3 text-center font-[Jost] text-sm font-medium tracking-[0.04em] transition-colors ${
+                      active ? "border-[#4E5A44] bg-[#4E5A44] text-white" : "border-[#D8D0BC] bg-white text-[#5C5645] hover:border-[#4E5A44]"
+                    }`}
+                  >
+                    {tag.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

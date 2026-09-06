@@ -1,10 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Heart, Sparkles, PackageCheck, Truck, Users, Gift, Package, Frame, CalendarHeart } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { ArrowRight, Sparkles, PackageCheck, Truck, Users, Gift, Package, CalendarHeart } from "lucide-react";
 import { usePalette } from "../PaletteContext";
-import { useEventType } from "../EventTypeContext";
-import FeatureCard from "../components/FeatureCard";
-import { getEventConfig } from "../eventConfig";
-import { ADDONS, resolveExperienceItem } from "../packageContent";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -55,7 +51,7 @@ const HERO_CTA_LABEL = "BUILD MY EXPERIENCE";
 const HERO_STATES = [
   {
     image: essentialsImage,
-    headline: "Your guests don't just attend. They help create something you'll keep.",
+    headline: "Guests don't just attend. They create.",
     supporting:
       "Interactive event experiences that turn your baby shower, first birthday, or celebration into memories you can actually keep.",
     secondaryLabel: "Explore the experiences",
@@ -63,7 +59,7 @@ const HERO_STATES = [
   },
   {
     image: heroFullBleed,
-    headline: "A time capsule your guests actually fill.",
+    headline: "A time capsule gets sealed.",
     supporting:
       "Photos, stories, wishes, and little pieces of the day come together to create something you'll treasure long after the celebration ends.",
     secondaryLabel: "See how it works",
@@ -72,8 +68,7 @@ const HERO_STATES = [
   {
     image: wallPuzzleEngagementPhoto,
     headline: "Not just decor. Something your guests can create.",
-    supporting:
-      "Beautiful pieces designed to get everyone involved, then become keepsakes you can take home.",
+    supporting: "The decor and memories are one in the same.",
     secondaryLabel: "Explore the experiences",
     secondaryTarget: "/experiences",
   },
@@ -87,7 +82,7 @@ const HERO_STATES = [
   },
   {
     image: nurseryRhymePhoto,
-    headline: "Give your guests something to do. Give yourself something to keep.",
+    headline: "Guests come together to create something you'll keep forever.",
     supporting:
       "Interactive experiences for baby showers, first birthdays, and celebrations designed around the people who make them special.",
     secondaryLabel: "Find your perfect experience",
@@ -184,7 +179,7 @@ function Hero({ fonts, palette, navigate }) {
                 opacity: i === index ? 1 : 0,
                 transform: i === index ? "translateY(0)" : "translateY(18px)",
                 transition: "opacity 1100ms ease, transform 1100ms cubic-bezier(.22,1,.36,1)",
-                textShadow: "0 2px 24px rgba(0,0,0,0.45)",
+                textShadow: "0 8px 24px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4)",
                 pointerEvents: "none",
                 textAlign: "center",
                 whiteSpace: "normal",
@@ -208,7 +203,7 @@ function Hero({ fonts, palette, navigate }) {
                 maxWidth: "620px",
                 margin: "0 auto",
                 color: "#FDF6EEE6",
-                fontSize: "clamp(16px, 2.2vw, 20px)",
+                fontSize: "clamp(18px, 2.6vw, 23px)",
                 lineHeight: 1.6,
                 opacity: i === index ? 1 : 0,
                 transition: "opacity 1100ms ease",
@@ -284,16 +279,6 @@ function Hero({ fonts, palette, navigate }) {
 /* ─── Main page ─── */
 export default function Home({ navigate }) {
   const { palette, fonts } = usePalette();
-  const { eventTypeId, eventType } = useEventType();
-  const eventConfig = useMemo(() => getEventConfig(eventTypeId), [eventTypeId]);
-
-  const resolvedItems = useMemo(() => {
-    const ids = Array.from(new Set(eventConfig.steps.filter((s) => s.type === "pool").flatMap((s) => s.poolIds)));
-    return ids.map((id) => resolveExperienceItem(id, eventTypeId)).filter(Boolean);
-  }, [eventConfig, eventTypeId]);
-
-  const guessArrivalAddon = ADDONS.find((a) => a.id === "guessArrival");
-  const [showArrivalModal, setShowArrivalModal] = useState(false);
 
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
@@ -313,10 +298,13 @@ export default function Home({ navigate }) {
             { title: "KEEP", body: "You take those memories home and get to revisit them long after the party ends." },
           ].map((f) => (
             <div key={f.title} className="text-center">
-              <p className="text-base font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+              <p
+                className="text-lg font-semibold tracking-[0.3em]"
+                style={{ ...fonts.bodyFont, color: palette.gold, textShadow: "0 4px 14px rgba(0,0,0,0.35)" }}
+              >
                 {f.title}
               </p>
-              <p className="mt-2 text-lg leading-relaxed" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
+              <p className="mt-2 text-xl leading-relaxed" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
                 {f.body}
               </p>
             </div>
@@ -369,35 +357,20 @@ export default function Home({ navigate }) {
             And when the celebration is over, you don't just pack everything
             away. <strong style={{ color: palette.primaryDeep }}>You keep the memories.</strong>
           </p>
-        </div>
 
-        <div
-          className="mx-auto mt-14 grid gap-8 sm:grid-cols-3"
-          style={{ position: "relative", width: "100%", maxWidth: "900px" }}
-        >
-          {[
-            { icon: Users, title: "Guests participate", body: "Activities designed to get people talking, laughing, creating, and connecting." },
-            { icon: Heart, title: "Guests contribute", body: "Photos, stories, wishes, messages, and little moments that become part of your celebration." },
-            { icon: Gift, title: "You keep it", body: "Finished pieces become meaningful keepsakes you can display, revisit, and treasure." },
-          ].map((f) => {
-            const Icon = f.icon;
-            return (
-              <div key={f.title} className="text-center">
-                <div
-                  className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl"
-                  style={{ background: `${palette.accent}1F` }}
-                >
-                  <Icon size={20} color={palette.accent} strokeWidth={1.8} />
-                </div>
-                <p className="mt-3 text-base font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
-                  {f.title}
-                </p>
-                <p className="mt-1.5 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                  {f.body}
-                </p>
-              </div>
-            );
-          })}
+          <h3
+            className="mt-12 text-2xl font-semibold sm:text-3xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            Are you curious?
+          </h3>
+          <button
+            onClick={() => navigate("/experiences")}
+            className="mt-5 inline-flex items-center gap-3 rounded-sm px-7 py-3.5 text-sm font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+            style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+          >
+            CHECK OUT THE EXPERIENCE <ArrowRight size={16} />
+          </button>
         </div>
       </section>
 
@@ -459,11 +432,10 @@ export default function Home({ navigate }) {
           >
             How involved do you want to be?
           </h2>
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="mx-auto grid max-w-2xl gap-6 sm:grid-cols-2">
             {[
               { icon: Package, title: "Self Setup", hook: "You set the scene. We make it easy.", body: "Everything arrives prepared and ready for you to place and arrange." },
               { icon: Sparkles, title: "Event Stylist", hook: "You don't lift a finger.", body: "We bring everything, set it up, style it, make sure every detail is ready, and take it all back when the celebration is over." },
-              { icon: Frame, title: "Memory Display", hook: "Give the memories a place to shine.", body: "Add a display and turn what your guests create into a beautiful focal point at the event." },
             ].map((f) => {
               const Icon = f.icon;
               return (
@@ -486,145 +458,6 @@ export default function Home({ navigate }) {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════
-          THE PACKAGE
-          ═══════════════════════════════════════ */}
-      <section
-        style={{
-          background: palette.bg,
-          padding: "40px 0",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "1400px",
-            margin: "0 auto",
-            padding: "0 40px",
-          }}
-        >
-          <Reveal>
-            <div
-              className="essentials-split"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                minHeight: "560px",
-                width: "100%",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "flex-start",
-                  padding: "60px 70px 60px 0",
-                }}
-              >
-                <p
-                  style={{
-                    ...fonts.bodyFont,
-                    margin: 0,
-                    color: palette.gold,
-                    fontSize: "14px",
-                    fontWeight: 600,
-                    letterSpacing: "0.3em",
-                  }}
-                >
-                  SIGNATURE EXPERIENCES
-                </p>
-
-                <h2
-                  style={{
-                    ...fonts.displayFont,
-                    margin: "20px 0 0",
-                    color: palette.primaryDeep,
-                    fontSize: "clamp(3rem, 6vw, 5.5rem)",
-                    fontWeight: 600,
-                    lineHeight: 0.95,
-                  }}
-                >
-                  Choose what your guests will remember.
-                </h2>
-
-                <p
-                  style={{
-                    ...fonts.displayFont,
-                    margin: "18px 0 0",
-                    color: palette.gold,
-                    fontSize: "2.75rem",
-                    fontWeight: 700,
-                    lineHeight: 1,
-                  }}
-                >
-                  Starting at ${eventConfig.startingPrice.toLocaleString()} + HST
-                </p>
-
-                <p
-                  style={{
-                    ...fonts.bodyFont,
-                    maxWidth: "500px",
-                    margin: "18px 0 0",
-                    color: palette.ink,
-                    fontSize: "18px",
-                    lineHeight: 1.7,
-                  }}
-                >
-                  Every event has its own story. That's why your experience
-                  changes with the celebration you're planning: a{" "}
-                  {eventType.label.toLowerCase()}.
-                </p>
-              </div>
-
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  minHeight: "560px",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src={essentialsImage}
-                  alt="Event styling"
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-            </div>
-          </Reveal>
-
-          <div
-            className="essentials-grid"
-            style={{
-              marginTop: "64px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-              gap: "24px",
-            }}
-          >
-            {resolvedItems.map((item, i) => (
-              <Reveal key={item.id} delay={i * 60}>
-                <FeatureCard
-                  icon={item.icon}
-                  name={item.name}
-                  tagline={item.tagline}
-                  description={item.description}
-                  photoKey={item.id}
-                  photoUrls={item.photoUrls}
-                />
-              </Reveal>
-            ))}
           </div>
         </div>
       </section>
@@ -688,158 +521,18 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-      {showArrivalModal && guessArrivalAddon && (
-        <div
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8"
-          style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Guess the Arrival"
-          onClick={() => setShowArrivalModal(false)}
-        >
-          <div
-            className="relative w-full max-w-md overflow-hidden rounded-2xl p-8 text-center"
-            style={{ background: palette.surface }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setShowArrivalModal(false)}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full"
-              style={{ color: palette.muted }}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <img
-              src={guessArrivalAddon.photoUrl}
-              alt="Guess the Arrival personalized guessing page"
-              className="mx-auto w-full max-w-[220px]"
-              style={{ background: "transparent" }}
-            />
-            <h2
-              className="mt-5 text-2xl font-semibold"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-            >
-              {guessArrivalAddon.name}
-            </h2>
-            <p
-              className="mt-1.5 text-base font-semibold italic"
-              style={{ ...fonts.bodyFont, color: palette.accent }}
-            >
-              {guessArrivalAddon.tagline}
-            </p>
-            <p
-              className="mt-3 text-base leading-relaxed"
-              style={{ ...fonts.bodyFont, color: palette.ink }}
-            >
-              {guessArrivalAddon.description}
-            </p>
-            <button
-              onClick={() => {
-                setShowArrivalModal(false);
-                navigate("/package-builder");
-              }}
-              className="mt-6 inline-flex items-center gap-2 rounded-sm px-6 py-3 text-sm font-semibold tracking-[0.15em] text-white"
-              style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
-            >
-              ADD IT TO MY EXPERIENCE <ArrowRight size={14} />
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* ═══════════════════════════════════════
-          ADD-ONS
+          BUILD MY EXPERIENCE
           ═══════════════════════════════════════ */}
-      <section className="py-20 sm:py-28" style={{ background: `${palette.primary}0D` }}>
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <Reveal>
-            <div className="mb-12 text-center">
-              <p
-                className="text-sm font-semibold tracking-[0.3em]"
-                style={{ ...fonts.bodyFont, color: palette.gold }}
-              >
-                MAKE IT YOURS
-              </p>
-              <h2
-                className="mt-3 text-4xl font-semibold sm:text-5xl"
-                style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-              >
-                Make it yours.
-              </h2>
-              <p
-                className="mt-3 text-lg"
-                style={{ ...fonts.bodyFont, color: palette.ink }}
-              >
-                Build an experience around your celebration, your people, and the
-                memories you want to make.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="grid gap-6 sm:grid-cols-3">
-            {ADDONS.slice(0, 3).map((a, i) => (
-              <Reveal key={a.id} delay={i * 80}>
-                {a.id === "guessArrival" ? (
-                  <button
-                    onClick={() => setShowArrivalModal(true)}
-                    className="flex h-full w-full flex-col rounded-xl p-5 text-left shadow-sm"
-                    style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
-                  >
-                    <div className="mb-2 flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg"
-                          style={{ background: `${palette.accent}1F` }}
-                        >
-                          <a.icon size={18} color={palette.accent} strokeWidth={1.8} />
-                        </div>
-                        <h3 className="text-lg font-bold leading-tight" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-                          {a.name}
-                        </h3>
-                      </div>
-                      <span className="flex-shrink-0 text-base font-bold" style={{ ...fonts.displayFont, color: palette.accent }}>
-                        +${a.price}
-                      </span>
-                    </div>
-                    <p className="flex-1 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                      Your own private, personalized digital shower experience. Guests get their own page to guess
-                      the date, the time, and more, then watch the live board update as the big day gets closer.
-                    </p>
-                    <p
-                      className="mt-3 text-sm font-semibold tracking-[0.1em] underline underline-offset-4"
-                      style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-                    >
-                      SEE HOW IT WORKS
-                    </p>
-                  </button>
-                ) : (
-                  <FeatureCard
-                    icon={a.icon}
-                    name={a.name}
-                    tagline={a.tagline}
-                    description={a.description}
-                    photoKey={a.id}
-                    photoUrl={a.photoUrl}
-                    fit={a.fit}
-                    priceLabel={`+$${a.price}`}
-                  />
-                )}
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal delay={300}>
-            <div className="mt-12 text-center">
-              <button
-                onClick={() => navigate("/package-builder")}
-                className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
-              >
-                BUILD MY EXPERIENCE <ArrowRight size={17} />
-              </button>
-            </div>
-          </Reveal>
+      <section className="py-16" style={{ background: `${palette.primary}0D` }}>
+        <div className="mx-auto max-w-6xl px-5 text-center sm:px-8">
+          <button
+            onClick={() => navigate("/package-builder")}
+            className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+            style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+          >
+            BUILD MY EXPERIENCE <ArrowRight size={17} />
+          </button>
         </div>
       </section>
 

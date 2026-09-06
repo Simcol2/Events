@@ -6,29 +6,46 @@ import { usePalette } from "../PaletteContext";
 // as few words as possible: interactive, guest-facing pieces that are also
 // keepsakes — the site's actual differentiator, not "activities" (too
 // school-project) and not vague "rental" language.
+//
+// Scrolls right to left continuously (see .marquee-track in SRC/index.css).
+// The message is rendered twice back to back inside a track twice as wide
+// as the viewport, then animated from translateX(0) to translateX(-50%) -
+// since the two copies are identical, the loop point is invisible and the
+// scroll reads as endless rather than a jarring reset.
+function Message({ palette, fonts }) {
+  return (
+    <span className="mx-6 inline-flex items-center whitespace-nowrap">
+      <span
+        className="text-sm font-semibold tracking-[0.18em]"
+        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+      >
+        INTERACTIVE GUEST EXPERIENCES
+      </span>
+      <span className="mx-3" style={{ color: palette.gold }}>
+        &middot;
+      </span>
+      <span
+        className="text-sm font-semibold tracking-[0.18em]"
+        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+      >
+        CUSTOM KEEPSAKES
+      </span>
+    </span>
+  );
+}
+
 export default function ValuePropBar() {
   const { palette, fonts } = usePalette();
 
   return (
     <div
-      className="w-full text-center px-4 py-2.5"
+      className="w-full overflow-hidden py-2.5"
       style={{ background: palette.surface, borderBottom: `1px solid ${palette.line}` }}
     >
-      <span
-        className="text-sm sm:text-sm font-semibold tracking-[0.18em]"
-        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-      >
-        INTERACTIVE GUEST EXPERIENCES
-      </span>
-      <span className="mx-3 align-middle" style={{ color: palette.gold }}>
-        &middot;
-      </span>
-      <span
-        className="text-sm sm:text-sm font-semibold tracking-[0.18em]"
-        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-      >
-        CUSTOM KEEPSAKES
-      </span>
+      <div className="marquee-track flex w-max">
+        <Message palette={palette} fonts={fonts} />
+        <Message palette={palette} fonts={fonts} />
+      </div>
     </div>
   );
 }

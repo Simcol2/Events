@@ -66,3 +66,16 @@ button {
   background: #D9DFD0;
   color: #4E5A44;
 }
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-scroll 22s linear infinite;
+}

@@ -33,7 +33,7 @@ export default function SiteHeader({ current, navigate, nav }) {
           </div>
         </button>
 
-        <nav className="hidden items-center gap-5 md:flex lg:gap-7">
+        <nav className="hidden items-center gap-3 md:flex lg:gap-4">
           {nav.map(({ label, path, cta, children }) => {
             const active = path === "/" ? current === "home" : current === path.slice(1);
             if (cta) {
@@ -41,7 +41,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                 <button
                   key={path}
                   onClick={() => go(path)}
-                  className="rounded-full px-5 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white transition-transform hover:-translate-y-0.5"
+                  className="rounded-full px-4 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.1em] text-white transition-transform hover:-translate-y-0.5"
                   style={{ background: palette.primaryDeep }}
                 >
                   {label.toUpperCase()}
@@ -54,7 +54,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                 <div key={path} className="group relative">
                   <button
                     onClick={() => go(path)}
-                    className="relative flex items-center gap-1 whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.1em] transition-colors"
+                    className="relative flex items-center gap-1 whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.02em] transition-colors"
                     style={{ color: active || childActive ? palette.primaryDeep : palette.muted }}
                   >
                     {label.toUpperCase()}
@@ -89,7 +89,7 @@ export default function SiteHeader({ current, navigate, nav }) {
               <button
                 key={path}
                 onClick={() => go(path)}
-                className="relative whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.1em] transition-colors"
+                className="relative whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.02em] transition-colors"
                 style={{ color: active ? palette.primaryDeep : palette.muted }}
               >
                 {label.toUpperCase()}

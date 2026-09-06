@@ -14,6 +14,8 @@
 export const TAGS = [
   { id: "table", label: "Table" },
   { id: "wall/floor", label: "Wall & Floor" },
+  { id: "equipment", label: "Equipment" },
+  { id: "marquee letters & numbers", label: "Marquee Letters & Numbers" },
   { id: "keepsakes & gifts", label: "Keepsakes & Gifts" },
   { id: "disposables", label: "Disposables" },
   { id: "stationery", label: "Stationery" },
