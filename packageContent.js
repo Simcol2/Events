@@ -21,6 +21,7 @@ import {
   Moon,
   Gift,
   Lightbulb,
+  Flower2,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -1121,6 +1122,29 @@ export const DISPLAYS = [
         "Approximately 10 feet wide and 6 feet tall.",
         "Requires a nearby outlet.",
         "Draping color can be customized, contact us for requests.",
+        "Setup pricing is separate, see Setup Pricing below.",
+      ],
+    },
+  },
+  {
+    id: "heyGirlHey",
+    icon: Flower2,
+    name: "Hey Girl Hey",
+    tagline: "Bold color, big blooms, bigger energy.",
+    description:
+      "Twin gold arches wrapped in string lights, dressed in flowing pink and green draping, and framed with oversized tropical florals and greenery. A personalized neon sign takes center stage, flanked by gold and jewel-toned pedestal columns. Approximately 10 feet wide and 6 feet tall, this display brings the drama.",
+    photoUrl: "/photos/hey-girl-hey-display.jpg",
+    details: {
+      summary: "Twin gold arches with pink and green draping, oversized tropical florals, and a personalized neon sign, about 10 feet wide and 6 feet tall.",
+      howItWorks: [
+        "Share the wording you want lit up in neon.",
+        "We build and bring the display to your event.",
+        "It's set up free standing near a power outlet.",
+        "It lights up for the full length of your event.",
+      ],
+      goodToKnow: [
+        "Approximately 10 feet wide and 6 feet tall.",
+        "Requires a nearby outlet.",
         "Setup pricing is separate, see Setup Pricing below.",
       ],
     },
