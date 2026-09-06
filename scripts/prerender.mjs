@@ -29,6 +29,7 @@ const ROUTES = [
   "/package-builder",
   "/display-options",
   "/past-events",
+  "/rental-guide",
 ];
 
 async function run() {

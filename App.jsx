@@ -22,6 +22,7 @@ import PackageBuilder from "./pages/PackageBuilder";
 import DisplayOptions from "./pages/DisplayOptions";
 import Catering from "./pages/Catering";
 import PastEvents from "./pages/PastEvents";
+import RentalGuide from "./pages/RentalGuide";
 import Admin from "./pages/Admin";
 
 // Nav order and the "primary CTA should be visually dominant" rule both
@@ -38,6 +39,7 @@ const NAV = [
     children: [
       { label: "Decor Collection", path: "/decor" },
       { label: "Display Options", path: "/display-options" },
+      { label: "Rental Guide", path: "/rental-guide" },
     ],
   },
   { label: "Activities", path: "/activities" },
@@ -97,6 +99,7 @@ function AppRoutes() {
     "/package-builder": { component: <PackageBuilder navigate={navigate} />, current: "package-builder" },
     "/display-options": { component: <DisplayOptions navigate={navigate} />, current: "display-options" },
     "/past-events": { component: <PastEvents navigate={navigate} />, current: "past-events" },
+    "/rental-guide": { component: <RentalGuide navigate={navigate} />, current: "rental-guide" },
   };
 
   const { component, current } = routeMap[page] || routeMap["/"];
