@@ -20,6 +20,7 @@ import {
   Aperture,
   Moon,
   Gift,
+  Lightbulb,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -1096,6 +1097,30 @@ export const DISPLAYS = [
       ],
       goodToKnow: [
         "Needs a nearby outlet, extension cords included.",
+        "Setup pricing is separate, see Setup Pricing below.",
+      ],
+    },
+  },
+  {
+    id: "allOfTheLights",
+    icon: Lightbulb,
+    name: "All Of The Lights",
+    tagline: "Every corner glows. Every photo pops.",
+    description:
+      "Two arched, light-lined walls dressed in flowing draping, framed palm leaf accents, and a personalized neon sign in the middle spelling out your celebration. Approximately 10 feet wide and 6 feet tall, this is the display that turns a room into a photo studio.",
+    photoUrl: "/photos/all-of-the-lights-display.jpg",
+    details: {
+      summary: "Two glowing arched walls with draping, palm accents, and a personalized neon sign, about 10 feet wide and 6 feet tall.",
+      howItWorks: [
+        "Share the wording you want lit up in neon.",
+        "Tell us your draping color, it's fully customizable.",
+        "We build and bring the display to your event.",
+        "It's set up free standing near a power outlet.",
+      ],
+      goodToKnow: [
+        "Approximately 10 feet wide and 6 feet tall.",
+        "Requires a nearby outlet.",
+        "Draping color can be customized, contact us for requests.",
         "Setup pricing is separate, see Setup Pricing below.",
       ],
     },

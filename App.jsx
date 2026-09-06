@@ -38,7 +38,7 @@ const NAV = [
     path: "/decor",
     children: [
       { label: "Decor Collection", path: "/decor" },
-      { label: "Display Options", path: "/display-options" },
+      { label: "Display Walls", path: "/display-options" },
     ],
   },
   { label: "Rental Guide", path: "/rental-guide" },

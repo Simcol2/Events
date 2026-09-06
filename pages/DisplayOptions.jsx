@@ -16,7 +16,7 @@ export default function DisplayOptions({ navigate }) {
           A SLICE OF G EVENTS
         </p>
         <h1 className="mt-3 text-6xl sm:text-7xl font-bold" style={{ ...fonts.displayFont, color: palette.gold }}>
-          Display Options
+          Display Walls
         </h1>
         <p className="mt-4 text-2xl sm:text-3xl" style={{ ...fonts.scriptFont, color: "#FFFFFF" }}>
           A backdrop worth remembering.
