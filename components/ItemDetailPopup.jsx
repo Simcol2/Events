@@ -29,7 +29,7 @@ function BulletList({ heading, items }) {
   if (!items || items.length === 0) return null;
   return (
     <div className="mt-7 rounded-xl bg-white p-4">
-      <p className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]">{heading}</p>
+      <p className="font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">{heading}</p>
       <ul className="mt-3 space-y-2.5">
         {items.map((line, i) => (
           <li key={i} className="flex items-start gap-2 font-[Jost] text-sm leading-5 text-[#5C5645]">
@@ -46,7 +46,7 @@ function TextSection({ heading, text, emphasize }) {
   if (!text) return null;
   return (
     <div className="mt-7">
-      <p className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]">{heading}</p>
+      <p className="font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">{heading}</p>
       <p className={`mt-2 font-[Jost] leading-6 text-[#3A342A] ${emphasize ? "text-base font-semibold" : "text-base"}`}>
         {text}
       </p>
@@ -100,7 +100,7 @@ export default function ItemDetailPopup({ name, tagline, details, onClose }) {
         </button>
 
         {tagline && (
-          <p className="pr-10 font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#B8935A]">
+          <p className="pr-10 font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#B8935A]">
             {tagline.toUpperCase()}
           </p>
         )}
@@ -120,11 +120,11 @@ export default function ItemDetailPopup({ name, tagline, details, onClose }) {
 
         {howItWorks && howItWorks.length > 0 && (
           <div className="mt-7">
-            <p className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]">HOW IT WORKS</p>
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">HOW IT WORKS</p>
             <div className="mt-4 space-y-4">
               {howItWorks.map((step, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#4E5A44] font-[Jost] text-xs font-semibold text-white">
+                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#4E5A44] font-[Jost] text-sm font-semibold text-white">
                     {i + 1}
                   </span>
                   <p className="mt-0.5 font-[Jost] text-base leading-5 text-[#3A342A]">{step}</p>

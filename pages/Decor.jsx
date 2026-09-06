@@ -17,7 +17,15 @@ function normalize(value) {
 // as filter-only options rather than living in the shared decorTags list
 // (which the admin form also uses, where they wouldn't make sense as a
 // checkbox).
-const TAGS = [...CATALOG_TAGS, { id: "rent", label: "Rent" }, { id: "purchase", label: "Purchase" }];
+// Gift Wrap and Stationery live in the catalog but belong on the Gifts
+// page instead of here (see pages/Gifts.jsx) - excluded from both the
+// filter buttons and the displayed items below.
+const MOVED_TO_GIFTS_TAGS = ["gift wrap", "stationery"];
+const TAGS = [
+  ...CATALOG_TAGS.filter((t) => !MOVED_TO_GIFTS_TAGS.includes(t.id)),
+  { id: "rent", label: "Rent" },
+  { id: "purchase", label: "Purchase" },
+];
 
 function itemTags(item) {
   const sheetTags = parseItemTags(item).map(normalize);
@@ -66,6 +74,7 @@ export default function Decor({ navigate }) {
     const q = normalize(query);
     return items.filter((item) => {
       const tags = itemTags(item);
+      if (MOVED_TO_GIFTS_TAGS.some((t) => tags.includes(t))) return false;
       const matchesTags = selectedTags.length === 0 || selectedTags.some((t) => tags.includes(t));
       const matchesGender = gender === "all" || normalize(item.gender) === gender;
       const matchesSearch =
@@ -132,11 +141,11 @@ export default function Decor({ navigate }) {
         <div className="flex flex-col gap-5 border-b border-[#E4DCC8] pb-7">
           <div>
             <div className="mb-3 flex items-center justify-between">
-              <span className="font-[Jost] text-xs font-semibold tracking-[0.16em] text-[#4E5A44]">FILTER BY TAG</span>
+              <span className="font-[Jost] text-sm font-semibold tracking-[0.16em] text-[#4E5A44]">FILTER BY TAG</span>
               {selectedTags.length > 0 && (
                 <button
                   onClick={() => setSelectedTags([])}
-                  className="font-[Jost] text-xs font-medium tracking-[0.1em] text-[#8C846F] underline underline-offset-4"
+                  className="font-[Jost] text-sm font-medium tracking-[0.1em] text-[#8C846F] underline underline-offset-4"
                 >
                   CLEAR ALL
                 </button>
@@ -151,7 +160,7 @@ export default function Decor({ navigate }) {
                     onChange={() => toggleTag(tag.id)}
                     className="h-3.5 w-3.5 accent-[#4E5A44]"
                   />
-                  <span className="font-[Jost] text-xs tracking-[0.04em] text-[#5C5645]">{tag.label}</span>
+                  <span className="font-[Jost] text-sm tracking-[0.04em] text-[#5C5645]">{tag.label}</span>
                 </label>
               ))}
             </div>
@@ -162,7 +171,7 @@ export default function Decor({ navigate }) {
               <button
                 key={g}
                 onClick={() => setGender(g)}
-                className={`px-3 py-2 font-[Jost] text-xs font-medium tracking-[0.14em] ${
+                className={`px-3 py-2 font-[Jost] text-sm font-medium tracking-[0.14em] ${
                   gender === g ? "bg-[#4E5A44] text-white" : "border border-[#D8D0BC] text-[#716B5C]"
                 }`}
               >
@@ -222,10 +231,10 @@ export default function Decor({ navigate }) {
         )}
 
         <div className="mt-20 border-t border-[#E4DCC8] pt-7 text-center">
-          <p className="font-[Jost] text-xs tracking-[0.18em] text-[#8C846F]">
+          <p className="font-[Jost] text-sm tracking-[0.18em] text-[#8C846F]">
             WANT AN EXPERIENCE YOUR GUESTS BECOME PART OF, NOT JUST A ROOM FULL OF DECOR?
           </p>
-          <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]">
+          <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">
             BUILD MY EXPERIENCE
           </button>
         </div>

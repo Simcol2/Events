@@ -73,7 +73,7 @@ export default function EventTypePicker() {
         <div className="px-6 pb-8 pt-10 text-center sm:px-12">
           <Heart className="mx-auto" size={22} strokeWidth={1.4} style={{ color: palette.gold }} />
           <p
-            className="mt-4 text-xs font-semibold tracking-[0.3em]"
+            className="mt-4 text-sm font-semibold tracking-[0.3em]"
             style={{ ...fonts.bodyFont, color: palette.gold }}
           >
             LET'S START WITH THE CELEBRATION

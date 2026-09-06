@@ -29,9 +29,17 @@ import Admin from "./pages/Admin";
 // Options stay live routes (linked from the footer and the Package
 // Builder's Memory Display step) without competing for top-level nav space.
 const NAV = [
+  { label: "Home", path: "/" },
   { label: "How It Works", path: "/how-it-works" },
   { label: "Experiences", path: "/experiences" },
-  { label: "Decor", path: "/decor" },
+  {
+    label: "Decor",
+    path: "/decor",
+    children: [
+      { label: "Decor Collection", path: "/decor" },
+      { label: "Display Options", path: "/display-options" },
+    ],
+  },
   { label: "Activities", path: "/activities" },
   { label: "Gifts", path: "/gifts" },
   { label: "Catering", path: "/catering" },

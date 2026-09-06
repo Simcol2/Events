@@ -967,6 +967,9 @@ export const KEEPSAKES = [
     upgradePrice: 0,
     includedGuestCount: 25,
     overagePricePerGuest: 4,
+    // Sold individually on the Gifts page, separate from its role as a
+    // package guest gift (upgradePrice/overagePricePerGuest above).
+    standalonePrice: 5,
     photoUrls: [readyToPopPhoto, readyToPopPhoto2],
     details: {
       summary: "A cute, ready made popcorn kit paired with a gourmet treat for every guest.",
@@ -992,6 +995,9 @@ export const KEEPSAKES = [
     upgradePrice: 225,
     includedGuestCount: 25,
     overagePricePerGuest: 13,
+    // Sold individually on the Gifts page, separate from its role as a
+    // package guest gift upgrade (upgradePrice above).
+    standalonePrice: 15,
     photoUrl: lilRootsPhoto,
     details: {
       summary: "A planted seedling in a keepsake jar, paired with a gourmet treat. A gift that keeps growing.",
@@ -1011,18 +1017,22 @@ export const KEEPSAKES = [
     id: "grownFolksLootBags",
     icon: Gift,
     name: "Grown Folks Loot Bags",
-    tagline: "A sweet favor for every guest.",
+    tagline: "Likkle sweetness fi big people business.",
     description:
-      "Every guest goes home with their own individually wrapped treat from our dessert line, a little something sweet to remember the celebration by.",
+      "A box of 3 full size rum cupcakes, individually gift boxed and vacuum sealed to lock in every bit of freshness. Hand someone this box and watch their whole day improve.",
     upgradePrice: 0,
     includedGuestCount: 10,
     overagePricePerGuest: 6,
+    // Sold individually on the Gifts page as a $15 box of 3, separate from
+    // its role as a package guest gift (upgradePrice/overagePricePerGuest
+    // above).
+    standalonePrice: 15,
     photoUrls: [grownFolksLootBagPhoto, grownFolksLootBagPhoto2],
     details: {
-      summary: "An individually wrapped dessert treat for every guest, straight from our own dessert line.",
+      summary: "A box of 3 full size rum cupcakes, individually gift boxed and vacuum sealed to lock in every bit of freshness.",
       howItWorks: [
-        "Treats are selected from our dessert menu.",
-        "Each one is individually wrapped for guests.",
+        "Rum cupcakes are baked and boxed from our own dessert line.",
+        "Each box is vacuum sealed to lock in freshness.",
         "They're set out or handed out at your event.",
         "Included free for your first set of guests.",
       ],

@@ -52,7 +52,7 @@ export default function EventDatePicker() {
         <button
           disabled={!draft}
           onClick={() => chooseEventDate(draft)}
-          className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+          className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
         >
           CONTINUE
         </button>

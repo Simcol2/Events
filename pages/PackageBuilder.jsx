@@ -50,7 +50,7 @@ function StepNav({ steps, step, setStep, palette, fonts }) {
               style={{ ...fonts.bodyFont, color: active ? palette.primaryDeep : done ? palette.accent : palette.muted }}
             >
               <span
-                className="w-6 h-6 rounded-full flex items-center justify-center text-xs flex-shrink-0"
+                className="w-6 h-6 rounded-full flex items-center justify-center text-sm flex-shrink-0"
                 style={{
                   background: active || done ? palette.accent : "transparent",
                   border: active || done ? "none" : `1px solid ${palette.line}`,

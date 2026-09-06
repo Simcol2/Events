@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Check, X as XIcon, Plus, ShoppingBag, ChevronDown, ArrowUpRight } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useCart } from "../CartContext";
+import { supabase } from "../supabaseClient";
 import CateringRequestModal from "../components/CateringRequestModal";
+import CartModal from "../components/CartModal";
 import {
   HERO,
   STANDARD,
@@ -30,7 +32,7 @@ function ArchFrame({ children, tall = false, palette }) {
 function PhotoComingSoon({ palette, fonts }) {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <span className="font-[Jost] text-xs tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.muted }}>
+      <span className="font-[Jost] text-sm tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.muted }}>
         PHOTO COMING SOON
       </span>
     </div>
@@ -54,7 +56,7 @@ function MenuCard({ item, index, palette, onOrder }) {
         )}
       </ArchFrame>
 
-      <p className="mt-5 font-[Jost] text-xs font-semibold tracking-[0.25em]" style={{ color: palette.gold }}>
+      <p className="mt-5 font-[Jost] text-sm font-semibold tracking-[0.25em]" style={{ color: palette.gold }}>
         {`NO. ${String(index + 1).padStart(2, "0")}`}
       </p>
       <h3 className="mt-1 font-['Cormorant_Garamond'] text-3xl font-semibold italic" style={{ color: palette.ink }}>
@@ -86,12 +88,12 @@ function MenuCard({ item, index, palette, onOrder }) {
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <span className="font-[Jost] text-xs font-semibold tracking-[0.1em]" style={{ color: palette.muted }}>
+        <span className="font-[Jost] text-sm font-semibold tracking-[0.1em]" style={{ color: palette.muted }}>
           PRICING BY REQUEST
         </span>
         <button
           onClick={() => onOrder(item, size)}
-          className="flex-shrink-0 rounded-sm px-5 py-3 font-[Jost] text-xs font-semibold tracking-[0.16em] text-white"
+          className="flex-shrink-0 rounded-sm px-5 py-3 font-[Jost] text-sm font-semibold tracking-[0.16em] text-white"
           style={{ background: EMERALD }}
         >
           REQUEST TO ORDER
@@ -108,6 +110,35 @@ export default function Catering() {
   const { palette, fonts } = usePalette();
   const { addToCart, removeFromCart, isInCart, cartCount } = useCart();
   const [requestItem, setRequestItem] = useState(null);
+  const [showCart, setShowCart] = useState(false);
+  const [catalog, setCatalog] = useState([]);
+  const [gifts, setGifts] = useState([]);
+
+  // Fetched so the cart can resolve "catalog"/"gift" kind lines added from
+  // other pages - this page's own Add to Cart buttons only ever add
+  // "dessert" kind lines, but the cart is shared site-wide (see
+  // CartContext).
+  useEffect(() => {
+    if (!supabase) return;
+    let cancelled = false;
+    supabase
+      .from("items")
+      .select("*")
+      .eq("active", true)
+      .then(({ data, error }) => {
+        if (!cancelled && !error) setCatalog(data || []);
+      });
+    supabase
+      .from("gifts")
+      .select("*")
+      .eq("active", true)
+      .then(({ data, error }) => {
+        if (!cancelled && !error) setGifts(data || []);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const toggleGift = (g) => {
     if (isInCart(g.id, "dessert")) removeFromCart(g.id, "dessert");
@@ -122,7 +153,7 @@ export default function Catering() {
           <div>
             <div className="flex items-center gap-3">
               <span className="h-px w-8" style={{ background: palette.gold }} />
-              <p className="font-[Jost] text-xs font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
+              <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
                 {HERO.eyebrow}
               </p>
             </div>
@@ -137,14 +168,14 @@ export default function Catering() {
             <div className="mt-8 flex flex-wrap gap-4">
               <button
                 onClick={() => scrollToId("menu")}
-                className="rounded-sm px-7 py-3.5 font-[Jost] text-xs font-semibold tracking-[0.18em]"
+                className="rounded-sm px-7 py-3.5 font-[Jost] text-sm font-semibold tracking-[0.18em]"
                 style={{ background: palette.gold, color: palette.primaryDeep }}
               >
                 VIEW THE MENU
               </button>
               <button
                 onClick={() => scrollToId("gifts")}
-                className="rounded-sm border px-7 py-3.5 font-[Jost] text-xs font-semibold tracking-[0.18em] text-white"
+                className="rounded-sm border px-7 py-3.5 font-[Jost] text-sm font-semibold tracking-[0.18em] text-white"
                 style={{ borderColor: "#FFFFFF66" }}
               >
                 GIFT A CAKE
@@ -167,7 +198,7 @@ export default function Catering() {
           <div>
             <div className="flex items-center gap-3">
               <span className="h-px w-8" style={{ background: palette.accent }} />
-              <p className="font-[Jost] text-xs font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
+              <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
                 {STANDARD.eyebrow}
               </p>
             </div>
@@ -218,7 +249,7 @@ export default function Catering() {
       <section id="menu" className="border-t px-5 py-20 sm:px-8" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-6xl">
           <div className="mb-4 text-center">
-            <p className="font-[Jost] text-xs font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
               THE MENU
             </p>
             <h2 className="mt-2 text-4xl font-semibold" style={{ ...fonts.displayFont, color: palette.ink }}>
@@ -239,7 +270,7 @@ export default function Catering() {
               href={FULL_CAKE_ORDER.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-shrink-0 items-center gap-1.5 rounded-sm px-5 py-3 font-[Jost] text-xs font-semibold tracking-[0.16em] text-white"
+              className="flex flex-shrink-0 items-center gap-1.5 rounded-sm px-5 py-3 font-[Jost] text-sm font-semibold tracking-[0.16em] text-white"
               style={{ background: EMERALD }}
             >
               {FULL_CAKE_ORDER.ctaLabel}
@@ -274,13 +305,17 @@ export default function Catering() {
       <section id="gifts" className="border-t px-5 py-20 sm:px-8" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-5xl">
           <div className="mb-3 flex items-center justify-between">
-            <p className="font-[Jost] text-xs font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
               GROWN FOLKS LOOT BAGS
             </p>
-            <div className="flex items-center gap-2 font-[Jost] text-sm font-semibold tracking-[0.1em]" style={{ color: palette.ink }}>
+            <button
+              onClick={() => setShowCart(true)}
+              className="flex items-center gap-2 font-[Jost] text-sm font-semibold tracking-[0.1em]"
+              style={{ color: palette.ink }}
+            >
               <ShoppingBag size={16} />
               CART ({cartCount})
-            </div>
+            </button>
           </div>
           <h2 className="mb-8 text-4xl font-semibold" style={{ ...fonts.displayFont, color: palette.ink }}>
             Individually wrapped, ready to gift now.
@@ -305,7 +340,7 @@ export default function Catering() {
                     </span>
                     <button
                       onClick={() => toggleGift(g)}
-                      className="flex items-center gap-1.5 rounded-sm px-4 py-2.5 font-[Jost] text-xs font-semibold tracking-[0.14em] text-white"
+                      className="flex items-center gap-1.5 rounded-sm px-4 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.14em] text-white"
                       style={{ background: inCart ? palette.ink : EMERALD }}
                     >
                       {inCart ? <Check size={12} /> : <Plus size={12} />}
@@ -328,7 +363,7 @@ export default function Catering() {
           {RUM_CAKE_STORY.watermark}
         </span>
         <div className="relative">
-          <p className="font-[Jost] text-xs font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
+          <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
             {RUM_CAKE_STORY.eyebrow}
           </p>
           <h2 className="mx-auto mt-3 max-w-2xl text-4xl font-semibold leading-[1.15] sm:text-5xl" style={{ ...fonts.displayFont, color: palette.ink }}>
@@ -340,7 +375,7 @@ export default function Catering() {
           </p>
           <button
             onClick={() => scrollToId("menu")}
-            className="mt-8 rounded-sm px-8 py-4 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white"
+            className="mt-8 rounded-sm px-8 py-4 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white"
             style={{ background: EMERALD }}
           >
             {RUM_CAKE_STORY.ctaLabel}
@@ -355,6 +390,10 @@ export default function Catering() {
           initialSize={requestItem.initialSize}
           onClose={() => setRequestItem(null)}
         />
+      )}
+
+      {showCart && (
+        <CartModal catalog={catalog} gifts={gifts} onClose={() => setShowCart(false)} />
       )}
     </div>
   );

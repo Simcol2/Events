@@ -88,7 +88,7 @@ export default function PastEvents({ navigate }) {
           </p>
           <button
             onClick={() => navigate("/package-builder")}
-            className="inline-flex items-center gap-3 px-7 py-3.5 text-xs font-semibold tracking-[0.2em] text-white"
+            className="inline-flex items-center gap-3 px-7 py-3.5 text-sm font-semibold tracking-[0.2em] text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
             BUILD MY EXPERIENCE <ArrowRight size={15} />

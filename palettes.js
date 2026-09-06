@@ -42,7 +42,7 @@ export const PALETTES = [
     gold: "#D9A441",
     ink: "#2E2A22",
     line: "#E7DFC8",
-    muted: "#9C927A",
+    muted: "#6A6353",
     photos: emptyPhotos(),
   },
   {
@@ -57,7 +57,7 @@ export const PALETTES = [
     gold: "#C9A227",
     ink: "#3A342A",
     line: "#E4DCC8",
-    muted: "#A69C7E",
+    muted: "#716A56",
     photos: emptyPhotos(),
   },
   {
@@ -72,7 +72,7 @@ export const PALETTES = [
     gold: "#C9A227",
     ink: "#3A342A",
     line: "#E4DCC8",
-    muted: "#A69C7E",
+    muted: "#716A56",
     photos: emptyPhotos(),
   },
   {
@@ -87,7 +87,7 @@ export const PALETTES = [
     gold: "#C9A227",
     ink: "#3A2A2A",
     line: "#F0DCD8",
-    muted: "#B08C8C",
+    muted: "#785F5F",
     photos: emptyPhotos(),
   },
   {
@@ -102,7 +102,7 @@ export const PALETTES = [
     gold: "#C9A227",
     ink: "#362420",
     line: "#E8D9CC",
-    muted: "#A88F80",
+    muted: "#726157",
     photos: emptyPhotos(),
   },
   {
@@ -117,7 +117,7 @@ export const PALETTES = [
     gold: "#C9A227",
     ink: "#26282E",
     line: "#DCDCD0",
-    muted: "#8E8E80",
+    muted: "#616157",
     photos: emptyPhotos(),
   },
   {
@@ -132,7 +132,7 @@ export const PALETTES = [
     gold: "#C9A227",
     ink: "#3A2A30",
     line: "#F0DCE4",
-    muted: "#B08C98",
+    muted: "#785F67",
     photos: emptyPhotos(),
   },
 ];

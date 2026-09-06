@@ -6,7 +6,7 @@ export default function SectionHeading({ eyebrow, title, subtitle, align = "cent
   return (
     <div className={centered ? "text-center" : "text-left"}>
       {eyebrow && (
-        <div className="font-[Jost] text-xs font-semibold tracking-[0.34em] text-[#B8935A]">
+        <div className="font-[Jost] text-sm font-semibold tracking-[0.34em] text-[#B8935A]">
           {eyebrow.toUpperCase()}
         </div>
       )}

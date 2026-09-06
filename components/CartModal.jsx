@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "../CartContext";
 import { GROWN_FOLKS_LOOT_BAGS } from "../cateringContent";
+import { KEEPSAKES } from "../packageContent";
 
 // Display-only price/name resolution, mirroring api/create-checkout-session.js's
 // server-side lookup (the actual charge is always computed there, from the
@@ -27,6 +28,11 @@ function resolveLine(line, { catalog, gifts }) {
         ? `Custom request: ${line.meta.custom}`
         : null;
     return { name: gift.name, unitPrice: isCustom ? gift.custom_price ?? gift.price : gift.price, description };
+  }
+  if (line.kind === "keepsake") {
+    const keepsake = KEEPSAKES.find((k) => k.id === line.id);
+    if (!keepsake) return null;
+    return { name: keepsake.name, unitPrice: keepsake.standalonePrice, description: null };
   }
   return null;
 }
@@ -150,7 +156,7 @@ export default function CartModal({ catalog, gifts, onClose }) {
             <button
               disabled={checkingOut}
               onClick={handleCheckout}
-              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               {checkingOut ? "REDIRECTING TO CHECKOUT..." : "CHECKOUT WITH STRIPE"}
             </button>

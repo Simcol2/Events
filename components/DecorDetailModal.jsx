@@ -42,7 +42,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
             <img src={photos[activePhoto] || photos[0]} alt={item.name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <span className="font-[Jost] text-xs tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+              <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
             </div>
           )}
           {photos.length > 1 && (
@@ -67,7 +67,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
         </div>
 
         <div className="px-6 py-8 sm:px-8">
-          <div className="font-[Jost] text-xs font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
+          <div className="font-[Jost] text-sm font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
             {tags.length ? tags.join(" · ") : "Decor"}
           </div>
           <h2 className="mt-1 font-['Cormorant_Garamond'] text-3xl font-semibold text-[#4E5A44]">{item.name}</h2>
@@ -81,11 +81,11 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
               <div className="flex items-center justify-between">
                 <span className="font-[Jost] text-base font-medium text-[#B8935A]">BUY ${item.purchase_price}</span>
                 {outOfStock ? (
-                  <span className="font-[Jost] text-xs tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
+                  <span className="font-[Jost] text-sm tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
                 ) : (
                   <button
                     onClick={() => onBuy?.(item)}
-                    className="rounded-full bg-[#4E5A44] px-5 py-2.5 font-[Jost] text-xs font-semibold tracking-[0.16em] text-white"
+                    className="rounded-full bg-[#4E5A44] px-5 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.16em] text-white"
                   >
                     PURCHASE
                   </button>
@@ -98,7 +98,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
                 <span className="font-[Jost] text-base font-medium text-[#B8935A]">RENT ${item.rental_price} / EVENT</span>
                 <button
                   onClick={() => onRent?.(item)}
-                  className="rounded-full border border-[#4E5A44] px-5 py-2.5 font-[Jost] text-xs font-semibold tracking-[0.16em] text-[#4E5A44]"
+                  className="rounded-full border border-[#4E5A44] px-5 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.16em] text-[#4E5A44]"
                 >
                   CHECK DATES
                 </button>
@@ -112,7 +112,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
 
           <button
             onClick={() => navigate?.("/package-builder")}
-            className="mt-3 w-full border border-[#B8935A] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]"
+            className="mt-3 w-full border border-[#B8935A] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]"
           >
             BUILD MY EXPERIENCE
           </button>

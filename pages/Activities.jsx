@@ -84,7 +84,7 @@ function ActivityRow({ activity, number, featured = false }) {
           {String(number).padStart(2, "0")}
         </div>
         <div>
-          <div className="font-[Jost] text-xs font-semibold tracking-[0.22em] text-[#B8935A]">
+          <div className="font-[Jost] text-sm font-semibold tracking-[0.22em] text-[#B8935A]">
             {activity.tagline}
           </div>
           <h3 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-none text-[#4E5A44]">
@@ -99,7 +99,7 @@ function ActivityRow({ activity, number, featured = false }) {
           {activity.stations && (
             <div className="mt-5 flex flex-wrap gap-2">
               {activity.stations.map((station) => (
-                <span key={station} className="border border-[#CFC7B1] px-3 py-1.5 font-[Jost] text-xs tracking-[0.12em] text-[#68775F]">
+                <span key={station} className="border border-[#CFC7B1] px-3 py-1.5 font-[Jost] text-sm tracking-[0.12em] text-[#68775F]">
                   {station.toUpperCase()}
                 </span>
               ))}
@@ -138,7 +138,7 @@ export default function Activities({ navigate }) {
             ))}
           </div>
           <div className="flex w-full flex-col justify-center px-5 py-10 sm:w-1/3 sm:px-8">
-            <p className="font-[Jost] text-xs font-semibold tracking-[0.3em] text-[#B8935A]">ACTIVITIES</p>
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em] text-[#B8935A]">ACTIVITIES</p>
             <h1 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-[1.05] text-[#4E5A44] sm:text-[42px]">
               Games they'll play. Memories they'll keep.
             </h1>
@@ -152,8 +152,8 @@ export default function Activities({ navigate }) {
 
       <section className="mx-auto max-w-5xl px-5 py-14 sm:px-8">
         <div className="mb-10 flex items-center justify-between">
-          <div className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#4E5A44]">SHOWER ACTIVITIES</div>
-          <div className="font-[Jost] text-xs tracking-[0.12em] text-[#A69C7E]">CUSTOMIZABLE FOR YOUR EVENT</div>
+          <div className="font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">SHOWER ACTIVITIES</div>
+          <div className="font-[Jost] text-sm tracking-[0.12em] text-[#A69C7E]">CUSTOMIZABLE FOR YOUR EVENT</div>
         </div>
 
         <div className="mb-2">
@@ -191,7 +191,7 @@ export default function Activities({ navigate }) {
           <p className="mx-auto mt-3 max-w-lg font-[Jost] text-base leading-7 text-[#DAD7C9]">
             Choose the activities that fit your crowd and let the rest of the experience do the work.
           </p>
-          <button onClick={() => navigate("/package-builder")} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white">
+          <button onClick={() => navigate("/package-builder")} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white">
             BUILD MY EXPERIENCE
           </button>
         </div>

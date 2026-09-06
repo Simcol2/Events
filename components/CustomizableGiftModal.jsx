@@ -55,7 +55,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
             <img src={photo} alt={selectedOption?.label || gift.name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <span className="font-[Jost] text-xs tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+              <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
             </div>
           )}
         </div>
@@ -64,7 +64,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
         {gift.tagline && <p className="mt-1 font-[Jost] text-sm italic text-[#B8935A]">{gift.tagline}</p>}
         {gift.description && <p className="mt-3 font-[Jost] text-base leading-6 text-[#5C5645]">{gift.description}</p>}
 
-        <label className="mt-5 block font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">
+        <label className="mt-5 block font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">
           CHOOSE A DESIGN
         </label>
         <div className="relative mt-2">
@@ -85,7 +85,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
 
         {isCustom && (
           <div className="mt-4">
-            <label className="block font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">
+            <label className="block font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">
               WHAT SHOW OR CHARACTER?
             </label>
             <input
@@ -105,7 +105,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
           <button
             disabled={!canAdd}
             onClick={handleAdd}
-            className="rounded-full bg-[#4E5A44] px-6 py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+            className="rounded-full bg-[#4E5A44] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
           >
             ADD TO CART
           </button>

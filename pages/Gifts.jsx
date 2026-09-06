@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { ShoppingBag, Check, Plus } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
-import { getItemFlags } from "../components/DecorCard";
+import { getItemFlags, parseItemTags } from "../components/DecorCard";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import CartModal from "../components/CartModal";
-import PhotoCarousel from "../components/PhotoCarousel";
+import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import { KEEPSAKES, resolveKeepsakeName } from "../packageContent";
 import { useEventType } from "../EventTypeContext";
 
@@ -17,34 +17,34 @@ function GiftTile({ name, tagline, description, photos, price, priceLabel, inCar
   return (
     <div className="overflow-hidden bg-white">
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
-        {photos && photos.length ? (
+        {normalizePhotos(photos).length ? (
           <PhotoCarousel photos={photos} alt={name} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="font-[Jost] text-xs tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+            <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
           </div>
         )}
       </div>
       <div className="px-1 pb-3 pt-4">
         <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{name}</h3>
-        {tagline && <p className="mt-1 font-[Jost] text-xs italic text-[#B8935A]">{tagline}</p>}
+        {tagline && <p className="mt-1 font-[Jost] text-sm italic text-[#B8935A]">{tagline}</p>}
         {description && <p className="mt-2 font-[Jost] text-sm leading-5 text-[#5C5645]">{description}</p>}
         <div className="mt-3 flex items-center justify-between border-t border-[#E4DCC8] pt-3">
-          <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">
+          <span className="font-[Jost] text-sm font-medium tracking-[0.08em] text-[#B8935A]">
             {priceLabel || `$${price}`}
           </span>
           {onCustomize ? (
             <button
               onClick={onCustomize}
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-xs font-semibold tracking-[0.14em]"
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-sm font-semibold tracking-[0.14em]"
               style={{ background: "transparent", color: "#4E5A44", border: "1px solid #4E5A44" }}
             >
-              CUSTOMIZE
+              SELECT CARD
             </button>
           ) : (
             <button
               onClick={onToggle}
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-xs font-semibold tracking-[0.14em]"
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-sm font-semibold tracking-[0.14em]"
               style={{
                 background: inCart ? "#4E5A44" : "transparent",
                 color: inCart ? "#FFFFFF" : "#4E5A44",
@@ -129,8 +129,15 @@ export default function Gifts({ navigate }) {
   const giftItems = catalog.filter((item) => {
     const { isPurchasable } = getItemFlags(item);
     if (!isPurchasable) return false;
-    const tags = Array.isArray(item.tags) ? item.tags.map((t) => String(t).toLowerCase().trim()) : [];
+    const tags = parseItemTags(item).map((t) => t.toLowerCase().trim());
     return tags.includes("keepsakes & gifts");
+  });
+
+  // Gift Wrap and Stationery live in the same catalog as the Decor page's
+  // items, but belong here instead (see pages/Decor.jsx's MOVED_TO_GIFTS_TAGS).
+  const wrapAndStationeryItems = catalog.filter((item) => {
+    const tags = parseItemTags(item).map((t) => t.toLowerCase().trim());
+    return tags.includes("gift wrap") || tags.includes("stationery");
   });
 
   const toggleCatalogGift = (item) => {
@@ -150,7 +157,7 @@ export default function Gifts({ navigate }) {
         <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-[Jost] text-xs font-semibold tracking-[0.3em] text-[#B8935A]">GIFTS</p>
+              <p className="font-[Jost] text-sm font-semibold tracking-[0.3em] text-[#B8935A]">GIFTS</p>
               <h1 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-[1.05] text-[#4E5A44] sm:text-[42px]">
                 The games are played. The memories are made.
               </h1>
@@ -198,39 +205,44 @@ export default function Gifts({ navigate }) {
 
         <h2 className="mb-2 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Guest Gifts</h2>
         <p className="mb-6 max-w-2xl font-[Jost] text-base leading-6 text-[#8C846F]">
-          Send your guests home with a little something to remember the day by. Every experience includes a guest
-          gift, choose which one when you build your experience.
+          Buy these on their own, sold individually, whether or not you're building an experience. Every package
+          also includes a guest gift, choose which one when you build your experience.
         </p>
         <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {KEEPSAKES.map((k) => {
             const name = resolveKeepsakeName(k, eventTypeId);
+            const photos = k.photoUrls || (k.photoUrl ? [k.photoUrl] : []);
+            const inCart = isInCart(k.id, "keepsake");
             return (
               <div key={k.id} className="overflow-hidden bg-white">
                 <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
-                  {k.photoUrl ? (
-                    <img src={k.photoUrl} alt={name} className="h-full w-full object-cover" />
+                  {normalizePhotos(photos).length ? (
+                    <PhotoCarousel photos={photos} alt={name} className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <span className="font-[Jost] text-xs tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+                      <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
                     </div>
                   )}
                 </div>
                 <div className="px-1 pb-3 pt-4">
                   <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{name}</h3>
-                  <p className="mt-1 font-[Jost] text-xs italic text-[#B8935A]">{k.tagline}</p>
+                  <p className="mt-1 font-[Jost] text-sm italic text-[#B8935A]">{k.tagline}</p>
                   <p className="mt-2 font-[Jost] text-sm leading-5 text-[#5C5645]">{k.description}</p>
-                  <p className="mt-2 font-[Jost] text-xs leading-4 text-[#A69C7E]">
-                    Included for your first {k.includedGuestCount} guests, then ${k.overagePricePerGuest}/guest after that.
-                  </p>
                   <div className="mt-3 flex items-center justify-between border-t border-[#E4DCC8] pt-3">
-                    <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">
-                      {k.upgradePrice > 0 ? `+$${k.upgradePrice} upgrade` : "Included"}
+                    <span className="font-[Jost] text-sm font-medium tracking-[0.08em] text-[#B8935A]">
+                      ${k.standalonePrice} each
                     </span>
                     <button
-                      onClick={() => navigate("/package-builder")}
-                      className="flex items-center gap-1.5 rounded-full border border-[#4E5A44] px-4 py-2 font-[Jost] text-xs font-semibold tracking-[0.14em] text-[#4E5A44]"
+                      onClick={() => (inCart ? removeFromCart(k.id, "keepsake") : addToCart(k.id, "keepsake"))}
+                      className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-sm font-semibold tracking-[0.14em]"
+                      style={{
+                        background: inCart ? "#4E5A44" : "transparent",
+                        color: inCart ? "#FFFFFF" : "#4E5A44",
+                        border: "1px solid #4E5A44",
+                      }}
                     >
-                      BUILD MY EXPERIENCE
+                      {inCart ? <Check size={12} /> : <Plus size={12} />}
+                      {inCart ? "IN CART" : "ADD TO CART"}
                     </button>
                   </div>
                 </div>
@@ -267,6 +279,28 @@ export default function Gifts({ navigate }) {
           </>
         )}
         {giftsError && <p className="mb-14 font-[Jost] text-base text-red-700">Couldn't load gifts: {giftsError}</p>}
+
+        {wrapAndStationeryItems.length > 0 && (
+          <>
+            <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Gift Wrap & Stationery</h2>
+            <p className="mb-6 max-w-2xl font-[Jost] text-base leading-6 text-[#8C846F]">
+              Everything to wrap it up and write it down.
+            </p>
+            <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+              {wrapAndStationeryItems.map((item) => (
+                <GiftTile
+                  key={item.id}
+                  name={item.name}
+                  description={item.description}
+                  photos={item.photos}
+                  price={item.purchase_price}
+                  inCart={isInCart(item.id, "catalog")}
+                  onToggle={() => toggleCatalogGift(item)}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
         <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Keepsakes & Gifts</h2>
         {loading && <p className="py-10 text-center font-[Jost] text-base text-[#A69C7E]">Curating the collection...</p>}

@@ -122,7 +122,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
 
       <div className="mb-1 grid grid-cols-7 gap-1">
         {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-          <div key={i} className="py-1 text-center font-[Jost] text-xs font-medium text-[#B0A98C]">
+          <div key={i} className="py-1 text-center font-[Jost] text-sm font-medium text-[#B0A98C]">
             {d}
           </div>
         ))}
@@ -157,7 +157,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
         })}
       </div>
 
-      <div className="mt-3 flex items-center gap-4 font-[Jost] text-xs" style={{ color: MUTED }}>
+      <div className="mt-3 flex items-center gap-4 font-[Jost] text-sm" style={{ color: MUTED }}>
         <span className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full" style={{ border: "1px solid #D8D2BE" }} /> Booked
         </span>
@@ -165,7 +165,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
           <span className="h-2.5 w-2.5 rounded-full" style={{ background: SAGE_DEEP }} /> Selected
         </span>
       </div>
-      {loading && <p className="mt-2 font-[Jost] text-xs text-[#A69C7E]">Loading availability...</p>}
+      {loading && <p className="mt-2 font-[Jost] text-sm text-[#A69C7E]">Loading availability...</p>}
     </div>
   );
 }

@@ -25,6 +25,16 @@ const DESSERT_GIFTS = {
   gRingGift: { name: "G Ring Gift", price: 10 },
 };
 
+// Mirrors packageContent.js's KEEPSAKES (id, name, standalonePrice only).
+// Duplicated rather than imported for the same reason as DESSERT_GIFTS
+// above - keep this in sync if those standalone prices or names ever
+// change.
+const KEEPSAKE_GIFTS = {
+  readyToPop: { name: "Ready to Pop", price: 5 },
+  lilRoots: { name: "Lil Roots", price: 15 },
+  grownFolksLootBags: { name: "Grown Folks Loot Bags", price: 15 },
+};
+
 async function resolveLineItem(line) {
   const quantity = Math.max(1, Math.floor(Number(line?.quantity) || 1));
 
@@ -78,6 +88,19 @@ async function resolveLineItem(line) {
         currency: "cad",
         unit_amount: Math.round(Number(unitPrice) * 100),
         product_data: { name: gift.name, ...(description ? { description } : {}) },
+      },
+    };
+  }
+
+  if (line.kind === "keepsake") {
+    const keepsake = KEEPSAKE_GIFTS[line.id];
+    if (!keepsake) return null;
+    return {
+      quantity,
+      price_data: {
+        currency: "cad",
+        unit_amount: Math.round(keepsake.price * 100),
+        product_data: { name: keepsake.name },
       },
     };
   }

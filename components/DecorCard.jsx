@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import PhotoCarousel from "./PhotoCarousel";
+import PhotoCarousel, { normalizePhotos } from "./PhotoCarousel";
 
 // Gift wrap and disposables are purchase-only by business rule, enforced
 // here rather than relying only on the sheet leaving rental_price blank.
@@ -59,7 +59,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
       className={`group cursor-pointer overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
     >
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
-        {active.photos && active.photos.length ? (
+        {normalizePhotos(active.photos).length ? (
           <PhotoCarousel
             photos={active.photos}
             alt={displayName}
@@ -67,25 +67,25 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="font-[Jost] text-xs tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+            <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
           </div>
         )}
         {outOfStock && (
-          <div className="absolute left-3 top-3 bg-[#FAF6ED]/95 px-3 py-1.5 font-[Jost] text-xs font-semibold tracking-[0.16em] text-[#7B7464]">
+          <div className="absolute left-3 top-3 bg-[#FAF6ED]/95 px-3 py-1.5 font-[Jost] text-sm font-semibold tracking-[0.16em] text-[#7B7464]">
             OUT OF STOCK
           </div>
         )}
       </div>
 
       <div className="px-1 pb-3 pt-4">
-        <div className="font-[Jost] text-xs font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
+        <div className="font-[Jost] text-sm font-medium uppercase tracking-[0.18em] text-[#A69C7E]">
           {tags.length ? tags.join(" · ") : "Decor"}
         </div>
         <h3 className="mt-1 font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">
           {displayName}
         </h3>
         {active.size && (
-          <div className="mt-2 font-[Jost] text-xs text-[#8C846F]">{active.size}</div>
+          <div className="mt-2 font-[Jost] text-sm text-[#8C846F]">{active.size}</div>
         )}
 
         {hasVariants && (
@@ -108,18 +108,18 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
         <div className="mt-3 space-y-2 border-t border-[#E4DCC8] pt-3">
           {isPurchasable && (
             <div className="flex items-end justify-between">
-              <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">
+              <span className="font-[Jost] text-sm font-medium tracking-[0.08em] text-[#B8935A]">
                 BUY ${active.purchase_price}
               </span>
               {outOfStock ? (
-                <span className="font-[Jost] text-xs tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
+                <span className="font-[Jost] text-sm tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
               ) : (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onBuy?.(active);
                   }}
-                  className="font-[Jost] text-xs font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
+                  className="font-[Jost] text-sm font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
                 >
                   {active.quantity_owned} AVAILABLE - INQUIRE
                 </button>
@@ -129,7 +129,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
 
           {isRentable && !outOfStock && (
             <div className="flex items-end justify-between">
-              <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">
+              <span className="font-[Jost] text-sm font-medium tracking-[0.08em] text-[#B8935A]">
                 RENT ${active.rental_price} / EVENT
               </span>
               <button
@@ -137,7 +137,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
                   e.stopPropagation();
                   onRent?.(active);
                 }}
-                className="font-[Jost] text-xs font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
+                className="font-[Jost] text-sm font-semibold tracking-[0.14em] text-[#4E5A44] underline underline-offset-4"
               >
                 CHECK DATES
               </button>
@@ -146,7 +146,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
 
           {!isPurchasable && !isRentable && (
             <div className="flex items-end justify-between">
-              <span className="font-[Jost] text-xs font-medium tracking-[0.08em] text-[#B8935A]">INQUIRE</span>
+              <span className="font-[Jost] text-sm font-medium tracking-[0.08em] text-[#B8935A]">INQUIRE</span>
             </div>
           )}
         </div>

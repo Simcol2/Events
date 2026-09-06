@@ -132,14 +132,14 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
             </p>
             <button
               onClick={onClose}
-              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white"
+              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white"
             >
               CLOSE
             </button>
           </div>
         ) : (
           <>
-            <p className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#B8935A]">
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#B8935A]">
               {isRental ? "REQUEST TO RENT" : "REQUEST TO PURCHASE"}
             </p>
             <h2 className="mt-1 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
@@ -148,7 +148,7 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
 
             {isRental && (
               <div className="mt-5 space-y-3">
-                <p className="font-[Jost] text-xs tracking-[0.1em] text-[#8C846F]">
+                <p className="font-[Jost] text-sm tracking-[0.1em] text-[#8C846F]">
                   {pickup && dropoff ? `PICKUP ${pickup} · DROP-OFF ${dropoff}` : "SELECT PICKUP, THEN DROP-OFF"}
                 </p>
                 <RentalCalendar
@@ -213,7 +213,7 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
             <button
               disabled={!canSubmit}
               onClick={handleSubmit}
-              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
               {submitting ? "SENDING..." : isRental ? "REQUEST TO RENT" : "REQUEST TO PURCHASE"}
             </button>

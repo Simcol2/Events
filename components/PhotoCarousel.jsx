@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function normalizePhotos(photos) {
+export function normalizePhotos(photos) {
   if (!Array.isArray(photos)) return [];
   return photos.map((p) => (typeof p === "string" ? p : p?.url)).filter(Boolean);
 }

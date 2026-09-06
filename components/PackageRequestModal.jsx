@@ -91,14 +91,14 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
             </p>
             <button
               onClick={onClose}
-              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white"
+              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white"
             >
               CLOSE
             </button>
           </div>
         ) : (
           <>
-            <p className="font-[Jost] text-xs font-semibold tracking-[0.2em] text-[#B8935A]">YOUR EXPERIENCE IS READY</p>
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#B8935A]">YOUR EXPERIENCE IS READY</p>
             <h2 className="mt-1 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
               {summary?.eventTypeLabel}
             </h2>
@@ -109,13 +109,13 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
             {summary && (
               <div className="mt-5 space-y-4 border-t border-[#E4DCC8] pt-4">
                 <div>
-                  <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">STARTING PRICE</p>
+                  <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">STARTING PRICE</p>
                   <LineRow label={summary.eventTypeLabel} price={summary.startingPrice} />
                 </div>
 
                 {summary.experiences?.length > 0 && (
                   <div>
-                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">EXPERIENCES</p>
+                    <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">EXPERIENCES</p>
                     {summary.experiences.map((e) => (
                       <LineRow key={e.name} label={e.name} price={e.included ? 0 : e.price} />
                     ))}
@@ -124,14 +124,14 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
 
                 {summary.servingDish && (
                   <div>
-                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">MAKE IT YOURS</p>
+                    <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">MAKE IT YOURS</p>
                     <LineRow label={summary.servingDish.name} price={summary.servingDish.price} />
                   </div>
                 )}
 
                 {summary.playful?.length > 0 && (
                   <div>
-                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">PLAYFUL ADD-ONS</p>
+                    <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">PLAYFUL ADD-ONS</p>
                     {summary.playful.map((p) => (
                       <LineRow key={p.name} label={p.name} price={p.price} />
                     ))}
@@ -140,14 +140,14 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
 
                 {summary.guestGift && (
                   <div>
-                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">GUEST GIFT</p>
+                    <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">GUEST GIFT</p>
                     <LineRow label={summary.guestGift.name} price={summary.guestGift.price} />
                   </div>
                 )}
 
                 {summary.addons?.length > 0 && (
                   <div>
-                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">ADD-ONS</p>
+                    <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">ADD-ONS</p>
                     {summary.addons.map((a) => (
                       <LineRow key={a.name} label={a.name} price={a.price} />
                     ))}
@@ -156,14 +156,14 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
 
                 {summary.serviceStyle && (
                   <div>
-                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">SERVICE</p>
+                    <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">SERVICE</p>
                     <LineRow label={summary.serviceStyle.name} price={summary.serviceStyle.price} />
                   </div>
                 )}
 
                 {summary.display && (
                   <div>
-                    <p className="font-[Jost] text-xs font-semibold tracking-[0.15em] text-[#4E5A44]">MEMORY DISPLAY</p>
+                    <p className="font-[Jost] text-sm font-semibold tracking-[0.15em] text-[#4E5A44]">MEMORY DISPLAY</p>
                     <LineRow
                       label={summary.display.setup ? `${summary.display.name} - ${summary.display.setup}` : summary.display.name}
                       price={summary.display.price}
@@ -220,7 +220,7 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
             <button
               disabled={!canSubmit}
               onClick={handleSubmit}
-              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-xs font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
               {submitting ? "SENDING..." : "REQUEST MY EXPERIENCE"}
             </button>
