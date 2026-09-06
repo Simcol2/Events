@@ -22,6 +22,7 @@ import {
   Gift,
   Lightbulb,
   Flower2,
+  LayoutGrid,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -1059,28 +1060,6 @@ export function resolveKeepsakeName(keepsake, eventTypeId) {
 // only depends on the setup option below.
 export const DISPLAYS = [
   {
-    id: "blackGoldGeometric",
-    icon: Frame,
-    name: "Black and Gold Geometric Display",
-    tagline: "Sleek lines, statement presence.",
-    description:
-      "A bold geometric frame in black and gold, 6 feet by 4 feet and free-standing, with your own custom text taking center stage. This is the piece guests walk in and photograph first.",
-    photoUrl: "https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/blackandgolddisplay.png",
-    details: {
-      summary: "A bold black and gold geometric frame, 6 feet by 4 feet, built to be the first thing guests photograph.",
-      howItWorks: [
-        "Share the custom text you want on the center panel.",
-        "We build and bring the display to your event.",
-        "It's set up free standing, no mounting needed.",
-        "You choose self setup or professional install.",
-      ],
-      goodToKnow: [
-        "Needs about 6 feet of wall or floor space.",
-        "Setup pricing is separate, see Setup Pricing below.",
-      ],
-    },
-  },
-  {
     id: "archedIridescent",
     icon: LampCeiling,
     name: "Arched Iridescent Light Up Display",
@@ -1098,6 +1077,28 @@ export const DISPLAYS = [
       ],
       goodToKnow: [
         "Needs a nearby outlet, extension cords included.",
+        "Setup pricing is separate, see Setup Pricing below.",
+      ],
+    },
+  },
+  {
+    id: "blackGoldGeometric",
+    icon: Frame,
+    name: "Black and Gold Geometric Display",
+    tagline: "Sleek lines, statement presence.",
+    description:
+      "A bold geometric frame in black and gold, 6 feet by 4 feet and free-standing, with your own custom text taking center stage. This is the piece guests walk in and photograph first.",
+    photoUrl: "https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/blackandgolddisplay.png",
+    details: {
+      summary: "A bold black and gold geometric frame, 6 feet by 4 feet, built to be the first thing guests photograph.",
+      howItWorks: [
+        "Share the custom text you want on the center panel.",
+        "We build and bring the display to your event.",
+        "It's set up free standing, no mounting needed.",
+        "You choose self setup or professional install.",
+      ],
+      goodToKnow: [
+        "Needs about 6 feet of wall or floor space.",
         "Setup pricing is separate, see Setup Pricing below.",
       ],
     },
@@ -1122,6 +1123,30 @@ export const DISPLAYS = [
         "Approximately 10 feet wide and 6 feet tall.",
         "Requires a nearby outlet.",
         "Draping color can be customized, contact us for requests.",
+        "Setup pricing is separate, see Setup Pricing below.",
+      ],
+    },
+  },
+  {
+    id: "ohBabyGridWall",
+    icon: LayoutGrid,
+    name: "Oh Baby",
+    tagline: "Playful squares, pops of color.",
+    description:
+      "A dimensional grid wall in crisp white, accented with colored cube inserts and warm up-lighting, paired with an arched light-up frame, flowing draping, and a personalized neon sign. Approximately 8 feet wide, with fully customizable draping and accent colors to match your theme.",
+    photoUrl: "/photos/oh-baby-grid-wall-display.jpg",
+    details: {
+      summary: "A dimensional grid wall with colored cube accents, an arched light-up frame, and a personalized neon sign, about 8 feet wide.",
+      howItWorks: [
+        "Share the wording you want lit up in neon.",
+        "Tell us your draping and accent colors, it's fully customizable.",
+        "We build and bring the display to your event.",
+        "It's set up free standing near a power outlet.",
+      ],
+      goodToKnow: [
+        "Approximately 8 feet wide.",
+        "Requires a nearby outlet.",
+        "Draping and accent color can be customized, contact us for requests.",
         "Setup pricing is separate, see Setup Pricing below.",
       ],
     },
