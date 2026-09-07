@@ -24,9 +24,9 @@ const HERO_PHOTOS = [
 const PLAY_CONNECT = [
   {
     label: "Hello World Kindness Station",
-    tagline: "A little kindness can change someone's whole day.",
+    tagline: "Give a little kindness. Leave a little behind.",
     subtitle: "Celebrate Baby By Being Kind",
-    description: "Guests take a card, read a little reminder, and carry it out into the world in celebration of baby's arrival. Add an optional $5 gift card to any note for a pay it forward surprise.",
+    description: "Two ways to make someone's day. First, guests choose a kindness card and pass a little encouragement along to someone else, out in the world, in celebration of baby's arrival. Then comes A Box of Compliments. Guests write down something genuinely wonderful about Mom that they have always meant to say but never quite had the chance to. Something they have admired from afar, something that meant more than she realized, or something they appreciate but don't say often enough. They write it, seal it, and place it in the box. A compliment, unsaid, finally delivered. Mom takes the box home and saves those words for a rainy day, a hard week, or whenever she needs a reminder of how loved she is. Add an optional $5 gift card to any kindness card for a pay it forward surprise.",
   },
   {
     label: "Guess the Arrival",

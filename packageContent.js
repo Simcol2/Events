@@ -28,6 +28,7 @@ import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
 import babyTriviaPhoto from "./media/babytrivia.png";
 import kindnessStationPhoto from "./media/file_00000000dcd4822fb648d37e9526b4b3.png";
+import complimentBoxPhoto from "./media/kindness-station-compliment-box.jpg";
 import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.png";
 import wallPuzzleShowerPhoto from "./media/wallpuzzle-babyshower.png";
 import wallPuzzleShowerFramedPhoto from "./media/wallpuzzle-babyshower-framed.png";
@@ -145,50 +146,50 @@ export const MAIN_PACKAGE_ITEMS = [
     copy: {
       default: {
         name: "Kindness Station",
-        tagline: "Take one. Pass it on.",
+        tagline: "Give a little kindness. Leave a little behind.",
         description:
-          "Guests take a card of encouragement to carry out into the world, a small act of kindness done in your honor. Add an optional $5 gift card to any note for a pay it forward surprise.",
+          "Two ways to make someone's day. Guests take a kindness card and pass a little encouragement along to a stranger, then write down something wonderful they have always meant to say about the guest of honour, seal it, and drop it into A Box of Compliments. Add an optional $5 gift card to any kindness card for a pay it forward surprise.",
       },
       babyShower: {
         name: "Hello World Kindness Station",
-        tagline: "A little kindness can change someone's whole day.",
+        tagline: "Give a little kindness. Leave a little behind.",
         description:
-          "Guests take a card, read a little reminder, and carry it out into the world in celebration of baby's arrival. Add an optional $5 gift card to any note for a pay it forward surprise.",
+          "Two ways to make someone's day. Guests take a kindness card out into the world in celebration of baby's arrival, then write the compliment they have always meant to give Mom, seal it, and add it to A Box of Compliments she takes home. Add an optional $5 gift card to any kindness card for a pay it forward surprise.",
       },
       engagement: {
         name: "Kindness Station",
-        tagline: "A little kindness can change someone's whole day.",
+        tagline: "Give a little kindness. Leave a little behind.",
         description:
-          "Guests take a message and carry an act of kindness into the world in honour of the couple. Add an optional $5 gift card to any note for a pay it forward surprise.",
+          "Two ways to make someone's day. Guests carry an act of kindness into the world in honour of the couple, then write the thing they have always meant to say about them, seal it, and add it to A Box of Compliments the couple keeps. Add an optional $5 gift card to any kindness card for a pay it forward surprise.",
       },
       milestoneBirthday: {
         name: "Kindness Corner",
         tagline: "Teaching kindness, one birthday at a time.",
         description:
-          "In honor of the birthday, guests take a kindness card to carry out into the world, a sweet little tradition that can grow with your little one every year. Add an optional $5 gift card for a pay it forward surprise.",
+          "Two ways to make someone's day. Guests take a kindness card out into the world, then write down something wonderful about the birthday little one, seal it, and add it to A Box of Compliments saved for them to read when they are old enough to understand what everyone already saw. Add an optional $5 gift card for a pay it forward surprise.",
       },
       birthday: {
         name: "Kindness Station",
-        tagline: "Take one. Pass it on.",
+        tagline: "Give a little kindness. Leave a little behind.",
         description:
-          "Guests take a card of kindness to carry out into the world, turning the party into something that reaches beyond the room. Add an optional $5 gift card for a pay it forward surprise.",
+          "Two ways to make someone's day. Guests take a kindness card out into the world, then write the compliment they have always meant to give the birthday guest of honour, seal it, and add it to A Box of Compliments they take home. Add an optional $5 gift card for a pay it forward surprise.",
       },
       holiday: {
         name: "Season of Kindness Station",
         tagline: "Spread a little extra this season.",
         description:
-          "Guests take a card of kindness to carry out into the world, sharing the spirit of the season with people outside the room. Add an optional $5 gift card for a pay it forward surprise.",
+          "Two ways to make someone's day. Guests carry the spirit of the season to someone outside the room, then write down something they appreciate about the host but rarely say out loud, seal it, and add it to A Box of Compliments. Add an optional $5 gift card for a pay it forward surprise.",
       },
       specialMoment: {
         name: "Kindness Station",
-        tagline: "A little kindness, for someone else.",
+        tagline: "Give a little kindness. Leave a little behind.",
         description:
-          "Guests take a card of kindness to carry out into the world, a quiet way of marking the occasion that reaches beyond your guest list. Add an optional $5 gift card for a pay it forward surprise.",
+          "Two ways to make someone's day. Guests take a kindness card out into the world, then write the thing they have always meant to say about the person being celebrated, seal it, and add it to A Box of Compliments they keep. Add an optional $5 gift card for a pay it forward surprise.",
       },
     },
     photos: {
-      default: kindnessStationPhoto,
-      babyShower: kindnessStationPhoto,
+      default: [kindnessStationPhoto, complimentBoxPhoto],
+      babyShower: [kindnessStationPhoto, complimentBoxPhoto],
       engagement: null,
       milestoneBirthday: null,
       birthday: null,
@@ -197,20 +198,38 @@ export const MAIN_PACKAGE_ITEMS = [
     },
     details: {
       stats: { bestFor: "Meaningful, family-focused celebrations", length: "10-20 minutes", guests: "Individual guests", createsKeepsake: "Yes", energy: 2 },
-      whatItIs: "A thoughtful guest station where friends and family create messages of kindness, encouragement, and love for the child to discover as they grow.",
+      whatItIs:
+        "Kindness Station gives guests two ways to make someone's day. First they choose a kindness card and pass a little encouragement along to someone else. Then comes A Box of Compliments, where guests write down the wonderful thing about the guest of honour they have always meant to say but never quite had the chance to.",
       howItWorks: [
-        "Guests approach the station and choose a prompt or message.",
-        "They write something for baby: a wish, a piece of advice, encouragement, or a little reminder of how loved they already are.",
-        "An optional $5 gift card can be added to any note.",
-        "Guests take a copy home as a reminder to pass it on, the original stays with the family.",
+        "Guests choose a kindness card and carry that small act of encouragement out into the world.",
+        "An optional $5 gift card can be added to any kindness card for a pay it forward surprise.",
+        "At A Box of Compliments, guests think of something genuinely wonderful about the guest of honour. Something they have admired from afar, something that meant more than the person realized, or something they appreciate but rarely say out loud.",
+        "They write it down, seal it, and place it in the box.",
+        "A compliment, unsaid, finally delivered.",
       ],
-      whatsIncluded: ["Styled kindness station", "Message cards", "Writing materials", "Display/signage", "Collection container"],
-      whatGuestsDo: "Write a personal message for baby.",
-      whatTheFamilyKeeps: "The completed messages become a collection of personal notes for the family to save.",
-      personalization: ["Baby's name", "Custom prompts", "Event colours", "Custom signage", "Custom message cards"],
+      whatsIncluded: [
+        "Styled kindness station",
+        "Kindness cards",
+        "Compliment cards and sealing envelopes",
+        "A Box of Compliments",
+        "Writing materials",
+        "Display and signage",
+      ],
+      whatGuestsDo:
+        "Pass a little kindness on to a stranger, then finally say the thing they have always meant to say about the person being celebrated.",
+      whatTheFamilyKeeps:
+        "The Box of Compliments goes home sealed, to be opened on a rainy day, a hard week, or simply whenever they need a reminder of how loved and appreciated they are. It is a box full of things worth remembering.",
+      personalization: [
+        "Guest of honour's name",
+        "Custom compliment prompts",
+        "Custom kindness cards",
+        "Event colours",
+        "Custom signage",
+        "Keepsake box finish",
+      ],
       spaceRequired: "Small tabletop or dedicated station.",
-      approximateDuration: "Guests can participate in 2-5 minutes each.",
-      optionalAddOns: ["Custom keepsake box", "Additional prompts", "Coordinating display"],
+      approximateDuration: "Guests can take part in 2-5 minutes each.",
+      optionalAddOns: ["$5 pay it forward gift cards", "Upgraded keepsake box", "Additional prompts", "Coordinating display"],
     },
   },
   {
