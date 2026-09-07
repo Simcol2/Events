@@ -37,18 +37,6 @@ import TutuTwirlsTea from "./pages/TutuTwirlsTea";
 const NAV = [
   { label: "Home", path: "/" },
   { label: "How It Works", path: "/how-it-works" },
-  { label: "Experiences", path: "/experiences" },
-  {
-    label: "Decor and Gifts",
-    path: "/decor",
-    children: [
-      { label: "Decor Collection", path: "/decor" },
-      { label: "Display Walls", path: "/display-options" },
-      { label: "Gifts", path: "/gifts" },
-    ],
-  },
-  { label: "Rental Guide", path: "/rental-guide" },
-  { label: "Activities", path: "/activities" },
   {
     label: "Milestone Events",
     path: "/package-builder",
@@ -67,6 +55,21 @@ const NAV = [
     ],
   },
   {
+    label: "Decor and Gifts",
+    path: "/decor",
+    children: [
+      { label: "Decor Collection", path: "/decor" },
+      { label: "Display Walls", path: "/display-options" },
+      { label: "Gifts", path: "/gifts" },
+    ],
+  },
+  { label: "Activities", path: "/activities" },
+  { label: "Experiences", path: "/experiences" },
+  { label: "Rental Guide", path: "/rental-guide" },
+  { label: "Catering", path: "/catering" },
+  { label: "Past Events", path: "/past-events" },
+  { label: "About", path: "/about" },
+  {
     label: "Celebrating You",
     path: "/package-builder",
     opensPicker: true,
@@ -74,9 +77,6 @@ const NAV = [
       { label: "Just Because", path: "/package-builder", eventTypeId: "specialMoment" },
     ],
   },
-  { label: "Catering", path: "/catering" },
-  { label: "Past Events", path: "/past-events" },
-  { label: "About", path: "/about" },
   { label: "Build My Experience", path: "/package-builder", cta: true, opensPicker: true },
 ];
 

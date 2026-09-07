@@ -8,6 +8,11 @@ export default function SiteHeader({ current, navigate, nav }) {
   const { palette, fonts } = usePalette();
   const { chooseEventType, openPickerForBuilder } = useEventType();
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState({});
+
+  const toggleExpanded = (key) => {
+    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   // Most nav items just navigate. A few carry extra intent: `opensPicker`
   // shows the "what are you planning?" popup instead of navigating directly
@@ -130,27 +135,44 @@ export default function SiteHeader({ current, navigate, nav }) {
       {open && (
         <div className="px-5 py-4 md:hidden" style={{ borderTop: `1px solid ${palette.line}`, background: palette.bg }}>
           <nav className="mx-auto flex max-w-7xl flex-col">
-            {nav.map((item) => (
-              <React.Fragment key={item.path}>
-                <button
-                  onClick={() => go(item)}
-                  className={item.cta ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-sm font-semibold tracking-[0.22em] text-white" : "py-4 text-left font-[Jost] text-sm font-medium tracking-[0.22em]"}
-                  style={item.cta ? { background: palette.primaryDeep } : { borderBottom: item.children ? "none" : `1px solid ${palette.line}CC`, color: palette.primaryDeep }}
-                >
-                  {item.label.toUpperCase()}
-                </button>
-                {item.children?.map((child) => (
+            {nav.map((item) => {
+              const isExpanded = Boolean(expanded[item.path]);
+              return (
+                <React.Fragment key={item.path}>
                   <button
-                    key={child.path + (child.eventTypeId || "")}
-                    onClick={() => go(child)}
-                    className="py-3 pl-5 text-left font-[Jost] text-sm font-medium tracking-[0.18em]"
-                    style={{ borderBottom: `1px solid ${palette.line}CC`, color: palette.muted }}
+                    onClick={() => (item.children ? toggleExpanded(item.path) : go(item))}
+                    className={
+                      item.cta
+                        ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-sm font-semibold tracking-[0.22em] text-white"
+                        : "flex items-center justify-between py-4 text-left font-[Jost] text-sm font-medium tracking-[0.22em]"
+                    }
+                    style={
+                      item.cta
+                        ? { background: palette.primaryDeep }
+                        : { borderBottom: item.children && isExpanded ? "none" : `1px solid ${palette.line}CC`, color: palette.primaryDeep }
+                    }
                   >
-                    {child.label.toUpperCase()}
+                    {item.label.toUpperCase()}
+                    {item.children && (
+                      <span aria-hidden="true" style={{ color: palette.gold }}>
+                        {isExpanded ? "−" : "+"}
+                      </span>
+                    )}
                   </button>
-                ))}
-              </React.Fragment>
-            ))}
+                  {item.children && isExpanded &&
+                    item.children.map((child) => (
+                      <button
+                        key={child.path + (child.eventTypeId || "")}
+                        onClick={() => go(child)}
+                        className="py-3 pl-5 text-left font-[Jost] text-sm font-medium tracking-[0.18em]"
+                        style={{ borderBottom: `1px solid ${palette.line}CC`, color: palette.muted }}
+                      >
+                        {child.label.toUpperCase()}
+                      </button>
+                    ))}
+                </React.Fragment>
+              );
+            })}
           </nav>
         </div>
       )}
