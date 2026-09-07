@@ -127,28 +127,85 @@ export default function TutuTwirlsTea({ navigate }) {
         className="px-6 py-20 sm:px-10 lg:py-28"
         style={{ background: palette.primaryDeep }}
       >
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="mx-auto max-w-3xl text-center">
           <SectionLabel palette={{ ...palette, gold: "#D7B77C" }} fonts={fonts}>
-            NOT A DROP-OFF ACTIVITY
+            NO PARTY SCHEDULE. ON PURPOSE.
           </SectionLabel>
 
           <h2
             className="mt-5 text-5xl font-medium leading-tight sm:text-6xl"
             style={{ ...fonts.displayFont, color: "#FFFFFF" }}
           >
-            Everyone gets to
+            Because different
             <br />
-            celebrate.
+            is beautiful...
           </h2>
+
+          <p
+            className="mt-5 text-xl italic"
+            style={{ ...fonts.displayFont, color: "#D7B77C" }}
+          >
+            Forget the clipboard.
+          </p>
 
           <p
             className="mx-auto mt-7 max-w-2xl text-base leading-8"
             style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}
           >
-            Tutu Twirls & Tea is designed for the whole room. Beautiful tea
-            service, a styled tablescape, a photo wall, a dress-up wardrobe,
-            meaningful activities and plenty of room for adults to enjoy
-            themselves too.
+            We don't run a standard birthday drop-off activity. On purpose.
+            There's no grand entrance, no mandatory group activity, no
+            "everybody sit down," and no awkward moment where someone has to
+            round up 15 children who have just discovered the concept of free
+            will.
+          </p>
+
+          <p
+            className="mx-auto mt-6 max-w-2xl text-xl font-medium leading-8"
+            style={{ ...fonts.displayFont, color: "#FFFFFF" }}
+          >
+            Tutu Twirls & Tea is a come-and-go experience.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-2">
+          {[
+            "Arrive anytime during your experience window.",
+            "Choose your look.",
+            "Twirl.",
+            "Take a photo.",
+            "Make something kind.",
+            "Grab a snack.",
+            "Leave a memory.",
+            "Hang out with your people.",
+          ].map((item) => (
+            <div
+              key={item}
+              className="flex items-center gap-3 border-b pb-3"
+              style={{ borderColor: "#FFFFFF30" }}
+            >
+              <Sparkles size={14} color="#D7B77C" />
+              <span
+                className="text-sm"
+                style={{ ...fonts.bodyFont, color: "#FFFFFFDD" }}
+              >
+                {item}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mx-auto mt-12 max-w-2xl text-center">
+          <p
+            className="text-base leading-8"
+            style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}
+          >
+            And whenever you're ready?
+          </p>
+          <p
+            className="mt-3 text-xl italic leading-8"
+            style={{ ...fonts.displayFont, color: "#D7B77C" }}
+          >
+            "It's time to love ya then leave ya," and they'll be on their way.
           </p>
         </div>
       </section>
@@ -242,11 +299,75 @@ export default function TutuTwirlsTea({ navigate }) {
         </div>
       </section>
 
-      {/* WARDROBE */}
+      {/* FLEXIBLE HOSPITALITY */}
       <section
         className="px-6 py-20 sm:px-10 lg:py-28"
         style={{ background: palette.surface }}
       >
+        <div className="mx-auto max-w-3xl text-center">
+          <SectionLabel palette={palette} fonts={fonts}>
+            FLEXIBLE BY DESIGN
+          </SectionLabel>
+
+          <h2
+            className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            Tea is part of the vibe.
+            <br />
+            The experience is the point.
+          </h2>
+
+          <p
+            className="mx-auto mt-6 max-w-2xl text-base leading-8"
+            style={{ ...fonts.bodyFont, color: palette.muted }}
+          >
+            Tea. Snacks. Twirls. Photos. A little sparkle. Tutu Twirls & Tea
+            brings them together into one playful afternoon, without turning
+            the whole thing into a formal tea party.
+          </p>
+
+          <p
+            className="mx-auto mt-5 max-w-2xl text-base leading-8"
+            style={{ ...fonts.bodyFont, color: palette.muted }}
+          >
+            And because the format is designed to be flexible, the
+            hospitality can change too.
+          </p>
+
+          <p
+            className="mt-8 text-sm font-semibold tracking-[0.18em]"
+            style={{ ...fonts.bodyFont, color: palette.gold }}
+          >
+            THINK:
+          </p>
+
+          <div className="mx-auto mt-5 grid max-w-xl gap-3 sm:grid-cols-2">
+            {[
+              "Tutu Twirls & Tea",
+              "Tutu Time @ Brunch",
+              "Tutus & Lemonade",
+              "Dress 2 Impress",
+            ].map((item) => (
+              <div
+                key={item}
+                className="border-b pb-3"
+                style={{ borderColor: palette.line }}
+              >
+                <span
+                  className="text-lg italic"
+                  style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+                >
+                  {item}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WARDROBE */}
+      <section className="px-6 py-20 sm:px-10 lg:py-28">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-20">
           <div className="order-2 lg:order-1">
             <SectionLabel palette={palette} fonts={fonts}>
@@ -317,6 +438,81 @@ export default function TutuTwirlsTea({ navigate }) {
             alt="Tutus and styled blazers on a garment rack"
             className="order-1 aspect-[4/5] lg:order-2"
           />
+        </div>
+      </section>
+
+      {/* GROWN-UPS TWIRL TOO */}
+      <section className="px-6 py-20 sm:px-10 lg:py-28">
+        <div className="mx-auto max-w-3xl text-center">
+          <SectionLabel palette={palette} fonts={fonts}>
+            NOT JUST FOR KIDS
+          </SectionLabel>
+
+          <h2
+            className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
+            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+          >
+            Yes. The grown-ups
+            <br />
+            get to twirl too.
+          </h2>
+
+          <p
+            className="mt-5 text-xl italic"
+            style={{ ...fonts.displayFont, color: palette.gold }}
+          >
+            Why should the kids have all the fun?
+          </p>
+
+          <p
+            className="mx-auto mt-6 max-w-2xl text-base leading-8"
+            style={{ ...fonts.bodyFont, color: palette.muted }}
+          >
+            The wardrobe is designed for the whole room, with children's
+            tutus, adult-sized tutus, statement jackets and adjustable pieces
+            so everyone can choose their level of fabulous.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-2">
+          {[
+            "Come in your regular clothes.",
+            "Arrive already dressed to twirl.",
+            "Throw on a tutu for five minutes.",
+            "Go full fabulous.",
+          ].map((item) => (
+            <div
+              key={item}
+              className="flex items-center gap-3 border-b pb-3"
+              style={{ borderColor: palette.line }}
+            >
+              <Sparkles size={14} color={palette.gold} />
+              <span
+                className="text-sm"
+                style={{ ...fonts.bodyFont, color: palette.ink }}
+              >
+                {item}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mx-auto mt-10 max-w-2xl text-center">
+          <p
+            className="text-xl italic"
+            style={{ ...fonts.displayFont, color: palette.gold }}
+          >
+            It's completely up to you.
+          </p>
+
+          <p
+            className="mt-5 text-sm leading-6"
+            style={{ ...fonts.bodyFont, color: palette.muted }}
+          >
+            And with Velcro-opening styles available, there are different
+            ways to wear the magic without creating a separate experience for
+            anyone.
+          </p>
         </div>
       </section>
 
