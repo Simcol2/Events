@@ -87,15 +87,24 @@ async function run() {
       throw new Error(`${route}: LocalBusiness structured data missing from snapshot`);
     }
 
-    // The decor and gift grids are loaded live from Supabase, so a build
-    // run without real VITE_SUPABASE_* credentials captures the loading
-    // state and ships a catalogue page with no products in it. That is
-    // invisible to anyone browsing the site (the live app fetches fine)
-    // and completely silent, but it means Google indexes the two pages
-    // most worth indexing without a single product name on them. Warn
-    // rather than throw, so a copy-only prerender still works.
-    if (route === "/decor" && /Curating the collection/.test(html)) {
-      emptyCatalogueRoutes.push(route);
+    // The decor grid is loaded live from Supabase, so a crawl that can't
+    // reach it (missing VITE_SUPABASE_* credentials, or no network route
+    // to Supabase from this machine) ships a catalogue page with no
+    // products in it. That's invisible to anyone browsing the live site
+    // (the real app fetches fine in a real browser) and completely
+    // silent otherwise, but it means Google indexes the page without a
+    // single product name on it. Warn rather than throw, so a copy-only
+    // prerender still works.
+    //
+    // /decor now shows items only after a category tile is clicked
+    // (nothing is crawled here, so that never happens), so the catalogue
+    // being empty no longer shows as a "Curating..." loading message -
+    // it shows as every category tile reading "0 items" instead. Sum the
+    // tile counts rather than matching removed loading text.
+    if (route === "/decor") {
+      const counts = [...html.matchAll(/(\d+)\s+items?</g)].map((m) => Number(m[1]));
+      const total = counts.reduce((sum, n) => sum + n, 0);
+      if (counts.length === 0 || total === 0) emptyCatalogueRoutes.push(route);
     }
 
     const outDir = route === "/" ? "prerendered" : path.join("prerendered", route.slice(1));
