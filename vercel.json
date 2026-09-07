@@ -8,6 +8,7 @@
     { "source": "/about", "destination": "/about/index.html" },
     { "source": "/faq", "destination": "/faq/index.html" },
     { "source": "/decor", "destination": "/decor/index.html" },
+    { "source": "/birthdays/tutu-twirls-tea", "destination": "/birthdays/tutu-twirls-tea/index.html" },
     { "source": "/activities", "destination": "/activities/index.html" },
     { "source": "/gifts", "destination": "/gifts/index.html" },
     { "source": "/catering", "destination": "/catering/index.html" },

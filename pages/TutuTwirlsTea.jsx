@@ -1,19 +1,13 @@
 import React from "react";
-import {
-  ArrowRight,
-  Camera,
-  Heart,
-  Sparkles,
-  Star,
-  Wine,
-} from "lucide-react";
+import { ArrowRight, Camera, Heart, Sparkles, Star, Wine } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 
-const HERO_IMAGE = "/media/tutu-twirls-tea-hero.jpg";
-const WARDROBE_IMAGE = "/media/tutu-twirls-tea-wardrobe.jpg";
-const TEA_IMAGE = "/media/tutu-twirls-tea-table.jpg";
-const PHOTO_IMAGE = "/media/tutu-twirls-tea-photo-wall.jpg";
-const BIRTHDAY_IMAGE = "/media/tutu-twirls-tea-birthday-star.jpg";
+const HERO_IMAGE = "/photos/tutu-twirls-tea-hero.jpg";
+const WARDROBE_IMAGE = "/photos/tutu-twirls-tea-wardrobe.jpg";
+const TEA_IMAGE = "/photos/tutu-twirls-tea-table.jpg";
+const PHOTO_IMAGE = "/photos/tutu-twirls-tea-photo-wall.jpg";
+const BIRTHDAY_IMAGE = "/photos/tutu-twirls-tea-birthday-star.jpg";
+const BACKYARD_IMAGE = "/photos/tutu-twirls-tea-backyard.jpg";
 
 function SectionLabel({ children, palette, fonts }) {
   return (
@@ -28,10 +22,7 @@ function SectionLabel({ children, palette, fonts }) {
 
 function ImagePanel({ src, alt, className = "" }) {
   return (
-    <div
-      className={`overflow-hidden ${className}`}
-      style={{ background: "#E9E1D2" }}
-    >
+    <div className={`overflow-hidden ${className}`} style={{ background: "#E9E1D2" }}>
       <img
         src={src}
         alt={alt}
@@ -46,10 +37,7 @@ function ImagePanel({ src, alt, className = "" }) {
 
 function Feature({ icon: Icon, title, children, palette, fonts }) {
   return (
-    <div
-      className="border-t pt-6"
-      style={{ borderColor: palette.line }}
-    >
+    <div className="border-t pt-6" style={{ borderColor: palette.line }}>
       <Icon size={20} strokeWidth={1.5} color={palette.gold} />
       <h3
         className="mt-4 text-2xl font-semibold"
@@ -73,10 +61,7 @@ export default function TutuTwirlsTea({ navigate }) {
   return (
     <main
       className="min-h-screen overflow-hidden"
-      style={{
-        background: palette.bg,
-        color: palette.ink,
-      }}
+      style={{ background: palette.bg, color: palette.ink }}
     >
       {/* HERO */}
       <section className="relative">
@@ -89,29 +74,20 @@ export default function TutuTwirlsTea({ navigate }) {
 
               <h1
                 className="mt-5 text-6xl font-medium leading-[0.9] sm:text-7xl lg:text-[88px]"
-                style={{
-                  ...fonts.displayFont,
-                  color: palette.primaryDeep,
-                }}
+                style={{ ...fonts.displayFont, color: palette.primaryDeep }}
               >
                 Tutu
                 <br />
                 Twirls
                 <br />
-                <span
-                  className="font-normal"
-                  style={{ color: palette.gold }}
-                >
+                <span className="font-normal" style={{ color: palette.gold }}>
                   & Tea
                 </span>
               </h1>
 
               <p
                 className="mt-7 text-2xl leading-9"
-                style={{
-                  ...fonts.displayFont,
-                  color: palette.ink,
-                }}
+                style={{ ...fonts.displayFont, color: palette.ink }}
               >
                 Tea. Twirls. Photos.
                 <br />
@@ -123,17 +99,14 @@ export default function TutuTwirlsTea({ navigate }) {
                 style={{ ...fonts.bodyFont, color: palette.muted }}
               >
                 A beautifully styled tea-time experience where kids and
-                grown-ups get to celebrate together — with a little dress-up,
+                grown-ups get to celebrate together, with a little dress-up,
                 a little sparkle, and a lot to remember.
               </p>
 
               <button
                 onClick={() => navigate("/package-builder")}
                 className="mt-9 inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.14em] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
-                style={{
-                  ...fonts.bodyFont,
-                  background: palette.primaryDeep,
-                }}
+                style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
               >
                 BUILD MY EXPERIENCE
                 <ArrowRight size={17} strokeWidth={1.7} />
@@ -180,6 +153,48 @@ export default function TutuTwirlsTea({ navigate }) {
         </div>
       </section>
 
+      {/* BACKYARD AFFAIR */}
+      <section className="px-6 py-20 sm:px-10 lg:py-28">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
+          <div>
+            <SectionLabel palette={palette} fonts={fonts}>
+              ANY SETTING
+            </SectionLabel>
+
+            <h2
+              className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
+              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+            >
+              A backyard affair
+              <br />
+              to be remembered.
+            </h2>
+
+            <p
+              className="mt-6 text-base leading-8"
+              style={{ ...fonts.bodyFont, color: palette.muted }}
+            >
+              Your own lawn can become the venue. A tented backyard, a garden
+              tablescape dressed in blush chair bows and fresh florals, and
+              the same twirls, tea and kindness carried right outside.
+            </p>
+
+            <p
+              className="mt-5 text-xl italic"
+              style={{ ...fonts.displayFont, color: palette.gold }}
+            >
+              Indoors, outdoors, or somewhere in between.
+            </p>
+          </div>
+
+          <ImagePanel
+            src={BACKYARD_IMAGE}
+            alt="A backyard Tutu Twirls & Tea celebration with a garden tablescape"
+            className="aspect-[4/5] sm:aspect-[5/4]"
+          />
+        </div>
+      </section>
+
       {/* TEA */}
       <section className="px-6 py-20 sm:px-10 lg:py-28">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
@@ -213,22 +228,12 @@ export default function TutuTwirlsTea({ navigate }) {
             </p>
 
             <div className="mt-10 grid gap-7 sm:grid-cols-2">
-              <Feature
-                icon={Sparkles}
-                title="For the kids"
-                palette={palette}
-                fonts={fonts}
-              >
+              <Feature icon={Sparkles} title="For the kids" palette={palette} fonts={fonts}>
                 Kid-friendly tea, treats and beautifully styled place settings
                 designed to make them feel like part of something special.
               </Feature>
 
-              <Feature
-                icon={Wine}
-                title="For the grown-ups"
-                palette={palette}
-                fonts={fonts}
-              >
+              <Feature icon={Wine} title="For the grown-ups" palette={palette} fonts={fonts}>
                 Traditional tea, specialty beverages, mocktails, mimosas or
                 whatever suits the host and the celebration.
               </Feature>
@@ -261,7 +266,7 @@ export default function TutuTwirlsTea({ navigate }) {
               className="mt-6 text-base leading-8"
               style={{ ...fonts.bodyFont, color: palette.muted }}
             >
-              The garment rack is a celebration wardrobe — filled with tutus,
+              The garment rack is a celebration wardrobe, filled with tutus,
               styled blazers and statement pieces for kids and grown-ups.
             </p>
 
@@ -303,7 +308,7 @@ export default function TutuTwirlsTea({ navigate }) {
             >
               Velcro-opening styles are available so children with different
               mobility needs can participate comfortably. There is no separate
-              wardrobe — just different ways to wear the magic.
+              wardrobe, just different ways to wear the magic.
             </p>
           </div>
 
@@ -355,7 +360,7 @@ export default function TutuTwirlsTea({ navigate }) {
                 style={{ ...fonts.bodyFont, color: palette.muted }}
               >
                 Because we really can start kids young. Guests create little
-                kindness cards for someone else — something genuine,
+                kindness cards for someone else, something genuine,
                 encouraging and worth keeping.
               </p>
 
@@ -437,12 +442,7 @@ export default function TutuTwirlsTea({ navigate }) {
               className="mt-9 flex items-start gap-4 border-t pt-6"
               style={{ borderColor: `${palette.primaryDeep}30` }}
             >
-              <Camera
-                size={22}
-                color={palette.gold}
-                strokeWidth={1.5}
-                className="mt-1 flex-shrink-0"
-              />
+              <Camera size={22} color={palette.gold} strokeWidth={1.5} className="mt-1 flex-shrink-0" />
               <div>
                 <h3
                   className="text-2xl font-semibold"
@@ -485,10 +485,7 @@ export default function TutuTwirlsTea({ navigate }) {
               style={{ background: palette.primaryDeep }}
             >
               <div>
-                <SectionLabel
-                  palette={{ ...palette, gold: "#D7B77C" }}
-                  fonts={fonts}
-                >
+                <SectionLabel palette={{ ...palette, gold: "#D7B77C" }} fonts={fonts}>
                   OPTIONAL ADD-ON
                 </SectionLabel>
 
@@ -532,10 +529,7 @@ export default function TutuTwirlsTea({ navigate }) {
 
                 <p
                   className="mt-8 text-xl italic leading-8"
-                  style={{
-                    ...fonts.displayFont,
-                    color: "#D7B77C",
-                  }}
+                  style={{ ...fonts.displayFont, color: "#D7B77C" }}
                 >
                   From across the room, everyone knows who we're celebrating.
                 </p>
@@ -567,7 +561,7 @@ export default function TutuTwirlsTea({ navigate }) {
               [
                 "01",
                 "Choose your look",
-                "Pick a tutu, blazer or statement piece — or let your little guest skip the dress-up entirely.",
+                "Pick a tutu, blazer or statement piece, or let your little guest skip the dress-up entirely.",
               ],
               [
                 "02",
@@ -585,11 +579,7 @@ export default function TutuTwirlsTea({ navigate }) {
                 "Everyone settles in, celebrates together and enjoys the room.",
               ],
             ].map(([number, title, text]) => (
-              <div
-                key={number}
-                className="border-t pt-5"
-                style={{ borderColor: palette.line }}
-              >
+              <div key={number} className="border-t pt-5" style={{ borderColor: palette.line }}>
                 <p
                   className="text-sm font-semibold tracking-[0.18em]"
                   style={{ ...fonts.bodyFont, color: palette.gold }}
@@ -605,4 +595,121 @@ export default function TutuTwirlsTea({ navigate }) {
                 </h3>
 
                 <p
-        
+                  className="mt-3 text-sm leading-7"
+                  style={{ ...fonts.bodyFont, color: palette.muted }}
+                >
+                  {text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ADD-ONS */}
+      <section className="px-6 py-20 sm:px-10 lg:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <SectionLabel palette={palette} fonts={fonts}>
+              MAKE IT YOURS
+            </SectionLabel>
+
+            <h2
+              className="mt-4 text-5xl font-medium sm:text-6xl"
+              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+            >
+              Build the celebration
+              <br />
+              around your people.
+            </h2>
+          </div>
+
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            {[
+              {
+                title: "Tutu Twirls",
+                text: "Add the styled garment rack of tutus, blazers and statement pieces.",
+              },
+              {
+                title: "Birthday Star",
+                text: "Give the birthday child a custom embellished tutu or statement jacket.",
+              },
+              {
+                title: "Professional Photography",
+                text: "Have the celebration professionally documented from the details to the dance floor.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="p-7"
+                style={{
+                  background: palette.surface,
+                  border: `1px solid ${palette.line}`,
+                }}
+              >
+                <h3
+                  className="text-3xl font-semibold"
+                  style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+                >
+                  {item.title}
+                </h3>
+
+                <p
+                  className="mt-3 text-base leading-7"
+                  style={{ ...fonts.bodyFont, color: palette.muted }}
+                >
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section
+        className="px-6 py-24 text-center sm:px-10 lg:py-32"
+        style={{ background: palette.primaryDeep }}
+      >
+        <div className="mx-auto max-w-3xl">
+          <p
+            className="text-3xl italic"
+            style={{ ...fonts.displayFont, color: "#D7B77C" }}
+          >
+            Your event is one day.
+          </p>
+
+          <h2
+            className="mt-3 text-5xl font-medium leading-tight sm:text-7xl"
+            style={{ ...fonts.displayFont, color: "#FFFFFF" }}
+          >
+            Make the memories
+            <br />
+            last longer.
+          </h2>
+
+          <p
+            className="mx-auto mt-6 max-w-xl text-base leading-7"
+            style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}
+          >
+            Choose the experiences your guests will love and the memories
+            you'll want to keep.
+          </p>
+
+          <button
+            onClick={() => navigate("/package-builder")}
+            className="mt-9 inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.14em] transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            style={{
+              ...fonts.bodyFont,
+              background: palette.gold,
+              color: palette.primaryDeep,
+            }}
+          >
+            BUILD MY EXPERIENCE
+            <ArrowRight size={17} />
+          </button>
+        </div>
+      </section>
+    </main>
+  );
+}
