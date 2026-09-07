@@ -8,6 +8,7 @@ import CartModal from "../components/CartModal";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import { KEEPSAKES, resolveKeepsakeName } from "../packageContent";
 import { useEventType } from "../EventTypeContext";
+import { giftAltText } from "../seo";
 
 // `onCustomize`, when passed, replaces the ADD TO CART / IN CART toggle
 // with a single CUSTOMIZE button - a customizable gift isn't a boolean
@@ -18,7 +19,7 @@ function GiftTile({ name, tagline, description, photos, price, priceLabel, inCar
     <div className="overflow-hidden bg-white">
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
         {normalizePhotos(photos).length ? (
-          <PhotoCarousel photos={photos} alt={name} className="h-full w-full object-cover" />
+          <PhotoCarousel photos={photos} alt={giftAltText(name)} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center">
             <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
@@ -217,7 +218,7 @@ export default function Gifts({ navigate }) {
               <div key={k.id} className="overflow-hidden bg-white">
                 <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
                   {normalizePhotos(photos).length ? (
-                    <PhotoCarousel photos={photos} alt={name} className="h-full w-full object-cover" />
+                    <PhotoCarousel photos={photos} alt={giftAltText(name)} className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center">
                       <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>

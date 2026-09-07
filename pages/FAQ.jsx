@@ -63,13 +63,38 @@ function FAQItem({ item, palette, fonts }) {
           style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 200ms ease", flexShrink: 0 }}
         />
       </button>
-      {open && (
-        <p className="pb-5 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
-          {item.a}
-        </p>
-      )}
+      {/* The answer stays mounted and is hidden with CSS rather than
+          unmounted when collapsed. A closed accordion that removes its
+          answer from the DOM hides it from search engines too, and these
+          answers are the most searchable content on the site: they are
+          what someone typing "do event rentals include setup Toronto"
+          into Google is actually looking for. */}
+      <p
+        hidden={!open}
+        className="pb-5 text-base leading-relaxed"
+        style={{ ...fonts.bodyFont, color: palette.ink }}
+      >
+        {item.a}
+      </p>
     </div>
   );
+}
+
+// FAQPage structured data. This is the one page on the site eligible for
+// a genuine rich result: Google can surface these questions and answers
+// directly under the search listing, which wins clicks from people
+// comparing rental companies before they contact any of them.
+function FaqJsonLd() {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }
 
 export default function FAQ() {
@@ -77,6 +102,7 @@ export default function FAQ() {
 
   return (
     <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
+      <FaqJsonLd />
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
         <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
         <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>

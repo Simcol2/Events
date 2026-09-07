@@ -1,5 +1,6 @@
 import React from "react";
 import { usePalette } from "../PaletteContext";
+import { SERVICE_AREA_SHORT } from "../seo";
 
 // Sits just below the sticky header on every page (not part of the sticky
 // unit itself, so it scrolls away normally). States the two-part model in
@@ -29,6 +30,18 @@ function Message({ palette, fonts }) {
         style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
       >
         CUSTOM KEEPSAKES
+      </span>
+      <span className="mx-3" style={{ color: palette.gold }}>
+        &middot;
+      </span>
+      {/* The service area belongs in the one strip that appears on every
+          page. A visitor should never have to hunt for whether we come to
+          them, and a crawler should see the same answer on every URL. */}
+      <span
+        className="text-sm font-semibold tracking-[0.18em]"
+        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+      >
+        RENTALS ACROSS {SERVICE_AREA_SHORT.toUpperCase()}
       </span>
     </span>
   );

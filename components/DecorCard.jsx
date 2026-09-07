@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import PhotoCarousel, { normalizePhotos } from "./PhotoCarousel";
+import { itemAltText } from "../seo";
 
 // Gift wrap and disposables are purchase-only by business rule, enforced
 // here rather than relying only on the sheet leaving rental_price blank.
@@ -75,7 +76,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
         {normalizePhotos(active.photos).length ? (
           <PhotoCarousel
             photos={active.photos}
-            alt={displayName}
+            alt={itemAltText(displayName, { color: selectedColor })}
             className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.025]"
           />
         ) : (

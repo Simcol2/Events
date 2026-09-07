@@ -9,9 +9,9 @@ import arrivalPhoto from "../media/web_arrival.png";
 // also anchor the homepage and the Package Builder's pools), so they lead
 // the list rather than being left out entirely.
 const HERO_PHOTOS = [
-  { src: pictureThisPhoto, alt: "Picture This guest activity", focus: "center" },
-  { src: kindnessStationPhoto, alt: "Kindness Station guest activity", focus: "center" },
-  { src: arrivalPhoto, alt: "Guess the Arrival guest activity", focus: "center" },
+  { src: pictureThisPhoto, alt: "Picture This guest activity set up at a baby shower in Toronto", focus: "center" },
+  { src: kindnessStationPhoto, alt: "Kindness Station keepsake activity available for event rental in Toronto", focus: "center" },
+  { src: arrivalPhoto, alt: "Guess the Arrival baby shower game available for rental in Toronto and the GTA", focus: "center" },
 ];
 
 // Same two buckets and the same supporting copy as the Package Builder's

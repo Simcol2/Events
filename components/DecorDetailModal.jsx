@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { getItemFlags, parseColorOptions } from "./DecorCard";
+import { itemAltText } from "../seo";
 
 function photoList(photos) {
   if (!Array.isArray(photos)) return [];
@@ -41,7 +42,11 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
 
         <div className="relative aspect-square bg-[#EEE9DC] sm:aspect-auto">
           {photos.length ? (
-            <img src={photos[activePhoto] || photos[0]} alt={item.name} className="h-full w-full object-cover" />
+            <img
+              src={photos[activePhoto] || photos[0]}
+              alt={itemAltText(item.name, { color: parseColorOptions(item)[0] })}
+              className="h-full w-full object-cover"
+            />
           ) : (
             <div className="flex h-full items-center justify-center">
               <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>

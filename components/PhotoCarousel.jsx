@@ -35,7 +35,11 @@ export default function PhotoCarousel({ photos, alt, className, intervalMs = 400
         <img
           key={src}
           src={src}
-          alt={alt}
+          // Numbered so several photos of the same item don't all carry
+          // one identical alt string, which reads to a crawler (and to a
+          // screen reader) as duplicate content rather than as different
+          // views of the same piece.
+          alt={i === 0 ? alt : `${alt}, photo ${i + 1}`}
           className={`${className} absolute inset-0 transition-opacity duration-1000 ease-in-out`}
           style={{ opacity: i === index ? 1 : 0 }}
         />

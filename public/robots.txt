@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Staff-only inventory tools and the one-time review link sent by email.
+# Nothing here is useful in a search result.
+Disallow: /admin
+Disallow: /scan
+Disallow: /review
+
+Sitemap: https://asliceofg.com/sitemap.xml

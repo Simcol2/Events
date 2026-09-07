@@ -50,7 +50,11 @@ function MenuCard({ item, index, palette, onOrder }) {
     <div className="flex flex-col">
       <ArchFrame palette={palette}>
         {item.photoUrl ? (
-          <img src={item.photoUrl} alt={item.name} className="h-full w-full object-cover" />
+          <img
+            src={item.photoUrl}
+            alt={`${item.name} available for celebrations and events in Toronto and the GTA`}
+            className="h-full w-full object-cover"
+          />
         ) : (
           <PhotoComingSoon palette={palette} fonts={{ bodyFont: {} }} />
         )}
@@ -184,7 +188,11 @@ export default function Catering() {
           </div>
           <ArchFrame tall palette={palette}>
             {HERO.photoUrl ? (
-              <img src={HERO.photoUrl} alt="A Slice of G rum cake" className="h-full w-full object-cover" />
+              <img
+                src={HERO.photoUrl}
+                alt="Small batch artisan rum cake made to order in Toronto"
+                className="h-full w-full object-cover"
+              />
             ) : (
               <PhotoComingSoon palette={palette} fonts={fonts} />
             )}
@@ -235,7 +243,11 @@ export default function Catering() {
             {(STANDARD.photoUrls || [null, null]).map((url, i) => (
               <ArchFrame key={i} palette={palette}>
                 {url ? (
-                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <img
+                    src={url}
+                    alt={`Handmade rum cake dessert available for events in Toronto, photo ${i + 1}`}
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <PhotoComingSoon palette={palette} fonts={fonts} />
                 )}

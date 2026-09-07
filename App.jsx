@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import SeoHead from "./components/SeoHead";
 import ValuePropBar from "./components/ValuePropBar";
 import EventTypePicker from "./components/EventTypePicker";
 import EventDatePicker from "./components/EventDatePicker";
@@ -88,7 +89,12 @@ function AppRoutes() {
   // Internal tool, not a customer-facing page - skip the nav/footer/event
   // picker chrome entirely rather than routing it through routeMap below.
   if (page === "/admin") {
-    return <Admin />;
+    return (
+      <>
+        <SeoHead path={page} />
+        <Admin />
+      </>
+    );
   }
 
   const routeMap = {
@@ -114,6 +120,7 @@ function AppRoutes() {
 
   return (
     <>
+      <SeoHead path={page} />
       <SiteHeader current={current} navigate={navigate} nav={NAV} />
       <ValuePropBar />
       {component}

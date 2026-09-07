@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Mail, MapPin } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { SERVICE_AREA_SHORT, SERVICE_AREA_LONG, SERVICE_CITIES } from "../seo";
 
 // Newsletter signup is a placeholder for now - no email service is wired
 // up yet, so submitting just acknowledges the input rather than sending
@@ -60,12 +61,13 @@ export default function SiteFooter({ navigate }) {
               EVENTS
             </div>
             <p className="mt-4 max-w-md text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Interactive event experiences that become keepsakes. You bring the people, we create the experience.
+              Interactive event experiences, decor and display walls available to rent for baby showers, birthdays,
+              weddings and corporate celebrations. You bring the people, we create the experience.
             </p>
             <div className="mt-5 space-y-2 text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
               <div className="flex items-center gap-2">
                 <MapPin size={14} color={palette.gold} />
-                Toronto & the GTA
+                {SERVICE_AREA_SHORT}
               </div>
               <div className="flex items-center gap-2">
                 <Mail size={14} color={palette.gold} />
@@ -114,8 +116,23 @@ export default function SiteFooter({ navigate }) {
           </div>
         </div>
 
-        <div className="mt-12 pt-5 text-sm tracking-[0.12em]" style={{ ...fonts.bodyFont, color: palette.muted, borderTop: `1px solid ${palette.line}` }}>
-          © {new Date().getFullYear()} A Slice of G Events
+        {/* Naming the cities we actually deliver to answers the first
+            question every visitor outside downtown has, and it is the
+            clearest signal we can give a search engine that this is a
+            local business serving the whole GTA rather than one
+            neighbourhood. */}
+        <div
+          className="mt-12 pt-8 text-base leading-7"
+          style={{ ...fonts.bodyFont, color: palette.muted, borderTop: `1px solid ${palette.line}` }}
+        >
+          <span className="font-semibold" style={{ color: palette.primaryDeep }}>
+            Delivering across {SERVICE_AREA_LONG}:
+          </span>{" "}
+          {SERVICE_CITIES.join(", ")}. Travel outside these areas can usually be arranged, just ask.
+        </div>
+
+        <div className="mt-8 pt-5 text-sm tracking-[0.12em]" style={{ ...fonts.bodyFont, color: palette.muted, borderTop: `1px solid ${palette.line}` }}>
+          © {new Date().getFullYear()} A Slice of G Events. Event rentals in {SERVICE_AREA_SHORT}.
         </div>
       </div>
     </footer>

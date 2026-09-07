@@ -51,6 +51,7 @@ const HERO_CTA_LABEL = "BUILD MY EXPERIENCE";
 const HERO_STATES = [
   {
     image: essentialsImage,
+    alt: "Interactive baby shower experience set up by A Slice of G Events in Toronto",
     headline: "Guests don't just attend. They create.",
     supporting:
       "Interactive event experiences that turn your baby shower, first birthday, or celebration into memories you can actually keep.",
@@ -59,6 +60,7 @@ const HERO_STATES = [
   },
   {
     image: heroFullBleed,
+    alt: "Time capsule keepsake experience available for event rental in Toronto and the GTA",
     headline: "A time capsule gets sealed.",
     supporting:
       "Photos, stories, wishes, and little pieces of the day come together to create something you'll treasure long after the celebration ends.",
@@ -67,6 +69,7 @@ const HERO_STATES = [
   },
   {
     image: wallPuzzleEngagementPhoto,
+    alt: "Guest-built wall puzzle keepsake at an engagement party in Toronto",
     headline: "Not just decor. Something your guests can create.",
     supporting: "The decor and memories are one in the same.",
     secondaryLabel: "Explore the experiences",
@@ -74,6 +77,7 @@ const HERO_STATES = [
   },
   {
     image: babyTriviaPhoto,
+    alt: "Guests playing baby trivia at a celebration in the Greater Toronto Area",
     headline: "The celebration that gets better after it ends.",
     supporting:
       "Your guests play, write, photograph, tell stories, and leave something meaningful behind for you to keep.",
@@ -82,6 +86,7 @@ const HERO_STATES = [
   },
   {
     image: nurseryRhymePhoto,
+    alt: "Custom keepsake art piece created by guests at a Toronto celebration",
     headline: "Guests come together to create something you'll keep forever.",
     supporting:
       "Interactive experiences for baby showers, first birthdays, and celebrations designed around the people who make them special.",
@@ -119,7 +124,7 @@ function Hero({ fonts, palette, navigate }) {
         <img
           key={state.image}
           src={state.image}
-          alt=""
+          alt={state.alt}
           style={{
             position: "absolute",
             inset: 0,
@@ -476,7 +481,11 @@ export default function Home({ navigate }) {
           <div className="grid gap-8 sm:grid-cols-2">
             <Reveal>
               <div className="overflow-hidden rounded-xl" style={{ aspectRatio: "4 / 3" }}>
-                <img src={babyTriviaPhoto} alt="Guests interacting at the celebration" className="h-full w-full object-cover" />
+                <img
+                  src={babyTriviaPhoto}
+                  alt="Guests playing a baby shower game rented from A Slice of G Events in Toronto"
+                  className="h-full w-full object-cover"
+                />
               </div>
               <p className="mt-4 text-sm font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                 AT THE PARTY
@@ -487,7 +496,11 @@ export default function Home({ navigate }) {
             </Reveal>
             <Reveal delay={80}>
               <div className="overflow-hidden rounded-xl" style={{ aspectRatio: "4 / 3" }}>
-                <img src={nurseryRhymePhoto} alt="A finished keepsake from the celebration" className="h-full w-full object-cover" />
+                <img
+                  src={nurseryRhymePhoto}
+                  alt="Custom keepsake art piece created by guests at a Toronto baby shower"
+                  className="h-full w-full object-cover"
+                />
               </div>
               <p className="mt-4 text-sm font-semibold tracking-[0.25em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
                 AFTER THE PARTY
