@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { Users, X, Package, CalendarDays } from "lucide-react";
+import { Users, X, Package, CalendarDays, Sparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import { useEventDate } from "../EventDateContext";
@@ -26,6 +26,125 @@ import {
   resolvePackageItem,
   resolveKeepsakeName,
 } from "../packageContent";
+
+// Custom-design lead time notice. Same message for baby showers and
+// birthdays, just addressed to the right guest of honour, since both are
+// fully custom-designed rather than pulled off a shelf.
+function bookingNoticeCopy(eventTypeId) {
+  const subject = eventTypeId === "babyShower" ? "the parents-to-be" : "the birthday child";
+  const occasion = eventTypeId === "babyShower" ? "baby shower" : "birthday celebration";
+  return `Please plan for 3 to 4 weeks notice when booking a ${occasion}. Shorter notice can sometimes be accommodated, but every event is custom designed. Each celebration gets an element of uniqueness matched to ${subject}'s personality, so the day truly celebrates and represents them. This isn't a pre-packaged, out-of-the-box experience, and only a limited number of event experiences and display setups are taken on each month so none of them start to feel generic.`;
+}
+
+// Sets expectations before the customer starts picking, so "Full Service"
+// reads as what it actually is rather than a vague upsell: the host does
+// nothing, everything is already done.
+function FullServiceIntro({ palette, fonts }) {
+  return (
+    <div
+      className="mx-auto mt-10 max-w-3xl rounded-sm p-8 text-center sm:p-10"
+      style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
+    >
+      <h2
+        className="text-3xl font-semibold leading-tight sm:text-4xl"
+        style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+      >
+        You're not booking a party activity.
+        <br />
+        You're booking the experience.
+      </h2>
+
+      <p className="mt-5 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+        We design, style and prepare the entire experience so you don't have to.
+      </p>
+
+      <div className="mx-auto mt-7 grid max-w-xl gap-3 text-left sm:grid-cols-2">
+        {[
+          "The wardrobe is ready.",
+          "The tablescape is styled.",
+          "The photo moment is set.",
+          "The kindness station is waiting.",
+          "The time capsule is ready for memories.",
+          "The snacks are set out.",
+        ].map((item) => (
+          <div key={item} className="flex items-center gap-2" style={{ ...fonts.bodyFont, color: palette.ink }}>
+            <Sparkles size={13} color={palette.gold} className="flex-shrink-0" />
+            <span className="text-sm">{item}</span>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-6 text-base font-medium" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+        And your guests simply arrive and enjoy it.
+      </p>
+
+      <div className="mx-auto mt-6 max-w-md space-y-1.5 text-left">
+        {[
+          "No hosting a craft.",
+          "No running games.",
+          "No keeping everyone on schedule.",
+          "No spending the afternoon trying to make the Pinterest board happen.",
+        ].map((item) => (
+          <p key={item} className="text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            {item}
+          </p>
+        ))}
+      </div>
+
+      <p className="mt-7 text-lg italic" style={{ ...fonts.displayFont, color: palette.gold }}>
+        You bring the people. We create the experience.
+      </p>
+    </div>
+  );
+}
+
+// Reference pricing only, deliberately not selectable: several of these
+// are ranges or quoted individually, so they can't be a fixed add-on the
+// way the pool/service/display steps below are.
+function AdditionalPricingNotes({ palette, fonts }) {
+  const rows = [
+    ["Additional participant", "$20-$25 each"],
+    ["Professional photography", "+$250-$350"],
+    ["Birthday Star custom tutu or jacket", "+$75-$125"],
+    ["Caribbean catering", "Quoted or priced per person"],
+    ["Additional event time", "+$75-$100/hour"],
+    ["Event Stylist / on-site attendant", "Selectable below as How Involved Do You Want to Be?"],
+  ];
+  return (
+    <div className="mx-auto mt-6 max-w-3xl rounded-sm p-8 sm:p-10" style={{ border: `1px solid ${palette.line}` }}>
+      <p className="text-sm font-semibold tracking-[0.18em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+        GOOD TO KNOW
+      </p>
+      <h3 className="mt-2 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+        A few common ways to make it more you
+      </h3>
+      <p className="mt-2 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+        Reference pricing for the most requested upgrades. These aren't picked here, just mention them when you submit your request.
+      </p>
+      <div className="mt-6 divide-y" style={{ borderColor: palette.line }}>
+        {rows.map(([label, price]) => (
+          <div key={label} className="flex items-center justify-between gap-4 py-3">
+            <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>{label}</span>
+            <span className="text-right text-sm font-medium" style={{ ...fonts.bodyFont, color: palette.muted }}>{price}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BookingNotice({ eventTypeId, palette, fonts }) {
+  return (
+    <div
+      className="mx-auto mt-6 max-w-3xl rounded-sm p-6 text-center sm:p-7"
+      style={{ background: `${palette.gold}14`, border: `1px solid ${palette.gold}55` }}
+    >
+      <p className="text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.ink }}>
+        {bookingNoticeCopy(eventTypeId)}
+      </p>
+    </div>
+  );
+}
 
 function SectionTitle({ children, palette, fonts }) {
   return (
@@ -390,6 +509,19 @@ export default function PackageBuilder() {
           STARTING AT ${eventConfig.startingPrice.toLocaleString()} + HST
         </p>
       </div>
+
+      {eventTypeId === "birthday" && (
+        <div className="px-6">
+          <FullServiceIntro palette={palette} fonts={fonts} />
+          <AdditionalPricingNotes palette={palette} fonts={fonts} />
+        </div>
+      )}
+
+      {(eventTypeId === "birthday" || eventTypeId === "babyShower") && (
+        <div className="px-6">
+          <BookingNotice eventTypeId={eventTypeId} palette={palette} fonts={fonts} />
+        </div>
+      )}
 
       <div className="max-w-5xl mx-auto px-6 py-12">
         <StepNav steps={steps} step={step} setStep={setStep} palette={palette} fonts={fonts} />
