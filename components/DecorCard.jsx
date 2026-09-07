@@ -23,6 +23,17 @@ export function parseItemTags(item) {
   return [];
 }
 
+// An item's `color` column can hold a single value ("Gold") or, for a
+// single catalog row that comes in more than one finish (e.g. the wine
+// glasses, sold as one line item in Gold or Crystal Clear), a
+// comma-separated list - same convention as `category`'s tag list. A
+// single value renders as plain text; more than one renders as a
+// dropdown so the shopper can indicate which they want.
+export function parseColorOptions(item) {
+  if (typeof item.color !== "string" || !item.color.trim()) return [];
+  return item.color.split(",").map((c) => c.trim()).filter(Boolean);
+}
+
 // Shared by DecorCard and DecorDetailModal so the purchase-only rule and
 // the tag list only live in one place.
 export function getItemFlags(item) {
@@ -52,6 +63,8 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
 
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(active);
   const displayName = hasVariants ? groupName || active.name : active.name;
+  const colorOptions = parseColorOptions(active);
+  const [selectedColor, setSelectedColor] = useState(colorOptions[0] || "");
 
   return (
     <article
@@ -84,6 +97,22 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
         <h3 className="mt-1 font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">
           {displayName}
         </h3>
+        {colorOptions.length > 1 ? (
+          <div className="mt-1 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <span className="font-[Jost] text-sm text-[#8C846F]">Color:</span>
+            <select
+              value={selectedColor}
+              onChange={(e) => setSelectedColor(e.target.value)}
+              className="rounded-sm border border-[#D8D0BC] bg-white px-2 py-1 font-[Jost] text-sm text-[#4E5A44] outline-none focus:border-[#4E5A44]"
+            >
+              {colorOptions.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+        ) : colorOptions.length === 1 ? (
+          <div className="mt-1 font-[Jost] text-sm text-[#8C846F]">Color: {colorOptions[0]}</div>
+        ) : null}
         {active.size && (
           <div className="mt-2 font-[Jost] text-sm text-[#8C846F]">{active.size}</div>
         )}

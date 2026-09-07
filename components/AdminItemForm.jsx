@@ -6,6 +6,7 @@ const EMPTY = {
   name: "",
   description: "",
   size: "",
+  color: "",
   gender: "",
   quantity_owned: 1,
   rental_price: "",
@@ -24,6 +25,7 @@ function toFormState(item) {
     name: item.name || "",
     description: item.description || "",
     size: item.size || "",
+    color: item.color || "",
     gender: item.gender || "",
     quantity_owned: item.quantity_owned ?? 1,
     rental_price: item.rental_price ?? "",
@@ -67,6 +69,7 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
       variant_group: form.variant_group.trim() || null,
       variant_label: form.variant_label.trim() || null,
       gender: form.gender.trim() || null,
+      color: form.color.trim() || null,
     };
     onSave(payload);
   };
@@ -95,10 +98,14 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block font-[Jost] text-[10px] font-semibold tracking-[0.12em] text-[#4E5A44]">SIZE</label>
           <input value={form.size} onChange={set("size")} placeholder="e.g. 6 x 8 in" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Jost] text-sm outline-none focus:border-[#4E5A44]" />
+        </div>
+        <div>
+          <label className="block font-[Jost] text-[10px] font-semibold tracking-[0.12em] text-[#4E5A44]">COLOR</label>
+          <input value={form.color} onChange={set("color")} placeholder="e.g. Gold" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Jost] text-sm outline-none focus:border-[#4E5A44]" />
         </div>
         <div>
           <label className="block font-[Jost] text-[10px] font-semibold tracking-[0.12em] text-[#4E5A44]">GENDER</label>

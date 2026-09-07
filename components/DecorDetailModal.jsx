@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import { getItemFlags } from "./DecorCard";
+import { getItemFlags, parseColorOptions } from "./DecorCard";
 
 function photoList(photos) {
   if (!Array.isArray(photos)) return [];
@@ -16,6 +16,8 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
   const photos = photoList(item.photos);
   const [activePhoto, setActivePhoto] = useState(0);
+  const colorOptions = parseColorOptions(item);
+  const [selectedColor, setSelectedColor] = useState(colorOptions[0] || "");
 
   return (
     <div
@@ -71,6 +73,22 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
             {tags.length ? tags.join(" · ") : "Decor"}
           </div>
           <h2 className="mt-1 font-['Cormorant_Garamond'] text-3xl font-semibold text-[#4E5A44]">{item.name}</h2>
+          {colorOptions.length > 1 ? (
+            <div className="mt-1 flex items-center gap-2">
+              <span className="font-[Jost] text-sm text-[#8C846F]">Color:</span>
+              <select
+                value={selectedColor}
+                onChange={(e) => setSelectedColor(e.target.value)}
+                className="rounded-sm border border-[#D8D0BC] bg-white px-2 py-1 font-[Jost] text-sm text-[#4E5A44] outline-none focus:border-[#4E5A44]"
+              >
+                {colorOptions.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+          ) : colorOptions.length === 1 ? (
+            <div className="mt-1 font-[Jost] text-sm text-[#8C846F]">Color: {colorOptions[0]}</div>
+          ) : null}
           {item.size && <div className="mt-2 font-[Jost] text-sm text-[#8C846F]">{item.size}</div>}
           {item.description && (
             <p className="mt-4 font-[Jost] text-base leading-6 text-[#5C5645]">{item.description}</p>
