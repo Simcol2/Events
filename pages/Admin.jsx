@@ -3,6 +3,8 @@ import { Plus } from "lucide-react";
 import { adminApi, getStoredPasscode, storePasscode, clearStoredPasscode } from "../adminApi";
 import AdminItemForm from "../components/AdminItemForm";
 import AdminGiftForm from "../components/AdminGiftForm";
+import AdminBookingsTab from "../components/AdminBookingsTab";
+import AdminReviewsTab from "../components/AdminReviewsTab";
 
 function PasscodeGate({ onUnlocked }) {
   const [code, setCode] = useState("");
@@ -270,6 +272,8 @@ export default function Admin() {
         {[
           { id: "gifts", label: "Gifts" },
           { id: "items", label: "Decor Items" },
+          { id: "bookings", label: "Bookings" },
+          { id: "reviews", label: "Reviews" },
         ].map((t) => (
           <button
             key={t.id}
@@ -283,7 +287,10 @@ export default function Admin() {
         ))}
       </div>
 
-      {tab === "gifts" ? <GiftsTab /> : <ItemsTab />}
+      {tab === "gifts" && <GiftsTab />}
+      {tab === "items" && <ItemsTab />}
+      {tab === "bookings" && <AdminBookingsTab />}
+      {tab === "reviews" && <AdminReviewsTab />}
     </div>
   );
 }

@@ -30,6 +30,7 @@ const ROUTES = [
   "/display-options",
   "/past-events",
   "/rental-guide",
+  "/reviews",
 ];
 
 async function run() {

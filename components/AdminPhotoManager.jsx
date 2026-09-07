@@ -1,49 +1,7 @@
 import React, { useRef, useState } from "react";
 import { X, ChevronUp, ChevronDown, Upload } from "lucide-react";
 import { getStoredPasscode } from "../adminApi";
-
-// Downscales before upload - phone photos routinely run 3-8MB, well past
-// Vercel's default 4.5MB serverless body limit once base64-encoded (which
-// inflates size by roughly a third), and a 1600px-wide JPEG is already
-// larger than this site displays anywhere.
-function resizeImageFile(file, maxDim = 1600, quality = 0.85) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      let { width, height } = img;
-      if (width > maxDim || height > maxDim) {
-        const scale = maxDim / Math.max(width, height);
-        width = Math.round(width * scale);
-        height = Math.round(height * scale);
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-      URL.revokeObjectURL(url);
-      canvas.toBlob(
-        (blob) => (blob ? resolve(blob) : reject(new Error("Could not process that image"))),
-        "image/jpeg",
-        quality
-      );
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("Could not read that image"));
-    };
-    img.src = url;
-  });
-}
-
-function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(String(reader.result).split(",")[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-}
+import { resizeImageFile, blobToBase64 } from "../imageResize";
 
 // `photos` is a plain array of URL strings, first = the one shown as the
 // card's cover photo everywhere on the site. Reordering here is what

@@ -45,6 +45,16 @@ export const adminApi = {
   updateItem: (id, fields) => request("/api/admin-items", { method: "PUT", body: { id, ...fields } }).then((d) => d.item),
   deleteItem: (id) => request("/api/admin-items", { method: "DELETE", body: { id } }),
 
+  listBookings: () => request("/api/admin-bookings"),
+  updateBookingStatus: (id, kind, status) =>
+    request("/api/admin-bookings", { method: "PUT", body: { id, kind, status } }),
+
+  listReviews: () => request("/api/admin-reviews").then((d) => (Array.isArray(d.reviews) ? d.reviews : [])),
+  updateReview: (id, fields) => request("/api/admin-reviews", { method: "PUT", body: { id, ...fields } }).then((d) => d.review),
+  deleteReview: (id) => request("/api/admin-reviews", { method: "DELETE", body: { id } }),
+  updateInvite: (inviteId, fields) => request("/api/admin-reviews", { method: "PUT", body: { inviteId, ...fields } }).then((d) => d.invite),
+  sendDueReviewEmails: () => request("/api/send-review-requests", { method: "POST" }),
+
   listGifts: () => request("/api/admin-gifts").then((d) => (Array.isArray(d.gifts) ? d.gifts : [])),
   createGift: (fields) => request("/api/admin-gifts", { method: "POST", body: fields }).then((d) => d.gift),
   updateGift: (id, fields) => request("/api/admin-gifts", { method: "PUT", body: { id, ...fields } }).then((d) => d.gift),

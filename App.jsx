@@ -23,6 +23,8 @@ import DisplayOptions from "./pages/DisplayOptions";
 import Catering from "./pages/Catering";
 import PastEvents from "./pages/PastEvents";
 import RentalGuide from "./pages/RentalGuide";
+import Reviews from "./pages/Reviews";
+import LeaveReview from "./pages/LeaveReview";
 import Admin from "./pages/Admin";
 
 // Nav order and the "primary CTA should be visually dominant" rule both
@@ -65,9 +67,11 @@ function AppRoutes() {
   }, []);
 
   // Ask what the visitor is planning right away, once ever, regardless of
-  // which page they land on first.
+  // which page they land on first. The one exception is the review link
+  // from a post-rental email: that visitor is here to finish one task, and
+  // asking them what they are shopping for first would be tone deaf.
   useEffect(() => {
-    if (!hasChosen) openPicker();
+    if (!hasChosen && !getPath().startsWith("/review")) openPicker();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -100,6 +104,8 @@ function AppRoutes() {
     "/display-options": { component: <DisplayOptions navigate={navigate} />, current: "display-options" },
     "/past-events": { component: <PastEvents navigate={navigate} />, current: "past-events" },
     "/rental-guide": { component: <RentalGuide navigate={navigate} />, current: "rental-guide" },
+    "/reviews": { component: <Reviews navigate={navigate} />, current: "reviews" },
+    "/review": { component: <LeaveReview navigate={navigate} />, current: "review" },
   };
 
   const { component, current } = routeMap[page] || routeMap["/"];
