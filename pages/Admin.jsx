@@ -5,6 +5,7 @@ import AdminItemForm from "../components/AdminItemForm";
 import AdminGiftForm from "../components/AdminGiftForm";
 import AdminBookingsTab from "../components/AdminBookingsTab";
 import AdminReviewsTab from "../components/AdminReviewsTab";
+import AdminAssetsTab from "../components/AdminAssetsTab";
 
 function PasscodeGate({ onUnlocked }) {
   const [code, setCode] = useState("");
@@ -272,6 +273,7 @@ export default function Admin() {
         {[
           { id: "gifts", label: "Gifts" },
           { id: "items", label: "Decor Items" },
+          { id: "assets", label: "Assets" },
           { id: "bookings", label: "Bookings" },
           { id: "reviews", label: "Reviews" },
         ].map((t) => (
@@ -289,6 +291,7 @@ export default function Admin() {
 
       {tab === "gifts" && <GiftsTab />}
       {tab === "items" && <ItemsTab />}
+      {tab === "assets" && <AdminAssetsTab />}
       {tab === "bookings" && <AdminBookingsTab />}
       {tab === "reviews" && <AdminReviewsTab />}
     </div>

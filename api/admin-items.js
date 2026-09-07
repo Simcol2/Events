@@ -19,7 +19,19 @@ export default async function handler(req, res) {
     const { id, ...fields } = req.body || {};
     const { data, error } = await supabase.from("items").insert(fields).select().single();
     if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json({ item: data });
+
+    // Every new catalogue row gets one physical asset with its own QR code
+    // straight away, so nothing can be added and then quietly go unlabelled.
+    // One, not one per quantity_owned: 94 wine glasses are not 94 labels.
+    // Anything she owns several of gets extra units added in the Assets tab,
+    // and counted things get a box instead.
+    const { data: asset } = await supabase
+      .from("assets")
+      .insert({ kind: "unit", item_id: data.id, label: data.name })
+      .select()
+      .single();
+
+    return res.status(200).json({ item: data, asset: asset || null });
   }
 
   if (req.method === "PUT") {

@@ -45,6 +45,11 @@ export const adminApi = {
   updateItem: (id, fields) => request("/api/admin-items", { method: "PUT", body: { id, ...fields } }).then((d) => d.item),
   deleteItem: (id) => request("/api/admin-items", { method: "DELETE", body: { id } }),
 
+  listAssets: () => request("/api/admin-assets"),
+  createAssets: (fields) => request("/api/admin-assets", { method: "POST", body: fields }).then((d) => d.assets),
+  updateAsset: (id, fields) => request("/api/admin-assets", { method: "PUT", body: { id, ...fields } }).then((d) => d.asset),
+  deleteAsset: (id) => request("/api/admin-assets", { method: "DELETE", body: { id } }),
+
   listBookings: () => request("/api/admin-bookings"),
   updateBookingStatus: (id, kind, status) =>
     request("/api/admin-bookings", { method: "PUT", body: { id, kind, status } }),
