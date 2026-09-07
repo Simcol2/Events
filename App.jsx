@@ -38,16 +38,16 @@ const NAV = [
   { label: "How It Works", path: "/how-it-works" },
   { label: "Experiences", path: "/experiences" },
   {
-    label: "Decor",
+    label: "Decor and Gifts",
     path: "/decor",
     children: [
       { label: "Decor Collection", path: "/decor" },
       { label: "Display Walls", path: "/display-options" },
+      { label: "Gifts", path: "/gifts" },
     ],
   },
   { label: "Rental Guide", path: "/rental-guide" },
   { label: "Activities", path: "/activities" },
-  { label: "Gifts", path: "/gifts" },
   { label: "Catering", path: "/catering" },
   { label: "Past Events", path: "/past-events" },
   { label: "About", path: "/about" },
