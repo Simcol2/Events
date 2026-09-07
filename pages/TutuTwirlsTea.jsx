@@ -415,13 +415,13 @@ export default function TutuTwirlsTea({ navigate }) {
       >
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
           <div>
-            <SectionLabel palette={palette} fonts={fonts}>
+            <SectionLabel palette={{ ...palette, gold: "#D7B77C" }} fonts={fonts}>
               PICTURE THIS
             </SectionLabel>
 
             <h2
               className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+              style={{ ...fonts.displayFont, color: "#FFFFFF" }}
             >
               The photo wall
               <br />
@@ -430,7 +430,7 @@ export default function TutuTwirlsTea({ navigate }) {
 
             <p
               className="mt-6 text-base leading-8"
-              style={{ ...fonts.bodyFont, color: palette.ink }}
+              style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}
             >
               Styled to coordinate with the celebration, the photo wall becomes
               a place for birthday portraits, family photographs, sibling
@@ -440,19 +440,19 @@ export default function TutuTwirlsTea({ navigate }) {
 
             <div
               className="mt-9 flex items-start gap-4 border-t pt-6"
-              style={{ borderColor: `${palette.primaryDeep}30` }}
+              style={{ borderColor: "#FFFFFF30" }}
             >
-              <Camera size={22} color={palette.gold} strokeWidth={1.5} className="mt-1 flex-shrink-0" />
+              <Camera size={22} color="#D7B77C" strokeWidth={1.5} className="mt-1 flex-shrink-0" />
               <div>
                 <h3
                   className="text-2xl font-semibold"
-                  style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+                  style={{ ...fonts.displayFont, color: "#FFFFFF" }}
                 >
                   Professional photography
                 </h3>
                 <p
                   className="mt-2 text-base leading-7"
-                  style={{ ...fonts.bodyFont, color: palette.ink }}
+                  style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}
                 >
                   Add professional event photography so the host can actually
                   enjoy the celebration instead of spending the whole afternoon
