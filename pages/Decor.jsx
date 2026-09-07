@@ -7,6 +7,7 @@ import { normalizePhotos } from "../components/PhotoCarousel";
 import DecorDetailModal from "../components/DecorDetailModal";
 import RentalRequestModal from "../components/RentalRequestModal";
 import { useEventDate } from "../EventDateContext";
+import { useEventType } from "../EventTypeContext";
 import { TAGS as CATALOG_TAGS } from "../decorTags";
 
 function normalize(value) {
@@ -50,6 +51,7 @@ function itemTags(item) {
 }
 
 export default function Decor({ navigate }) {
+  const { openPickerForBuilder } = useEventType();
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [availability, setAvailability] = useState("all");
@@ -284,7 +286,6 @@ export default function Decor({ navigate }) {
             onClose={() => setDetailItem(null)}
             onRent={handleRent}
             onBuy={handleBuy}
-            navigate={navigate}
           />
         )}
 
@@ -300,7 +301,7 @@ export default function Decor({ navigate }) {
           <p className="font-[Jost] text-sm tracking-[0.18em] text-[#8C846F]">
             WANT AN EXPERIENCE YOUR GUESTS BECOME PART OF, NOT JUST A ROOM FULL OF DECOR?
           </p>
-          <button onClick={() => navigate("/package-builder")} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">
+          <button onClick={() => openPickerForBuilder()} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">
             BUILD MY EXPERIENCE
           </button>
         </div>

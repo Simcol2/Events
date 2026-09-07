@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles, PackageCheck, Truck, Users, Gift, Package, CalendarHeart } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -96,6 +97,7 @@ const HERO_STATES = [
 ];
 
 function Hero({ fonts, palette, navigate }) {
+  const { openPickerForBuilder } = useEventType();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -232,7 +234,7 @@ function Hero({ fonts, palette, navigate }) {
           }}
         >
           <button
-            onClick={() => navigate("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             style={{
               ...fonts.bodyFont,
               display: "inline-flex",
@@ -284,6 +286,7 @@ function Hero({ fonts, palette, navigate }) {
 /* ─── Main page ─── */
 export default function Home({ navigate }) {
   const { palette, fonts } = usePalette();
+  const { openPickerForBuilder } = useEventType();
 
   return (
     <div className="overflow-hidden" style={{ background: palette.bg }}>
@@ -540,7 +543,7 @@ export default function Home({ navigate }) {
       <section className="py-16" style={{ background: `${palette.primary}0D` }}>
         <div className="mx-auto max-w-6xl px-5 text-center sm:px-8">
           <button
-            onClick={() => navigate("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >
@@ -576,7 +579,7 @@ export default function Home({ navigate }) {
             </p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-5">
               <button
-                onClick={() => navigate("/package-builder")}
+                onClick={() => openPickerForBuilder()}
                 className="inline-flex items-center gap-3 rounded-sm px-7 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
                 style={{ ...fonts.bodyFont, background: palette.gold }}
               >

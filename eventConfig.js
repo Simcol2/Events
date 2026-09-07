@@ -3,6 +3,8 @@ import {
   CREATE_KEEP_IDS,
   ENGAGEMENT_POOL_IDS,
   NEUTRAL_POOL_IDS,
+  TUTU_PLAY_CONNECT_IDS,
+  TUTU_CREATE_KEEP_IDS,
 } from "./packageContent";
 
 // Single source of truth for how each event type prices and shapes its
@@ -90,6 +92,29 @@ export const EVENT_CONFIGS = {
     startingPrice: 895,
     guestGiftDefaultId: "readyToPop",
     steps: neutralFlowSteps(),
+  },
+  tutuTwirlsTea: {
+    startingPrice: 495,
+    guestGiftDefaultId: "readyToPop",
+    steps: [
+      {
+        type: "pool",
+        id: "playConnect",
+        label: "Play & Connect",
+        supportingCopy: "Choose 2 experiences that get your guests moving, laughing, and connecting.",
+        poolIds: TUTU_PLAY_CONNECT_IDS,
+        chooseCount: 2,
+      },
+      {
+        type: "pool",
+        id: "createKeep",
+        label: "Create & Keep",
+        supportingCopy: "Now choose 2 ways your guests can create something meaningful to keep.",
+        poolIds: TUTU_CREATE_KEEP_IDS,
+        chooseCount: 2,
+      },
+      ...SERVICE_AND_DISPLAY_STEPS,
+    ],
   },
   holiday: {
     startingPrice: 895,

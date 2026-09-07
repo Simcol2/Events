@@ -1,11 +1,13 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 import FeatureCard from "../components/FeatureCard";
 import { DISPLAYS, DISPLAY_SETUP_OPTIONS } from "../packageContent";
 
-export default function DisplayOptions({ navigate }) {
+export default function DisplayOptions() {
   const { palette, fonts } = usePalette();
+  const { openPickerForBuilder } = useEventType();
 
   return (
     <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
@@ -76,7 +78,7 @@ export default function DisplayOptions({ navigate }) {
 
         <div className="mt-16 text-center">
           <button
-            onClick={() => navigate("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             className="px-8 py-3 rounded-full text-sm font-semibold tracking-widest text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >

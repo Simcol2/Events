@@ -1,11 +1,13 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 
 // Section 40: personal and purposeful, explaining the belief behind the
 // business rather than a company-history bio.
-export default function About({ navigate }) {
+export default function About() {
   const { palette, fonts } = usePalette();
+  const { openPickerForBuilder } = useEventType();
 
   return (
     <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
@@ -44,7 +46,7 @@ export default function About({ navigate }) {
 
         <div className="mt-12 text-center">
           <button
-            onClick={() => navigate("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >

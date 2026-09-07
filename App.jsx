@@ -6,7 +6,7 @@ import SeoHead from "./components/SeoHead";
 import ValuePropBar from "./components/ValuePropBar";
 import EventTypePicker from "./components/EventTypePicker";
 import EventDatePicker from "./components/EventDatePicker";
-import { EventTypeProvider, useEventType } from "./EventTypeContext";
+import { EventTypeProvider } from "./EventTypeContext";
 import { EventDateProvider } from "./EventDateContext";
 import { PackageProvider } from "./PackageContext";
 import { CartProvider } from "./CartContext";
@@ -50,17 +50,34 @@ const NAV = [
   { label: "Rental Guide", path: "/rental-guide" },
   { label: "Activities", path: "/activities" },
   {
+    label: "Milestone Events",
+    path: "/package-builder",
+    opensPicker: true,
+    children: [
+      { label: "Baby Shower", path: "/package-builder", eventTypeId: "babyShower" },
+      { label: "Engagement Shower", path: "/package-builder", eventTypeId: "engagement" },
+    ],
+  },
+  {
     label: "Birthdays",
     path: "/birthdays/tutu-twirls-tea",
     children: [
-      { label: "Tutu Twirls & Tea", path: "/birthdays/tutu-twirls-tea" },
-      { label: "Birthday Experiences", path: "/experiences" },
+      { label: "Tutu Twirls & Tea", path: "/birthdays/tutu-twirls-tea", eventTypeId: "tutuTwirlsTea" },
+      { label: "Milestone Birthdays", path: "/package-builder", eventTypeId: "birthday" },
+    ],
+  },
+  {
+    label: "Celebrating You",
+    path: "/package-builder",
+    opensPicker: true,
+    children: [
+      { label: "Just Because", path: "/package-builder", eventTypeId: "specialMoment" },
     ],
   },
   { label: "Catering", path: "/catering" },
   { label: "Past Events", path: "/past-events" },
   { label: "About", path: "/about" },
-  { label: "Build My Experience", path: "/package-builder", cta: true },
+  { label: "Build My Experience", path: "/package-builder", cta: true, opensPicker: true },
 ];
 
 function getPath() {
@@ -69,21 +86,11 @@ function getPath() {
 
 function AppRoutes() {
   const [path, setPath] = useState(getPath);
-  const { hasChosen, openPicker } = useEventType();
 
   useEffect(() => {
     const handlePopState = () => setPath(getPath());
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  // Ask what the visitor is planning right away, once ever, regardless of
-  // which page they land on first. The one exception is the review link
-  // from a post-rental email: that visitor is here to finish one task, and
-  // asking them what they are shopping for first would be tone deaf.
-  useEffect(() => {
-    if (!hasChosen && !/^\/(review|scan)/.test(getPath())) openPicker();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const navigate = (to) => {
@@ -135,7 +142,7 @@ function AppRoutes() {
       <ValuePropBar />
       {component}
       <SiteFooter navigate={navigate} />
-      <EventTypePicker />
+      <EventTypePicker navigate={navigate} />
       <EventDatePicker />
     </>
   );

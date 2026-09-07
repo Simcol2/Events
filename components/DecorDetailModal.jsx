@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import { getItemFlags, parseColorOptions } from "./DecorCard";
 import { itemAltText } from "../seo";
+import { useEventType } from "../EventTypeContext";
 
 function photoList(photos) {
   if (!Array.isArray(photos)) return [];
@@ -13,7 +14,8 @@ function photoList(photos) {
 // plus a route to the package builder for anyone who wants this piece as
 // part of a curated package (Setup items there come from a fixed list, not
 // the live catalog, so this modal doesn't add straight to a package).
-export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigate }) {
+export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
+  const { openPickerForBuilder } = useEventType();
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
   const photos = photoList(item.photos);
   const [activePhoto, setActivePhoto] = useState(0);
@@ -134,7 +136,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy, navigat
           </div>
 
           <button
-            onClick={() => navigate?.("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             className="mt-3 w-full border border-[#B8935A] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]"
           >
             BUILD MY EXPERIENCE

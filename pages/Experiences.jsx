@@ -32,7 +32,7 @@ function ExperienceCard({ item, palette, fonts }) {
 // source of truth the Package Builder itself reads from.
 export default function Experiences({ navigate }) {
   const { palette, fonts } = usePalette();
-  const { eventTypeId, eventType } = useEventType();
+  const { eventTypeId, eventType, openPickerForBuilder } = useEventType();
   const eventConfig = useMemo(() => getEventConfig(eventTypeId), [eventTypeId]);
   const poolSteps = useMemo(() => eventConfig.steps.filter((s) => s.type === "pool"), [eventConfig]);
   const hasPlayfulStep = eventConfig.steps.some((s) => s.type === "playful");
@@ -92,7 +92,7 @@ export default function Experiences({ navigate }) {
 
         <div className="mt-4 text-center">
           <button
-            onClick={() => navigate("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >

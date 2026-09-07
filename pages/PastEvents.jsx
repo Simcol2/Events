@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, ImagePlus } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 import SectionHeading from "../components/SectionHeading";
 
 // Section 38: each past event is a mini before/during/after story, not a
@@ -35,8 +36,9 @@ const STORIES = [
   },
 ];
 
-export default function PastEvents({ navigate }) {
+export default function PastEvents() {
   const { palette, fonts } = usePalette();
+  const { openPickerForBuilder } = useEventType();
 
   return (
     <div style={{ background: palette.bg, color: palette.ink }}>
@@ -87,7 +89,7 @@ export default function PastEvents({ navigate }) {
             Want your celebration featured here next?
           </p>
           <button
-            onClick={() => navigate("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             className="inline-flex items-center gap-3 px-7 py-3.5 text-sm font-semibold tracking-[0.2em] text-white"
             style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
           >

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { useEventType } from "../EventTypeContext";
 import pictureThisPhoto from "../media/picturethis.png";
 import kindnessStationPhoto from "../media/file_00000000dcd4822fb648d37e9526b4b3.png";
 import arrivalPhoto from "../media/web_arrival.png";
@@ -112,7 +113,8 @@ function ActivityRow({ activity, number, featured = false }) {
   );
 }
 
-export default function Activities({ navigate }) {
+export default function Activities() {
+  const { openPickerForBuilder } = useEventType();
   const [heroIndex, setHeroIndex] = useState(0);
 
   useEffect(() => {
@@ -191,7 +193,7 @@ export default function Activities({ navigate }) {
           <p className="mx-auto mt-3 max-w-lg font-[Jost] text-base leading-7 text-[#DAD7C9]">
             Choose the activities that fit your crowd and let the rest of the experience do the work.
           </p>
-          <button onClick={() => navigate("/package-builder")} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white">
+          <button onClick={() => openPickerForBuilder()} className="mt-6 border border-[#D4BC91] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white">
             BUILD MY EXPERIENCE
           </button>
         </div>

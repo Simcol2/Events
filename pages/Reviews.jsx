@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Star, Quote } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 
 // Only approved reviews are readable with the public key (see the RLS
 // policy in supabase/reviews_setup.sql), so this page cannot accidentally
@@ -33,8 +34,9 @@ function formatDate(value) {
   return date.toLocaleDateString("en-CA", { month: "long", year: "numeric" });
 }
 
-export default function Reviews({ navigate }) {
+export default function Reviews() {
   const { palette, fonts } = usePalette();
+  const { openPickerForBuilder } = useEventType();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -118,7 +120,7 @@ export default function Reviews({ navigate }) {
               wrap up, their words will land on this page.
             </p>
             <button
-              onClick={() => navigate("/package-builder")}
+              onClick={() => openPickerForBuilder()}
               className="mt-6 rounded-sm px-7 py-3.5 text-sm font-semibold tracking-[0.1em] text-white"
               style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
             >

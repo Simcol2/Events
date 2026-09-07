@@ -146,6 +146,34 @@ function BookingNotice({ eventTypeId, palette, fonts }) {
   );
 }
 
+// Event types without a built-out builder yet. Kept as a plain page state
+// (not a separate route) so switching types via the header chip or the
+// picker just swaps what renders here, same as every built type does.
+const BUILT_EVENT_TYPES = ["babyShower", "birthday", "tutuTwirlsTea"];
+
+function ComingSoon({ eventType, palette, fonts, openPickerForBuilder }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
+      <div className="max-w-md text-center">
+        <Sparkles className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.gold }} />
+        <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+          {eventType.label} is coming soon.
+        </h1>
+        <p className="mt-3 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+          We're still building this experience out. Only a limited number of event types are open for booking right now, but we'd love to hear what you have in mind, so reach out and we'll help you plan it directly.
+        </p>
+        <button
+          onClick={() => openPickerForBuilder()}
+          className="mt-6 rounded-full px-8 py-3 text-sm font-semibold tracking-widest text-white"
+          style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+        >
+          CHOOSE A DIFFERENT EXPERIENCE
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function SectionTitle({ children, palette, fonts }) {
   return (
     <h2 className="text-2xl font-semibold mb-4" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
@@ -272,8 +300,9 @@ function resolveSetupItem(id, eventTypeId, decorCatalog) {
 
 export default function PackageBuilder() {
   const { palette, fonts } = usePalette();
-  const { eventTypeId, eventType } = useEventType();
+  const { eventTypeId, eventType, openPickerForBuilder } = useEventType();
   const { hasEventDate, requestEventDate } = useEventDate();
+  const isBuilt = BUILT_EVENT_TYPES.includes(eventTypeId);
   const eventConfig = useMemo(() => getEventConfig(eventTypeId), [eventTypeId]);
   const poolSteps = useMemo(() => eventConfig.steps.filter((s) => s.type === "pool"), [eventConfig]);
 
@@ -341,9 +370,9 @@ export default function PackageBuilder() {
   // availability checks against it actually mean something. Prompts once,
   // right away, if it isn't set yet.
   useEffect(() => {
-    if (!hasEventDate) requestEventDate();
+    if (!hasEventDate && isBuilt) requestEventDate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [eventTypeId, isBuilt]);
 
   useEffect(() => {
     if (!notice) return;
@@ -470,6 +499,17 @@ export default function PackageBuilder() {
   };
   const displayIncomplete = Boolean(displayId) && !displaySetupId;
 
+  if (!isBuilt) {
+    return (
+      <ComingSoon
+        eventType={eventType}
+        palette={palette}
+        fonts={fonts}
+        openPickerForBuilder={openPickerForBuilder}
+      />
+    );
+  }
+
   if (!hasEventDate) {
     return (
       <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
@@ -510,14 +550,14 @@ export default function PackageBuilder() {
         </p>
       </div>
 
-      {eventTypeId === "birthday" && (
+      {(eventTypeId === "birthday" || eventTypeId === "tutuTwirlsTea") && (
         <div className="px-6">
           <FullServiceIntro palette={palette} fonts={fonts} />
           <AdditionalPricingNotes palette={palette} fonts={fonts} />
         </div>
       )}
 
-      {(eventTypeId === "birthday" || eventTypeId === "babyShower") && (
+      {(eventTypeId === "birthday" || eventTypeId === "babyShower" || eventTypeId === "tutuTwirlsTea") && (
         <div className="px-6">
           <BookingNotice eventTypeId={eventTypeId} palette={palette} fonts={fonts} />
         </div>

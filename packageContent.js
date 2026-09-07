@@ -659,13 +659,17 @@ export const SETUP_ONLY_ITEMS = [
 // any pool - it's a paid ADDONS upgrade, purchasable in the Make It Yours
 // step and previewed on the homepage's "Guess the Arrival" modal.
 //
-// Baby Shower is the only event type with two 3-pick pools; every other
-// event type uses a single 4-pick pool plus the separate Playful Add-On
-// step (see PLAYFUL_ADDON_IDS below).
+// Baby Shower and Tutu Twirls & Tea are the two-pool event types; every
+// other event type uses a single 4-pick pool plus the separate Playful
+// Add-On step (see PLAYFUL_ADDON_IDS below).
 export const PLAY_CONNECT_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight", "kindnessStation"];
 export const CREATE_KEEP_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "nurseryRhyme"];
 export const ENGAGEMENT_POOL_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
 export const NEUTRAL_POOL_IDS = ["pictureThis", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
+// Tutu Twirls & Tea: two 3-item pools, choose 2 of 3 each (not 3 of 3, so
+// there's a real choice to make in both).
+export const TUTU_PLAY_CONNECT_IDS = ["pictureThis", "photoChallenge", "kindnessStation"];
+export const TUTU_CREATE_KEEP_IDS = ["storybook", "wallPuzzle", "timeCapsule"];
 
 // Resolves any pool id's copy/photo for the active event type, whichever
 // list it lives in - MAIN_PACKAGE_ITEMS/SETUP_ONLY_ITEMS (event-aware

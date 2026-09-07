@@ -12,9 +12,9 @@ const EXIT_DURATION = 280;
 //
 // Stays mounted a beat after `isPickerOpen` goes false so the fade/scale-out
 // can actually play instead of the whole thing snapping away instantly.
-export default function EventTypePicker() {
+export default function EventTypePicker({ navigate }) {
   const { palette, fonts } = usePalette();
-  const { eventTypes, eventTypeId, isPickerOpen, chooseEventType, closePicker } = useEventType();
+  const { eventTypes, eventTypeId, isPickerOpen, builderIntent, chooseEventType, closePicker } = useEventType();
   const [mounted, setMounted] = useState(isPickerOpen);
   const [entered, setEntered] = useState(false);
 
@@ -37,6 +37,15 @@ export default function EventTypePicker() {
   }, [isPickerOpen]);
 
   if (!mounted) return null;
+
+  // Picking a type here always resolves the choice; when this popup was
+  // opened by a "Build My Experience" click (builderIntent), it also carries
+  // the visitor straight into the Package Builder for that type.
+  const handleChoose = (id) => {
+    const shouldEnterBuilder = builderIntent;
+    chooseEventType(id);
+    if (shouldEnterBuilder) navigate?.("/package-builder");
+  };
 
   return (
     <div
@@ -98,7 +107,7 @@ export default function EventTypePicker() {
               return (
                 <button
                   key={type.id}
-                  onClick={() => chooseEventType(type.id)}
+                  onClick={() => handleChoose(type.id)}
                   className="rounded-xl px-5 py-4 text-left transition-all hover:-translate-y-0.5"
                   style={{
                     background: active ? `${palette.accent}14` : palette.bg,

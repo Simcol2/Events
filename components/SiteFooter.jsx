@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Mail, MapPin } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 import { SERVICE_AREA_SHORT, SERVICE_AREA_LONG, SERVICE_CITIES } from "../seo";
 
 // Newsletter signup is a placeholder for now - no email service is wired
@@ -48,6 +49,7 @@ function NewsletterSignup({ palette, fonts }) {
 
 export default function SiteFooter({ navigate }) {
   const { palette, fonts } = usePalette();
+  const { openPickerForBuilder } = useEventType();
 
   return (
     <footer className="mt-24" style={{ borderTop: `1px solid ${palette.line}`, background: `${palette.primary}0D` }}>
@@ -91,7 +93,7 @@ export default function SiteFooter({ navigate }) {
               <button onClick={() => navigate("/catering")} className="block hover:opacity-70">Catering</button>
               <button onClick={() => navigate("/past-events")} className="block hover:opacity-70">Past Events</button>
               <button onClick={() => navigate("/about")} className="block hover:opacity-70">About</button>
-              <button onClick={() => navigate("/package-builder")} className="block hover:opacity-70">Build My Experience</button>
+              <button onClick={() => openPickerForBuilder()} className="block hover:opacity-70">Build My Experience</button>
             </div>
           </div>
 

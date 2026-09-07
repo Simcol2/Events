@@ -17,8 +17,13 @@ export const EVENT_TYPES = [
   },
   {
     id: "birthday",
-    label: "Birthday",
-    shortLabel: "Birthday",
+    label: "Milestone Birthdays",
+    shortLabel: "Milestone Birthdays",
+  },
+  {
+    id: "tutuTwirlsTea",
+    label: "Tutu Twirls & Tea",
+    shortLabel: "Tutu Twirls & Tea",
   },
   {
     id: "holiday",

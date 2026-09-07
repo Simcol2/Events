@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight, Camera, Heart, Sparkles, Star, Wine } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 
 const HERO_IMAGE = "/photos/tutu-twirls-tea-hero.jpg";
 const WARDROBE_IMAGE = "/photos/tutu-twirls-tea-wardrobe.jpg";
@@ -55,7 +56,8 @@ function Feature({ icon: Icon, title, children, palette, fonts }) {
   );
 }
 
-export default function TutuTwirlsTea({ navigate }) {
+export default function TutuTwirlsTea() {
+  const { openPickerForBuilder } = useEventType();
   const { palette, fonts } = usePalette();
 
   return (
@@ -104,7 +106,7 @@ export default function TutuTwirlsTea({ navigate }) {
               </p>
 
               <button
-                onClick={() => navigate("/package-builder")}
+                onClick={() => openPickerForBuilder()}
                 className="mt-9 inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.14em] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
                 style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
               >
@@ -164,48 +166,6 @@ export default function TutuTwirlsTea({ navigate }) {
             style={{ ...fonts.displayFont, color: "#FFFFFF" }}
           >
             Tutu Twirls & Tea is a come-and-go experience.
-          </p>
-        </div>
-
-        <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-2">
-          {[
-            "Arrive anytime during your experience window.",
-            "Choose your look.",
-            "Twirl.",
-            "Take a photo.",
-            "Make something kind.",
-            "Grab a snack.",
-            "Leave a memory.",
-            "Hang out with your people.",
-          ].map((item) => (
-            <div
-              key={item}
-              className="flex items-center gap-3 border-b pb-3"
-              style={{ borderColor: "#FFFFFF30" }}
-            >
-              <Sparkles size={14} color="#D7B77C" />
-              <span
-                className="text-sm"
-                style={{ ...fonts.bodyFont, color: "#FFFFFFDD" }}
-              >
-                {item}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mx-auto mt-12 max-w-2xl text-center">
-          <p
-            className="text-base leading-8"
-            style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}
-          >
-            And whenever you're ready?
-          </p>
-          <p
-            className="mt-3 text-xl italic leading-8"
-            style={{ ...fonts.displayFont, color: "#D7B77C" }}
-          >
-            "It's time to love ya then leave ya," and they'll be on their way.
           </p>
         </div>
       </section>
@@ -749,30 +709,35 @@ export default function TutuTwirlsTea({ navigate }) {
             className="mt-4 text-5xl font-medium sm:text-6xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
-            Choose your magic.
+            Do whatever feels right.
           </h2>
 
-          <div className="mt-14 grid gap-10 text-left md:grid-cols-4">
+          <div className="mt-14 grid gap-10 text-left md:grid-cols-5">
             {[
               [
                 "01",
-                "Choose your look",
-                "Pick a tutu, blazer or statement piece, or let your little guest skip the dress-up entirely.",
+                "Get dressed.",
+                "Pick a tutu, blazer or statement piece.",
               ],
               [
                 "02",
-                "Twirl & photograph",
-                "The photo wall becomes part of the experience, not an afterthought.",
+                "Make a memory.",
+                "Leave a kindness card. Add something to the time capsule.",
               ],
               [
                 "03",
-                "Create & connect",
-                "Guests contribute to the Kindness Station and Time Capsule.",
+                "Grab a snack.",
+                "Tea, treats, whatever you've chosen for your celebration.",
               ],
               [
                 "04",
-                "Sit for tea",
-                "Everyone settles in, celebrates together and enjoys the room.",
+                "Take the photo.",
+                "Or don't. There are no participation police.",
+              ],
+              [
+                "05",
+                "Hang out.",
+                "Talk. Laugh. Twirl. Sit down. Get back up.",
               ],
             ].map(([number, title, text]) => (
               <div key={number} className="border-t pt-5" style={{ borderColor: palette.line }}>
@@ -799,6 +764,13 @@ export default function TutuTwirlsTea({ navigate }) {
               </div>
             ))}
           </div>
+
+          <p
+            className="mx-auto mt-14 max-w-2xl text-xl italic"
+            style={{ ...fonts.displayFont, color: palette.gold }}
+          >
+            Love ya then leave ya.
+          </p>
         </div>
       </section>
 
@@ -893,7 +865,7 @@ export default function TutuTwirlsTea({ navigate }) {
           </p>
 
           <button
-            onClick={() => navigate("/package-builder")}
+            onClick={() => openPickerForBuilder()}
             className="mt-9 inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.14em] transition-all hover:-translate-y-0.5 hover:shadow-lg"
             style={{
               ...fonts.bodyFont,

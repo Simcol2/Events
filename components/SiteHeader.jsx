@@ -1,15 +1,27 @@
 import React, { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
 import EventTypeBar from "./EventTypeBar";
 
 export default function SiteHeader({ current, navigate, nav }) {
   const { palette, fonts } = usePalette();
+  const { chooseEventType, openPickerForBuilder } = useEventType();
   const [open, setOpen] = useState(false);
 
-  const go = (path) => {
+  // Most nav items just navigate. A few carry extra intent: `opensPicker`
+  // shows the "what are you planning?" popup instead of navigating directly
+  // (used by the Build My Experience CTA and the group parents that don't
+  // map to one event type), and `eventTypeId` pre-selects a type before
+  // navigating (used by the specific event links inside those groups).
+  const go = (item) => {
     setOpen(false);
-    navigate(path);
+    if (item.opensPicker) {
+      openPickerForBuilder();
+      return;
+    }
+    if (item.eventTypeId) chooseEventType(item.eventTypeId);
+    navigate(item.path);
   };
 
   return (
@@ -21,7 +33,7 @@ export default function SiteHeader({ current, navigate, nav }) {
       <EventTypeBar />
 
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
-        <button onClick={() => go("/")} className="group text-left">
+        <button onClick={() => go({ path: "/" })} className="group text-left">
           <div className="font-[Jost] text-sm font-semibold tracking-[0.42em]" style={{ color: palette.gold }}>
             A SLICE OF G
           </div>
@@ -34,13 +46,14 @@ export default function SiteHeader({ current, navigate, nav }) {
         </button>
 
         <nav className="hidden items-center gap-3 md:flex lg:gap-4">
-          {nav.map(({ label, path, cta, children }) => {
+          {nav.map((item) => {
+            const { label, path, cta, children } = item;
             const active = path === "/" ? current === "home" : current === path.slice(1);
             if (cta) {
               return (
                 <button
                   key={path}
-                  onClick={() => go(path)}
+                  onClick={() => go(item)}
                   className="rounded-full px-4 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.1em] text-white transition-transform hover:-translate-y-0.5"
                   style={{ background: palette.primaryDeep }}
                 >
@@ -53,7 +66,7 @@ export default function SiteHeader({ current, navigate, nav }) {
               return (
                 <div key={path} className="group relative">
                   <button
-                    onClick={() => go(path)}
+                    onClick={() => go(item)}
                     className="relative flex items-center gap-1 whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.02em] transition-colors"
                     style={{ color: active || childActive ? palette.primaryDeep : palette.muted }}
                   >
@@ -72,8 +85,8 @@ export default function SiteHeader({ current, navigate, nav }) {
                     <div className="overflow-hidden rounded-sm shadow-lg" style={{ background: palette.surface, border: `1px solid ${palette.line}` }}>
                       {children.map((child) => (
                         <button
-                          key={child.path}
-                          onClick={() => go(child.path)}
+                          key={child.path + (child.eventTypeId || "")}
+                          onClick={() => go(child)}
                           className="block w-full whitespace-nowrap px-5 py-3 text-left font-[Jost] text-sm font-medium tracking-[0.1em] transition-colors hover:opacity-70"
                           style={{ color: current === child.path.slice(1) ? palette.primaryDeep : palette.ink }}
                         >
@@ -88,7 +101,7 @@ export default function SiteHeader({ current, navigate, nav }) {
             return (
               <button
                 key={path}
-                onClick={() => go(path)}
+                onClick={() => go(item)}
                 className="relative whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.02em] transition-colors"
                 style={{ color: active ? palette.primaryDeep : palette.muted }}
               >
@@ -117,19 +130,19 @@ export default function SiteHeader({ current, navigate, nav }) {
       {open && (
         <div className="px-5 py-4 md:hidden" style={{ borderTop: `1px solid ${palette.line}`, background: palette.bg }}>
           <nav className="mx-auto flex max-w-7xl flex-col">
-            {nav.map(({ label, path, cta, children }) => (
-              <React.Fragment key={path}>
+            {nav.map((item) => (
+              <React.Fragment key={item.path}>
                 <button
-                  onClick={() => go(path)}
-                  className={cta ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-sm font-semibold tracking-[0.22em] text-white" : "py-4 text-left font-[Jost] text-sm font-medium tracking-[0.22em]"}
-                  style={cta ? { background: palette.primaryDeep } : { borderBottom: children ? "none" : `1px solid ${palette.line}CC`, color: palette.primaryDeep }}
+                  onClick={() => go(item)}
+                  className={item.cta ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-sm font-semibold tracking-[0.22em] text-white" : "py-4 text-left font-[Jost] text-sm font-medium tracking-[0.22em]"}
+                  style={item.cta ? { background: palette.primaryDeep } : { borderBottom: item.children ? "none" : `1px solid ${palette.line}CC`, color: palette.primaryDeep }}
                 >
-                  {label.toUpperCase()}
+                  {item.label.toUpperCase()}
                 </button>
-                {children?.map((child) => (
+                {item.children?.map((child) => (
                   <button
-                    key={child.path}
-                    onClick={() => go(child.path)}
+                    key={child.path + (child.eventTypeId || "")}
+                    onClick={() => go(child)}
                     className="py-3 pl-5 text-left font-[Jost] text-sm font-medium tracking-[0.18em]"
                     style={{ borderBottom: `1px solid ${palette.line}CC`, color: palette.muted }}
                   >

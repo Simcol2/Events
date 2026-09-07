@@ -17,8 +17,13 @@ export function EventTypeProvider({ children }) {
     return window.localStorage.getItem(CHOSEN_KEY) === "1";
   });
 
-  // Opens automatically, once ever, on first visit — see App.jsx.
   const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+  // True when the picker was opened by a "Build My Experience" click rather
+  // than the header's event-type chip; see openPickerForBuilder below.
+  // EventTypePicker reads this to decide whether picking a type should also
+  // carry the visitor straight into the Package Builder.
+  const [builderIntent, setBuilderIntent] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -36,12 +41,20 @@ export function EventTypeProvider({ children }) {
     setIsPickerOpen(false);
   };
 
-  const openPicker = () => setIsPickerOpen(true);
+  // Used by the header's event-type chip: just swap the type, no navigation.
+  const openPicker = () => {
+    setBuilderIntent(false);
+    setIsPickerOpen(true);
+  };
+  // Used by every "Build My Experience" entry point: after picking, the
+  // visitor should land in the Package Builder for that type.
+  const openPickerForBuilder = () => {
+    setBuilderIntent(true);
+    setIsPickerOpen(true);
+  };
   const closePicker = () => {
-    // A dismissal without picking still counts as "asked" so it only
-    // auto-opens once ever, defaulting to the site's specialization.
-    if (!hasChosen) chooseEventType(DEFAULT_EVENT_TYPE_ID);
     setIsPickerOpen(false);
+    setBuilderIntent(false);
   };
 
   const eventType = EVENT_TYPES.find((e) => e.id === eventTypeId) || EVENT_TYPES[0];
@@ -54,7 +67,9 @@ export function EventTypeProvider({ children }) {
         eventTypes: EVENT_TYPES,
         hasChosen,
         isPickerOpen,
+        builderIntent,
         openPicker,
+        openPickerForBuilder,
         closePicker,
         chooseEventType,
       }}
