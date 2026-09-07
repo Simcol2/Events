@@ -29,7 +29,6 @@ import ohBabyCenterPhoto from "./media/ohbabycenter.png";
 import babyTriviaPhoto from "./media/babytrivia.png";
 import kindnessStationPhoto from "./media/file_00000000dcd4822fb648d37e9526b4b3.png";
 import complimentBoxPhoto from "./media/kindness-station-compliment-box.jpg";
-import wallPuzzleBabyPhoto from "./media/file_00000000f7a8822fbf984e976f7ea0b4.png";
 import wallPuzzleShowerPhoto from "./media/wallpuzzle-babyshower.png";
 import wallPuzzleShowerFramedPhoto from "./media/wallpuzzle-babyshower-framed.png";
 import nurseryRhymeKeepsakePhoto from "./media/nurseryrhyme-keepsake.png";
@@ -88,12 +87,6 @@ export const MAIN_PACKAGE_ITEMS = [
         description:
           "Guests capture a photo and leave a handwritten note about a favourite memory or moment with the couple. Both go into the time capsule to discover someday.",
       },
-      milestoneBirthday: {
-        name: "Picture This: Their Year in Review",
-        tagline: "The moments you wish you could bottle up.",
-        description:
-          "Guests capture a photo and leave a handwritten note about their favourite story of the birthday kiddo this year. Both go into the time capsule to look back on someday.",
-      },
       birthday: {
         name: "Picture This",
         tagline: "The moments you wish you could bottle up.",
@@ -117,7 +110,6 @@ export const MAIN_PACKAGE_ITEMS = [
       default: pictureThisPhoto,
       babyShower: pictureThisPhoto,
       engagement: null,
-      milestoneBirthday: null,
       birthday: null,
       holiday: null,
       specialMoment: null,
@@ -162,12 +154,6 @@ export const MAIN_PACKAGE_ITEMS = [
         description:
           "Two ways to make someone's day. Guests carry an act of kindness into the world in honour of the couple, then write the thing they have always meant to say about them, seal it, and add it to A Box of Compliments the couple keeps. Add an optional $5 gift card to any kindness card for a pay it forward surprise.",
       },
-      milestoneBirthday: {
-        name: "Kindness Corner",
-        tagline: "Teaching kindness, one birthday at a time.",
-        description:
-          "Two ways to make someone's day. Guests take a kindness card out into the world, then write down something wonderful about the birthday little one, seal it, and add it to A Box of Compliments saved for them to read when they are old enough to understand what everyone already saw. Add an optional $5 gift card for a pay it forward surprise.",
-      },
       birthday: {
         name: "Kindness Station",
         tagline: "Give a little kindness. Leave a little behind.",
@@ -191,7 +177,6 @@ export const MAIN_PACKAGE_ITEMS = [
       default: [kindnessStationPhoto, complimentBoxPhoto],
       babyShower: [kindnessStationPhoto, complimentBoxPhoto],
       engagement: null,
-      milestoneBirthday: null,
       birthday: null,
       holiday: null,
       specialMoment: null,
@@ -254,12 +239,6 @@ export const MAIN_PACKAGE_ITEMS = [
         description:
           "Guests contribute words, memories, wishes, and pieces of the couple's journey to create an illustrated keepsake.",
       },
-      milestoneBirthday: {
-        name: "Their Big Adventure",
-        tagline: "Guests write the next chapter.",
-        description:
-          "Every guest adds a page to a growing storybook (a memory, a lesson, a little piece of this year's adventure), building a keepsake you'll add to for every birthday to come.",
-      },
       birthday: {
         name: "Their Story So Far",
         tagline: "A page from everyone who came to celebrate.",
@@ -283,7 +262,6 @@ export const MAIN_PACKAGE_ITEMS = [
       default: null,
       babyShower: null,
       engagement: null,
-      milestoneBirthday: null,
       birthday: null,
       holiday: null,
       specialMoment: null,
@@ -322,12 +300,6 @@ export const MAIN_PACKAGE_ITEMS = [
         description:
           "A playful collection of baby and parent trivia for guests to test their knowledge. Add up to 15 custom questions all about Mom and Dad.",
       },
-      milestoneBirthday: {
-        name: "Birthday Trivia Card Pack",
-        tagline: "How well do you know the birthday star?",
-        description:
-          "A playful round of trivia all about the birthday kiddo, with up to 15 custom questions guests will love guessing.",
-      },
       birthday: {
         name: "Birthday Trivia Card Pack",
         tagline: "How well do you really know them?",
@@ -351,7 +323,6 @@ export const MAIN_PACKAGE_ITEMS = [
       default: babyTriviaPhoto,
       babyShower: babyTriviaPhoto,
       engagement: null,
-      milestoneBirthday: null,
       birthday: null,
       holiday: null,
       specialMoment: null,
@@ -396,12 +367,6 @@ export const MAIN_PACKAGE_ITEMS = [
         description:
           "A meaningful photo becomes an interactive puzzle that guests assemble throughout the celebration. A smaller framed print of the finished piece becomes wall art for the home, and you're welcome to keep the full-size assembled puzzle too.",
       },
-      milestoneBirthday: {
-        name: "Piece By Piece",
-        tagline: "A portrait guests build together.",
-        description:
-          "A giant portrait puzzle guests gradually assemble throughout the party. A smaller framed print of the finished piece becomes a one-of-a-kind keepsake, and you're welcome to keep the full-size assembled puzzle too.",
-      },
       birthday: {
         name: "Custom Wall Puzzle",
         tagline: "Help us put it together.",
@@ -422,15 +387,12 @@ export const MAIN_PACKAGE_ITEMS = [
       },
     },
     photos: {
-      // The toddler portrait only makes sense for the 1st-3rd-birthday
-      // variant, so it's not reused for babyShower. babyShower gets its own
-      // photo instead, since a shower puzzle uses an illustrated/rendered
-      // baby portrait rather than a real one (there's no baby to photograph
-      // yet).
+      // babyShower gets its own photo since a shower puzzle uses an
+      // illustrated/rendered baby portrait rather than a real one (there's
+      // no baby to photograph yet).
       default: null,
       babyShower: [wallPuzzleShowerPhoto, wallPuzzleShowerFramedPhoto],
       engagement: null,
-      milestoneBirthday: wallPuzzleBabyPhoto,
       birthday: null,
       holiday: null,
       specialMoment: wallPuzzleEngagementPhoto,
@@ -475,12 +437,6 @@ export const MAIN_PACKAGE_ITEMS = [
         description:
           "Guests leave messages, wishes, predictions, and memories for the couple to open on an anniversary or future milestone.",
       },
-      milestoneBirthday: {
-        name: "The World at 18 Time Capsule",
-        tagline: "What will the world look like when they turn 18?",
-        description:
-          "Every photo and note from Picture This gets sealed inside, along with guest predictions about the world, opened together on their 18th birthday.",
-      },
       birthday: {
         name: "Time Capsule",
         tagline: "Your guests fill it today. You open it someday.",
@@ -504,7 +460,6 @@ export const MAIN_PACKAGE_ITEMS = [
       default: timeCapsulePhoto,
       babyShower: timeCapsulePhoto,
       engagement: null,
-      milestoneBirthday: null,
       birthday: null,
       holiday: null,
       specialMoment: null,

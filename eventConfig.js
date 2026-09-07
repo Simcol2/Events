@@ -86,11 +86,6 @@ export const EVENT_CONFIGS = {
       { type: "display", id: "display", label: "The Memory Display" },
     ],
   },
-  milestoneBirthday: {
-    startingPrice: 895,
-    guestGiftDefaultId: "readyToPop",
-    steps: neutralFlowSteps(),
-  },
   birthday: {
     startingPrice: 895,
     guestGiftDefaultId: "readyToPop",
