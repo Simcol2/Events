@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import SectionHeading from "../components/SectionHeading";
 import DecorCard, { parseItemTags } from "../components/DecorCard";
+import { normalizePhotos } from "../components/PhotoCarousel";
 import DecorDetailModal from "../components/DecorDetailModal";
 import RentalRequestModal from "../components/RentalRequestModal";
 import { useEventDate } from "../EventDateContext";
@@ -104,7 +105,13 @@ export default function Decor({ navigate }) {
       }
       if (seen.has(key)) continue;
       seen.add(key);
-      const variants = visible.filter((i) => i.variant_group?.trim() === key);
+      // A variant that has photos leads the card, so the default view is
+      // never a "photo coming soon" placeholder while another color in the
+      // same group has a real picture. Sort is stable, so variants that
+      // both have photos (or both don't) keep their existing order.
+      const variants = visible
+        .filter((i) => i.variant_group?.trim() === key)
+        .sort((a, b) => Number(normalizePhotos(b.photos).length > 0) - Number(normalizePhotos(a.photos).length > 0));
       result.push({ key, item: variants[0], variants, groupName: key });
     }
     return result;
