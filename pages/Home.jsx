@@ -48,51 +48,34 @@ function Reveal({ children, className = "", delay = 0 }) {
 
 /* ─── Hero: 5 states, each its own image, headline, copy, and CTA ─── */
 const HERO_CTA_LABEL = "BUILD MY EXPERIENCE";
+const HERO_HEADLINE_LINES = ["Rent the pieces", "Create the keepsakes", "Enjoy the memories"];
+const HERO_SUPPORTING =
+  "Interactive event experiences, styled decor, and keepsake activities for celebrations where guests don't just show up, they take part.";
+const HERO_SECONDARY_LABEL = "Explore the experiences";
+const HERO_SECONDARY_TARGET = "/experiences";
 
+// Photos still crossfade behind the fixed headline/supporting copy above -
+// only the text stopped rotating with them.
 const HERO_STATES = [
   {
     image: essentialsImage,
     alt: "Interactive baby shower experience set up by A Slice of G Events in Toronto",
-    headline: "Guests don't just attend. They create.",
-    supporting:
-      "Interactive event experiences that turn your baby shower, first birthday, or celebration into memories you can actually keep.",
-    secondaryLabel: "Explore the experiences",
-    secondaryTarget: "/experiences",
   },
   {
     image: heroFullBleed,
     alt: "Time capsule keepsake experience available for event rental in Toronto and the GTA",
-    headline: "A time capsule gets sealed.",
-    supporting:
-      "Photos, stories, wishes, and little pieces of the day come together to create something you'll treasure long after the celebration ends.",
-    secondaryLabel: "See how it works",
-    secondaryTarget: "/how-it-works",
   },
   {
     image: wallPuzzleEngagementPhoto,
     alt: "Guest-built wall puzzle keepsake at an engagement party in Toronto",
-    headline: "Not just decor. Something your guests can create.",
-    supporting: "The decor and memories are one in the same.",
-    secondaryLabel: "Explore the experiences",
-    secondaryTarget: "/experiences",
   },
   {
     image: babyTriviaPhoto,
     alt: "Guests playing baby trivia at a celebration in the Greater Toronto Area",
-    headline: "The celebration that gets better after it ends.",
-    supporting:
-      "Your guests play, write, photograph, tell stories, and leave something meaningful behind for you to keep.",
-    secondaryLabel: "See it in action",
-    secondaryTarget: "/how-it-works",
   },
   {
     image: nurseryRhymePhoto,
     alt: "Custom keepsake art piece created by guests at a Toronto celebration",
-    headline: "Guests come together to create something you'll keep forever.",
-    supporting:
-      "Interactive experiences for baby showers, first birthdays, and celebrations designed around the people who make them special.",
-    secondaryLabel: "Find your perfect experience",
-    secondaryTarget: "/experiences",
   },
 ];
 
@@ -106,8 +89,6 @@ function Hero({ fonts, palette, navigate }) {
     }, 6500);
     return () => clearInterval(timer);
   }, []);
-
-  const current = HERO_STATES[index];
 
   return (
     <section
@@ -161,66 +142,38 @@ function Hero({ fonts, palette, navigate }) {
           textAlign: "center",
         }}
       >
-        <div
-          className="relative mx-auto w-full"
-          style={{ minHeight: "clamp(5.5rem, 13vw, 9rem)", marginBottom: "1.5rem", maxWidth: "100%" }}
+        <h1
+          style={{
+            ...fonts.displayFont,
+            margin: "0 auto 1.5rem",
+            fontSize: "clamp(2rem, 5vw, 4.2rem)",
+            fontWeight: 500,
+            lineHeight: 1.15,
+            color: "#FDF6EE",
+            textShadow: "0 8px 24px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4)",
+            textAlign: "center",
+          }}
         >
-          {HERO_STATES.map((state, i) => (
-            <h1
-              key={state.headline}
-              style={{
-                ...fonts.displayFont,
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "0 10px",
-                margin: 0,
-                width: "100%",
-                maxWidth: "100%",
-                fontSize: "clamp(2rem, 5vw, 4.2rem)",
-                fontWeight: 500,
-                lineHeight: 1.1,
-                color: "#FDF6EE",
-                opacity: i === index ? 1 : 0,
-                transform: i === index ? "translateY(0)" : "translateY(18px)",
-                transition: "opacity 1100ms ease, transform 1100ms cubic-bezier(.22,1,.36,1)",
-                textShadow: "0 8px 24px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4)",
-                pointerEvents: "none",
-                textAlign: "center",
-                whiteSpace: "normal",
-                overflowWrap: "anywhere",
-                wordBreak: "break-word",
-              }}
-            >
-              {state.headline}
-            </h1>
+          {HERO_HEADLINE_LINES.map((line, i) => (
+            <React.Fragment key={line}>
+              {i > 0 && <br />}
+              {line}
+            </React.Fragment>
           ))}
-        </div>
+        </h1>
 
-        <div className="relative mx-auto w-full" style={{ minHeight: "clamp(4.5rem, 11vw, 7rem)", maxWidth: "100%" }}>
-          {HERO_STATES.map((state, i) => (
-            <p
-              key={state.supporting}
-              style={{
-                ...fonts.bodyFont,
-                position: "absolute",
-                inset: 0,
-                maxWidth: "620px",
-                margin: "0 auto",
-                color: "#FDF6EEE6",
-                fontSize: "clamp(18px, 2.6vw, 23px)",
-                lineHeight: 1.6,
-                opacity: i === index ? 1 : 0,
-                transition: "opacity 1100ms ease",
-                pointerEvents: "none",
-              }}
-            >
-              {state.supporting}
-            </p>
-          ))}
-        </div>
+        <p
+          style={{
+            ...fonts.bodyFont,
+            maxWidth: "620px",
+            margin: "0 auto",
+            color: "#FDF6EEE6",
+            fontSize: "clamp(18px, 2.6vw, 23px)",
+            lineHeight: 1.6,
+          }}
+        >
+          {HERO_SUPPORTING}
+        </p>
 
         <div
           style={{
@@ -257,7 +210,7 @@ function Hero({ fonts, palette, navigate }) {
           </button>
 
           <button
-            onClick={() => navigate(current.secondaryTarget)}
+            onClick={() => navigate(HERO_SECONDARY_TARGET)}
             style={{
               ...fonts.bodyFont,
               display: "inline-flex",
@@ -275,7 +228,7 @@ function Hero({ fonts, palette, navigate }) {
               whiteSpace: "nowrap",
             }}
           >
-            {current.secondaryLabel}
+            {HERO_SECONDARY_LABEL}
           </button>
         </div>
       </div>
