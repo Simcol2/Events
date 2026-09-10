@@ -71,7 +71,7 @@ export default function PastEvents() {
                         Photo coming soon
                       </span>
                     </div>
-                    <p className="mt-3 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+                    <p className="mt-3 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
                       {beat.label}
                     </p>
                     <p className="mt-1 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>

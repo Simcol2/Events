@@ -68,7 +68,7 @@ function FullServiceIntro({ palette, fonts }) {
           "The snacks are set out.",
         ].map((item) => (
           <div key={item} className="flex items-center gap-2" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            <Sparkles size={13} color={palette.gold} className="flex-shrink-0" />
+            <Sparkles size={13} color={palette.goldDeep} className="flex-shrink-0" />
             <span className="text-sm">{item}</span>
           </div>
         ))}
@@ -91,7 +91,7 @@ function FullServiceIntro({ palette, fonts }) {
         ))}
       </div>
 
-      <p className="mt-7 text-lg italic" style={{ ...fonts.displayFont, color: palette.gold }}>
+      <p className="mt-7 text-lg italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
         You bring the people. We create the experience.
       </p>
     </div>
@@ -112,7 +112,7 @@ function AdditionalPricingNotes({ palette, fonts }) {
   ];
   return (
     <div className="mx-auto mt-6 max-w-3xl rounded-sm p-8 sm:p-10" style={{ border: `1px solid ${palette.line}` }}>
-      <p className="text-sm font-semibold tracking-[0.18em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+      <p className="text-sm font-semibold tracking-[0.18em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
         GOOD TO KNOW
       </p>
       <h3 className="mt-2 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
@@ -155,7 +155,7 @@ function ComingSoon({ eventType, palette, fonts, openPickerForBuilder }) {
   return (
     <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
       <div className="max-w-md text-center">
-        <Sparkles className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.gold }} />
+        <Sparkles className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.goldDeep }} />
         <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
           {eventType.label} is coming soon.
         </h1>
@@ -514,7 +514,7 @@ export default function PackageBuilder() {
     return (
       <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
         <div className="max-w-md text-center">
-          <CalendarDays className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.gold }} />
+          <CalendarDays className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.goldDeep }} />
           <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
             Let's start with your date.
           </h1>

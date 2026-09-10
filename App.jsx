@@ -28,6 +28,7 @@ import LeaveReview from "./pages/LeaveReview";
 import ScanAsset from "./pages/ScanAsset";
 import Admin from "./pages/Admin";
 import TutuTwirlsTea from "./pages/TutuTwirlsTea";
+import BabyShower from "./pages/BabyShower";
 
 // Nav order and the "primary CTA should be visually dominant" rule both
 // come from the Master Plan's navigation section - Catering and Display
@@ -41,7 +42,7 @@ const NAV = [
     path: "/package-builder",
     opensPicker: true,
     children: [
-      { label: "Baby Shower", path: "/package-builder", eventTypeId: "babyShower" },
+      { label: "Baby Shower", path: "/milestone-events/baby-shower", eventTypeId: "babyShower" },
       { label: "Engagement Shower", path: "/package-builder", eventTypeId: "engagement" },
     ],
   },
@@ -125,6 +126,7 @@ function AppRoutes() {
     "/past-events": { component: <PastEvents navigate={navigate} />, current: "past-events" },
     "/rental-guide": { component: <RentalGuide navigate={navigate} />, current: "rental-guide" },
     "/birthdays/tutu-twirls-tea": { component: <TutuTwirlsTea navigate={navigate} />, current: "birthdays" },
+    "/milestone-events/baby-shower": { component: <BabyShower navigate={navigate} />, current: "milestone-events" },
     "/reviews": { component: <Reviews navigate={navigate} />, current: "reviews" },
     "/review": { component: <LeaveReview navigate={navigate} />, current: "review" },
     "/scan": { component: <ScanAsset navigate={navigate} />, current: "scan" },

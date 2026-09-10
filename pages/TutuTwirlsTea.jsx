@@ -16,7 +16,7 @@ function SectionLabel({ children, palette, fonts }) {
   return (
     <p
       className="text-xs font-semibold tracking-[0.3em]"
-      style={{ ...fonts.bodyFont, color: palette.gold }}
+      style={{ ...fonts.bodyFont, color: palette.goldDeep }}
     >
       {children}
     </p>
@@ -41,7 +41,7 @@ function ImagePanel({ src, alt, className = "" }) {
 function Feature({ icon: Icon, title, children, palette, fonts }) {
   return (
     <div className="border-t pt-6" style={{ borderColor: palette.line }}>
-      <Icon size={20} strokeWidth={1.5} color={palette.gold} />
+      <Icon size={20} strokeWidth={1.5} color={palette.goldDeep} />
       <h3
         className="mt-4 text-2xl font-semibold"
         style={{ ...fonts.displayFont, color: palette.primaryDeep }}
@@ -102,7 +102,7 @@ export default function TutuTwirlsTea() {
 
               <p
                 className="mt-5 text-xl italic"
-                style={{ ...fonts.displayFont, color: palette.gold }}
+                style={{ ...fonts.displayFont, color: palette.goldDeep }}
               >
                 Tutu Twirls brings that feeling back.
               </p>
@@ -161,7 +161,7 @@ export default function TutuTwirlsTea() {
 
             <p
               className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.gold }}
+              style={{ ...fonts.displayFont, color: palette.goldDeep }}
             >
               Who decided dress-up was only for kids?
             </p>
@@ -192,7 +192,7 @@ export default function TutuTwirlsTea() {
 
             <p
               className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.gold }}
+              style={{ ...fonts.displayFont, color: palette.goldDeep }}
             >
               Because the best events are the ones where everyone is
               smiling.
@@ -230,14 +230,14 @@ export default function TutuTwirlsTea() {
 
             <p
               className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.gold }}
+              style={{ ...fonts.displayFont, color: palette.goldDeep }}
             >
               But the magic is in the transformation.
             </p>
 
             <p
               className="mt-6 text-sm font-semibold tracking-[0.18em]"
-              style={{ ...fonts.bodyFont, color: palette.gold }}
+              style={{ ...fonts.bodyFont, color: palette.goldDeep }}
             >
               A TUTU TWIRLS POP-UP MIGHT INCLUDE:
             </p>
@@ -302,7 +302,7 @@ export default function TutuTwirlsTea() {
 
             <p
               className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.gold }}
+              style={{ ...fonts.displayFont, color: palette.goldDeep }}
             >
               We arrive, style the space, set everything up, and pack it
               away when the fun is done.
@@ -336,7 +336,7 @@ export default function TutuTwirlsTea() {
 
           <p
             className="mt-5 text-xl italic"
-            style={{ ...fonts.displayFont, color: palette.gold }}
+            style={{ ...fonts.displayFont, color: palette.goldDeep }}
           >
             Dress-up should feel exciting, not limiting.
           </p>
@@ -468,7 +468,7 @@ export default function TutuTwirlsTea() {
               style={{ background: palette.primaryDeep }}
             >
               <div>
-                <SectionLabel palette={{ ...palette, gold: "#D7B77C" }} fonts={fonts}>
+                <SectionLabel palette={{ ...palette, goldDeep: "#D7B77C" }} fonts={fonts}>
                   THE TUTU TWIRLS FEELING
                 </SectionLabel>
 

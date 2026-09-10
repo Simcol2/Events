@@ -898,7 +898,7 @@ export default function RentalGuide() {
         </PolicySection>
 
         <div className="mt-4 rounded-xl p-8" style={{ background: `${palette.primary}0D`, border: `1px solid ${palette.line}` }}>
-          <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+          <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
             THE SHORT VERSION
           </p>
           <ul className="mt-4 space-y-2.5">

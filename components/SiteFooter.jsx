@@ -56,7 +56,7 @@ export default function SiteFooter({ navigate }) {
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
         <div className="grid gap-10 md:grid-cols-[1.2fr_.7fr_.7fr_.9fr]">
           <div>
-            <div className="text-sm font-semibold tracking-[0.4em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.4em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
               A SLICE OF G
             </div>
             <div className="mt-1 text-4xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
@@ -68,18 +68,18 @@ export default function SiteFooter({ navigate }) {
             </p>
             <div className="mt-5 space-y-2 text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
               <div className="flex items-center gap-2">
-                <MapPin size={14} color={palette.gold} />
+                <MapPin size={14} color={palette.goldDeep} />
                 {SERVICE_AREA_SHORT}
               </div>
               <div className="flex items-center gap-2">
-                <Mail size={14} color={palette.gold} />
+                <Mail size={14} color={palette.goldDeep} />
                 hello@asliceofgevents.com
               </div>
             </div>
           </div>
 
           <div>
-            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
               EXPLORE
             </div>
             <div className="mt-4 space-y-3 text-base" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
@@ -97,7 +97,7 @@ export default function SiteFooter({ navigate }) {
           </div>
 
           <div>
-            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
               MORE
             </div>
             <div className="mt-4 space-y-3 text-base" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
@@ -107,7 +107,7 @@ export default function SiteFooter({ navigate }) {
           </div>
 
           <div>
-            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+            <div className="text-sm font-semibold tracking-[0.22em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
               STAY IN THE LOOP
             </div>
             <p className="mt-4 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>

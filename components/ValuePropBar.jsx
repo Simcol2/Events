@@ -22,7 +22,7 @@ function Message({ palette, fonts }) {
       >
         INTERACTIVE GUEST EXPERIENCES
       </span>
-      <span className="mx-3" style={{ color: palette.gold }}>
+      <span className="mx-3" style={{ color: palette.goldDeep }}>
         &middot;
       </span>
       <span
@@ -31,7 +31,7 @@ function Message({ palette, fonts }) {
       >
         CUSTOM KEEPSAKES
       </span>
-      <span className="mx-3" style={{ color: palette.gold }}>
+      <span className="mx-3" style={{ color: palette.goldDeep }}>
         &middot;
       </span>
       {/* The service area belongs in the one strip that appears on every

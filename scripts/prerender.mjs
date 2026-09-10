@@ -27,6 +27,7 @@ const ROUTES = [
   "/faq",
   "/decor",
   "/birthdays/tutu-twirls-tea",
+  "/milestone-events/baby-shower",
   "/gifts",
   "/catering",
   "/package-builder",

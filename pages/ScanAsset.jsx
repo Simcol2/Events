@@ -127,7 +127,7 @@ export default function ScanAsset({ navigate }) {
         className="rounded-sm p-7 text-center"
         style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
       >
-        <AlertTriangle size={26} className="mx-auto" style={{ color: palette.gold }} />
+        <AlertTriangle size={26} className="mx-auto" style={{ color: palette.goldDeep }} />
         <h1 className="mt-4 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
           {state === "missing" ? "No asset with that code" : "Something went wrong"}
         </h1>
@@ -151,7 +151,7 @@ export default function ScanAsset({ navigate }) {
 
   return shell(
     <div>
-      <p className="text-sm font-semibold tracking-[0.28em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+      <p className="text-sm font-semibold tracking-[0.28em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
         {asset.code}
       </p>
       <h1 className="mt-2 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>

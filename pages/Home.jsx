@@ -126,7 +126,24 @@ function Hero({ fonts, palette, navigate }) {
           inset: 0,
           zIndex: 1,
           background:
-            "linear-gradient(180deg, rgba(25,15,20,.82) 0%, rgba(25,15,20,.68) 38%, rgba(25,15,20,.38) 72%, rgba(25,15,20,.18) 100%)",
+            "linear-gradient(180deg, rgba(20,12,16,.80) 0%, rgba(20,12,16,.72) 35%, rgba(20,12,16,.70) 65%, rgba(20,12,16,.74) 100%)",
+        }}
+      />
+
+      {/* A second, tighter scrim centered behind the text block itself.
+          The linear gradient above keeps the photo readable at the edges,
+          but on its own still lets a busy or light part of the rotating
+          photos show through directly behind the words (this is what made
+          the accent line unreadable against the mailbox photo). This darkens
+          just the text's own footprint, regardless of which photo is
+          showing. */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          background:
+            "radial-gradient(ellipse 640px 620px at 50% 48%, rgba(15,9,12,.42) 0%, rgba(15,9,12,0) 72%)",
         }}
       />
 
@@ -137,19 +154,20 @@ function Hero({ fonts, palette, navigate }) {
           width: "100%",
           maxWidth: "1000px",
           margin: "0 auto",
-          padding: "120px 32px 80px",
+          padding: "clamp(90px, 15vw, 120px) 28px clamp(56px, 10vw, 80px)",
           textAlign: "center",
         }}
       >
         <p
           style={{
             ...fonts.bodyFont,
-            maxWidth: "620px",
-            margin: "0 auto 1rem",
-            color: "#FDF6EEE6",
-            fontSize: "clamp(16px, 2.1vw, 19px)",
+            maxWidth: "560px",
+            margin: "0 auto 0.75rem",
+            color: "#FDF6EEC2",
+            fontSize: "clamp(13px, 1.6vw, 15px)",
             fontWeight: 600,
-            letterSpacing: "0.02em",
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
             lineHeight: 1.5,
           }}
         >
@@ -159,7 +177,7 @@ function Hero({ fonts, palette, navigate }) {
         <h1
           style={{
             ...fonts.displayFont,
-            margin: "0 auto 1.5rem",
+            margin: "0 auto 1.25rem",
             fontSize: "clamp(2rem, 5vw, 4.2rem)",
             fontWeight: 500,
             lineHeight: 1.15,
@@ -179,10 +197,10 @@ function Hero({ fonts, palette, navigate }) {
         <p
           style={{
             ...fonts.bodyFont,
-            maxWidth: "620px",
+            maxWidth: "580px",
             margin: "0 auto",
             color: "#FDF6EEE6",
-            fontSize: "clamp(18px, 2.6vw, 23px)",
+            fontSize: "clamp(16px, 2.1vw, 19px)",
             lineHeight: 1.6,
           }}
         >
@@ -193,8 +211,8 @@ function Hero({ fonts, palette, navigate }) {
           style={{
             ...fonts.displayFont,
             maxWidth: "560px",
-            margin: "1.25rem auto 0",
-            color: "#E8C77E",
+            margin: "1.1rem auto 0",
+            color: "#F2D9A3",
             fontSize: "clamp(17px, 2.2vw, 21px)",
             fontStyle: "italic",
             lineHeight: 1.5,
@@ -309,7 +327,7 @@ export default function Home({ navigate }) {
     }
     if (action === "babyShower") {
       chooseEventType("babyShower");
-      navigate("/experiences");
+      navigate("/milestone-events/baby-shower");
       return;
     }
     openPickerForBuilder();
@@ -392,7 +410,7 @@ export default function Home({ navigate }) {
                     >
                       {card.title}
                     </h3>
-                    <p className="mt-2 text-base italic" style={{ ...fonts.displayFont, color: palette.gold }}>
+                    <p className="mt-2 text-base italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
                       {card.tagline}
                     </p>
                     <p className="mt-3 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
@@ -476,7 +494,7 @@ export default function Home({ navigate }) {
             We are not here to create another pretty corner that guests walk
             past.
           </p>
-          <p className="mt-3 text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.gold }}>
+          <p className="mt-3 text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
             We create experiences that invite people in.
           </p>
 
@@ -507,7 +525,7 @@ export default function Home({ navigate }) {
           ═══════════════════════════════════════ */}
       <section style={{ background: palette.bg, padding: "80px 40px" }}>
         <div style={{ width: "100%", maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
-          <Sparkles className="mx-auto mb-4" size={22} strokeWidth={1.2} style={{ color: palette.gold }} />
+          <Sparkles className="mx-auto mb-4" size={22} strokeWidth={1.2} style={{ color: palette.goldDeep }} />
           <h2
             className="text-3xl font-semibold sm:text-4xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
@@ -525,7 +543,7 @@ export default function Home({ navigate }) {
             The moments that make people smile.
           </p>
 
-          <p className="mt-6 text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.gold }}>
+          <p className="mt-6 text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
             The ideas that make guests say, "Wait, this is so cool."
           </p>
 

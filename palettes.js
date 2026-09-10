@@ -40,6 +40,14 @@ export const PALETTES = [
     primaryDeep: "#154A31",
     accent: "#F0684B",
     gold: "#D9A441",
+    // A darker antique-gold for text set directly on the light bg/surface
+    // colors above. The bright `gold` reads clearly against a dark
+    // background (roughly 4.5:1 against primaryDeep) but drops to about
+    // 2:1 against this palette's own cream bg - unreadable for body-sized
+    // text. Use goldDeep for any gold-colored text (eyebrow labels, italic
+    // accent lines) that sits on bg/surface; keep `gold` for buttons,
+    // icons, and text on dark sections.
+    goldDeep: "#8C6417",
     ink: "#2E2A22",
     line: "#E7DFC8",
     muted: "#6A6353",
@@ -55,6 +63,7 @@ export const PALETTES = [
     primaryDeep: "#4E5A44",
     accent: "#C77B4E",
     gold: "#C9A227",
+    goldDeep: "#7A5A10",
     ink: "#3A342A",
     line: "#E4DCC8",
     muted: "#716A56",
@@ -70,6 +79,7 @@ export const PALETTES = [
     primaryDeep: "#3F4937",
     accent: "#C1523A",
     gold: "#C9A227",
+    goldDeep: "#7A5A10",
     ink: "#3A342A",
     line: "#E4DCC8",
     muted: "#716A56",
@@ -85,6 +95,7 @@ export const PALETTES = [
     primaryDeep: "#5F6B3F",
     accent: "#E24E7A",
     gold: "#C9A227",
+    goldDeep: "#7A5A10",
     ink: "#3A2A2A",
     line: "#F0DCD8",
     muted: "#785F5F",
@@ -100,6 +111,7 @@ export const PALETTES = [
     primaryDeep: "#5C1B22",
     accent: "#6B7A5E",
     gold: "#C9A227",
+    goldDeep: "#7A5A10",
     ink: "#362420",
     line: "#E8D9CC",
     muted: "#726157",
@@ -115,6 +127,7 @@ export const PALETTES = [
     primaryDeep: "#1B2A4A",
     accent: "#5A6B4C",
     gold: "#C9A227",
+    goldDeep: "#7A5A10",
     ink: "#26282E",
     line: "#DCDCD0",
     muted: "#616157",
@@ -130,6 +143,7 @@ export const PALETTES = [
     primaryDeep: "#B8305F",
     accent: "#5A6B4C",
     gold: "#C9A227",
+    goldDeep: "#7A5A10",
     ink: "#3A2A30",
     line: "#F0DCE4",
     muted: "#785F67",

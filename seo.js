@@ -100,6 +100,11 @@ export const ROUTE_SEO = {
     description:
       "A styled tutu dress-up and tea party birthday experience with a photo wall, kindness station and time capsule, available for celebrations in Toronto and the GTA.",
   },
+  "/milestone-events/baby-shower": {
+    title: "Baby Shower Experiences | Toronto & GTA Rentals",
+    description:
+      "Interactive baby shower experiences, keepsakes and guest gifts guests actually take part in, available to rent for celebrations across Toronto and the GTA.",
+  },
   "/gifts": {
     title: "Guest Gifts & Party Favours | Toronto & GTA Events",
     description:

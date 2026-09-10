@@ -80,10 +80,10 @@ export default function EventTypePicker({ navigate }) {
         </button>
 
         <div className="px-6 pb-8 pt-10 text-center sm:px-12">
-          <Heart className="mx-auto" size={22} strokeWidth={1.4} style={{ color: palette.gold }} />
+          <Heart className="mx-auto" size={22} strokeWidth={1.4} style={{ color: palette.goldDeep }} />
           <p
             className="mt-4 text-sm font-semibold tracking-[0.3em]"
-            style={{ ...fonts.bodyFont, color: palette.gold }}
+            style={{ ...fonts.bodyFont, color: palette.goldDeep }}
           >
             LET'S START WITH THE CELEBRATION
           </p>

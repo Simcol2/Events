@@ -37,8 +37,8 @@ function StarPicker({ value, onChange, palette, fonts }) {
               size={34}
               strokeWidth={1.5}
               style={{
-                color: n <= active ? palette.gold : palette.line,
-                fill: n <= active ? palette.gold : "transparent",
+                color: n <= active ? palette.goldDeep : palette.line,
+                fill: n <= active ? palette.goldDeep : "transparent",
               }}
             />
           </button>
@@ -257,7 +257,7 @@ export default function LeaveReview({ navigate }) {
 
   return shell(
     <>
-      <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+      <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
         A SLICE OF G EVENTS
       </p>
       <h1 className="mt-3 text-4xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>

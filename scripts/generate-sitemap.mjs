@@ -18,6 +18,7 @@ const PRIORITY = {
   "/display-options": "0.9",
   "/package-builder": "0.9",
   "/experiences": "0.8",
+  "/milestone-events/baby-shower": "0.9",
   "/gifts": "0.8",
   "/catering": "0.8",
   "/how-it-works": "0.7",

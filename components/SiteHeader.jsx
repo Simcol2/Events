@@ -39,7 +39,7 @@ export default function SiteHeader({ current, navigate, nav }) {
 
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <button onClick={() => go({ path: "/" })} className="group text-left">
-          <div className="font-[Jost] text-sm font-semibold tracking-[0.42em]" style={{ color: palette.gold }}>
+          <div className="font-[Jost] text-sm font-semibold tracking-[0.42em]" style={{ color: palette.goldDeep }}>
             A SLICE OF G
           </div>
           <div
@@ -154,7 +154,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                   >
                     {item.label.toUpperCase()}
                     {item.children && (
-                      <span aria-hidden="true" style={{ color: palette.gold }}>
+                      <span aria-hidden="true" style={{ color: palette.goldDeep }}>
                         {isExpanded ? "−" : "+"}
                       </span>
                     )}

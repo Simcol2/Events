@@ -14,7 +14,7 @@ function CategoryLabel({ children, palette, fonts }) {
   return (
     <p
       className="text-xs font-semibold tracking-[0.3em]"
-      style={{ ...fonts.bodyFont, color: palette.gold }}
+      style={{ ...fonts.bodyFont, color: palette.goldDeep }}
     >
       {children}
     </p>
@@ -26,7 +26,7 @@ function BulletList({ items, palette, fonts }) {
     <div className="mt-5 grid gap-3 sm:grid-cols-2">
       {items.map((item) => (
         <div key={item} className="flex items-center gap-3 border-b pb-3" style={{ borderColor: palette.line }}>
-          <Sparkles size={14} color={palette.gold} />
+          <Sparkles size={14} color={palette.goldDeep} />
           <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>
             {item}
           </span>
@@ -57,7 +57,7 @@ function ExperienceBlock({
         {title}
       </h3>
       {tagline && (
-        <p className="mt-2 text-lg italic" style={{ ...fonts.displayFont, color: palette.gold }}>
+        <p className="mt-2 text-lg italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
           {tagline}
         </p>
       )}
@@ -70,14 +70,14 @@ function ExperienceBlock({
       </div>
       {listLabel && listItems && (
         <>
-          <p className="mt-6 text-sm font-semibold tracking-[0.18em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
+          <p className="mt-6 text-sm font-semibold tracking-[0.18em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
             {listLabel}
           </p>
           <BulletList items={listItems} palette={palette} fonts={fonts} />
         </>
       )}
       {accent && (
-        <p className="mt-6 text-lg italic leading-relaxed" style={{ ...fonts.displayFont, color: palette.gold }}>
+        <p className="mt-6 text-lg italic leading-relaxed" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
           {accent}
         </p>
       )}
@@ -342,7 +342,7 @@ export default function Experiences({ navigate }) {
               <div className="mt-4 space-y-2">
                 {combo.items.map((item) => (
                   <div key={item} className="flex items-center gap-2">
-                    <Sparkles size={13} color={palette.gold} />
+                    <Sparkles size={13} color={palette.goldDeep} />
                     <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>
                       {item}
                     </span>
@@ -353,7 +353,7 @@ export default function Experiences({ navigate }) {
           ))}
         </div>
 
-        <p className="mx-auto mt-14 max-w-2xl text-center text-lg italic leading-8" style={{ ...fonts.displayFont, color: palette.gold }}>
+        <p className="mx-auto mt-14 max-w-2xl text-center text-lg italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
           The possibilities are endless because your celebration should not
           feel like everyone else's.
         </p>

@@ -60,7 +60,7 @@ function MenuCard({ item, index, palette, onOrder }) {
         )}
       </ArchFrame>
 
-      <p className="mt-5 font-[Jost] text-sm font-semibold tracking-[0.25em]" style={{ color: palette.gold }}>
+      <p className="mt-5 font-[Jost] text-sm font-semibold tracking-[0.25em]" style={{ color: palette.goldDeep }}>
         {`NO. ${String(index + 1).padStart(2, "0")}`}
       </p>
       <h3 className="mt-1 font-['Cormorant_Garamond'] text-3xl font-semibold italic" style={{ color: palette.ink }}>
@@ -261,7 +261,7 @@ export default function Catering() {
       <section id="menu" className="border-t px-5 py-20 sm:px-8" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-6xl">
           <div className="mb-4 text-center">
-            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.goldDeep }}>
               THE MENU
             </p>
             <h2 className="mt-2 text-4xl font-semibold" style={{ ...fonts.displayFont, color: palette.ink }}>
@@ -317,7 +317,7 @@ export default function Catering() {
       <section id="gifts" className="border-t px-5 py-20 sm:px-8" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-5xl">
           <div className="mb-3 flex items-center justify-between">
-            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
+            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.goldDeep }}>
               GROWN FOLKS LOOT BAGS
             </p>
             <button
@@ -380,7 +380,7 @@ export default function Catering() {
           </p>
           <h2 className="mx-auto mt-3 max-w-2xl text-4xl font-semibold leading-[1.15] sm:text-5xl" style={{ ...fonts.displayFont, color: palette.ink }}>
             {RUM_CAKE_STORY.headingLine}{" "}
-            <span style={{ fontStyle: "italic", color: palette.gold }}>{RUM_CAKE_STORY.headingAccent}</span>
+            <span style={{ fontStyle: "italic", color: palette.goldDeep }}>{RUM_CAKE_STORY.headingAccent}</span>
           </h2>
           <p className="mx-auto mt-4 max-w-md font-['Cormorant_Garamond'] text-xl italic" style={{ color: palette.muted }}>
             {RUM_CAKE_STORY.subtitle}

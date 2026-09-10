@@ -18,8 +18,8 @@ function Stars({ rating, size = 16, palette }) {
           size={size}
           strokeWidth={1.5}
           style={{
-            color: n <= rating ? palette.gold : palette.line,
-            fill: n <= rating ? palette.gold : "transparent",
+            color: n <= rating ? palette.goldDeep : palette.line,
+            fill: n <= rating ? palette.goldDeep : "transparent",
           }}
         />
       ))}
@@ -111,7 +111,7 @@ export default function Reviews() {
             className="rounded-sm p-10 text-center"
             style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
           >
-            <Quote size={26} className="mx-auto" style={{ color: palette.gold }} />
+            <Quote size={26} className="mx-auto" style={{ color: palette.goldDeep }} />
             <h2 className="mt-4 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
               The first reviews are on their way
             </h2>
