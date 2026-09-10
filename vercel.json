@@ -9,7 +9,7 @@
     { "source": "/faq", "destination": "/faq/index.html" },
     { "source": "/decor", "destination": "/decor/index.html" },
     { "source": "/birthdays/tutu-twirls-tea", "destination": "/birthdays/tutu-twirls-tea/index.html" },
-    { "source": "/activities", "destination": "/activities/index.html" },
+    { "source": "/milestone-events/baby-shower", "destination": "/milestone-events/baby-shower/index.html" },
     { "source": "/gifts", "destination": "/gifts/index.html" },
     { "source": "/catering", "destination": "/catering/index.html" },
     { "source": "/package-builder", "destination": "/package-builder/index.html" },
