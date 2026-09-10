@@ -100,11 +100,6 @@ export const ROUTE_SEO = {
     description:
       "A styled tutu dress-up and tea party birthday experience with a photo wall, kindness station and time capsule, available for celebrations in Toronto and the GTA.",
   },
-  "/activities": {
-    title: "Party Games & Guest Activities to Rent | Toronto",
-    description:
-      "Interactive party games and guest activities available to rent for baby showers, birthdays and celebrations across Toronto and the Greater Toronto Area.",
-  },
   "/gifts": {
     title: "Guest Gifts & Party Favours | Toronto & GTA Events",
     description:

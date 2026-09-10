@@ -13,7 +13,6 @@ import { CartProvider } from "./CartContext";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
-import Activities from "./pages/Activities";
 import Gifts from "./pages/Gifts";
 import HowItWorks from "./pages/HowItWorks";
 import Experiences from "./pages/Experiences";
@@ -63,7 +62,6 @@ const NAV = [
       { label: "Gifts", path: "/gifts" },
     ],
   },
-  { label: "Activities", path: "/activities" },
   { label: "Experiences", path: "/experiences" },
   { label: "Rental Guide", path: "/rental-guide" },
   { label: "Catering", path: "/catering" },
@@ -116,7 +114,6 @@ function AppRoutes() {
   const routeMap = {
     "/": { component: <Home navigate={navigate} />, current: "home" },
     "/decor": { component: <Decor navigate={navigate} />, current: "decor" },
-    "/activities": { component: <Activities navigate={navigate} />, current: "activities" },
     "/gifts": { component: <Gifts navigate={navigate} />, current: "gifts" },
     "/catering": { component: <Catering navigate={navigate} />, current: "catering" },
     "/how-it-works": { component: <HowItWorks navigate={navigate} />, current: "how-it-works" },
