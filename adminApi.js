@@ -40,28 +40,28 @@ async function request(path, { method = "GET", body } = {}) {
 }
 
 export const adminApi = {
-  listItems: () => request("/api/admin-items").then((d) => (Array.isArray(d.items) ? d.items : [])),
-  createItem: (fields) => request("/api/admin-items", { method: "POST", body: fields }).then((d) => d.item),
-  updateItem: (id, fields) => request("/api/admin-items", { method: "PUT", body: { id, ...fields } }).then((d) => d.item),
-  deleteItem: (id) => request("/api/admin-items", { method: "DELETE", body: { id } }),
+  listItems: () => request("/api/admin?resource=items").then((d) => (Array.isArray(d.items) ? d.items : [])),
+  createItem: (fields) => request("/api/admin?resource=items", { method: "POST", body: fields }).then((d) => d.item),
+  updateItem: (id, fields) => request("/api/admin?resource=items", { method: "PUT", body: { id, ...fields } }).then((d) => d.item),
+  deleteItem: (id) => request("/api/admin?resource=items", { method: "DELETE", body: { id } }),
 
-  listAssets: () => request("/api/admin-assets"),
-  createAssets: (fields) => request("/api/admin-assets", { method: "POST", body: fields }).then((d) => d.assets),
-  updateAsset: (id, fields) => request("/api/admin-assets", { method: "PUT", body: { id, ...fields } }).then((d) => d.asset),
-  deleteAsset: (id) => request("/api/admin-assets", { method: "DELETE", body: { id } }),
+  listAssets: () => request("/api/admin?resource=assets"),
+  createAssets: (fields) => request("/api/admin?resource=assets", { method: "POST", body: fields }).then((d) => d.assets),
+  updateAsset: (id, fields) => request("/api/admin?resource=assets", { method: "PUT", body: { id, ...fields } }).then((d) => d.asset),
+  deleteAsset: (id) => request("/api/admin?resource=assets", { method: "DELETE", body: { id } }),
 
-  listBookings: () => request("/api/admin-bookings"),
+  listBookings: () => request("/api/admin?resource=bookings"),
   updateBookingStatus: (id, kind, status) =>
-    request("/api/admin-bookings", { method: "PUT", body: { id, kind, status } }),
+    request("/api/admin?resource=bookings", { method: "PUT", body: { id, kind, status } }),
 
-  listReviews: () => request("/api/admin-reviews").then((d) => (Array.isArray(d.reviews) ? d.reviews : [])),
-  updateReview: (id, fields) => request("/api/admin-reviews", { method: "PUT", body: { id, ...fields } }).then((d) => d.review),
-  deleteReview: (id) => request("/api/admin-reviews", { method: "DELETE", body: { id } }),
-  updateInvite: (inviteId, fields) => request("/api/admin-reviews", { method: "PUT", body: { inviteId, ...fields } }).then((d) => d.invite),
+  listReviews: () => request("/api/admin?resource=reviews").then((d) => (Array.isArray(d.reviews) ? d.reviews : [])),
+  updateReview: (id, fields) => request("/api/admin?resource=reviews", { method: "PUT", body: { id, ...fields } }).then((d) => d.review),
+  deleteReview: (id) => request("/api/admin?resource=reviews", { method: "DELETE", body: { id } }),
+  updateInvite: (inviteId, fields) => request("/api/admin?resource=reviews", { method: "PUT", body: { inviteId, ...fields } }).then((d) => d.invite),
   sendDueReviewEmails: () => request("/api/send-review-requests", { method: "POST" }),
 
-  listGifts: () => request("/api/admin-gifts").then((d) => (Array.isArray(d.gifts) ? d.gifts : [])),
-  createGift: (fields) => request("/api/admin-gifts", { method: "POST", body: fields }).then((d) => d.gift),
-  updateGift: (id, fields) => request("/api/admin-gifts", { method: "PUT", body: { id, ...fields } }).then((d) => d.gift),
-  deleteGift: (id) => request("/api/admin-gifts", { method: "DELETE", body: { id } }),
+  listGifts: () => request("/api/admin?resource=gifts").then((d) => (Array.isArray(d.gifts) ? d.gifts : [])),
+  createGift: (fields) => request("/api/admin?resource=gifts", { method: "POST", body: fields }).then((d) => d.gift),
+  updateGift: (id, fields) => request("/api/admin?resource=gifts", { method: "PUT", body: { id, ...fields } }).then((d) => d.gift),
+  deleteGift: (id) => request("/api/admin?resource=gifts", { method: "DELETE", body: { id } }),
 };

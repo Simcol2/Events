@@ -20,7 +20,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
       for (const file of Array.from(files)) {
         const resized = await resizeImageFile(file);
         const base64 = await blobToBase64(resized);
-        const res = await fetch("/api/admin-upload", {
+        const res = await fetch("/api/admin?resource=upload", {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-Admin-Passcode": getStoredPasscode() },
           body: JSON.stringify({
