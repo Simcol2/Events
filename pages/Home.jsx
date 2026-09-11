@@ -57,8 +57,8 @@ const HERO_ACCENT_LINE = "Because the best celebrations are the ones where every
 const HERO_CTA_LABEL = "EXPLORE EXPERIENCES";
 const HERO_CTA_TARGET = "/experiences";
 
-function Blob({ style }) {
-  return <div style={{ position: "absolute", pointerEvents: "none", ...style }} />;
+function Blob({ style, className }) {
+  return <div className={className} style={{ position: "absolute", pointerEvents: "none", ...style }} />;
 }
 
 function Hero({ fonts, palette, navigate }) {
@@ -68,62 +68,55 @@ function Hero({ fonts, palette, navigate }) {
         position: "relative",
         overflow: "hidden",
         background: palette.bg,
-        padding: "56px 24px 80px",
+        padding: "56px 24px 64px",
       }}
     >
-      {/* Organic accent shapes, the same trio as the reference direction:
-          a deep emerald arch, a ruby blob, and a small brass-ringed dot. */}
+      {/* Organic accent shapes, the same trio as the reference direction -
+          hidden below lg, where there's no second column to keep them
+          clear of the text, so they never sit on top of a word. */}
       <Blob
+        className="hidden lg:block shape-in"
         style={{
-          width: "min(46vw, 420px)",
-          height: "min(46vw, 420px)",
-          top: "-8%",
-          right: "-6%",
+          width: "min(30vw, 340px)",
+          height: "min(30vw, 340px)",
+          top: "-6%",
+          right: "-4%",
           background: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
           border: `3px solid ${palette.gold}`,
           borderRadius: "45% 45% 8% 8%",
           zIndex: 0,
+          animationDelay: "0.1s",
         }}
       />
       <Blob
+        className="shape-in"
         style={{
-          width: "min(16vw, 150px)",
-          height: "min(15vw, 140px)",
-          bottom: "6%",
-          left: "-3%",
+          width: "min(13vw, 120px)",
+          height: "min(12vw, 110px)",
+          bottom: "4%",
+          left: "-2%",
           background: "linear-gradient(135deg, #F03C7E 0%, #B60D46 100%)",
           borderRadius: "41% 59% 37% 63% / 55% 40% 60% 45%",
           opacity: 0.85,
           zIndex: 0,
-        }}
-      />
-      <Blob
-        style={{
-          width: "min(9vw, 96px)",
-          height: "min(9vw, 96px)",
-          top: "38%",
-          right: "16%",
-          background: "linear-gradient(140deg, #FFDE6E 0%, #C99A2E 100%)",
-          border: `3px solid ${palette.gold}`,
-          borderRadius: "50%",
-          zIndex: 0,
-          display: "none",
+          animationDelay: "0.3s",
         }}
       />
 
       <div
-        className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10"
+        className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10"
         style={{ position: "relative", zIndex: 2 }}
       >
         <div className="max-w-xl">
           <span
-            className="inline-block"
+            className="inline-block shape-in"
             style={{
               ...fonts.scriptFont,
               fontSize: "17px",
               color: palette.accent,
               transform: "rotate(-3deg)",
               marginBottom: "10px",
+              animationDelay: "0.05s",
             }}
           >
             {HERO_KICKER}
@@ -227,10 +220,12 @@ function Hero({ fonts, palette, navigate }) {
           </div>
         </div>
 
-        {/* Polaroid collage, layered over the blobs */}
-        <div className="relative mx-auto hidden h-[420px] w-full max-w-[420px] sm:block lg:h-[480px]">
+        {/* Polaroid collage - stacks below the text on narrow screens
+            instead of disappearing, so mobile visitors get the same
+            playful moment as desktop. */}
+        <div className="relative mx-auto mt-6 h-[360px] w-full max-w-[380px] sm:h-[420px] sm:max-w-[420px] lg:mt-0 lg:h-[480px]">
           <div
-            className="absolute overflow-hidden bg-white shadow-xl"
+            className="shape-in-rot absolute overflow-hidden bg-white shadow-xl"
             style={{
               width: "58%",
               aspectRatio: "4/4.6",
@@ -239,12 +234,14 @@ function Hero({ fonts, palette, navigate }) {
               padding: "10px 10px 34px",
               transform: "rotate(-4deg)",
               borderRadius: "2px",
+              "--rot": "-4deg",
+              animationDelay: "0.5s",
             }}
           >
             <img src={essentialsImage} alt="Baby shower experience by A Slice of G Events" className="h-full w-full object-cover" />
           </div>
           <div
-            className="absolute overflow-hidden bg-white shadow-xl"
+            className="shape-in-rot absolute overflow-hidden bg-white shadow-xl"
             style={{
               width: "50%",
               aspectRatio: "4/4.6",
@@ -254,12 +251,14 @@ function Hero({ fonts, palette, navigate }) {
               transform: "rotate(5deg)",
               borderRadius: "2px",
               zIndex: 2,
+              "--rot": "5deg",
+              animationDelay: "0.65s",
             }}
           >
             <img src={TUTU_IMAGE} alt="Tutu Twirls pop-up dress-up experience" className="h-full w-full object-cover" />
           </div>
           <div
-            className="absolute overflow-hidden bg-white shadow-xl"
+            className="shape-in-rot absolute overflow-hidden bg-white shadow-xl"
             style={{
               width: "44%",
               aspectRatio: "4/4.6",
@@ -268,20 +267,22 @@ function Hero({ fonts, palette, navigate }) {
               padding: "10px 10px 34px",
               transform: "rotate(2.5deg)",
               borderRadius: "2px",
+              "--rot": "2.5deg",
+              animationDelay: "0.8s",
             }}
           >
             <img src={wallPuzzleEngagementPhoto} alt="Guest-built keepsake at a milestone celebration" className="h-full w-full object-cover" />
           </div>
 
           <span
-            className="absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
-            style={{ top: "44%", left: "-2%", color: "#2451D9", transform: "rotate(-5deg)" }}
+            className="shape-in-rot absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
+            style={{ top: "44%", left: "-2%", color: "#2451D9", transform: "rotate(-5deg)", "--rot": "-5deg", animationDelay: "0.95s" }}
           >
             custom keepsakes
           </span>
           <span
-            className="absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
-            style={{ bottom: "2%", right: "4%", color: palette.accent, transform: "rotate(6deg)" }}
+            className="shape-in-rot absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
+            style={{ bottom: "2%", right: "4%", color: palette.accent, transform: "rotate(6deg)", "--rot": "6deg", animationDelay: "1.05s" }}
           >
             tutu pop-ups
           </span>
@@ -328,21 +329,33 @@ const HOW_IT_WORKS_STEPS = [
     icon: CalendarHeart,
     title: "Choose your experience",
     body: "Start with one of our signature experiences or tell us what you are imagining.",
+    tint: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
+    iconColor: "#FFFFFF",
+    rotate: "-3deg",
   },
   {
     icon: Truck,
     title: "We bring the pieces",
     body: "We provide the interactive elements, styled details, and thoughtful touches that bring the experience to life.",
+    tint: "linear-gradient(140deg, #FFDE6E 0%, #C99A2E 100%)",
+    iconColor: "#12201A",
+    rotate: "2deg",
   },
   {
     icon: Users,
     title: "Your guests take part",
     body: "They play, connect, create, and contribute to the moment.",
+    tint: "linear-gradient(150deg, #D3B9F2 0%, #8F63C9 100%)",
+    iconColor: "#12201A",
+    rotate: "-2deg",
   },
   {
     icon: Gift,
     title: "You keep the memories",
     body: "Photos, messages, keepsakes, and stories that continue long after the celebration ends.",
+    tint: "linear-gradient(135deg, #F03C7E 0%, #B60D46 100%)",
+    iconColor: "#FFFFFF",
+    rotate: "3deg",
   },
 ];
 
@@ -513,38 +526,59 @@ export default function Home({ navigate }) {
       {/* ═══════════════════════════════════════
           HOW IT WORKS
           ═══════════════════════════════════════ */}
-      <section style={{ background: palette.bg, padding: "80px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "1000px", margin: "0 auto" }}>
+      <section style={{ background: palette.bg, padding: "90px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto" }}>
           <h2
-            className="mb-12 text-center text-3xl font-semibold sm:text-4xl"
+            className="text-center text-3xl font-semibold sm:text-4xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
             How it works
           </h2>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <span
+            className="mx-auto mt-2 block text-center"
+            style={{ ...fonts.scriptFont, fontSize: "16px", color: palette.accent, transform: "rotate(-2deg)" }}
+          >
+            (it's easier than picking a theme)
+          </span>
+
+          <div className="mt-16 grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
             {HOW_IT_WORKS_STEPS.map((step, i) => {
               const Icon = step.icon;
               return (
-                <div key={step.title} className="text-center sm:text-left">
-                  <div
-                    className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl sm:mx-0"
-                    style={{ background: `${palette.accent}1F` }}
-                  >
-                    <Icon size={20} color={palette.accent} strokeWidth={1.8} />
+                <Reveal key={step.title} delay={i * 100}>
+                  <div className="relative text-center">
+                    <div
+                      className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-[26px] shadow-lg"
+                      style={{ background: step.tint, transform: `rotate(${step.rotate})` }}
+                    >
+                      <Icon size={30} color={step.iconColor} strokeWidth={1.8} />
+                      <span
+                        className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold shadow-md"
+                        style={{
+                          ...fonts.displayFont,
+                          background: palette.surface,
+                          color: palette.primaryDeep,
+                          border: `2px solid ${palette.gold}`,
+                          transform: `rotate(${step.rotate})`,
+                        }}
+                      >
+                        {i + 1}
+                      </span>
+                    </div>
+                    <p
+                      className="mt-5 text-lg font-semibold"
+                      style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+                    >
+                      {step.title}
+                    </p>
+                    <p
+                      className="mx-auto mt-2 max-w-[220px] text-base leading-relaxed"
+                      style={{ ...fonts.bodyFont, color: palette.muted }}
+                    >
+                      {step.body}
+                    </p>
                   </div>
-                  <p
-                    className="mt-3 text-base font-semibold"
-                    style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-                  >
-                    {i + 1}. {step.title}
-                  </p>
-                  <p
-                    className="mt-1.5 text-base leading-relaxed"
-                    style={{ ...fonts.bodyFont, color: palette.muted }}
-                  >
-                    {step.body}
-                  </p>
-                </div>
+                </Reveal>
               );
             })}
           </div>

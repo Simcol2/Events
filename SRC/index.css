@@ -1,21 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@400;500;600&family=Parisienne&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
-  font-family: 'Jost', sans-serif;
-  background: #FAF6ED;
-  color: #3A342A;
+  font-family: 'Space Grotesk', sans-serif;
+  background: #FCFBF7;
+  color: #12201A;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
 
 html {
   scroll-behavior: smooth;
-  background: #FAF6ED;
+  background: #FCFBF7;
 }
 
 html, body, #root {
@@ -29,7 +27,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #FAF6ED;
+  background: #FCFBF7;
 }
 
 button,
@@ -63,8 +61,8 @@ button {
 }
 
 ::selection {
-  background: #D9DFD0;
-  color: #4E5A44;
+  background: #D6E8DD;
+  color: #0B4933;
 }
 
 @keyframes marquee-scroll {
@@ -78,4 +76,30 @@ button {
 
 .marquee-track {
   animation: marquee-scroll 22s linear infinite;
+}
+
+/* Entry animation for the hero's blob shapes and polaroid collage - each
+   piece fades/scales/rotates in with its own delay (set inline per
+   element via animation-delay), matching the reference direction's
+   staggered "pieces landing" feel instead of the page just appearing. */
+@keyframes shapeIn {
+  from { opacity: 0; transform: scale(0.85) translateY(14px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes shapeInRot {
+  from { opacity: 0; transform: scale(0.85) translateY(14px) rotate(var(--rot, 0deg)); }
+  to { opacity: 1; transform: scale(1) translateY(0) rotate(var(--rot, 0deg)); }
+}
+.shape-in {
+  animation: shapeIn 0.9s cubic-bezier(.2,.7,.3,1) both;
+}
+.shape-in-rot {
+  animation: shapeInRot 0.8s cubic-bezier(.2,.7,.3,1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shape-in, .shape-in-rot {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
