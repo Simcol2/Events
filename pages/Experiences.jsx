@@ -305,6 +305,58 @@ export default function Experiences({ navigate }) {
         />
       </section>
 
+      {/* "WAIT, THIS IS SO COOL" QUOTE BAND */}
+      <section
+        className="relative overflow-hidden text-center"
+        style={{ background: palette.primaryDeep, padding: "90px 40px" }}
+      >
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute select-none whitespace-nowrap"
+          style={{
+            ...fonts.scriptFont,
+            fontSize: "clamp(60px, 14vw, 160px)",
+            color: "#FFFFFF",
+            opacity: 0.06,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%) rotate(-4deg)",
+          }}
+        >
+          everyday magic
+        </span>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute rounded-full"
+          style={{
+            width: "min(50vw, 420px)",
+            height: "min(50vw, 420px)",
+            top: "-15%",
+            left: "-12%",
+            background: palette.gold,
+            opacity: 0.14,
+          }}
+        />
+
+        <div className="relative mx-auto max-w-2xl">
+          <p
+            className="text-2xl leading-tight sm:text-4xl"
+            style={{ ...fonts.displayFont, fontStyle: "italic", color: "#FFFFFF" }}
+          >
+            "Wait, this is so cool."
+            <br />
+            The reaction we design every piece for.
+          </p>
+          <button
+            onClick={() => openPickerForBuilder()}
+            className="mt-9 inline-flex items-center gap-3 rounded-full px-8 py-4 text-sm font-semibold tracking-[0.1em] transition-transform hover:-translate-y-0.5"
+            style={{ ...fonts.bodyFont, background: "#FFFFFF", color: palette.primaryDeep, textTransform: "uppercase" }}
+          >
+            Start Planning
+          </button>
+        </div>
+      </section>
+
       {/* BUILD YOUR OWN EXPERIENCE */}
       <section className="px-6 py-20 sm:px-10 lg:py-28">
         <div className="mx-auto max-w-5xl text-center">

@@ -95,19 +95,20 @@ function Hero({ fonts, palette, navigate }) {
 
       <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr]">
         <div className="max-w-xl">
-          <p
+          <span
+            className="inline-block"
             style={{
-              ...fonts.bodyFont,
-              color: palette.primary,
-              fontSize: "12px",
-              fontWeight: 700,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
+              ...fonts.displayFont,
+              fontStyle: "italic",
+              fontWeight: 500,
+              fontSize: "clamp(28px, 4.4vw, 40px)",
+              color: palette.accent,
+              transform: "rotate(-3deg)",
               marginBottom: "18px",
             }}
           >
-            Toronto & the GTA
-          </p>
+            psst... Toronto & the GTA
+          </span>
 
           <h1
             style={{
