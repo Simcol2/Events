@@ -71,23 +71,11 @@ function Hero({ fonts, palette, navigate }) {
         padding: "56px 24px 64px",
       }}
     >
-      {/* Organic accent shapes, the same trio as the reference direction -
-          hidden below lg, where there's no second column to keep them
-          clear of the text, so they never sit on top of a word. */}
-      <Blob
-        className="hidden lg:block shape-in"
-        style={{
-          width: "min(30vw, 340px)",
-          height: "min(30vw, 340px)",
-          top: "-6%",
-          right: "-4%",
-          background: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
-          border: `3px solid ${palette.gold}`,
-          borderRadius: "45% 45% 8% 8%",
-          zIndex: 0,
-          animationDelay: "0.1s",
-        }}
-      />
+      {/* A small pink blob peeking from the hero's own edge, clear of the
+          text column at every width. The large arch shape lives with the
+          polaroid collage below instead, since that's the pairing the
+          reference direction actually shows - shapes framing the photos,
+          not floating alone over a paragraph. */}
       <Blob
         className="shape-in"
         style={{
@@ -111,11 +99,13 @@ function Hero({ fonts, palette, navigate }) {
           <span
             className="inline-block shape-in"
             style={{
-              ...fonts.scriptFont,
-              fontSize: "17px",
+              ...fonts.displayFont,
+              fontStyle: "italic",
+              fontWeight: 500,
+              fontSize: "clamp(22px, 3.4vw, 30px)",
               color: palette.accent,
               transform: "rotate(-3deg)",
-              marginBottom: "10px",
+              marginBottom: "12px",
               animationDelay: "0.05s",
             }}
           >
@@ -222,8 +212,24 @@ function Hero({ fonts, palette, navigate }) {
 
         {/* Polaroid collage - stacks below the text on narrow screens
             instead of disappearing, so mobile visitors get the same
-            playful moment as desktop. */}
+            playful moment as desktop. The arch shape lives in here too,
+            scoped to this container so it always frames the photos and
+            never drifts over the text column at any width. */}
         <div className="relative mx-auto mt-6 h-[360px] w-full max-w-[380px] sm:h-[420px] sm:max-w-[420px] lg:mt-0 lg:h-[480px]">
+          <Blob
+            className="shape-in"
+            style={{
+              width: "58%",
+              height: "62%",
+              top: "-8%",
+              right: "-6%",
+              background: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
+              border: `3px solid ${palette.gold}`,
+              borderRadius: "45% 45% 8% 8%",
+              zIndex: 0,
+              animationDelay: "0.1s",
+            }}
+          />
           <div
             className="shape-in-rot absolute overflow-hidden bg-white shadow-xl"
             style={{
@@ -671,9 +677,8 @@ export default function Home({ navigate }) {
             The moments that make people smile.
           </p>
 
-          <p className="mt-6 text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-            The ideas that make guests say, "Wait, this is so cool." That's
-            the reaction we design every piece for.
+          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            The ideas that make guests say, "Wait, this is so cool."
           </p>
 
           <p
@@ -683,6 +688,58 @@ export default function Home({ navigate }) {
             From playful dress-up experiences to meaningful keepsakes,
             everything we create is designed to help people connect.
           </p>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          "WAIT, THIS IS SO COOL" QUOTE BAND
+          ═══════════════════════════════════════ */}
+      <section
+        className="relative overflow-hidden text-center"
+        style={{ background: palette.primaryDeep, padding: "90px 40px" }}
+      >
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute select-none whitespace-nowrap"
+          style={{
+            ...fonts.scriptFont,
+            fontSize: "clamp(60px, 14vw, 160px)",
+            color: "#FFFFFF",
+            opacity: 0.06,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%) rotate(-4deg)",
+          }}
+        >
+          everyday magic
+        </span>
+        <Blob
+          style={{
+            width: "min(50vw, 420px)",
+            height: "min(50vw, 420px)",
+            top: "-15%",
+            left: "-12%",
+            background: palette.gold,
+            opacity: 0.14,
+            borderRadius: "50%",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-2xl">
+          <p
+            className="text-2xl leading-tight sm:text-4xl"
+            style={{ ...fonts.displayFont, fontStyle: "italic", color: "#FFFFFF" }}
+          >
+            "Wait, this is so cool." That's the reaction we design every
+            piece for.
+          </p>
+          <button
+            onClick={() => openPickerForBuilder()}
+            className="mt-9 inline-flex items-center gap-3 rounded-full px-8 py-4 text-sm font-semibold tracking-[0.1em] transition-transform hover:-translate-y-0.5"
+            style={{ ...fonts.bodyFont, background: "#FFFFFF", color: palette.primaryDeep, textTransform: "uppercase" }}
+          >
+            Start Planning
+          </button>
         </div>
       </section>
 
