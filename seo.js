@@ -96,7 +96,7 @@ export const ROUTE_SEO = {
       "Rental minimums, security deposits, delivery, pickup and damage policies for event rentals from A Slice of G Events in Toronto and the GTA.",
   },
   "/birthdays/tutu-twirls-tea": {
-    title: "Tutu Twirls & Tea Birthday Party | Toronto & GTA",
+    title: "Tutu Twirls Birthday Party | Toronto & GTA",
     description:
       "A styled tutu dress-up and tea party birthday experience with a photo wall, kindness station and time capsule, available for celebrations in Toronto and the GTA.",
   },

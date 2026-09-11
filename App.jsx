@@ -44,7 +44,7 @@ const NAV = [
     children: [
       { label: "Baby Shower", path: "/milestone-events/baby-shower", eventTypeId: "babyShower" },
       { label: "Engagement Shower", path: "/package-builder", eventTypeId: "engagement" },
-      { label: "Tutu Twirls & Tea", path: "/birthdays/tutu-twirls-tea", eventTypeId: "tutuTwirlsTea" },
+      { label: "Tutu Twirls", path: "/birthdays/tutu-twirls-tea", eventTypeId: "tutuTwirlsTea" },
       { label: "Milestone Birthdays", path: "/package-builder", eventTypeId: "birthday" },
     ],
   },

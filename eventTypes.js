@@ -22,8 +22,8 @@ export const EVENT_TYPES = [
   },
   {
     id: "tutuTwirlsTea",
-    label: "Tutu Twirls & Tea",
-    shortLabel: "Tutu Twirls & Tea",
+    label: "Tutu Twirls",
+    shortLabel: "Tutu Twirls",
   },
   {
     id: "holiday",

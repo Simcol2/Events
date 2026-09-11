@@ -163,7 +163,7 @@ function Hero({ fonts, palette, navigate }) {
               margin: "0 0 30px",
             }}
           >
-            Tutu Twirls & Tea starting at ${TUTU_STARTING_PRICE}
+            Tutu Twirls starting at ${TUTU_STARTING_PRICE}
           </p>
 
           <div className="flex flex-wrap items-center gap-5">
@@ -292,7 +292,7 @@ const CELEBRATION_CARDS = [
     action: "babyShower",
   },
   {
-    title: "Tutu Twirls & Tea",
+    title: "Tutu Twirls",
     image: TUTU_IMAGE,
     action: "tutu",
   },
@@ -322,7 +322,7 @@ const FEATURED = [
     action: "babyShower",
   },
   {
-    title: "Tutu Twirls & Tea",
+    title: "Tutu Twirls",
     image: TUTU_IMAGE,
     body: "A dress-up experience filled with sparkle, play and confidence.",
     action: "tutu",
