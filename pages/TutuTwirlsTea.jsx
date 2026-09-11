@@ -1,7 +1,20 @@
 import React from "react";
-import { ArrowRight, Camera, Heart, Sparkles, Star, Palette, UtensilsCrossed, Wand2 } from "lucide-react";
+import { Camera, Heart, Sparkles, Star, UtensilsCrossed, Wand2 } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import {
+  ElevatedCard,
+  FullBleedStatement,
+  JewelBand,
+  Kicker,
+  PageHero,
+  PrimaryButton,
+  Reveal,
+  ScriptNote,
+  SectionIntro,
+  editorialShadow,
+  paperTexture,
+} from "../components/EditorialKit";
 
 const HERO_IMAGE = "/photos/tutu-twirls-tea-hero.jpg";
 const WARDROBE_IMAGE = "/photos/tutu-twirls-tea-wardrobe.jpg";
@@ -10,441 +23,335 @@ const PHOTO_IMAGE = "/photos/tutu-twirls-tea-photo-wall.jpg";
 const BIRTHDAY_IMAGE = "/photos/tutu-twirls-tea-birthday-star.jpg";
 const BACKYARD_IMAGE = "/photos/tutu-twirls-tea-backyard.jpg";
 
-const CTA_LABEL = "CREATE YOUR TUTU POP-UP";
+const FEATURES = [
+  {
+    icon: Sparkles,
+    title: "The Tutu Tent",
+    body: "A wardrobe moment filled with pieces waiting to be discovered.",
+  },
+  {
+    icon: Star,
+    title: "Statement Looks",
+    body: "Tutus, sequin blazers, suspenders and unexpected accessories for kids and grown-ups.",
+  },
+  {
+    icon: Camera,
+    title: "A photo moment",
+    body: "Because once everyone is dressed up, somebody is absolutely taking pictures.",
+  },
+  {
+    icon: UtensilsCrossed,
+    title: "Tea and treats",
+    body: "Add a styled table or snack moment so the experience can keep going after the wardrobe raid.",
+  },
+];
 
-function SectionLabel({ children, palette, fonts }) {
-  return (
-    <p
-      className="text-xs font-semibold tracking-[0.3em]"
-      style={{ ...fonts.bodyFont, color: palette.goldDeep }}
-    >
-      {children}
-    </p>
-  );
-}
+const ADD_ONS = [
+  {
+    icon: Camera,
+    title: "Event Photography",
+    body: "Capture the looks, the laughter and the moments guests will want to remember.",
+  },
+  {
+    icon: Sparkles,
+    title: "Tutu Event Stylist",
+    body: "Want someone there to help guide the experience and encourage guests to jump in? Add a stylist to your pop-up.",
+  },
+  {
+    icon: UtensilsCrossed,
+    title: "Caribbean Catering",
+    body: "Bring delicious Caribbean flavours into your celebration.",
+  },
+  {
+    icon: Wand2,
+    title: "Custom Enhancements",
+    body: "Have a vision? Let's create something unforgettable.",
+  },
+];
 
-function ImagePanel({ src, alt, className = "" }) {
-  return (
-    <div className={`overflow-hidden ${className}`} style={{ background: "#E9E1D2" }}>
-      <img
-        src={src}
-        alt={alt}
-        className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-        onError={(e) => {
-          e.currentTarget.style.display = "none";
-        }}
-      />
-    </div>
-  );
-}
-
-function Feature({ icon: Icon, title, children, palette, fonts }) {
-  return (
-    <div className="border-t pt-6" style={{ borderColor: palette.line }}>
-      <Icon size={20} strokeWidth={1.5} color={palette.goldDeep} />
-      <h3
-        className="mt-4 text-2xl font-semibold"
-        style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-      >
-        {title}
-      </h3>
-      <p
-        className="mt-3 text-base leading-7"
-        style={{ ...fonts.bodyFont, color: palette.muted }}
-      >
-        {children}
-      </p>
-    </div>
-  );
-}
+const OCCASIONS = [
+  "Birthdays",
+  "Playdates",
+  "Family celebrations",
+  "Special occasions",
+  "School or community events",
+  "Any gathering where people want to have fun again",
+];
 
 export default function TutuTwirlsTea() {
-  const { openPickerForBuilder } = useEventType();
   const { palette, fonts } = usePalette();
+  const { openPickerForBuilder } = useEventType();
 
   return (
-    <main
-      className="min-h-screen overflow-hidden"
-      style={{ background: palette.bg, color: palette.ink }}
-    >
-      {/* HERO */}
-      <section className="relative">
-        <div className="mx-auto grid max-w-7xl lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="flex items-center px-6 py-20 sm:px-10 lg:px-14 lg:py-28">
-            <div className="max-w-xl">
-              <SectionLabel palette={palette} fonts={fonts}>
-                A TUTU POP-UP EXPERIENCE
-              </SectionLabel>
-
-              <h1
-                className="mt-5 text-6xl font-medium leading-[0.9] sm:text-7xl lg:text-[88px]"
-                style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-              >
-                Tutu
-                <br />
-                Twirls
-              </h1>
-
-              <p
-                className="mt-7 text-2xl leading-9"
-                style={{ ...fonts.displayFont, color: palette.ink }}
-              >
-                Remember when getting dressed up was the best part?
-              </p>
-
-              <p
-                className="mt-6 max-w-md text-base leading-7"
-                style={{ ...fonts.bodyFont, color: palette.muted }}
-              >
-                The sparkle. The confidence. The feeling of becoming someone
-                a little more fabulous for the day.
-              </p>
-
-              <p
-                className="mt-5 text-xl italic"
-                style={{ ...fonts.displayFont, color: palette.goldDeep }}
-              >
-                Tutu Twirls brings that feeling back.
-              </p>
-
-              <p
-                className="mt-5 max-w-md text-base leading-7"
-                style={{ ...fonts.bodyFont, color: palette.muted }}
-              >
-                We create pop-up dress-up experiences filled with statement
-                pieces, playful styling, and unforgettable moments for kids
-                and grown-ups who still know how to have fun.
-              </p>
-
-              <p
-                className="mt-7 text-sm font-semibold tracking-[0.2em]"
-                style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-              >
-                STARTING AT $495
-              </p>
-
-              <button
-                onClick={() => openPickerForBuilder()}
-                className="mt-5 inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.14em] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
-              >
-                {CTA_LABEL}
-                <ArrowRight size={17} strokeWidth={1.7} />
-              </button>
-            </div>
-          </div>
-
-          <ImagePanel
-            src={HERO_IMAGE}
-            alt="Tutu Twirls pop-up dress-up experience"
-            className="min-h-[520px] lg:min-h-[720px]"
-          />
+    <main style={{ background: palette.bg, color: palette.ink }}>
+      <PageHero
+        eyebrow="A TUTU POP-UP EXPERIENCE"
+        title="Tutu Twirls"
+        script="Dress-up fun is back."
+        body="A playful pop-up experience filled with statement pieces, sparkly details and the very serious business of becoming a little more fabulous for the day."
+        image={HERO_IMAGE}
+        imageAlt="Tutu Twirls pop-up dress-up experience"
+        palette={palette}
+        fonts={fonts}
+      >
+        <div className="flex flex-wrap items-center gap-5">
+          <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+            Create your Tutu Pop-Up
+          </PrimaryButton>
+          <span
+            style={{
+              ...fonts.bodyFont,
+              color: palette.goldDeep,
+              fontSize: "13px",
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}
+          >
+            Starting at $495
+          </span>
         </div>
-      </section>
+      </PageHero>
 
-      {/* DRESS UP IS FOR EVERYONE */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
+      <section style={{ ...paperTexture(palette), padding: "96px 24px" }}>
+        <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-2 lg:items-center">
           <div>
-            <SectionLabel palette={palette} fonts={fonts}>
-              NOT JUST FOR KIDS
-            </SectionLabel>
-
+            <Kicker palette={palette} fonts={fonts}>NOT JUST FOR KIDS</Kicker>
             <h2
-              className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+              className="mt-4"
+              style={{
+                ...fonts.displayFont,
+                color: palette.primaryDeep,
+                fontSize: "clamp(3rem, 6vw, 5.5rem)",
+                lineHeight: 0.98,
+                fontWeight: 630,
+              }}
             >
-              Dress up is
-              <br />
-              for everyone.
+              Dress-up is for everyone.
             </h2>
-
-            <p
-              className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.goldDeep }}
+            <ScriptNote
+              palette={palette}
+              fonts={fonts}
+              style={{ fontSize: "clamp(2rem, 4vw, 3.6rem)", marginTop: "18px" }}
             >
-              Who decided dress-up was only for kids?
-            </p>
-
-            <p
-              className="mt-6 text-base leading-8"
-              style={{ ...fonts.bodyFont, color: palette.muted }}
-            >
-              At Tutu Twirls, everyone gets to join in.
-            </p>
-
-            <p
-              className="mt-4 text-base leading-8"
-              style={{ ...fonts.bodyFont, color: palette.muted }}
-            >
-              Little ones can twirl in tutus, try on bold looks, and step
-              into their imagination.
-            </p>
-
-            <p
-              className="mt-4 text-base leading-8"
-              style={{ ...fonts.bodyFont, color: palette.muted }}
-            >
-              Grown-ups can join the fun too, with adult-sized tutus,
-              statement pieces, sequin blazers, suspenders, and playful
-              accessories designed for anyone who wants to get involved.
-            </p>
-
-            <p
-              className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.goldDeep }}
-            >
-              Because the best events are the ones where everyone is
-              smiling.
+              Who decided we had to grow out of fun?
+            </ScriptNote>
+            <p className="mt-7 max-w-xl text-base leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Little ones can twirl, layer, accessorize and step into their imagination. Grown-ups can join in with adult-sized pieces, statement looks and enough sparkle to make restraint feel like a strange personal choice.
             </p>
           </div>
 
-          <ImagePanel
-            src={BACKYARD_IMAGE}
-            alt="Kids and grown-ups twirling together in tutus at a Tutu Twirls pop-up"
-            className="aspect-[4/5] sm:aspect-[5/4]"
-          />
-        </div>
-      </section>
-
-      {/* MORE THAN TUTUS */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
-          <ImagePanel
-            src={WARDROBE_IMAGE}
-            alt="The Tutu Tent, filled with dress-up pieces waiting to be discovered"
-            className="aspect-[4/5]"
-          />
-
-          <div>
-            <SectionLabel palette={palette} fonts={fonts}>
-              MORE THAN TUTUS
-            </SectionLabel>
-
-            <h2
-              className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-            >
-              Yes, there are tutus.
-            </h2>
-
-            <p
-              className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.goldDeep }}
-            >
-              But the magic is in the transformation.
-            </p>
-
-            <p
-              className="mt-6 text-sm font-semibold tracking-[0.18em]"
-              style={{ ...fonts.bodyFont, color: palette.goldDeep }}
-            >
-              A TUTU TWIRLS POP-UP MIGHT INCLUDE:
-            </p>
-
-            <div className="mt-6 grid gap-7 sm:grid-cols-2">
-              <Feature icon={Sparkles} title="The Tutu Tent" palette={palette} fonts={fonts}>
-                A whimsical space filled with dress-up pieces waiting to be
-                discovered.
-              </Feature>
-
-              <Feature icon={Star} title="Statement Looks" palette={palette} fonts={fonts}>
-                From colourful tutus to sequin blazers, suspenders, and
-                unexpected accessories that make guests feel like the best
-                version of themselves.
-              </Feature>
-
-              <Feature icon={Heart} title="Styled Details" palette={palette} fonts={fonts}>
-                A beautiful setup designed to turn your space into an
-                experience.
-              </Feature>
-
-              <Feature icon={Palette} title="Creative Moments" palette={palette} fonts={fonts}>
-                Activity stations and interactive elements that give guests
-                something to do, create, and remember.
-              </Feature>
-            </div>
+          <div
+            className="overflow-hidden"
+            style={{
+              borderRadius: "5px",
+              boxShadow: editorialShadow,
+              border: `1px solid ${palette.line}`,
+            }}
+          >
+            <img src={BACKYARD_IMAGE} alt="Kids and grown-ups enjoying Tutu Twirls together" className="aspect-[5/4] h-full w-full object-cover" />
           </div>
         </div>
       </section>
 
-      {/* YOU BRING THE PEOPLE, WE BRING THE MAGIC */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
-          <ImagePanel
-            src={TEA_IMAGE}
-            alt="A fully styled Tutu Twirls setup, ready for guests to arrive"
-            className="aspect-[4/5] sm:aspect-[5/4]"
+      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="MORE THAN TUTUS"
+            title="The magic is in the transformation."
+            body="The wardrobe is the invitation. The real experience is the moment guests stop worrying about looking silly and start having fun."
+            palette={palette}
+            fonts={fonts}
+            light
           />
 
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {FEATURES.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <Reveal key={item.title} delay={i * 70}>
+                  <ElevatedCard palette={palette} className="h-full p-7">
+                    <div
+                      className="flex h-12 w-12 items-center justify-center rounded-full"
+                      style={{ background: i % 2 ? palette.gold : palette.accent, color: i % 2 ? palette.primaryDeep : "#fff" }}
+                    >
+                      <Icon size={20} />
+                    </div>
+                    <h3 className="mt-6 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {item.body}
+                    </p>
+                  </ElevatedCard>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </JewelBand>
+
+      <section style={{ ...paperTexture(palette), padding: "96px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="BUILD THE MOMENT"
+            title="Wardrobe. Table. Photos. Personality."
+            body="Choose how simple or styled you want the pop-up to feel. The point is not to make everyone match. The point is to give everyone permission to play."
+            palette={palette}
+            fonts={fonts}
+          />
+
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {[
+              { src: WARDROBE_IMAGE, label: "The wardrobe" },
+              { src: TEA_IMAGE, label: "The table" },
+              { src: PHOTO_IMAGE, label: "The photo moment" },
+            ].map((item, i) => (
+              <Reveal key={item.label} delay={i * 80}>
+                <div>
+                  <div
+                    className="overflow-hidden"
+                    style={{
+                      aspectRatio: "4 / 5",
+                      borderRadius: "5px",
+                      boxShadow: editorialShadow,
+                      transform: `rotate(${i === 1 ? 1.5 : i === 0 ? -1.5 : 1}deg)`,
+                      border: `1px solid ${palette.line}`,
+                    }}
+                  >
+                    <img src={item.src} alt={item.label} className="h-full w-full object-cover" />
+                  </div>
+                  <p
+                    className="mt-5 text-center text-sm font-semibold tracking-[0.12em]"
+                    style={{ ...fonts.bodyFont, color: palette.primaryDeep, textTransform: "uppercase" }}
+                  >
+                    {item.label}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{ background: palette.surface, padding: "96px 24px" }}>
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center">
           <div>
-            <SectionLabel palette={palette} fonts={fonts}>
-              HOW IT WORKS
-            </SectionLabel>
-
+            <Kicker palette={palette} fonts={fonts}>HOW IT WORKS</Kicker>
             <h2
-              className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+              className="mt-4"
+              style={{
+                ...fonts.displayFont,
+                color: palette.primaryDeep,
+                fontSize: "clamp(2.7rem, 5vw, 4.7rem)",
+                lineHeight: 1,
+                fontWeight: 630,
+              }}
             >
-              You bring the people.
-              <br />
-              We bring the magic.
+              You bring the people. We bring the magic.
             </h2>
-
-            <p
-              className="mt-6 text-base leading-8"
-              style={{ ...fonts.bodyFont, color: palette.muted }}
-            >
-              Tutu Twirls is not a traditional party entertainer. We don't
-              take over your event. We create the moment everyone wants to
-              be part of.
+            <p className="mt-6 max-w-xl text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Tutu Twirls is not a traditional party entertainer. We don't take over your event. We create the moment everyone wants to be part of.
             </p>
-
-            <p
-              className="mt-5 text-xl italic"
-              style={{ ...fonts.displayFont, color: palette.goldDeep }}
+            <ScriptNote
+              palette={palette}
+              fonts={fonts}
+              style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", marginTop: "18px" }}
             >
-              We arrive, style the space, set everything up, and pack it
-              away when the fun is done.
-            </p>
-
-            <p
-              className="mt-5 text-base leading-8"
-              style={{ ...fonts.bodyFont, color: palette.muted }}
-            >
+              We arrive, style the space, set everything up, and pack it away when the fun is done.
+            </ScriptNote>
+            <p className="mt-6 max-w-xl text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
               You get to enjoy your guests.
             </p>
           </div>
+
+          <ElevatedCard palette={palette} className="p-8">
+            <Kicker palette={palette} fonts={fonts}>MADE FOR EVERYONE</Kicker>
+            <h3 className="mt-3 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+              Dress-up should feel exciting, not limiting.
+            </h3>
+            <p className="mt-4 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Our collection includes options designed with different comfort needs in mind, including Velcro-opening tutus that make dressing easier and more accessible.
+            </p>
+            <p className="mt-4 text-lg font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+              There is no single way to wear the magic.
+            </p>
+            <p className="mt-3 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Everyone deserves the chance to feel included, creative, and confident.
+            </p>
+          </ElevatedCard>
         </div>
       </section>
 
-      {/* DESIGNED SO EVERYONE CAN JOIN IN */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
-        <div className="mx-auto max-w-3xl text-center">
-          <SectionLabel palette={palette} fonts={fonts}>
-            MADE FOR EVERYONE
-          </SectionLabel>
-
-          <h2
-            className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            Designed so everyone
-            <br />
-            can join in.
-          </h2>
-
-          <p
-            className="mt-5 text-xl italic"
-            style={{ ...fonts.displayFont, color: palette.goldDeep }}
-          >
-            Dress-up should feel exciting, not limiting.
-          </p>
-
-          <p
-            className="mx-auto mt-6 max-w-2xl text-base leading-8"
-            style={{ ...fonts.bodyFont, color: palette.muted }}
-          >
-            Our collection includes options designed with different comfort
-            needs in mind, including Velcro-opening tutus that make dressing
-            easier and more accessible.
-          </p>
-
-          <p
-            className="mx-auto mt-6 max-w-2xl text-xl font-medium leading-8"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            There is no single way to wear the magic.
-          </p>
-
-          <p
-            className="mx-auto mt-4 max-w-2xl text-base leading-8"
-            style={{ ...fonts.bodyFont, color: palette.muted }}
-          >
-            Everyone deserves the chance to feel included, creative, and
-            confident.
-          </p>
-        </div>
-      </section>
-
-      {/* WANT TO MAKE IT EVEN BIGGER */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
-          <ImagePanel
-            src={PHOTO_IMAGE}
-            alt="Guests celebrating together at a Tutu Twirls pop-up"
-            className="aspect-[4/5]"
+      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="ADD-ON EXPERIENCES"
+            title="Want to make it even bigger?"
+            palette={palette}
+            fonts={fonts}
+            light
           />
 
-          <div>
-            <SectionLabel palette={palette} fonts={fonts}>
-              ADD-ON EXPERIENCES
-            </SectionLabel>
-
-            <h2
-              className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-            >
-              Want to make it
-              <br />
-              even bigger?
-            </h2>
-
-            <div className="mt-9 grid gap-7 sm:grid-cols-2">
-              <Feature icon={Camera} title="Event Photography" palette={palette} fonts={fonts}>
-                Capture the looks, the laughter, and the moments guests will
-                want to remember.
-              </Feature>
-
-              <Feature icon={Sparkles} title="Tutu Event Stylist" palette={palette} fonts={fonts}>
-                Want someone there to help guide the experience and
-                encourage guests to jump in? Add a stylist to your pop-up.
-              </Feature>
-
-              <Feature icon={UtensilsCrossed} title="Caribbean Catering" palette={palette} fonts={fonts}>
-                Bring delicious Caribbean flavours into your celebration.
-              </Feature>
-
-              <Feature icon={Wand2} title="Custom Enhancements" palette={palette} fonts={fonts}>
-                Have a vision? Let's create something unforgettable.
-              </Feature>
-            </div>
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {ADD_ONS.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <Reveal key={item.title} delay={i * 70}>
+                  <ElevatedCard palette={palette} className="h-full p-7">
+                    <div
+                      className="flex h-12 w-12 items-center justify-center rounded-full"
+                      style={{ background: i % 2 ? palette.gold : palette.accent, color: i % 2 ? palette.primaryDeep : "#fff" }}
+                    >
+                      <Icon size={20} />
+                    </div>
+                    <h3 className="mt-6 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {item.body}
+                    </p>
+                  </ElevatedCard>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
-      </section>
+      </JewelBand>
 
-      {/* PERFECT FOR */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
+      <FullBleedStatement
+        image={BIRTHDAY_IMAGE}
+        imageAlt="Tutu Twirls birthday celebration"
+        eyebrow="FOR BIRTHDAYS AND BEYOND"
+        title="A little dramatic? Perfect."
+        body="Tutu Twirls works beautifully for birthdays, family celebrations, pop-up dress-up moments and any event that needs a little permission to stop taking itself so seriously."
+        palette={palette}
+        fonts={fonts}
+      >
+        <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts} light>
+          Create your Tutu Pop-Up
+        </PrimaryButton>
+      </FullBleedStatement>
+
+      <section style={{ ...paperTexture(palette), padding: "88px 24px" }}>
         <div className="mx-auto max-w-3xl text-center">
-          <SectionLabel palette={palette} fonts={fonts}>
-            WHERE THE MAGIC FITS
-          </SectionLabel>
-
+          <Kicker palette={palette} fonts={fonts}>WHERE THE MAGIC FITS</Kicker>
           <h2
-            className="mt-4 text-5xl font-medium leading-tight sm:text-6xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+            className="mt-4"
+            style={{
+              ...fonts.displayFont,
+              color: palette.primaryDeep,
+              fontSize: "clamp(2.5rem, 5vw, 4.2rem)",
+              lineHeight: 1,
+              fontWeight: 630,
+            }}
           >
             Perfect for
           </h2>
-
-          <div className="mx-auto mt-10 grid max-w-xl gap-3 sm:grid-cols-2">
-            {[
-              "Birthdays",
-              "Playdates",
-              "Family celebrations",
-              "Special occasions",
-              "School or community events",
-              "Any gathering where people want to have fun again",
-            ].map((item) => (
-              <div
-                key={item}
-                className="border-b pb-3"
-                style={{ borderColor: palette.line }}
-              >
-                <span
-                  className="text-lg italic"
-                  style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-                >
+          <div className="mx-auto mt-9 grid max-w-xl gap-3 sm:grid-cols-2">
+            {OCCASIONS.map((item) => (
+              <div key={item} className="border-b pb-3" style={{ borderColor: palette.line }}>
+                <span className="text-lg italic" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
                   {item}
                 </span>
               </div>
@@ -453,102 +360,26 @@ export default function TutuTwirlsTea() {
         </div>
       </section>
 
-      {/* THE TUTU TWIRLS FEELING */}
-      <section className="px-6 py-20 sm:px-10 lg:py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid overflow-hidden lg:grid-cols-2">
-            <ImagePanel
-              src={BIRTHDAY_IMAGE}
-              alt="A custom tiered tutu gown"
-              className="min-h-[500px]"
-            />
-
-            <div
-              className="flex items-center px-8 py-14 sm:px-12 lg:px-16"
-              style={{ background: palette.primaryDeep }}
-            >
-              <div>
-                <SectionLabel palette={{ ...palette, goldDeep: palette.gold }} fonts={fonts}>
-                  THE TUTU TWIRLS FEELING
-                </SectionLabel>
-
-                <p
-                  className="mt-6 text-2xl leading-9"
-                  style={{ ...fonts.displayFont, color: "#FFFFFF" }}
-                >
-                  It's the moment someone puts on a piece they never
-                  expected to wear.
-                </p>
-
-                <p
-                  className="mt-5 text-2xl leading-9"
-                  style={{ ...fonts.displayFont, color: "#FFFFFF" }}
-                >
-                  It's the laugh when an adult decides to join the fun.
-                </p>
-
-                <p
-                  className="mt-5 text-2xl leading-9"
-                  style={{ ...fonts.displayFont, color: "#FFFFFF" }}
-                >
-                  It's kids seeing themselves as creative, confident, and
-                  completely themselves.
-                </p>
-
-                <p
-                  className="mt-8 text-base leading-7"
-                  style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}
-                >
-                  It's not just dressing up.
-                </p>
-
-                <p
-                  className="mt-2 text-xl italic leading-8"
-                  style={{ ...fonts.displayFont, color: palette.gold }}
-                >
-                  It's creating a memory.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section
-        className="px-6 py-24 text-center sm:px-10 lg:py-32"
-        style={{ background: palette.primaryDeep }}
-      >
-        <div className="mx-auto max-w-3xl">
+      <section style={{ ...paperTexture(palette), padding: "88px 24px" }}>
+        <div className="mx-auto max-w-4xl text-center">
+          <Heart className="mx-auto" size={22} color={palette.accent} />
           <h2
-            className="text-5xl font-medium leading-tight sm:text-7xl"
-            style={{ ...fonts.displayFont, color: "#FFFFFF" }}
-          >
-            Ready to bring
-            <br />
-            back the fun?
-          </h2>
-
-          <p
-            className="mx-auto mt-6 max-w-xl text-xl italic leading-8"
-            style={{ ...fonts.displayFont, color: palette.gold }}
-          >
-            Let's create a Tutu Pop-Up that people will talk about long
-            after the last twirl.
-          </p>
-
-          <button
-            onClick={() => openPickerForBuilder()}
-            className="mt-9 inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.14em] transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            className="mt-5"
             style={{
-              ...fonts.bodyFont,
-              background: palette.gold,
+              ...fonts.displayFont,
               color: palette.primaryDeep,
+              fontSize: "clamp(2.8rem, 5vw, 4.8rem)",
+              lineHeight: 1,
+              fontWeight: 630,
             }}
           >
-            {CTA_LABEL}
-            <ArrowRight size={17} />
-          </button>
+            The best part is watching people forget they were supposed to be too grown-up for this.
+          </h2>
+          <div className="mt-8">
+            <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+              Build the experience
+            </PrimaryButton>
+          </div>
         </div>
       </section>
     </main>

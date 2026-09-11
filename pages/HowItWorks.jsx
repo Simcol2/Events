@@ -1,16 +1,49 @@
 import React from "react";
 import {
   CalendarHeart,
-  PackageCheck,
-  Users,
-  Gift,
-  Sparkles,
-  Truck,
   Frame,
+  Gift,
+  PackageCheck,
   PartyPopper,
   Send,
+  Sparkles,
+  Truck,
+  Users,
 } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { useEventType } from "../EventTypeContext";
+import {
+  ElevatedCard,
+  JewelBand,
+  PageHero,
+  PrimaryButton,
+  Reveal,
+  SectionIntro,
+  paperTexture,
+} from "../components/EditorialKit";
+
+const STEPS = [
+  {
+    icon: CalendarHeart,
+    title: "Choose your celebration",
+    body: "Tell us what you are planning so the experiences, pricing and guest gift options shown actually fit the event.",
+  },
+  {
+    icon: PackageCheck,
+    title: "Build your experience",
+    body: "Choose the activities, keepsakes, display options and upgrades that feel right for your people.",
+  },
+  {
+    icon: Users,
+    title: "Guests take part",
+    body: "They play, write, photograph, build, laugh and contribute throughout the celebration.",
+  },
+  {
+    icon: Gift,
+    title: "You keep the memories",
+    body: "The finished keepsakes, photos, messages and stories live on after the room is packed away.",
+  },
+];
 
 // Section 34: answers the required questions quickly, built around the
 // core message "You bring the people. We create the experience."
@@ -18,7 +51,7 @@ const QUESTIONS = [
   {
     icon: Sparkles,
     q: "What is an A Slice of G experience?",
-    a: "Interactive event experiences that become keepsakes. Guests participate, contribute, and create something meaningful during the celebration, and you get to keep what they made.",
+    a: "Interactive event experiences that become keepsakes. Guests participate, contribute and create something meaningful during the celebration, and you get to keep what they made.",
   },
   {
     icon: CalendarHeart,
@@ -74,54 +107,131 @@ const QUESTIONS = [
 
 export default function HowItWorks() {
   const { palette, fonts } = usePalette();
-  const badgeColors = [palette.accent, palette.primary];
+  const { openPickerForBuilder } = useEventType();
 
   return (
-    <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
-      {/* Banner */}
-      <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
-        <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
-        <Sparkles className="absolute bottom-8 left-10 opacity-40" size={16} color={palette.gold} />
-        <p className="text-sm font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
-          A SLICE OF G EVENTS
-        </p>
-        <h1 className="mt-3 text-5xl sm:text-6xl font-bold" style={{ ...fonts.displayFont, color: palette.gold }}>
-          How It Works
-        </h1>
-        <p className="mt-4 text-2xl sm:text-3xl" style={{ ...fonts.scriptFont, color: "#FFFFFF" }}>
-          You bring the people. We create the experience.
-        </p>
-      </div>
+    <main style={{ background: palette.bg, color: palette.ink }}>
+      <PageHero
+        eyebrow="HOW IT WORKS"
+        title="You bring the people. We create the experience."
+        script="It is easier than picking a theme."
+        body="Start with the celebration, choose the moments you want guests to take part in, decide how much help you want with setup, then let the whole thing become one cohesive experience."
+        palette={palette}
+        fonts={fonts}
+        align="center"
+      >
+        <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+          Start building
+        </PrimaryButton>
+      </PageHero>
 
-      {/* Questions grid */}
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {QUESTIONS.map((item, i) => {
-            const Icon = item.icon;
-            const badge = badgeColors[i % 2];
-            return (
-              <div
-                key={item.q}
-                className="rounded-2xl p-6 shadow-sm flex flex-col"
-                style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
-              >
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 mb-4"
-                  style={{ background: `${badge}22` }}
-                >
-                  <Icon size={22} color={badge} strokeWidth={1.8} />
-                </div>
-                <h3 className="text-lg font-bold leading-tight" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-                  {item.q}
-                </h3>
-                <p className="mt-2 text-base leading-relaxed flex-1" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                  {item.a}
-                </p>
-              </div>
-            );
-          })}
+      <section style={{ ...paperTexture(palette), padding: "92px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="THE SHORT VERSION"
+            title="Four steps. No event-planning scavenger hunt."
+            palette={palette}
+            fonts={fonts}
+          />
+
+          <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map((step, i) => {
+              const Icon = step.icon;
+
+              return (
+                <Reveal key={step.title} delay={i * 75}>
+                  <ElevatedCard palette={palette} className="h-full p-7">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className="flex h-12 w-12 items-center justify-center rounded-full"
+                        style={{
+                          background: i === 1 ? palette.gold : palette.primaryDeep,
+                          color: i === 1 ? palette.primaryDeep : "#FFFFFF",
+                        }}
+                      >
+                        <Icon size={20} />
+                      </div>
+                      <span className="text-xl font-semibold" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-6 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {step.body}
+                    </p>
+                  </ElevatedCard>
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="GOOD TO KNOW"
+            title="The questions that actually matter before you book."
+            body="The practical stuff should be clear before money changes hands. Revolutionary concept, apparently."
+            palette={palette}
+            fonts={fonts}
+            light
+          />
+
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {QUESTIONS.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <Reveal key={item.q} delay={i * 55}>
+                  <ElevatedCard palette={palette} className="h-full p-7">
+                    <div
+                      className="flex h-11 w-11 items-center justify-center rounded-full"
+                      style={{
+                        background: i % 2 ? palette.gold : palette.accent,
+                        color: i % 2 ? palette.primaryDeep : "#FFFFFF",
+                      }}
+                    >
+                      <Icon size={19} />
+                    </div>
+                    <h3 className="mt-5 text-xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                      {item.q}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {item.a}
+                    </p>
+                  </ElevatedCard>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </JewelBand>
+
+      <section style={{ ...paperTexture(palette), padding: "88px 24px" }}>
+        <div className="mx-auto max-w-4xl text-center">
+          <Sparkles className="mx-auto" size={20} color={palette.goldDeep} />
+          <h2
+            className="mt-5"
+            style={{
+              ...fonts.displayFont,
+              color: palette.primaryDeep,
+              fontSize: "clamp(2.8rem, 5vw, 4.8rem)",
+              lineHeight: 1,
+              fontWeight: 630,
+            }}
+          >
+            Pick the experience. Pick the help level. Keep the memories.
+          </h2>
+          <div className="mt-8">
+            <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+              Build my experience
+            </PrimaryButton>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

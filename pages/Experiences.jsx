@@ -1,7 +1,19 @@
 import React from "react";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Camera, Gift, Heart, Sparkles, WandSparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import {
+  ElevatedCard,
+  FullBleedStatement,
+  JewelBand,
+  Kicker,
+  PageHero,
+  PrimaryButton,
+  Reveal,
+  SectionIntro,
+  editorialShadow,
+  paperTexture,
+} from "../components/EditorialKit";
 
 import arrivalPhoto from "../media/web_arrival.png";
 import babyTriviaPhoto from "../media/babytrivia.png";
@@ -10,299 +22,241 @@ import photoWallPhoto from "../media/featurewall.png";
 
 const TUTU_IMAGE = "/photos/tutu-twirls-tea-hero.jpg";
 
-function CategoryLabel({ children, palette, fonts }) {
-  return (
-    <p
-      className="text-xs font-semibold tracking-[0.3em]"
-      style={{ ...fonts.bodyFont, color: palette.goldDeep }}
-    >
-      {children}
-    </p>
-  );
-}
+const FEATURES = [
+  {
+    image: arrivalPhoto,
+    eyebrow: "INTERACTIVE",
+    title: "Guess The Arrival",
+    tagline: "The countdown becomes part of the party.",
+    body:
+      "Guests predict when baby will arrive, where Mom will be, what she will be doing and what time the big entrance happens. The fun keeps going after the shower because everyone can follow along until the winner is revealed.",
+  },
+  {
+    image: babyTriviaPhoto,
+    eyebrow: "PLAY & CONNECT",
+    title: "Custom Trivia",
+    tagline: "Questions that could only belong at this celebration.",
+    body:
+      "Forget generic party trivia. We build questions around the people being celebrated so guests laugh, remember stories and discover how well they really know the guest of honour.",
+  },
+  {
+    image: wallPuzzleShowerPhoto,
+    eyebrow: "CREATE TOGETHER",
+    title: "Interactive Wall Puzzle",
+    tagline: "One piece from every guest. One finished keepsake.",
+    body:
+      "Guests add to the display throughout the celebration until the final image comes together. The result is a visual reminder that everyone played a part.",
+  },
+];
 
-function BulletList({ items, palette, fonts }) {
-  return (
-    <div className="mt-5 grid gap-3 sm:grid-cols-2">
-      {items.map((item) => (
-        <div key={item} className="flex items-center gap-3 border-b pb-3" style={{ borderColor: palette.line }}>
-          <Sparkles size={14} color={palette.goldDeep} />
-          <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            {item}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
+const MINI = [
+  {
+    icon: Heart,
+    title: "Custom Story Book",
+    body: "Guests contribute pages that become one collaborative story made by the people who came to celebrate.",
+  },
+  {
+    icon: Camera,
+    title: "Picture This",
+    body: "Photos and handwritten memories turn into something worth opening again years later.",
+  },
+  {
+    icon: Gift,
+    title: "Kindness Station",
+    body: "Guests pass a little kindness forward and leave meaningful words behind for the host.",
+  },
+  {
+    icon: WandSparkles,
+    title: "Memory Displays",
+    body: "A visual focal point designed around the keepsakes and experiences happening throughout the event.",
+  },
+];
 
-function ExperienceBlock({
-  image,
-  imageAlt,
-  title,
-  tagline,
-  paragraphs = [],
-  listLabel,
-  listItems,
-  accent,
-  ctaLabel,
-  onCta,
-  reverse,
-  palette,
-  fonts,
-}) {
-  const content = (
-    <div>
-      <h3 className="text-3xl font-semibold sm:text-4xl" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-        {title}
-      </h3>
-      {tagline && (
-        <p className="mt-2 text-lg italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-          {tagline}
-        </p>
-      )}
-      <div className="mt-5 space-y-3">
-        {paragraphs.map((p) => (
-          <p key={p} className="text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            {p}
-          </p>
-        ))}
-      </div>
-      {listLabel && listItems && (
-        <>
-          <p className="mt-6 text-sm font-semibold tracking-[0.18em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
-            {listLabel}
-          </p>
-          <BulletList items={listItems} palette={palette} fonts={fonts} />
-        </>
-      )}
-      {accent && (
-        <p className="mt-6 text-lg italic leading-relaxed" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-          {accent}
-        </p>
-      )}
-      {ctaLabel && (
-        <button
-          onClick={onCta}
-          className="mt-7 inline-flex items-center gap-2 text-sm font-semibold tracking-[0.1em]"
-          style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-        >
-          {ctaLabel}
-          <ArrowRight size={15} />
-        </button>
-      )}
-    </div>
-  );
-
-  if (!image) {
-    return <div className="mx-auto max-w-2xl">{content}</div>;
-  }
-
-  return (
-    <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-      <div
-        className={reverse ? "lg:order-2" : "lg:order-1"}
-        style={{ background: "#E9E1D2" }}
-      >
-        <div className="overflow-hidden" style={{ aspectRatio: "4 / 5" }}>
-          <img src={image} alt={imageAlt} className="h-full w-full object-cover" />
-        </div>
-      </div>
-      <div className={reverse ? "lg:order-1" : "lg:order-2"}>{content}</div>
-    </div>
-  );
-}
+const COMBOS = [
+  {
+    intro: "A baby shower might include:",
+    items: ["Guess The Arrival", "Custom Trivia", "Custom Story Book", "Immersive Photo Moment"],
+  },
+  {
+    intro: "A Tutu Pop-Up might include:",
+    items: ["The Tutu Tent", "Dress-Up Experiences", "Photo Moments", "Creative Activities"],
+  },
+  {
+    intro: "A milestone celebration might include:",
+    items: ["A Story Experience", "Interactive Guest Activity", "Custom Display"],
+  },
+];
 
 export default function Experiences({ navigate }) {
   const { palette, fonts } = usePalette();
   const { openPickerForBuilder } = useEventType();
 
-  const goToTutu = () => navigate("/birthdays/tutu-twirls-tea");
-  const goToDisplays = () => navigate("/display-options");
-
   return (
-    <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
-      {/* HERO */}
-      <div className="relative overflow-hidden px-6 py-24 text-center sm:px-10" style={{ background: palette.primaryDeep }}>
-        <Sparkles className="absolute top-8 right-10 opacity-60" size={22} color={palette.gold} />
-        <p className="text-sm font-semibold tracking-[0.3em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
-          EXPERIENCES
-        </p>
-        <h1 className="mx-auto mt-4 max-w-3xl text-4xl font-bold sm:text-6xl" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>
-          Celebrations where guests become part of the story.
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-8" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
-          The best moments are not always the ones you decorate.
-        </p>
-        <p className="mx-auto mt-1 max-w-2xl text-lg leading-8" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
-          They are the ones people participate in.
-        </p>
-        <p className="mx-auto mt-6 max-w-2xl text-base leading-7" style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}>
-          We create interactive experiences, immersive displays, and
-          keepsake moments that invite guests to contribute, connect,
-          create, and leave something behind.
-        </p>
-        <p className="mx-auto mt-4 max-w-2xl text-base leading-7" style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}>
-          From Tutu Pop-Ups to baby showers, milestone celebrations, and
-          custom events, we design experiences people remember because they
-          were part of them.
-        </p>
-      </div>
-
-      {/* INTERACTIVE EXPERIENCES */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto mb-14 max-w-6xl text-center">
-          <CategoryLabel palette={palette} fonts={fonts}>
-            INTERACTIVE EXPERIENCES
-          </CategoryLabel>
+    <main style={{ background: palette.bg, color: palette.ink }}>
+      <PageHero
+        eyebrow="EXPERIENCES"
+        title="Celebrations where guests become part of the story."
+        script="Not just something pretty to look at."
+        body="We create interactive moments, collaborative keepsakes and playful experiences that give guests something to do, something to feel and something to remember."
+        image={photoWallPhoto}
+        imageAlt="Interactive celebration display by A Slice of G Events"
+        palette={palette}
+        fonts={fonts}
+      >
+        <div className="flex flex-wrap gap-4">
+          <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+            Build my experience
+          </PrimaryButton>
+          <button
+            onClick={() => navigate("/how-it-works")}
+            className="border-b-2 pb-1 text-sm font-semibold tracking-[0.08em]"
+            style={{ ...fonts.bodyFont, color: palette.primaryDeep, borderColor: palette.gold }}
+          >
+            HOW IT WORKS
+          </button>
         </div>
+      </PageHero>
 
-        <div className="space-y-20">
-          <ExperienceBlock
-            image={arrivalPhoto}
-            imageAlt="Guess the Arrival baby shower prediction game"
-            title="Guess The Arrival"
-            tagline="A baby shower experience that keeps the excitement going long after the celebration ends."
-            paragraphs={[
-              "Guests predict the big moment:",
-              "When will baby arrive?",
-              "Where will mom be?",
-              "What will she be doing?",
-              "What time will baby make their entrance?",
-              "Guests submit their guesses and can sign up for email updates so they can follow along as the countdown continues.",
-              "When baby arrives, everyone gets to share in the excitement.",
-            ]}
-            accent="Because waiting for baby is better when everyone is part of the story."
+      <section style={{ ...paperTexture(palette), padding: "96px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="A FEW OF OUR FAVOURITES"
+            title="The kind of thing guests talk about on the ride home."
+            body="The experience should feel like it belongs to the people in the room, not like another activity downloaded from the internet fifteen minutes before everyone arrived."
             palette={palette}
             fonts={fonts}
           />
 
-          <ExperienceBlock
-            image={babyTriviaPhoto}
-            imageAlt="Custom trivia experience at a celebration"
-            title="Custom Trivia Experiences"
-            tagline="Forget the standard party questions."
-            paragraphs={[
-              "We create custom trivia boards built around the people being celebrated.",
-              "For baby showers, guests can test how well they know the parents-to-be.",
-              "For milestones, couples, birthdays, and special celebrations, trivia becomes a personalized way to laugh, connect, and share memories.",
-            ]}
-            reverse
-            palette={palette}
-            fonts={fonts}
-          />
+          <div className="mt-16 space-y-20">
+            {FEATURES.map((item, index) => (
+              <Reveal key={item.title}>
+                <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+                  <div
+                    className={index % 2 ? "lg:order-2" : ""}
+                    style={{
+                      overflow: "hidden",
+                      borderRadius: "5px",
+                      boxShadow: editorialShadow,
+                      border: `1px solid ${palette.line}`,
+                    }}
+                  >
+                    <img src={item.image} alt={item.title} className="aspect-[5/4] h-full w-full object-cover" />
+                  </div>
+                  <div className={index % 2 ? "lg:order-1" : ""}>
+                    <Kicker palette={palette} fonts={fonts}>{item.eyebrow}</Kicker>
+                    <h2
+                      className="mt-3"
+                      style={{
+                        ...fonts.displayFont,
+                        color: palette.primaryDeep,
+                        fontSize: "clamp(2.4rem, 4.5vw, 4.2rem)",
+                        lineHeight: 1,
+                        fontWeight: 640,
+                      }}
+                    >
+                      {item.title}
+                    </h2>
+                    <p
+                      className="mt-4 text-xl italic"
+                      style={{ ...fonts.displayFont, color: palette.goldDeep }}
+                    >
+                      {item.tagline}
+                    </p>
+                    <p
+                      className="mt-6"
+                      style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.75 }}
+                    >
+                      {item.body}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* STORYTELLING EXPERIENCES */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
-        <div className="mx-auto mb-14 max-w-6xl text-center">
-          <CategoryLabel palette={palette} fonts={fonts}>
-            STORYTELLING EXPERIENCES
-          </CategoryLabel>
+      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="MORE WAYS TO MAKE IT YOURS"
+            title="Some memories are made. Some are actually built together."
+            palette={palette}
+            fonts={fonts}
+            light
+          />
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {MINI.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <Reveal key={item.title} delay={i * 70}>
+                  <ElevatedCard palette={palette} className="h-full p-7">
+                    <div
+                      className="flex h-12 w-12 items-center justify-center rounded-full"
+                      style={{ background: i % 2 ? palette.gold : palette.accent, color: i % 2 ? palette.primaryDeep : "#fff" }}
+                    >
+                      <Icon size={20} />
+                    </div>
+                    <h3 className="mt-6 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {item.body}
+                    </p>
+                  </ElevatedCard>
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
+      </JewelBand>
 
-        <div className="space-y-20">
-          <ExperienceBlock
-            title="Custom Story Book"
-            tagline="A collaborative story created by the people who came to celebrate."
-            paragraphs={[
-              "Guests contribute pages to a custom story using a guided digital experience with prompts and creative direction.",
-              "The host chooses the overall story concept, plot direction, and visual style.",
-              "Each guest creates their own page.",
-              "Together, the pages become a one-of-a-kind storybook created by the people who matter most.",
-            ]}
-            listLabel="PERFECT FOR:"
-            listItems={["Baby showers", "New couples", "Milestone birthdays", "Guest of honor celebrations"]}
-            accent="Because some memories deserve to become a story."
+      <FullBleedStatement
+        image={TUTU_IMAGE}
+        imageAlt="Tutu Twirls dress-up experience"
+        eyebrow="DRESS-UP EXPERIENCES"
+        title="Dress-up is back, and everybody gets invited."
+        body="Tutu Twirls is a playful pop-up experience for kids and grown-ups who still know how to have fun."
+        palette={palette}
+        fonts={fonts}
+      >
+        <PrimaryButton onClick={() => navigate("/birthdays/tutu-twirls-tea")} palette={palette} fonts={fonts} light>
+          Explore Tutu Twirls
+        </PrimaryButton>
+      </FullBleedStatement>
+
+      <section style={{ ...paperTexture(palette), padding: "96px 24px" }}>
+        <div className="mx-auto max-w-5xl text-center">
+          <SectionIntro
+            eyebrow="BUILD YOUR OWN EXPERIENCE"
+            title="Every celebration has its own story."
+            body="Choose one experience or combine multiple elements to create something completely custom."
             palette={palette}
             fonts={fonts}
           />
 
-          <ExperienceBlock
-            image={wallPuzzleShowerPhoto}
-            imageAlt="Guests completing an interactive wall puzzle keepsake"
-            title="Interactive Wall Puzzle"
-            tagline="A celebration keepsake that comes together piece by piece."
-            paragraphs={[
-              "Each guest contributes a piece of the experience, creating a larger interactive display that reveals the complete picture as everyone participates.",
-              "A visual reminder that every guest played a part.",
-            ]}
-            palette={palette}
-            fonts={fonts}
-          />
+          <div className="mx-auto mt-14 grid max-w-5xl gap-6 sm:grid-cols-3">
+            {COMBOS.map((combo) => (
+              <ElevatedCard key={combo.intro} palette={palette} className="p-6 text-left">
+                <p className="text-base font-semibold leading-relaxed" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                  {combo.intro}
+                </p>
+                <div className="mt-4 space-y-2">
+                  {combo.items.map((item) => (
+                    <div key={item} className="flex items-center gap-2">
+                      <Sparkles size={13} color={palette.goldDeep} />
+                      <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </ElevatedCard>
+            ))}
+          </div>
+
+          <p className="mx-auto mt-14 max-w-2xl text-lg italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
+            The possibilities are endless because your celebration should not feel like everyone else's.
+          </p>
         </div>
-      </section>
-
-      {/* DRESS-UP EXPERIENCES */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto mb-14 max-w-6xl text-center">
-          <CategoryLabel palette={palette} fonts={fonts}>
-            DRESS-UP EXPERIENCES
-          </CategoryLabel>
-        </div>
-
-        <ExperienceBlock
-          image={TUTU_IMAGE}
-          imageAlt="Tutu Twirls pop-up dress-up experience"
-          title="Tutu Twirls Pop-Up"
-          tagline="Dress-up fun is back."
-          paragraphs={[
-            "A playful pop-up experience where kids and grown-ups can explore tutus, statement pieces, accessories, and creative looks.",
-          ]}
-          listLabel="FEATURING:"
-          listItems={[
-            "The Tutu Tent",
-            "Adult and child dress-up options",
-            "Tutus",
-            "Sequin blazers",
-            "Suspenders",
-            "Statement accessories",
-            "Styled details",
-            "Photo moments",
-          ]}
-          accent="Because imagination does not have an age limit."
-          ctaLabel="EXPLORE TUTU TWIRLS"
-          onCta={goToTutu}
-          palette={palette}
-          fonts={fonts}
-        />
-      </section>
-
-      {/* IMMERSIVE PHOTO MOMENTS */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
-        <div className="mx-auto mb-14 max-w-6xl text-center">
-          <CategoryLabel palette={palette} fonts={fonts}>
-            MORE THAN A BACKDROP
-          </CategoryLabel>
-        </div>
-
-        <ExperienceBlock
-          image={photoWallPhoto}
-          imageAlt="Custom-built display wall photo moment"
-          title="Immersive Photo Moments"
-          paragraphs={[
-            "Our custom-built display walls and photo experiences are designed to become part of the celebration.",
-            "No standard arch-and-balloon setup.",
-            "We create statement pieces that give guests a reason to step in, interact, and capture the moment.",
-          ]}
-          listLabel="FEATURING:"
-          listItems={[
-            "Custom-designed display walls",
-            "Light-up elements",
-            "Statement furniture",
-            "Lounge-style setups",
-            "Couch installations",
-            "Creative photo environments",
-            "Instagram-worthy moments designed around your event",
-          ]}
-          accent="These are not just backgrounds. They are part of the experience."
-          ctaLabel="EXPLORE DISPLAY WALLS"
-          onCta={goToDisplays}
-          reverse
-          palette={palette}
-          fonts={fonts}
-        />
       </section>
 
       {/* "WAIT, THIS IS SO COOL" QUOTE BAND */}
@@ -347,80 +301,39 @@ export default function Experiences({ navigate }) {
             <br />
             The reaction we design every piece for.
           </p>
-          <button
-            onClick={() => openPickerForBuilder()}
-            className="mt-9 inline-flex items-center gap-3 rounded-full px-8 py-4 text-sm font-semibold tracking-[0.1em] transition-transform hover:-translate-y-0.5"
-            style={{ ...fonts.bodyFont, background: "#FFFFFF", color: palette.primaryDeep, textTransform: "uppercase" }}
+          <div className="mt-9">
+            <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts} light>
+              Start Planning
+            </PrimaryButton>
+          </div>
+        </div>
+      </section>
+
+      <section style={{ ...paperTexture(palette), padding: "94px 24px" }}>
+        <div className="mx-auto max-w-4xl text-center">
+          <Sparkles className="mx-auto" size={20} color={palette.goldDeep} />
+          <h2
+            className="mt-5"
+            style={{
+              ...fonts.displayFont,
+              color: palette.primaryDeep,
+              fontSize: "clamp(2.8rem, 5vw, 4.8rem)",
+              lineHeight: 1,
+              fontWeight: 630,
+            }}
           >
-            Start Planning
-          </button>
-        </div>
-      </section>
-
-      {/* BUILD YOUR OWN EXPERIENCE */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto max-w-5xl text-center">
-          <h2 className="text-4xl font-semibold sm:text-5xl" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-            Build Your Own Experience
+            Have an idea that is not on this page?
           </h2>
-          <p className="mt-5 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            Every celebration has its own story.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            Excellent. Customization is the fun part. Bring the problem, the screenshot, the strange idea or the feeling you are trying to create.
           </p>
-          <p className="mt-2 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            Choose one experience or combine multiple elements to create
-            something completely custom.
-          </p>
+          <div className="mt-8">
+            <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+              Tell us what you are imagining
+            </PrimaryButton>
+          </div>
         </div>
-
-        <div className="mx-auto mt-14 grid max-w-5xl gap-8 sm:grid-cols-3">
-          {[
-            {
-              intro: "A baby shower might include:",
-              items: ["Guess The Arrival", "Custom Trivia", "Custom Story Book", "Immersive Photo Moment"],
-            },
-            {
-              intro: "A Tutu Pop-Up might include:",
-              items: ["The Tutu Tent", "Dress-Up Experiences", "Photo Moments", "Creative Activities"],
-            },
-            {
-              intro: "A milestone celebration might include:",
-              items: ["A Story Experience", "Interactive Guest Activity", "Custom Display"],
-            },
-          ].map((combo) => (
-            <div key={combo.intro} className="rounded-xl p-6" style={{ background: palette.surface, border: `1px solid ${palette.line}` }}>
-              <p className="text-base font-semibold leading-relaxed" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
-                {combo.intro}
-              </p>
-              <div className="mt-4 space-y-2">
-                {combo.items.map((item) => (
-                  <div key={item} className="flex items-center gap-2">
-                    <Sparkles size={13} color={palette.goldDeep} />
-                    <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <p className="mx-auto mt-14 max-w-2xl text-center text-lg italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-          The possibilities are endless because your celebration should not
-          feel like everyone else's.
-        </p>
       </section>
-
-      {/* FINAL CTA */}
-      <div className="px-6 py-16 text-center sm:px-10" style={{ background: `${palette.primary}0D` }}>
-        <button
-          onClick={() => openPickerForBuilder()}
-          className="inline-flex items-center gap-3 rounded-sm px-8 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-          style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
-        >
-          BUILD MY EXPERIENCE <ArrowRight size={17} />
-        </button>
-      </div>
-    </div>
+    </main>
   );
 }

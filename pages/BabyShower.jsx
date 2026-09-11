@@ -1,7 +1,19 @@
 import React from "react";
-import { ArrowRight, Heart, MessageCircle, Sparkles } from "lucide-react";
+import { Camera, Heart, MessageCircle, Sparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import {
+  ElevatedCard,
+  FullBleedStatement,
+  JewelBand,
+  Kicker,
+  PageHero,
+  PrimaryButton,
+  Reveal,
+  SectionIntro,
+  editorialShadow,
+  paperTexture,
+} from "../components/EditorialKit";
 
 import essentialsImage from "../media/hero.png";
 import arrivalPhoto from "../media/web_arrival.png";
@@ -10,497 +22,359 @@ import wallPuzzleShowerPhoto from "../media/wallpuzzle-babyshower.png";
 import photoWallPhoto from "../media/featurewall.png";
 import lilRootsPhoto from "../media/lilroots.png";
 import readyToPopPhoto from "../media/readytopop.png";
+import kindnessPhoto from "../media/poem.png";
 
 const CTA_LABEL = "PLAN YOUR BABY SHOWER EXPERIENCE";
 
-function SectionLabel({ children, palette, fonts }) {
-  return (
-    <p
-      className="text-xs font-semibold tracking-[0.3em]"
-      style={{ ...fonts.bodyFont, color: palette.goldDeep }}
-    >
-      {children}
-    </p>
-  );
-}
+const EXPERIENCE_CARDS = [
+  {
+    image: arrivalPhoto,
+    title: "Guess The Arrival",
+    tagline: "The countdown to baby becomes a celebration of its own.",
+    body: "Guests predict when baby will arrive, where mom will be, what she'll be doing, and what time baby makes their entrance. Guests submit their guesses through a custom digital experience and can sign up for email updates as the big day approaches.",
+  },
+  {
+    image: babyTriviaPhoto,
+    title: "Baby Trivia",
+    tagline: "How well do they really know the parents-to-be?",
+    body: "We create a custom trivia experience featuring questions about the parents-to-be, their relationship and their story. Guests laugh, compete, and discover something new about the couple they came to celebrate.",
+  },
+  {
+    image: wallPuzzleShowerPhoto,
+    title: "Interactive Wall Puzzle",
+    tagline: "A keepsake built one guest at a time.",
+    body: "Each guest contributes a part of the display throughout the event. A visual reminder that every person there played a part in welcoming this new chapter.",
+  },
+  {
+    image: kindnessPhoto,
+    title: "Hello World Kindness Station",
+    tagline: "A little kindness goes out. Something meaningful stays behind.",
+    body: "Guests pass a kindness card forward and leave genuine words for the host to keep for a rainy day.",
+  },
+];
 
-function ImagePanel({ src, alt, className = "" }) {
-  return (
-    <div className={`overflow-hidden ${className}`} style={{ background: "#E9E1D2" }}>
-      <img
-        src={src}
-        alt={alt}
-        className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-      />
-    </div>
-  );
-}
+const KEEP = [
+  {
+    icon: Camera,
+    title: "Photos worth opening again",
+    body: "Not just images from the day, but photos paired with the memories and messages behind them.",
+  },
+  {
+    icon: MessageCircle,
+    title: "Words for the future",
+    body: "Advice, stories, wishes and messages that become part of the baby's story before they even arrive.",
+  },
+  {
+    icon: Heart,
+    title: "Something made together",
+    body: "The best keepsakes are not bought finished. They become meaningful because the people in the room helped create them.",
+  },
+];
 
-function ExperienceRow({
-  image,
-  imageAlt,
-  title,
-  tagline,
-  paragraphs = [],
-  listLabel,
-  listItems,
-  accent,
-  reverse,
-  palette,
-  fonts,
-}) {
-  const content = (
-    <div>
-      <h3 className="text-3xl font-semibold sm:text-4xl" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-        {title}
-      </h3>
-      {tagline && (
-        <p className="mt-2 text-lg italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-          {tagline}
-        </p>
-      )}
-      <div className="mt-5 space-y-3">
-        {paragraphs.map((p) => (
-          <p key={p} className="text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            {p}
-          </p>
-        ))}
-      </div>
-      {listLabel && listItems && (
-        <>
-          <p className="mt-6 text-sm font-semibold tracking-[0.18em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
-            {listLabel}
-          </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {listItems.map((item) => (
-              <div key={item} className="flex items-center gap-3 border-b pb-3" style={{ borderColor: palette.line }}>
-                <Sparkles size={14} color={palette.goldDeep} />
-                <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                  {item}
-                </span>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-      {accent && (
-        <p className="mt-6 text-lg italic leading-relaxed" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-          {accent}
-        </p>
-      )}
-    </div>
-  );
+const KEEPSAKE_NOTES = [
+  {
+    icon: Heart,
+    title: "Wishes For Baby",
+    body: "A place for guests to share hopes, advice, and heartfelt messages for the little one. A keepsake the family can return to as baby grows.",
+  },
+  {
+    icon: MessageCircle,
+    title: "Advice For The Parents",
+    body: "Because every new parent needs encouragement, wisdom, and a little laughter along the way. Guests share their words, memories, and advice to create something meaningful for the journey ahead.",
+  },
+];
 
-  if (!image) {
-    return <div className="mx-auto max-w-2xl">{content}</div>;
-  }
-
-  return (
-    <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-      <div className={reverse ? "lg:order-2" : "lg:order-1"}>
-        <ImagePanel src={image} alt={imageAlt} className="aspect-[4/5]" />
-      </div>
-      <div className={reverse ? "lg:order-1" : "lg:order-2"}>{content}</div>
-    </div>
-  );
-}
-
-function KeepsakeNote({ icon: Icon, title, children, palette, fonts }) {
-  return (
-    <div className="border-t pt-6" style={{ borderColor: palette.line }}>
-      <Icon size={20} strokeWidth={1.5} color={palette.goldDeep} />
-      <h4 className="mt-4 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-        {title}
-      </h4>
-      <p className="mt-3 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-        {children}
-      </p>
-    </div>
-  );
-}
-
-function GiftCard({ image, alt, title, paragraphs, palette, fonts }) {
-  return (
-    <div>
-      <ImagePanel src={image} alt={alt} className="aspect-[4/3]" />
-      <h4 className="mt-5 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-        {title}
-      </h4>
-      <div className="mt-3 space-y-2">
-        {paragraphs.map((p) => (
-          <p key={p} className="text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            {p}
-          </p>
-        ))}
-      </div>
-    </div>
-  );
-}
+const PHOTO_MOMENT_THINK = [
+  "Custom-designed statement walls",
+  "Light-up displays",
+  "Lounge-style setups",
+  "Statement furniture",
+  "Couch installations",
+  "Theme-inspired photo environments",
+  "Instagram-worthy moments guests actually want to step into",
+];
 
 export default function BabyShower() {
   const { openPickerForBuilder } = useEventType();
   const { palette, fonts } = usePalette();
 
   return (
-    <main className="min-h-screen overflow-hidden" style={{ background: palette.bg, color: palette.ink }}>
-      {/* HERO */}
-      <section className="relative">
-        <div className="mx-auto grid max-w-7xl lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="flex items-center px-6 py-20 sm:px-10 lg:px-14 lg:py-28">
-            <div className="max-w-xl">
-              <SectionLabel palette={palette} fonts={fonts}>
-                BABY SHOWER EXPERIENCES
-              </SectionLabel>
-
-              <h1
-                className="mt-5 text-5xl font-medium leading-[1.05] sm:text-6xl lg:text-[64px]"
-                style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-              >
-                A baby shower where every guest becomes part of the story.
-              </h1>
-
-              <p
-                className="mt-7 text-sm font-semibold tracking-[0.2em]"
-                style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-              >
-                STARTING AT $1,295
-              </p>
-
-              <p className="mt-6 text-base leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                A baby shower is more than a celebration before baby arrives.
-              </p>
-
-              <p className="mt-4 text-base leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                It is the beginning of a story.
-              </p>
-
-              <p className="mt-4 text-base leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                We create interactive experiences, meaningful keepsakes, and
-                thoughtful details that bring guests together and give the
-                parents-to-be memories they can treasure long after the day
-                is over.
-              </p>
-
-              <p className="mt-4 text-base leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                From predicting baby's arrival to creating messages for the
-                future, every experience gives guests a way to connect,
-                contribute, and celebrate the little one on the way.
-              </p>
-
-              <p className="mt-5 text-xl italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-                Not just a baby shower. A memory in the making.
-              </p>
-
-              <button
-                onClick={() => openPickerForBuilder()}
-                className="mt-7 inline-flex items-center gap-3 rounded-sm px-7 py-4 text-sm font-semibold tracking-[0.14em] text-white transition-all hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
-              >
-                {CTA_LABEL}
-                <ArrowRight size={17} strokeWidth={1.7} />
-              </button>
-            </div>
-          </div>
-
-          <ImagePanel
-            src={essentialsImage}
-            alt="Interactive baby shower experience set up by A Slice of G Events"
-            className="min-h-[520px] lg:min-h-[720px]"
-          />
+    <main style={{ background: palette.bg, color: palette.ink }}>
+      <PageHero
+        eyebrow="BABY SHOWER EXPERIENCES"
+        title="A baby shower where every guest becomes part of the story."
+        script="Not just a shower. A memory in the making."
+        body="Interactive experiences, meaningful keepsakes and thoughtful details that bring guests together and give the parents-to-be something worth keeping long after the day is over."
+        image={essentialsImage}
+        imageAlt="Interactive baby shower experience by A Slice of G Events"
+        palette={palette}
+        fonts={fonts}
+      >
+        <div className="flex flex-wrap items-center gap-5">
+          <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+            {CTA_LABEL}
+          </PrimaryButton>
+          <span
+            style={{
+              ...fonts.bodyFont,
+              color: palette.goldDeep,
+              fontSize: "13px",
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}
+          >
+            Starting at $1,295
+          </span>
         </div>
-      </section>
+      </PageHero>
 
-      {/* THE PRETTIEST DETAILS */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
+      <section style={{ ...paperTexture(palette), padding: "88px 24px" }}>
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-2xl leading-9" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-            The prettiest details are wonderful.
-          </p>
-          <p className="mt-2 text-2xl leading-9" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-            But the moments people remember are the ones they were part of.
-          </p>
-
-          <div className="mx-auto mt-9 max-w-xl space-y-2">
-            <p className="text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              A prediction someone gets right.
-            </p>
-            <p className="text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              A message baby reads years later.
-            </p>
-            <p className="text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              A story created by the people who love them most.
-            </p>
-            <p className="text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              A keepsake that brings everyone back to this special time.
-            </p>
-          </div>
-
-          <p className="mx-auto mt-8 max-w-xl text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-            We design experiences that turn guests from attendees into
-            contributors.
-          </p>
-        </div>
-      </section>
-
-      {/* THE BABY SHOWER EXPERIENCE (overview) */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <SectionLabel palette={palette} fonts={fonts}>
-            THE BABY SHOWER EXPERIENCE
-          </SectionLabel>
-
+          <Kicker palette={palette} fonts={fonts}>THE BABY SHOWER EXPERIENCE</Kicker>
           <h2
-            className="mt-4 text-4xl font-medium leading-tight sm:text-5xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+            className="mt-4"
+            style={{
+              ...fonts.displayFont,
+              color: palette.primaryDeep,
+              fontSize: "clamp(2.5rem, 5vw, 4.2rem)",
+              lineHeight: 1,
+              fontWeight: 630,
+            }}
           >
             Your celebration includes:
           </h2>
 
-          <div className="mx-auto mt-8 flex max-w-xl flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-6">
+          <div className="mx-auto mt-9 flex max-w-xl flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-6">
             <p
               className="rounded-sm border px-6 py-4 text-lg font-semibold"
-              style={{ ...fonts.bodyFont, color: palette.primaryDeep, borderColor: palette.line }}
+              style={{ ...fonts.bodyFont, color: palette.primaryDeep, borderColor: palette.line, background: palette.surface }}
             >
               Choose 2 Interactive Experiences
             </p>
-            <span className="text-sm italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-              and
-            </span>
+            <span className="text-sm italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>and</span>
             <p
               className="rounded-sm border px-6 py-4 text-lg font-semibold"
-              style={{ ...fonts.bodyFont, color: palette.primaryDeep, borderColor: palette.line }}
+              style={{ ...fonts.bodyFont, color: palette.primaryDeep, borderColor: palette.line, background: palette.surface }}
             >
               Choose 2 Keepsake Experiences
             </p>
           </div>
 
           <p className="mx-auto mt-8 max-w-xl text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            Then personalize your celebration with additional add-ons.
-          </p>
-
-          <p className="mx-auto mt-4 max-w-xl text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            Every experience is designed to work together, creating a baby
-            shower that feels personal, thoughtful, and completely yours.
+            Then personalize your celebration with additional add-ons. Every experience is designed to work together, creating a baby shower that feels personal, thoughtful, and completely yours.
           </p>
         </div>
       </section>
 
-      {/* INTERACTIVE EXPERIENCES */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
-        <div className="mx-auto mb-14 max-w-6xl text-center">
-          <SectionLabel palette={palette} fonts={fonts}>
-            INTERACTIVE EXPERIENCES
-          </SectionLabel>
-        </div>
-
-        <div className="space-y-20">
-          <ExperienceRow
-            image={arrivalPhoto}
-            imageAlt="Guess the Arrival baby shower prediction game"
-            title="Guess The Arrival"
-            tagline="The countdown to baby becomes a celebration of its own."
-            paragraphs={[
-              "Guests predict:",
-              "When will baby arrive?",
-              "Where will mom be?",
-              "What will she be doing?",
-              "What time will baby make their entrance?",
-              "Guests submit their guesses through a custom digital experience and can sign up for email updates as the big day approaches.",
-              "When baby arrives, everyone who joined in gets to share the excitement.",
-            ]}
-            accent="Because waiting for baby is better when everyone is part of the journey."
+      <section style={{ background: palette.surface, padding: "90px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="THE BABY SHOWER EXPERIENCE"
+            title="The pretty details matter. The moments people join in on matter more."
+            body="A prediction someone gets right. A message baby reads years later. A story created by the people who love them most. That is the part we design around."
             palette={palette}
             fonts={fonts}
           />
 
-          <ExperienceRow
-            image={babyTriviaPhoto}
-            imageAlt="Custom trivia experience about the parents-to-be at a baby shower"
-            title="Custom Trivia: How Well Do You Know Mom & Dad?"
-            tagline="A baby shower game that is actually about the people being celebrated."
-            paragraphs={[
-              "We create a custom trivia experience featuring questions about the parents-to-be, their relationship, their story, and the little details guests love.",
-              "Guests laugh, compete, and discover something new about the couple they came to celebrate.",
-            ]}
-            reverse
-            palette={palette}
-            fonts={fonts}
-          />
+          <div className="mt-16 grid gap-6 md:grid-cols-2">
+            {EXPERIENCE_CARDS.map((item, i) => (
+              <Reveal key={item.title} delay={i * 70}>
+                <ElevatedCard palette={palette} className="h-full overflow-hidden">
+                  <div className="overflow-hidden" style={{ aspectRatio: "16 / 10" }}>
+                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                  </div>
+                  <div className="p-7">
+                    <h3 className="text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-lg italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
+                      {item.tagline}
+                    </p>
+                    <p className="mt-4 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {item.body}
+                    </p>
+                  </div>
+                </ElevatedCard>
+              </Reveal>
+            ))}
+          </div>
 
-          <ExperienceRow
-            title="Custom Story Book"
-            tagline="A story created by the people who love them most."
-            paragraphs={[
-              "Guests contribute pages to a custom digital story experience using guided prompts.",
-              "The parents choose the overall concept, story direction, and visual style.",
-              "Each guest creates their own page.",
-              "Together, those pages become a one-of-a-kind keepsake created by the people who will surround this child with love.",
-            ]}
-            palette={palette}
-            fonts={fonts}
-          />
-
-          <ExperienceRow
-            image={wallPuzzleShowerPhoto}
-            imageAlt="Guests completing an interactive wall puzzle keepsake at a baby shower"
-            title="Interactive Wall Puzzle"
-            tagline="A celebration keepsake created piece by piece."
-            paragraphs={[
-              "Each guest contributes a part of the experience, creating a larger interactive display that comes together throughout the event.",
-              "A visual reminder that every person there played a part in welcoming this new chapter.",
-            ]}
-            reverse
-            palette={palette}
-            fonts={fonts}
-          />
+          <p className="mx-auto mt-12 max-w-2xl text-center text-lg italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
+            Also available: a collaborative Custom Story Book, where guests contribute pages using guided prompts until the pieces become a one-of-a-kind keepsake.
+          </p>
         </div>
       </section>
 
-      {/* KEEPSAKE EXPERIENCES */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28">
-        <div className="mx-auto mb-14 max-w-6xl text-center">
-          <SectionLabel palette={palette} fonts={fonts}>
-            KEEPSAKE EXPERIENCES
-          </SectionLabel>
-        </div>
+      <FullBleedStatement
+        image={photoWallPhoto}
+        imageAlt="Baby shower memory display"
+        eyebrow="THE PART PEOPLE KEEP"
+        title="The experience does not end when the shower does."
+        body="The celebration becomes photos, notes, predictions, stories and keepsakes that can live in a nursery, a home or a box that gets opened years later."
+        palette={palette}
+        fonts={fonts}
+      />
 
-        <div className="mx-auto max-w-5xl">
-          <div className="grid gap-10 sm:grid-cols-2">
-            <KeepsakeNote icon={Heart} title="Wishes For Baby" palette={palette} fonts={fonts}>
-              A place for guests to share hopes, advice, and heartfelt
-              messages for the little one. A keepsake the family can return
-              to as baby grows.
-            </KeepsakeNote>
-
-            <KeepsakeNote icon={MessageCircle} title="Advice For The Parents" palette={palette} fonts={fonts}>
-              Because every new parent needs encouragement, wisdom, and a
-              little laughter along the way. Guests share their words,
-              memories, and advice to create something meaningful for the
-              journey ahead.
-            </KeepsakeNote>
+      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="BUILT FOR PARTICIPATION"
+            title="Your guests are not just watching the day happen."
+            body="They are contributing to it, and that is what makes the final keepsakes matter."
+            palette={palette}
+            fonts={fonts}
+            light
+          />
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            {KEEP.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <Reveal key={item.title} delay={i * 80}>
+                  <ElevatedCard palette={palette} className="h-full p-7">
+                    <div
+                      className="flex h-12 w-12 items-center justify-center rounded-full"
+                      style={{ background: i === 1 ? palette.gold : palette.accent, color: i === 1 ? palette.primaryDeep : "#fff" }}
+                    >
+                      <Icon size={20} />
+                    </div>
+                    <h3 className="mt-6 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {item.body}
+                    </p>
+                  </ElevatedCard>
+                </Reveal>
+              );
+            })}
           </div>
 
-          <div className="mt-24">
-            <ExperienceRow
-              image={photoWallPhoto}
-              imageAlt="Custom-built display wall photo moment at a baby shower"
-              title="Immersive Photo Moments"
-              tagline="More than a backdrop."
-              paragraphs={[
-                "Create a photo experience that feels like part of the celebration.",
-                "Our custom-built display walls and photo moments are designed to be unique, creative, and memorable.",
-                "No standard arch-and-balloon setup.",
-              ]}
-              listLabel="THINK:"
-              listItems={[
-                "Custom-designed statement walls",
-                "Light-up displays",
-                "Lounge-style setups",
-                "Statement furniture",
-                "Couch installations",
-                "Theme-inspired photo environments",
-                "Instagram-worthy moments guests actually want to step into",
-              ]}
-              palette={palette}
-              fonts={fonts}
-            />
+          <div className="mt-14 grid gap-7 sm:grid-cols-2">
+            {KEEPSAKE_NOTES.map((item) => {
+              const Icon = item.icon;
+              return (
+                <ElevatedCard key={item.title} palette={palette} className="h-full p-7">
+                  <div
+                    className="flex h-11 w-11 items-center justify-center rounded-full"
+                    style={{ background: palette.gold, color: palette.primaryDeep }}
+                  >
+                    <Icon size={19} />
+                  </div>
+                  <h3 className="mt-5 text-xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                    {item.body}
+                  </p>
+                </ElevatedCard>
+              );
+            })}
+          </div>
+        </div>
+      </JewelBand>
+
+      <section style={{ ...paperTexture(palette), padding: "96px 24px" }}>
+        <div className="mx-auto max-w-7xl">
+          <SectionIntro
+            eyebrow="IMMERSIVE PHOTO MOMENTS"
+            title="More than a backdrop."
+            body="Create a photo experience that feels like part of the celebration. Our custom-built display walls and photo moments are designed to be unique, creative, and memorable. No standard arch-and-balloon setup."
+            palette={palette}
+            fonts={fonts}
+            align="left"
+          />
+          <div className="mt-10 grid gap-3 sm:grid-cols-2">
+            {PHOTO_MOMENT_THINK.map((item) => (
+              <div key={item} className="flex items-center gap-3 border-b pb-3" style={{ borderColor: palette.line }}>
+                <Sparkles size={14} color={palette.goldDeep} />
+                <span className="text-sm" style={{ ...fonts.bodyFont, color: palette.ink }}>{item}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* GUEST GIFTS */}
-      <section className="px-6 py-20 sm:px-10 lg:py-28" style={{ background: palette.surface }}>
-        <div className="mx-auto max-w-5xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <SectionLabel palette={palette} fonts={fonts}>
-              GUEST GIFTS & LITTLE THANK YOUS
-            </SectionLabel>
-
+      <section style={{ background: palette.surface, padding: "96px 24px" }}>
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center">
+          <div>
+            <Kicker palette={palette} fonts={fonts}>GUEST GIFTS</Kicker>
             <h2
-              className="mt-4 text-4xl font-medium leading-tight sm:text-5xl"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+              className="mt-4"
+              style={{
+                ...fonts.displayFont,
+                color: palette.primaryDeep,
+                fontSize: "clamp(2.7rem, 5vw, 4.7rem)",
+                lineHeight: 1,
+                fontWeight: 630,
+              }}
             >
-              Send guests home with something thoughtful.
+              A little something for the road.
             </h2>
-
-            <p className="mt-5 text-base leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Our customized guest gifts are designed to complement your
-              theme, colours, and the story you are creating.
+            <p className="mt-6 max-w-xl text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Our customized guest gifts are designed to complement your theme, colours, and the story you are creating. Every package includes a guest gift, and you can choose the option that fits the celebration. Ready to Pop is included, with additional keepsakes and gifts available as upgrades.
             </p>
+            <div className="mt-8">
+              <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
+                Build the full experience
+              </PrimaryButton>
+            </div>
           </div>
 
-          <div className="mx-auto mt-14 grid max-w-3xl gap-12 sm:grid-cols-2">
-            <GiftCard
-              image={lilRootsPhoto}
-              alt="Lil Roots planted seedling guest gift for a baby shower"
-              title="Lil Roots"
-              paragraphs={[
-                "A little reminder that something beautiful is growing.",
-                "A customized keepsake designed around your baby shower theme and personalized with the parents' names.",
-                "A meaningful gift guests can take home as they celebrate the arrival of your little one.",
-              ]}
-              palette={palette}
-              fonts={fonts}
-            />
-
-            <GiftCard
-              image={readyToPopPhoto}
-              alt="Ready to Pop popcorn favour guest gift for a baby shower"
-              title="Ready To Pop"
-              paragraphs={[
-                "A fun little thank you for guests celebrating your little one who is about to pop.",
-                "A customized jar of popcorn seasoning with a personalized tag designed to match your baby shower theme.",
-                "A playful favour guests can enjoy after the celebration.",
-              ]}
-              palette={palette}
-              fonts={fonts}
-            />
+          <div className="grid gap-5 sm:grid-cols-2">
+            {[
+              { src: lilRootsPhoto, alt: "Lil Roots planted seedling guest gift", title: "Lil Roots", body: "A little reminder that something beautiful is growing." },
+              { src: readyToPopPhoto, alt: "Ready to Pop popcorn favour guest gift", title: "Ready To Pop", body: "A fun little thank you for guests celebrating your little one who is about to pop." },
+            ].map((gift, i) => (
+              <div key={gift.title}>
+                <div
+                  className="overflow-hidden"
+                  style={{
+                    borderRadius: "5px",
+                    boxShadow: editorialShadow,
+                    border: `1px solid ${palette.line}`,
+                    transform: `rotate(${i ? 2 : -2}deg)`,
+                  }}
+                >
+                  <img src={gift.src} alt={gift.alt} className="aspect-[4/5] h-full w-full object-cover" />
+                </div>
+                <h4 className="mt-4 text-lg font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                  {gift.title}
+                </h4>
+                <p className="mt-1 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  {gift.body}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section className="px-6 py-24 text-center sm:px-10 lg:py-32" style={{ background: palette.primaryDeep }}>
-        <div className="mx-auto max-w-3xl">
+      <JewelBand palette={palette} style={{ padding: "82px 24px" }}>
+        <div className="mx-auto max-w-4xl text-center">
+          <Sparkles className="mx-auto" size={20} color={palette.gold} />
           <h2
-            className="text-5xl font-medium leading-tight sm:text-6xl"
-            style={{ ...fonts.displayFont, color: "#FFFFFF" }}
+            className="mt-5"
+            style={{
+              ...fonts.displayFont,
+              color: "#FFFFFF",
+              fontSize: "clamp(2.8rem, 5vw, 4.8rem)",
+              lineHeight: 1,
+              fontWeight: 630,
+            }}
           >
-            Your Baby Shower.
-            <br />
-            Your Story.
+            Your baby shower. Your story.
           </h2>
-
-          <p className="mx-auto mt-7 max-w-xl text-lg leading-8" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
-            Start with the experiences that feel most meaningful.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7" style={{ ...fonts.bodyFont, color: "rgba(255,255,255,0.80)" }}>
+            Start with the experiences that feel most meaningful. Add the details that make it yours. We will help you create a celebration where guests do not just show up. They become part of the story.
           </p>
-          <p className="mx-auto mt-2 max-w-xl text-lg leading-8" style={{ ...fonts.bodyFont, color: "#FFFFFFCC" }}>
-            Add the details that make it yours.
-          </p>
-
-          <p className="mx-auto mt-6 max-w-xl text-base leading-7" style={{ ...fonts.bodyFont, color: "#FFFFFFB8" }}>
-            We will help you create a celebration where guests do not just
-            show up. They become part of the story.
-          </p>
-
-          <p className="mx-auto mt-8 max-w-xl text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.gold }}>
-            Ready to create your baby shower experience?
-          </p>
-
-          <p className="mt-5 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
-            STARTING AT $1,295
-          </p>
-
-          <button
-            onClick={() => openPickerForBuilder()}
-            className="mt-8 inline-flex items-center gap-3 rounded-sm px-8 py-4 text-sm font-semibold tracking-[0.14em] transition-all hover:-translate-y-0.5 hover:shadow-lg"
-            style={{ ...fonts.bodyFont, background: palette.gold, color: palette.primaryDeep }}
-          >
-            {CTA_LABEL}
-            <ArrowRight size={17} />
-          </button>
+          <div className="mt-8">
+            <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts} light>
+              {CTA_LABEL}
+            </PrimaryButton>
+          </div>
         </div>
-      </section>
+      </JewelBand>
     </main>
   );
 }
