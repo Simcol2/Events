@@ -29,6 +29,7 @@ import ScanAsset from "./pages/ScanAsset";
 import Admin from "./pages/Admin";
 import TutuTwirlsTea from "./pages/TutuTwirlsTea";
 import BabyShower from "./pages/BabyShower";
+import ClientPortal from "./pages/ClientPortal";
 
 // Nav order and the "primary CTA should be visually dominant" rule both
 // come from the Master Plan's navigation section - Catering and Display
@@ -124,6 +125,7 @@ function AppRoutes() {
     "/reviews": { component: <Reviews navigate={navigate} />, current: "reviews" },
     "/review": { component: <LeaveReview navigate={navigate} />, current: "review" },
     "/scan": { component: <ScanAsset navigate={navigate} />, current: "scan" },
+    "/client": { component: <ClientPortal navigate={navigate} />, current: "client" },
   };
 
   const { component, current } = routeMap[page] || routeMap["/"];

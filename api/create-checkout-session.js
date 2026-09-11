@@ -130,6 +130,9 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: lineItems,
+      customer_creation: "always",
+      invoice_creation: { enabled: true },
+      metadata: { source: "purchase" },
       success_url: `${origin}/gifts?checkout=success`,
       cancel_url: `${origin}/gifts?checkout=cancelled`,
     });

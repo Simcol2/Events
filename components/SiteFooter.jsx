@@ -103,6 +103,7 @@ export default function SiteFooter({ navigate }) {
             <div className="mt-4 space-y-3 text-base" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
               <button onClick={() => navigate("/faq")} className="block hover:opacity-70">FAQ</button>
               <button onClick={() => navigate("/display-options")} className="block hover:opacity-70">Display Walls</button>
+              <button onClick={() => navigate("/client")} className="block font-semibold hover:opacity-70">Client Portal</button>
             </div>
           </div>
 
