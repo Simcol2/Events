@@ -54,7 +54,7 @@ const NAV = [
     children: [
       { label: "Decor Collection", path: "/decor" },
       { label: "Display Walls", path: "/display-options" },
-      { label: "Gifts", path: "/gifts" },
+      { label: "Gifts & Gift Wrap", path: "/gifts" },
     ],
   },
   { label: "Experiences", path: "/experiences" },
