@@ -631,6 +631,47 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
+      {/* Why A Slice of G */}
+      <section style={{ ...paperTexture(palette), padding: "84px 24px" }}>
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <Sparkles className="mx-auto mb-4" size={22} strokeWidth={1.2} style={{ color: palette.goldDeep }} />
+          <h2
+            style={{
+              ...fonts.displayFont,
+              color: palette.primaryDeep,
+              fontSize: "clamp(1.9rem, 3.6vw, 2.6rem)",
+              fontWeight: 650,
+            }}
+          >
+            Why people choose A Slice of G
+          </h2>
+          <span
+            className="mt-2 inline-block"
+            style={{ ...fonts.scriptFont, fontSize: "16px", color: palette.accent, transform: "rotate(-2deg)" }}
+          >
+            (besides the fact that we're just really fun)
+          </span>
+
+          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
+            Because celebrations do not have to look the same.
+          </p>
+          <p className="mt-3 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            We love the unexpected details.
+          </p>
+          <p className="mt-1 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            The moments that make people smile.
+          </p>
+          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            The ideas that make guests say, "Wait, this is so cool."
+          </p>
+
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
+            From playful dress-up experiences to meaningful keepsakes,
+            everything we create is designed to help people connect.
+          </p>
+        </Reveal>
+      </section>
+
       {/* How it works */}
       <section style={{ ...paperTexture(palette), padding: "84px 24px 100px" }}>
         <div className="mx-auto max-w-7xl">
