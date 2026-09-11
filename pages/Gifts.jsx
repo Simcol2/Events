@@ -82,7 +82,17 @@ function GiftTile({
         )}
 
         {description && (
-          <p className="mt-3 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+          <p
+            className="mt-3 text-sm leading-6"
+            style={{
+              ...fonts.bodyFont,
+              color: palette.muted,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
             {description}
           </p>
         )}
@@ -202,6 +212,26 @@ export default function Gifts() {
     };
   }, []);
 
+  // Some standalone gifts read as a natural pair with a specific keepsake
+  // or catalog section rather than their own generic grid, so they're
+  // pulled out of `gifts` and rendered inside those sections instead.
+  const gRingGift = gifts.find((g) => g.name === "G Ring Gift");
+  const popUpCards = gifts.find((g) => g.name === "Pop Up Nostalgia Cards");
+  const otherGifts = gifts.filter((g) => g.id !== gRingGift?.id && g.id !== popUpCards?.id);
+
+  const giftTileProps = (g) => ({
+    name: g.name,
+    tagline: g.tagline,
+    description: g.description,
+    photos: g.photos,
+    priceLabel: g.customizable ? `From $${g.price}` : `$${g.price}`,
+    onCustomize: g.customizable ? () => setCustomizing(g) : undefined,
+    inCart: !g.customizable && isInCart(g.id, "gift"),
+    onToggle: g.customizable
+      ? undefined
+      : () => (isInCart(g.id, "gift") ? removeFromCart(g.id, "gift") : addToCart(g.id, "gift")),
+  });
+
   const giftItems = catalog.filter((item) => {
     const { isPurchasable } = getItemFlags(item);
     if (!isPurchasable) return false;
@@ -300,11 +330,16 @@ export default function Gifts() {
                 </Reveal>
               );
             })}
+            {gRingGift && (
+              <Reveal delay={KEEPSAKES.length * 55}>
+                <GiftTile {...giftTileProps(gRingGift)} palette={palette} fonts={fonts} />
+              </Reveal>
+            )}
           </div>
         </div>
       </section>
 
-      {gifts.length > 0 && (
+      {otherGifts.length > 0 && (
         <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
           <div className="mx-auto max-w-7xl">
             <SectionIntro
@@ -317,27 +352,9 @@ export default function Gifts() {
             />
 
             <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
-              {gifts.map((g, i) => (
+              {otherGifts.map((g, i) => (
                 <Reveal key={g.id} delay={i * 55}>
-                  <GiftTile
-                    name={g.name}
-                    tagline={g.tagline}
-                    description={g.description}
-                    photos={g.photos}
-                    priceLabel={g.customizable ? `From $${g.price}` : `$${g.price}`}
-                    onCustomize={g.customizable ? () => setCustomizing(g) : undefined}
-                    inCart={!g.customizable && isInCart(g.id, "gift")}
-                    onToggle={
-                      g.customizable
-                        ? undefined
-                        : () =>
-                            isInCart(g.id, "gift")
-                              ? removeFromCart(g.id, "gift")
-                              : addToCart(g.id, "gift")
-                    }
-                    palette={palette}
-                    fonts={fonts}
-                  />
+                  <GiftTile {...giftTileProps(g)} palette={palette} fonts={fonts} />
                 </Reveal>
               ))}
             </div>
@@ -347,7 +364,7 @@ export default function Gifts() {
 
       <section style={{ ...paperTexture(palette), padding: "94px 24px" }}>
         <div className="mx-auto max-w-7xl">
-          {wrapAndStationeryItems.length > 0 && (
+          {(wrapAndStationeryItems.length > 0 || popUpCards) && (
             <>
               <SectionIntro
                 eyebrow="WRAP IT UP"
@@ -372,6 +389,7 @@ export default function Gifts() {
                     fonts={fonts}
                   />
                 ))}
+                {popUpCards && <GiftTile {...giftTileProps(popUpCards)} palette={palette} fonts={fonts} />}
               </div>
             </>
           )}
