@@ -187,7 +187,7 @@ export default function ClientPortal() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/client-portal-data", {
+      const response = await fetch("/api/client-portal", {
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
       const payload = await response.json();
@@ -220,7 +220,7 @@ export default function ClientPortal() {
     setBusyAction(actionKey);
     setError("");
     try {
-      const response = await fetch("/api/create-client-invoice", {
+      const response = await fetch("/api/client-portal?action=invoice", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -241,7 +241,7 @@ export default function ClientPortal() {
     setBusyAction("billing");
     setError("");
     try {
-      const response = await fetch("/api/create-stripe-billing-portal", {
+      const response = await fetch("/api/client-portal?action=billing-portal", {
         method: "POST",
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
