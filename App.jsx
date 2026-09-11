@@ -36,7 +36,7 @@ import BabyShower from "./pages/BabyShower";
 // Builder's Memory Display step) without competing for top-level nav space.
 const NAV = [
   { label: "Home", path: "/" },
-  { label: "How It Works", path: "/how-it-works" },
+  { label: "About", path: "/about" },
   {
     label: "Milestone Events",
     path: "/package-builder",
@@ -65,9 +65,9 @@ const NAV = [
   },
   { label: "Experiences", path: "/experiences" },
   { label: "Rental Guide", path: "/rental-guide" },
+  { label: "FAQ", path: "/faq" },
   { label: "Catering", path: "/catering" },
   { label: "Past Events", path: "/past-events" },
-  { label: "About", path: "/about" },
   {
     label: "Celebrating You",
     path: "/package-builder",

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles, Truck, Users, Gift, CalendarHeart } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { hexToRgba, paperTexture } from "../theme";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -11,29 +12,6 @@ import nurseryRhymePhoto from "../media/poem.png";
 
 const TUTU_IMAGE = "/photos/tutu-twirls-tea-hero.jpg";
 const TUTU_STARTING_PRICE = 495;
-
-// Converts a "#RRGGBB" palette color into an rgba() string at the given
-// alpha, so the subtle paper-grain texture and glow accents below always
-// derive from the live palette instead of a second, hardcoded set of
-// hex values that could drift out of sync with it.
-function hexToRgba(hex, alpha) {
-  const clean = hex.replace("#", "");
-  const r = parseInt(clean.slice(0, 2), 16);
-  const g = parseInt(clean.slice(2, 4), 16);
-  const b = parseInt(clean.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-function paperTexture(palette) {
-  return {
-    backgroundColor: palette.bg,
-    backgroundImage: [
-      `radial-gradient(circle at 18% 10%, ${hexToRgba(palette.gold, 0.08)}, transparent 28%)`,
-      `radial-gradient(circle at 85% 18%, ${hexToRgba(palette.accent, 0.045)}, transparent 24%)`,
-      `repeating-linear-gradient(0deg, ${hexToRgba(palette.ink, 0.018)} 0, ${hexToRgba(palette.ink, 0.018)} 1px, transparent 1px, transparent 4px)`,
-    ].join(", "),
-  };
-}
 
 const elevatedShadow =
   "0 2px 4px rgba(18,32,26,0.05), 0 18px 42px rgba(18,32,26,0.10), 0 32px 70px rgba(18,32,26,0.06)";
