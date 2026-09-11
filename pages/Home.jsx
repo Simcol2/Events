@@ -102,10 +102,10 @@ function Hero({ fonts, palette, navigate }) {
               ...fonts.displayFont,
               fontStyle: "italic",
               fontWeight: 500,
-              fontSize: "clamp(22px, 3.4vw, 30px)",
+              fontSize: "clamp(28px, 4.4vw, 40px)",
               color: palette.accent,
               transform: "rotate(-3deg)",
-              marginBottom: "12px",
+              marginBottom: "14px",
               animationDelay: "0.05s",
             }}
           >
@@ -116,12 +116,12 @@ function Hero({ fonts, palette, navigate }) {
             style={{
               ...fonts.bodyFont,
               color: palette.goldDeep,
-              fontSize: "clamp(13px, 1.6vw, 15px)",
+              fontSize: "clamp(16px, 2.2vw, 19px)",
               fontWeight: 600,
-              letterSpacing: "0.08em",
+              letterSpacing: "0.06em",
               textTransform: "uppercase",
-              lineHeight: 1.5,
-              margin: "6px 0 14px",
+              lineHeight: 1.4,
+              margin: "6px 0 16px",
             }}
           >
             {HERO_LEAD_LINE}
@@ -280,12 +280,6 @@ function Hero({ fonts, palette, navigate }) {
             <img src={wallPuzzleEngagementPhoto} alt="Guest-built keepsake at a milestone celebration" className="h-full w-full object-cover" />
           </div>
 
-          <span
-            className="shape-in-rot absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
-            style={{ top: "44%", left: "-2%", color: "#2451D9", transform: "rotate(-5deg)", "--rot": "-5deg", animationDelay: "0.95s" }}
-          >
-            custom keepsakes
-          </span>
           <span
             className="shape-in-rot absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
             style={{ bottom: "2%", right: "4%", color: palette.accent, transform: "rotate(6deg)", "--rot": "6deg", animationDelay: "1.05s" }}
@@ -541,8 +535,8 @@ export default function Home({ navigate }) {
             How it works
           </h2>
           <span
-            className="mx-auto mt-2 block text-center"
-            style={{ ...fonts.scriptFont, fontSize: "16px", color: palette.accent, transform: "rotate(-2deg)" }}
+            className="mx-auto mt-3 block text-center"
+            style={{ ...fonts.scriptFont, fontSize: "clamp(20px, 2.8vw, 26px)", color: palette.accent, transform: "rotate(-2deg)" }}
           >
             (it's easier than picking a theme)
           </span>
@@ -600,7 +594,9 @@ export default function Home({ navigate }) {
             className="text-3xl font-semibold sm:text-4xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
           >
-            More than décor. More than a rental.
+            More than décor.
+            <br />
+            More than a rental.
           </h2>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
@@ -661,8 +657,8 @@ export default function Home({ navigate }) {
             Why people choose A Slice of G
           </h2>
           <span
-            className="mt-2 inline-block"
-            style={{ ...fonts.scriptFont, fontSize: "16px", color: palette.accent, transform: "rotate(-2deg)" }}
+            className="mt-3 inline-block"
+            style={{ ...fonts.scriptFont, fontSize: "clamp(20px, 2.8vw, 26px)", color: palette.accent, transform: "rotate(-2deg)" }}
           >
             (besides the fact that we're just really fun)
           </span>
