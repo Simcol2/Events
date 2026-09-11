@@ -19,7 +19,7 @@ function dayCount(pickup, dropoff) {
 }
 
 const inputClass =
-  "w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Jost] text-base text-[#3A342A] outline-none focus:border-[#4E5A44]";
+  "w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]";
 
 // Handles both the rental request flow (date range, live availability) and
 // the purchase inquiry placeholder (no dates). Both write to the same
@@ -111,12 +111,12 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
       aria-label={isRental ? "Request to rent" : "Request to purchase"}
     >
       <div
-        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[#FAF6ED] px-6 py-8 sm:px-8"
+        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[#FCFBF7] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#A69C7E]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
           aria-label="Close"
         >
           <X size={19} />
@@ -124,31 +124,31 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
 
         {submitted ? (
           <div className="pt-4 text-center">
-            <h2 className="font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
+            <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
               Request received
             </h2>
-            <p className="mx-auto mt-3 max-w-xs font-[Jost] text-base leading-6 text-[#8C846F]">
+            <p className="mx-auto mt-3 max-w-xs font-[Space_Grotesk] text-base leading-6 text-[#8C846F]">
               We will confirm {isRental ? "availability" : "details"} for {item.name} and follow up by email to arrange payment.
             </p>
             <button
               onClick={onClose}
-              className="mt-6 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white"
+              className="mt-6 w-full rounded-full bg-[#0B4933] py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-white"
             >
               CLOSE
             </button>
           </div>
         ) : (
           <>
-            <p className="font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#B8935A]">
+            <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-[#8A6A1E]">
               {isRental ? "REQUEST TO RENT" : "REQUEST TO PURCHASE"}
             </p>
-            <h2 className="mt-1 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
+            <h2 className="mt-1 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
               {item.name}
             </h2>
 
             {isRental && (
               <div className="mt-5 space-y-3">
-                <p className="font-[Jost] text-sm tracking-[0.1em] text-[#8C846F]">
+                <p className="font-[Space_Grotesk] text-sm tracking-[0.1em] text-[#8C846F]">
                   {pickup && dropoff ? `PICKUP ${pickup} · DROP-OFF ${dropoff}` : "SELECT PICKUP, THEN DROP-OFF"}
                 </p>
                 <RentalCalendar
@@ -162,17 +162,17 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
                 />
 
                 {overLimit && (
-                  <p className="rounded-sm bg-[#FBF1E4] px-3 py-2 font-[Jost] text-sm leading-5 text-[#8A6B3A]">
+                  <p className="rounded-sm bg-[#FBF1E4] px-3 py-2 font-[Space_Grotesk] text-sm leading-5 text-[#8A6B3A]">
                     Rentals longer than {MAX_INCLUDED_DAYS} days include an additional fee, we will follow up with the total.
                   </p>
                 )}
 
                 {!datesValid && (
-                  <p className="font-[Jost] text-sm text-red-700">Drop-off must be on or after pickup.</p>
+                  <p className="font-[Space_Grotesk] text-sm text-red-700">Drop-off must be on or after pickup.</p>
                 )}
 
                 {datesValid && (
-                  <p className="font-[Jost] text-sm text-[#8C846F]">
+                  <p className="font-[Space_Grotesk] text-sm text-[#8C846F]">
                     {checkingAvailability
                       ? "Checking availability..."
                       : availability == null
@@ -208,12 +208,12 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
               />
             </div>
 
-            {submitError && <p className="mt-3 font-[Jost] text-sm text-red-700">{submitError}</p>}
+            {submitError && <p className="mt-3 font-[Space_Grotesk] text-sm text-red-700">{submitError}</p>}
 
             <button
               disabled={!canSubmit}
               onClick={handleSubmit}
-              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+              className="mt-5 w-full rounded-full bg-[#0B4933] py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
               {submitting ? "SENDING..." : isRental ? "REQUEST TO RENT" : "REQUEST TO PURCHASE"}
             </button>

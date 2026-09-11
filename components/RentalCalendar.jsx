@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "../supabaseClient";
 
-const SAGE_DEEP = "#4E5A44";
+const SAGE_DEEP = "#0B4933";
 const LINE = "#D8D0BC";
-const MUTED = "#A69C7E";
-const INK = "#3A342A";
+const MUTED = "#5A5F54";
+const INK = "#12201A";
 
 function toISODate(y, m, d) {
   const mm = String(m + 1).padStart(2, "0");
@@ -107,7 +107,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
         >
           <ChevronLeft size={16} color={SAGE_DEEP} />
         </button>
-        <span className="font-['Cormorant_Garamond'] text-base font-semibold" style={{ color: SAGE_DEEP }}>
+        <span className="font-['Fraunces'] text-base font-semibold" style={{ color: SAGE_DEEP }}>
           {monthLabel}
         </span>
         <button
@@ -122,7 +122,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
 
       <div className="mb-1 grid grid-cols-7 gap-1">
         {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-          <div key={i} className="py-1 text-center font-[Jost] text-sm font-medium text-[#B0A98C]">
+          <div key={i} className="py-1 text-center font-[Space_Grotesk] text-sm font-medium text-[#B0A98C]">
             {d}
           </div>
         ))}
@@ -143,7 +143,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
               type="button"
               disabled={disabled}
               onClick={() => handleClick(iso)}
-              className="flex aspect-square items-center justify-center rounded-full font-[Jost] text-sm transition disabled:cursor-not-allowed"
+              className="flex aspect-square items-center justify-center rounded-full font-[Space_Grotesk] text-sm transition disabled:cursor-not-allowed"
               style={{
                 background: isEndpoint ? SAGE_DEEP : inRange ? "#EDEFE6" : "transparent",
                 color: isEndpoint ? "#FFFFFF" : disabled ? "#D8D2BE" : INK,
@@ -157,7 +157,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
         })}
       </div>
 
-      <div className="mt-3 flex items-center gap-4 font-[Jost] text-sm" style={{ color: MUTED }}>
+      <div className="mt-3 flex items-center gap-4 font-[Space_Grotesk] text-sm" style={{ color: MUTED }}>
         <span className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full" style={{ border: "1px solid #D8D2BE" }} /> Booked
         </span>
@@ -165,7 +165,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
           <span className="h-2.5 w-2.5 rounded-full" style={{ background: SAGE_DEEP }} /> Selected
         </span>
       </div>
-      {loading && <p className="mt-2 font-[Jost] text-sm text-[#A69C7E]">Loading availability...</p>}
+      {loading && <p className="mt-2 font-[Space_Grotesk] text-sm text-[#5A5F54]">Loading availability...</p>}
     </div>
   );
 }

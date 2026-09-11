@@ -24,7 +24,7 @@ function StatusPill({ status }) {
   };
   const labels = { in_stock: "In stock", out: "Out", held: "Held", retired: "Retired" };
   return (
-    <span className={`rounded-full px-2.5 py-1 font-[Jost] text-[10px] font-semibold tracking-[0.08em] ${styles[status] || styles.retired}`}>
+    <span className={`rounded-full px-2.5 py-1 font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.08em] ${styles[status] || styles.retired}`}>
       {(labels[status] || status).toUpperCase()}
     </span>
   );
@@ -57,9 +57,9 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
           quantity: Number(quantity) || 1,
         });
       }}
-      className="mb-6 rounded-sm border border-[#E4DCC8] bg-white p-5"
+      className="mb-6 rounded-sm border border-[#EAE3D3] bg-white p-5"
     >
-      <h3 className="mb-4 font-['Cormorant_Garamond'] text-xl font-semibold text-[#4E5A44]">Add assets</h3>
+      <h3 className="mb-4 font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Add assets</h3>
 
       <div className="mb-4 flex gap-2">
         {[
@@ -71,24 +71,24 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
             type="button"
             onClick={() => setKind(k.id)}
             className={`flex-1 rounded-sm border p-3 text-left ${
-              kind === k.id ? "border-[#4E5A44] bg-[#F4F7F2]" : "border-[#D8D0BC] bg-white"
+              kind === k.id ? "border-[#0B4933] bg-[#F4F7F2]" : "border-[#D8D0BC] bg-white"
             }`}
           >
-            <span className="block font-[Jost] text-sm font-semibold text-[#3A342A]">{k.label}</span>
-            <span className="block font-[Jost] text-xs text-[#8C846F]">{k.hint}</span>
+            <span className="block font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">{k.label}</span>
+            <span className="block font-[Space_Grotesk] text-xs text-[#8C846F]">{k.hint}</span>
           </button>
         ))}
       </div>
 
       {kind === "unit" && (
         <div className="mb-4">
-          <label className="block font-[Jost] text-[10px] font-semibold tracking-[0.12em] text-[#4E5A44]">
+          <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">
             CATALOGUE ITEM
           </label>
           <select
             value={itemId}
             onChange={(e) => pickItem(e.target.value)}
-            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Jost] text-sm outline-none focus:border-[#4E5A44]"
+            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
           >
             <option value="">Not tied to a catalogue item</option>
             {items.map((i) => (
@@ -102,7 +102,7 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
 
       <div className="mb-4 grid grid-cols-3 gap-4">
         <div className="col-span-2">
-          <label className="block font-[Jost] text-[10px] font-semibold tracking-[0.12em] text-[#4E5A44]">
+          <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">
             LABEL
           </label>
           <input
@@ -110,11 +110,11 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             placeholder={kind === "box" ? "e.g. Box 1" : "What this object is"}
-            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Jost] text-sm outline-none focus:border-[#4E5A44]"
+            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
           />
         </div>
         <div>
-          <label className="block font-[Jost] text-[10px] font-semibold tracking-[0.12em] text-[#4E5A44]">
+          <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">
             HOW MANY
           </label>
           <input
@@ -123,7 +123,7 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
             max="50"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Jost] text-sm outline-none focus:border-[#4E5A44]"
+            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
           />
         </div>
       </div>
@@ -133,9 +133,9 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
           type="checkbox"
           checked={delicate}
           onChange={(e) => setDelicate(e.target.checked)}
-          className="h-3.5 w-3.5 accent-[#4E5A44]"
+          className="h-3.5 w-3.5 accent-[#0B4933]"
         />
-        <span className="font-[Jost] text-xs text-[#5C5645]">
+        <span className="font-[Space_Grotesk] text-xs text-[#5C5645]">
           Delicate, prompt for padding at check-out
         </span>
       </label>
@@ -144,14 +144,14 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-full bg-[#4E5A44] px-6 py-2.5 font-[Jost] text-[11px] font-semibold tracking-[0.16em] text-white disabled:opacity-50"
+          className="rounded-full bg-[#0B4933] px-6 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.16em] text-white disabled:opacity-50"
         >
           {saving ? "ADDING..." : "ADD"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-full border border-[#D8D0BC] px-6 py-2.5 font-[Jost] text-[11px] font-semibold tracking-[0.16em] text-[#4E5A44]"
+          className="rounded-full border border-[#D8D0BC] px-6 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.16em] text-[#0B4933]"
         >
           CANCEL
         </button>
@@ -257,7 +257,7 @@ export default function AdminAssetsTab() {
 
   const print = () => window.print();
 
-  if (loading) return <p className="font-[Jost] text-sm text-[#8C846F]">Loading assets...</p>;
+  if (loading) return <p className="font-[Space_Grotesk] text-sm text-[#8C846F]">Loading assets...</p>;
 
   return (
     <div>
@@ -283,19 +283,19 @@ export default function AdminAssetsTab() {
       `}</style>
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Assets</h2>
+        <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Assets</h2>
         <div className="flex gap-3">
           <button
             onClick={print}
             disabled={!toPrint.length}
-            className="inline-flex items-center gap-2 rounded-full border border-[#D8D0BC] px-5 py-2.5 font-[Jost] text-[11px] font-semibold tracking-[0.14em] text-[#4E5A44] disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full border border-[#D8D0BC] px-5 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.14em] text-[#0B4933] disabled:opacity-50"
           >
             <Printer size={13} />
             PRINT {selected.length ? `${selected.length} LABEL${selected.length === 1 ? "" : "S"}` : "ALL LABELS"}
           </button>
           <button
             onClick={() => setAdding((a) => !a)}
-            className="inline-flex items-center gap-2 rounded-full bg-[#4E5A44] px-5 py-2.5 font-[Jost] text-[11px] font-semibold tracking-[0.14em] text-white"
+            className="inline-flex items-center gap-2 rounded-full bg-[#0B4933] px-5 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.14em] text-white"
           >
             <Plus size={13} />
             ADD ASSETS
@@ -303,7 +303,7 @@ export default function AdminAssetsTab() {
         </div>
       </div>
 
-      {error && <p className="mb-4 font-[Jost] text-sm text-red-700">{error}</p>}
+      {error && <p className="mb-4 font-[Space_Grotesk] text-sm text-red-700">{error}</p>}
 
       {adding && (
         <NewAssetForm items={items} onCreate={create} onCancel={() => setAdding(false)} saving={saving} />
@@ -311,13 +311,13 @@ export default function AdminAssetsTab() {
 
       {unlabelled.length > 0 && (
         <div className="mb-6 rounded-sm border border-[#E0AD5C] bg-[#FBF1DE] p-4">
-          <p className="font-[Jost] text-sm font-semibold text-[#8A5D14]">
+          <p className="font-[Space_Grotesk] text-sm font-semibold text-[#8A5D14]">
             {unlabelled.length} catalogue {unlabelled.length === 1 ? "item has" : "items have"} nothing physical registered yet
           </p>
-          <p className="mt-1 font-[Jost] text-xs text-[#8A5D14]">
+          <p className="mt-1 font-[Space_Grotesk] text-xs text-[#8A5D14]">
             {unlabelled.map((i) => i.name).join(", ")}
           </p>
-          <p className="mt-2 font-[Jost] text-xs text-[#6A6353]">
+          <p className="mt-2 font-[Space_Grotesk] text-xs text-[#6A6353]">
             Add a single asset for each object you hand over, or a counted box for anything you rent
             by the number.
           </p>
@@ -325,7 +325,7 @@ export default function AdminAssetsTab() {
       )}
 
       {!assets.length && (
-        <p className="font-[Jost] text-sm text-[#8C846F]">
+        <p className="font-[Space_Grotesk] text-sm text-[#8C846F]">
           No assets yet. Everything you add to the catalogue from now on gets a code automatically.
         </p>
       )}
@@ -334,32 +334,32 @@ export default function AdminAssetsTab() {
         {assets.map((asset) => (
           <div
             key={asset.id}
-            className="flex flex-wrap items-center gap-4 rounded-sm border border-[#E4DCC8] bg-white p-3"
+            className="flex flex-wrap items-center gap-4 rounded-sm border border-[#EAE3D3] bg-white p-3"
           >
             <input
               type="checkbox"
               checked={selected.includes(asset.id)}
               onChange={() => toggleSelected(asset.id)}
-              className="h-4 w-4 accent-[#4E5A44]"
+              className="h-4 w-4 accent-[#0B4933]"
               aria-label={`Select ${asset.code}`}
             />
             {qrByCode[asset.code] ? (
               <img src={qrByCode[asset.code]} alt="" className="h-12 w-12" />
             ) : (
               <div className="flex h-12 w-12 items-center justify-center">
-                <Loader2 size={14} className="animate-spin text-[#A69C7E]" />
+                <Loader2 size={14} className="animate-spin text-[#5A5F54]" />
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="font-[Jost] text-sm font-semibold text-[#3A342A]">{asset.label}</p>
-              <p className="font-[Jost] text-xs tracking-[0.08em] text-[#8C846F]">
+              <p className="font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">{asset.label}</p>
+              <p className="font-[Space_Grotesk] text-xs tracking-[0.08em] text-[#8C846F]">
                 {asset.code} · {asset.kind === "box" ? "Counted box" : "Single asset"}
                 {asset.item_name ? ` · ${asset.item_name}` : ""}
               </p>
             </div>
             <button
               onClick={() => toggleDelicate(asset)}
-              className={`rounded-full px-3 py-1 font-[Jost] text-[10px] font-semibold tracking-[0.08em] ${
+              className={`rounded-full px-3 py-1 font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.08em] ${
                 asset.delicate ? "bg-[#FBF1DE] text-[#8A5D14]" : "bg-[#F0EBDD] text-[#8C846F]"
               }`}
             >

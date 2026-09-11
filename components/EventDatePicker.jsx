@@ -22,22 +22,22 @@ export default function EventDatePicker() {
       aria-label="When is your event?"
     >
       <div
-        className="relative w-full max-w-sm rounded-2xl bg-[#FAF6ED] px-6 py-8 text-center sm:px-8"
+        className="relative w-full max-w-sm rounded-2xl bg-[#FCFBF7] px-6 py-8 text-center sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={closePicker}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#A69C7E]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
           aria-label="Close"
         >
           <X size={19} />
         </button>
 
-        <CalendarDays className="mx-auto" size={22} strokeWidth={1.4} style={{ color: "#B8935A" }} />
-        <h2 className="mt-4 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
+        <CalendarDays className="mx-auto" size={22} strokeWidth={1.4} style={{ color: "#8A6A1E" }} />
+        <h2 className="mt-4 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
           When is your event?
         </h2>
-        <p className="mx-auto mt-2 max-w-xs font-[Jost] text-base leading-6 text-[#8C846F]">
+        <p className="mx-auto mt-2 max-w-xs font-[Space_Grotesk] text-base leading-6 text-[#8C846F]">
           We use this to suggest pickup and drop-off dates for anything you rent. You can adjust those later.
         </p>
 
@@ -46,13 +46,13 @@ export default function EventDatePicker() {
           min={today}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          className="mt-6 w-full rounded-sm border border-[#D8D0BC] bg-white px-4 py-3 font-[Jost] text-base text-[#3A342A] outline-none focus:border-[#4E5A44]"
+          className="mt-6 w-full rounded-sm border border-[#D8D0BC] bg-white px-4 py-3 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]"
         />
 
         <button
           disabled={!draft}
           onClick={() => chooseEventDate(draft)}
-          className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
+          className="mt-5 w-full rounded-full bg-[#0B4933] py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-30"
         >
           CONTINUE
         </button>

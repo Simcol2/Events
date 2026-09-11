@@ -32,7 +32,7 @@ function ArchFrame({ children, tall = false, palette }) {
 function PhotoComingSoon({ palette, fonts }) {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <span className="font-[Jost] text-sm tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.muted }}>
+      <span className="font-[Space_Grotesk] text-sm tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.muted }}>
         PHOTO COMING SOON
       </span>
     </div>
@@ -60,16 +60,16 @@ function MenuCard({ item, index, palette, onOrder }) {
         )}
       </ArchFrame>
 
-      <p className="mt-5 font-[Jost] text-sm font-semibold tracking-[0.25em]" style={{ color: palette.goldDeep }}>
+      <p className="mt-5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.25em]" style={{ color: palette.goldDeep }}>
         {`NO. ${String(index + 1).padStart(2, "0")}`}
       </p>
-      <h3 className="mt-1 font-['Cormorant_Garamond'] text-3xl font-semibold italic" style={{ color: palette.ink }}>
+      <h3 className="mt-1 font-['Fraunces'] text-3xl font-semibold italic" style={{ color: palette.ink }}>
         {item.name}
       </h3>
-      <p className="mt-2 font-[Jost] text-sm italic" style={{ color: palette.accent }}>
+      <p className="mt-2 font-[Space_Grotesk] text-sm italic" style={{ color: palette.accent }}>
         {item.tagline}
       </p>
-      <p className="mt-3 font-[Jost] text-base leading-relaxed" style={{ color: palette.ink }}>
+      <p className="mt-3 font-[Space_Grotesk] text-base leading-relaxed" style={{ color: palette.ink }}>
         {item.description}
       </p>
 
@@ -78,7 +78,7 @@ function MenuCard({ item, index, palette, onOrder }) {
           <select
             value={size}
             onChange={(e) => setSize(e.target.value)}
-            className="w-full appearance-none rounded-sm border px-4 py-3 font-[Jost] text-sm font-semibold tracking-[0.1em]"
+            className="w-full appearance-none rounded-sm border px-4 py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em]"
             style={{ borderColor: palette.line, color: palette.ink, background: palette.surface }}
           >
             {item.sizes.map((s) => (
@@ -92,18 +92,18 @@ function MenuCard({ item, index, palette, onOrder }) {
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <span className="font-[Jost] text-sm font-semibold tracking-[0.1em]" style={{ color: palette.muted }}>
+        <span className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em]" style={{ color: palette.muted }}>
           PRICING BY REQUEST
         </span>
         <button
           onClick={() => onOrder(item, size)}
-          className="flex-shrink-0 rounded-sm px-5 py-3 font-[Jost] text-sm font-semibold tracking-[0.16em] text-white"
+          className="flex-shrink-0 rounded-sm px-5 py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-white"
           style={{ background: EMERALD }}
         >
           REQUEST TO ORDER
         </button>
       </div>
-      <p className="mt-3 font-[Jost] text-sm" style={{ color: palette.muted }}>
+      <p className="mt-3 font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
         {item.sizeNote}
       </p>
     </div>
@@ -157,7 +157,7 @@ export default function Catering() {
           <div>
             <div className="flex items-center gap-3">
               <span className="h-px w-8" style={{ background: palette.gold }} />
-              <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
+              <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.gold }}>
                 {HERO.eyebrow}
               </p>
             </div>
@@ -166,20 +166,20 @@ export default function Catering() {
               <br />
               <span style={{ fontStyle: "italic", color: palette.gold }}>{HERO.headingAccent}</span>
             </h1>
-            <p className="mt-6 font-[Jost] text-sm font-semibold tracking-[0.14em]" style={{ color: "#FFFFFFB3" }}>
+            <p className="mt-6 font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em]" style={{ color: "#FFFFFFB3" }}>
               {HERO.facts.join("  ·  ")}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <button
                 onClick={() => scrollToId("menu")}
-                className="rounded-sm px-7 py-3.5 font-[Jost] text-sm font-semibold tracking-[0.18em]"
+                className="rounded-sm px-7 py-3.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.18em]"
                 style={{ background: palette.gold, color: palette.primaryDeep }}
               >
                 VIEW THE MENU
               </button>
               <button
                 onClick={() => scrollToId("gifts")}
-                className="rounded-sm border px-7 py-3.5 font-[Jost] text-sm font-semibold tracking-[0.18em] text-white"
+                className="rounded-sm border px-7 py-3.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.18em] text-white"
                 style={{ borderColor: "#FFFFFF66" }}
               >
                 GIFT A CAKE
@@ -206,7 +206,7 @@ export default function Catering() {
           <div>
             <div className="flex items-center gap-3">
               <span className="h-px w-8" style={{ background: palette.accent }} />
-              <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
+              <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
                 {STANDARD.eyebrow}
               </p>
             </div>
@@ -216,12 +216,12 @@ export default function Catering() {
               <span style={{ fontStyle: "italic", color: palette.primary }}>{STANDARD.headingAccent}</span>
             </h2>
             <p
-              className="mt-6 border-l-2 pl-4 font-['Cormorant_Garamond'] text-xl italic leading-relaxed"
+              className="mt-6 border-l-2 pl-4 font-['Fraunces'] text-xl italic leading-relaxed"
               style={{ borderColor: palette.gold, color: palette.muted }}
             >
               {STANDARD.quote}
             </p>
-            <p className="mt-5 font-[Jost] text-base leading-7" style={{ color: palette.ink }}>
+            <p className="mt-5 font-[Space_Grotesk] text-base leading-7" style={{ color: palette.ink }}>
               {STANDARD.body}
             </p>
             <div className="mt-7 space-y-3 border-t pt-6" style={{ borderColor: palette.line }}>
@@ -232,7 +232,7 @@ export default function Catering() {
                   ) : (
                     <XIcon size={16} className="mt-0.5 flex-shrink-0" color={palette.accent} />
                   )}
-                  <p className="font-[Jost] text-base leading-6" style={{ color: palette.ink }}>
+                  <p className="font-[Space_Grotesk] text-base leading-6" style={{ color: palette.ink }}>
                     {item.text}
                   </p>
                 </div>
@@ -261,7 +261,7 @@ export default function Catering() {
       <section id="menu" className="border-t px-5 py-20 sm:px-8" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-6xl">
           <div className="mb-4 text-center">
-            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.goldDeep }}>
+            <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.goldDeep }}>
               THE MENU
             </p>
             <h2 className="mt-2 text-4xl font-semibold" style={{ ...fonts.displayFont, color: palette.ink }}>
@@ -271,10 +271,10 @@ export default function Catering() {
 
           <div className="mx-auto mb-14 flex max-w-xl flex-col items-center gap-2 rounded-2xl p-6 text-center sm:flex-row sm:justify-between sm:text-left" style={{ background: palette.surface, border: `1px solid ${palette.line}` }}>
             <div>
-              <p className="font-[Jost] text-base font-semibold" style={{ color: palette.ink }}>
+              <p className="font-[Space_Grotesk] text-base font-semibold" style={{ color: palette.ink }}>
                 {FULL_CAKE_ORDER.label}
               </p>
-              <p className="font-[Jost] text-sm" style={{ color: palette.muted }}>
+              <p className="font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
                 {FULL_CAKE_ORDER.description}
               </p>
             </div>
@@ -282,7 +282,7 @@ export default function Catering() {
               href={FULL_CAKE_ORDER.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-shrink-0 items-center gap-1.5 rounded-sm px-5 py-3 font-[Jost] text-sm font-semibold tracking-[0.16em] text-white"
+              className="flex flex-shrink-0 items-center gap-1.5 rounded-sm px-5 py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-white"
               style={{ background: EMERALD }}
             >
               {FULL_CAKE_ORDER.ctaLabel}
@@ -306,7 +306,7 @@ export default function Catering() {
             <h3 className="mb-2 text-xl font-bold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
               {ICING_OPTION.name}
             </h3>
-            <p className="mx-auto max-w-2xl font-[Jost] text-base leading-relaxed" style={{ color: palette.ink }}>
+            <p className="mx-auto max-w-2xl font-[Space_Grotesk] text-base leading-relaxed" style={{ color: palette.ink }}>
               {ICING_OPTION.description}
             </p>
           </div>
@@ -317,12 +317,12 @@ export default function Catering() {
       <section id="gifts" className="border-t px-5 py-20 sm:px-8" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-5xl">
           <div className="mb-3 flex items-center justify-between">
-            <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.goldDeep }}>
+            <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.goldDeep }}>
               GROWN FOLKS LOOT BAGS
             </p>
             <button
               onClick={() => setShowCart(true)}
-              className="flex items-center gap-2 font-[Jost] text-sm font-semibold tracking-[0.1em]"
+              className="flex items-center gap-2 font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em]"
               style={{ color: palette.ink }}
             >
               <ShoppingBag size={16} />
@@ -340,19 +340,19 @@ export default function Catering() {
                   <h3 className="text-xl font-bold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
                     {g.name}
                   </h3>
-                  <p className="mb-2 mt-1 font-[Jost] text-sm italic" style={{ color: palette.accent }}>
+                  <p className="mb-2 mt-1 font-[Space_Grotesk] text-sm italic" style={{ color: palette.accent }}>
                     {g.tagline}
                   </p>
-                  <p className="mb-4 font-[Jost] text-base leading-relaxed" style={{ color: palette.ink }}>
+                  <p className="mb-4 font-[Space_Grotesk] text-base leading-relaxed" style={{ color: palette.ink }}>
                     {g.description}
                   </p>
                   <div className="flex items-center justify-between border-t pt-4" style={{ borderColor: palette.line }}>
-                    <span className="font-[Jost] text-base font-bold" style={{ color: palette.accent }}>
+                    <span className="font-[Space_Grotesk] text-base font-bold" style={{ color: palette.accent }}>
                       ${g.price}
                     </span>
                     <button
                       onClick={() => toggleGift(g)}
-                      className="flex items-center gap-1.5 rounded-sm px-4 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.14em] text-white"
+                      className="flex items-center gap-1.5 rounded-sm px-4 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em] text-white"
                       style={{ background: inCart ? palette.ink : EMERALD }}
                     >
                       {inCart ? <Check size={12} /> : <Plus size={12} />}
@@ -375,19 +375,19 @@ export default function Catering() {
           {RUM_CAKE_STORY.watermark}
         </span>
         <div className="relative">
-          <p className="font-[Jost] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
+          <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.3em]" style={{ color: palette.accent }}>
             {RUM_CAKE_STORY.eyebrow}
           </p>
           <h2 className="mx-auto mt-3 max-w-2xl text-4xl font-semibold leading-[1.15] sm:text-5xl" style={{ ...fonts.displayFont, color: palette.ink }}>
             {RUM_CAKE_STORY.headingLine}{" "}
             <span style={{ fontStyle: "italic", color: palette.goldDeep }}>{RUM_CAKE_STORY.headingAccent}</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-md font-['Cormorant_Garamond'] text-xl italic" style={{ color: palette.muted }}>
+          <p className="mx-auto mt-4 max-w-md font-['Fraunces'] text-xl italic" style={{ color: palette.muted }}>
             {RUM_CAKE_STORY.subtitle}
           </p>
           <button
             onClick={() => scrollToId("menu")}
-            className="mt-8 rounded-sm px-8 py-4 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white"
+            className="mt-8 rounded-sm px-8 py-4 font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-white"
             style={{ background: EMERALD }}
           >
             {RUM_CAKE_STORY.ctaLabel}

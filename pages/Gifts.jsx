@@ -22,34 +22,34 @@ function GiftTile({ name, tagline, description, photos, price, priceLabel, inCar
           <PhotoCarousel photos={photos} alt={giftAltText(name)} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+            <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#5A5F54]">PHOTO COMING SOON</span>
           </div>
         )}
       </div>
       <div className="px-1 pb-3 pt-4">
-        <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{name}</h3>
-        {tagline && <p className="mt-1 font-[Jost] text-sm italic text-[#B8935A]">{tagline}</p>}
-        {description && <p className="mt-2 font-[Jost] text-sm leading-5 text-[#5C5645]">{description}</p>}
-        <div className="mt-3 flex items-center justify-between border-t border-[#E4DCC8] pt-3">
-          <span className="font-[Jost] text-sm font-medium tracking-[0.08em] text-[#B8935A]">
+        <h3 className="font-['Fraunces'] text-[25px] font-semibold leading-[1] text-[#0B4933]">{name}</h3>
+        {tagline && <p className="mt-1 font-[Space_Grotesk] text-sm italic text-[#8A6A1E]">{tagline}</p>}
+        {description && <p className="mt-2 font-[Space_Grotesk] text-sm leading-5 text-[#5C5645]">{description}</p>}
+        <div className="mt-3 flex items-center justify-between border-t border-[#EAE3D3] pt-3">
+          <span className="font-[Space_Grotesk] text-sm font-medium tracking-[0.08em] text-[#8A6A1E]">
             {priceLabel || `$${price}`}
           </span>
           {onCustomize ? (
             <button
               onClick={onCustomize}
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-sm font-semibold tracking-[0.14em]"
-              style={{ background: "transparent", color: "#4E5A44", border: "1px solid #4E5A44" }}
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em]"
+              style={{ background: "transparent", color: "#0B4933", border: "1px solid #0B4933" }}
             >
               SELECT CARD
             </button>
           ) : (
             <button
               onClick={onToggle}
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-sm font-semibold tracking-[0.14em]"
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em]"
               style={{
-                background: inCart ? "#4E5A44" : "transparent",
-                color: inCart ? "#FFFFFF" : "#4E5A44",
-                border: "1px solid #4E5A44",
+                background: inCart ? "#0B4933" : "transparent",
+                color: inCart ? "#FFFFFF" : "#0B4933",
+                border: "1px solid #0B4933",
               }}
             >
               {inCart ? <Check size={12} /> : <Plus size={12} />}
@@ -154,22 +154,22 @@ export default function Gifts({ navigate }) {
 
   return (
     <div>
-      <section className="border-b border-[#E4DCC8]">
+      <section className="border-b border-[#EAE3D3]">
         <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-[Jost] text-sm font-semibold tracking-[0.3em] text-[#B8935A]">GIFTS</p>
-              <h1 className="mt-2 font-['Cormorant_Garamond'] text-4xl font-semibold leading-[1.05] text-[#4E5A44] sm:text-[42px]">
+              <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.3em] text-[#8A6A1E]">GIFTS</p>
+              <h1 className="mt-2 font-['Fraunces'] text-4xl font-semibold leading-[1.05] text-[#0B4933] sm:text-[42px]">
                 The games are played. The memories are made.
               </h1>
-              <p className="mt-3 max-w-xl font-[Jost] text-base leading-6 text-[#8C846F]">
+              <p className="mt-3 max-w-xl font-[Space_Grotesk] text-base leading-6 text-[#8C846F]">
                 Take a lil something for the road. Guest gifts, favors, and one-off keepsakes ready to add to your
                 event or send someone special.
               </p>
             </div>
             <button
               onClick={() => setShowCart(true)}
-              className="hidden items-center gap-2 font-[Jost] text-sm font-semibold tracking-[0.1em] text-[#4E5A44] sm:flex"
+              className="hidden items-center gap-2 font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em] text-[#0B4933] sm:flex"
             >
               <ShoppingBag size={16} />
               CART ({cartCount})
@@ -180,14 +180,14 @@ export default function Gifts({ navigate }) {
 
       {checkoutStatus === "success" && (
         <div className="mx-auto mt-6 max-w-7xl px-5 sm:px-8">
-          <div className="rounded-sm border border-[#B8935A] bg-[#F0F3EA] px-5 py-4 font-[Jost] text-base text-[#4E5A44]">
+          <div className="rounded-sm border border-[#8A6A1E] bg-[#F0F3EA] px-5 py-4 font-[Space_Grotesk] text-base text-[#0B4933]">
             Thank you, your payment went through. We'll follow up by email with the details.
           </div>
         </div>
       )}
       {checkoutStatus === "cancelled" && (
         <div className="mx-auto mt-6 max-w-7xl px-5 sm:px-8">
-          <div className="rounded-sm border border-[#D8D0BC] bg-white px-5 py-4 font-[Jost] text-base text-[#8C846F]">
+          <div className="rounded-sm border border-[#D8D0BC] bg-white px-5 py-4 font-[Space_Grotesk] text-base text-[#8C846F]">
             Checkout was cancelled, your cart is still here whenever you're ready.
           </div>
         </div>
@@ -197,15 +197,15 @@ export default function Gifts({ navigate }) {
         <div className="mb-6 flex items-center justify-between sm:hidden">
           <button
             onClick={() => setShowCart(true)}
-            className="flex items-center gap-2 font-[Jost] text-sm font-semibold tracking-[0.1em] text-[#4E5A44]"
+            className="flex items-center gap-2 font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em] text-[#0B4933]"
           >
             <ShoppingBag size={16} />
             CART ({cartCount})
           </button>
         </div>
 
-        <h2 className="mb-2 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Guest Gifts</h2>
-        <p className="mb-6 max-w-2xl font-[Jost] text-base leading-6 text-[#8C846F]">
+        <h2 className="mb-2 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Guest Gifts</h2>
+        <p className="mb-6 max-w-2xl font-[Space_Grotesk] text-base leading-6 text-[#8C846F]">
           Buy these on their own, sold individually, whether or not you're building an experience. Every package
           also includes a guest gift, choose which one when you build your experience.
         </p>
@@ -221,25 +221,25 @@ export default function Gifts({ navigate }) {
                     <PhotoCarousel photos={photos} alt={giftAltText(name)} className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <span className="font-[Jost] text-sm tracking-[0.2em] text-[#A69C7E]">PHOTO COMING SOON</span>
+                      <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#5A5F54]">PHOTO COMING SOON</span>
                     </div>
                   )}
                 </div>
                 <div className="px-1 pb-3 pt-4">
-                  <h3 className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-[1] text-[#4E5A44]">{name}</h3>
-                  <p className="mt-1 font-[Jost] text-sm italic text-[#B8935A]">{k.tagline}</p>
-                  <p className="mt-2 font-[Jost] text-sm leading-5 text-[#5C5645]">{k.description}</p>
-                  <div className="mt-3 flex items-center justify-between border-t border-[#E4DCC8] pt-3">
-                    <span className="font-[Jost] text-sm font-medium tracking-[0.08em] text-[#B8935A]">
+                  <h3 className="font-['Fraunces'] text-[25px] font-semibold leading-[1] text-[#0B4933]">{name}</h3>
+                  <p className="mt-1 font-[Space_Grotesk] text-sm italic text-[#8A6A1E]">{k.tagline}</p>
+                  <p className="mt-2 font-[Space_Grotesk] text-sm leading-5 text-[#5C5645]">{k.description}</p>
+                  <div className="mt-3 flex items-center justify-between border-t border-[#EAE3D3] pt-3">
+                    <span className="font-[Space_Grotesk] text-sm font-medium tracking-[0.08em] text-[#8A6A1E]">
                       ${k.standalonePrice} each
                     </span>
                     <button
                       onClick={() => (inCart ? removeFromCart(k.id, "keepsake") : addToCart(k.id, "keepsake"))}
-                      className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Jost] text-sm font-semibold tracking-[0.14em]"
+                      className="flex items-center gap-1.5 rounded-full px-4 py-2 font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em]"
                       style={{
-                        background: inCart ? "#4E5A44" : "transparent",
-                        color: inCart ? "#FFFFFF" : "#4E5A44",
-                        border: "1px solid #4E5A44",
+                        background: inCart ? "#0B4933" : "transparent",
+                        color: inCart ? "#FFFFFF" : "#0B4933",
+                        border: "1px solid #0B4933",
                       }}
                     >
                       {inCart ? <Check size={12} /> : <Plus size={12} />}
@@ -254,8 +254,8 @@ export default function Gifts({ navigate }) {
 
         {gifts.length > 0 && (
           <>
-            <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Just for You</h2>
-            <p className="mb-6 max-w-2xl font-[Jost] text-base leading-6 text-[#8C846F]">
+            <h2 className="mb-6 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Just for You</h2>
+            <p className="mb-6 max-w-2xl font-[Space_Grotesk] text-base leading-6 text-[#8C846F]">
               One-off keepsakes and gifts, ready to buy on their own, whether or not you're building an experience.
             </p>
             <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -279,12 +279,12 @@ export default function Gifts({ navigate }) {
             </div>
           </>
         )}
-        {giftsError && <p className="mb-14 font-[Jost] text-base text-red-700">Couldn't load gifts: {giftsError}</p>}
+        {giftsError && <p className="mb-14 font-[Space_Grotesk] text-base text-red-700">Couldn't load gifts: {giftsError}</p>}
 
         {wrapAndStationeryItems.length > 0 && (
           <>
-            <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Gift Wrap & Stationery</h2>
-            <p className="mb-6 max-w-2xl font-[Jost] text-base leading-6 text-[#8C846F]">
+            <h2 className="mb-6 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Gift Wrap & Stationery</h2>
+            <p className="mb-6 max-w-2xl font-[Space_Grotesk] text-base leading-6 text-[#8C846F]">
               Everything to wrap it up and write it down.
             </p>
             <div className="mb-14 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -303,11 +303,11 @@ export default function Gifts({ navigate }) {
           </>
         )}
 
-        <h2 className="mb-6 font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Keepsakes & Gifts</h2>
-        {loading && <p className="py-10 text-center font-[Jost] text-base text-[#A69C7E]">Curating the collection...</p>}
-        {error && <p className="py-10 text-center font-[Jost] text-base text-red-700">Couldn't load the collection: {error}</p>}
+        <h2 className="mb-6 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Keepsakes & Gifts</h2>
+        {loading && <p className="py-10 text-center font-[Space_Grotesk] text-base text-[#5A5F54]">Curating the collection...</p>}
+        {error && <p className="py-10 text-center font-[Space_Grotesk] text-base text-red-700">Couldn't load the collection: {error}</p>}
         {!loading && !error && giftItems.length === 0 && (
-          <p className="py-10 text-center font-[Jost] text-base text-[#A69C7E]">Nothing tagged yet, check back soon.</p>
+          <p className="py-10 text-center font-[Space_Grotesk] text-base text-[#5A5F54]">Nothing tagged yet, check back soon.</p>
         )}
         <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {giftItems.map((item) => (

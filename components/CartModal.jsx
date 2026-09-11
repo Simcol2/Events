@@ -86,44 +86,44 @@ export default function CartModal({ catalog, gifts, onClose }) {
       aria-label="Your cart"
     >
       <div
-        className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-[#FAF6ED] px-6 py-8 sm:px-8"
+        className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-[#FCFBF7] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#A69C7E]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
           aria-label="Close"
         >
           <X size={19} />
         </button>
 
-        <h2 className="font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">Your Cart</h2>
+        <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Your Cart</h2>
 
         {lines.length === 0 ? (
-          <p className="mt-4 font-[Jost] text-base text-[#8C846F]">Your cart is empty.</p>
+          <p className="mt-4 font-[Space_Grotesk] text-base text-[#8C846F]">Your cart is empty.</p>
         ) : (
           <>
             <div className="mt-5 space-y-4">
               {lines.map((line) => (
-                <div key={`${line.id}-${line.kind}-${JSON.stringify(line.meta)}`} className="flex items-start justify-between gap-3 border-b border-[#E4DCC8] pb-4">
+                <div key={`${line.id}-${line.kind}-${JSON.stringify(line.meta)}`} className="flex items-start justify-between gap-3 border-b border-[#EAE3D3] pb-4">
                   <div>
-                    <p className="font-[Jost] text-base font-semibold text-[#4E5A44]">{line.name}</p>
+                    <p className="font-[Space_Grotesk] text-base font-semibold text-[#0B4933]">{line.name}</p>
                     {line.description && (
-                      <p className="mt-0.5 font-[Jost] text-sm text-[#8C846F]">{line.description}</p>
+                      <p className="mt-0.5 font-[Space_Grotesk] text-sm text-[#8C846F]">{line.description}</p>
                     )}
-                    <p className="mt-1 font-[Jost] text-sm text-[#B8935A]">${line.unitPrice} each</p>
+                    <p className="mt-1 font-[Space_Grotesk] text-sm text-[#8A6A1E]">${line.unitPrice} each</p>
                     <div className="mt-2 flex items-center gap-2">
                       <button
                         onClick={() => setQuantity(line.id, line.kind, line.quantity - 1, line.meta)}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D8D0BC] text-[#4E5A44]"
+                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D8D0BC] text-[#0B4933]"
                         aria-label="Decrease quantity"
                       >
                         <Minus size={11} />
                       </button>
-                      <span className="font-[Jost] text-sm text-[#3A342A]">{line.quantity}</span>
+                      <span className="font-[Space_Grotesk] text-sm text-[#12201A]">{line.quantity}</span>
                       <button
                         onClick={() => setQuantity(line.id, line.kind, line.quantity + 1, line.meta)}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D8D0BC] text-[#4E5A44]"
+                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D8D0BC] text-[#0B4933]"
                         aria-label="Increase quantity"
                       >
                         <Plus size={11} />
@@ -131,12 +131,12 @@ export default function CartModal({ catalog, gifts, onClose }) {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <span className="font-[Jost] text-base font-semibold text-[#4E5A44]">
+                    <span className="font-[Space_Grotesk] text-base font-semibold text-[#0B4933]">
                       ${(line.unitPrice * line.quantity).toFixed(2)}
                     </span>
                     <button
                       onClick={() => removeFromCart(line.id, line.kind, line.meta)}
-                      className="text-[#A69C7E]"
+                      className="text-[#5A5F54]"
                       aria-label={`Remove ${line.name}`}
                     >
                       <Trash2 size={14} />
@@ -147,16 +147,16 @@ export default function CartModal({ catalog, gifts, onClose }) {
             </div>
 
             <div className="mt-5 flex items-center justify-between">
-              <span className="font-[Jost] text-base font-semibold text-[#4E5A44]">Total</span>
-              <span className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#4E5A44]">${total.toFixed(2)}</span>
+              <span className="font-[Space_Grotesk] text-base font-semibold text-[#0B4933]">Total</span>
+              <span className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">${total.toFixed(2)}</span>
             </div>
 
-            {checkoutError && <p className="mt-3 font-[Jost] text-sm text-red-700">{checkoutError}</p>}
+            {checkoutError && <p className="mt-3 font-[Space_Grotesk] text-sm text-red-700">{checkoutError}</p>}
 
             <button
               disabled={checkingOut}
               onClick={handleCheckout}
-              className="mt-5 w-full rounded-full bg-[#4E5A44] py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-5 w-full rounded-full bg-[#0B4933] py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               {checkingOut ? "REDIRECTING TO CHECKOUT..." : "CHECKOUT WITH STRIPE"}
             </button>

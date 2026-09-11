@@ -31,26 +31,27 @@ export const PALETTES = [
   {
     id: "signature",
     name: "Signature",
-    description: "Our signature look: sage, coral and gold.",
-    // A brighter read of the flyer's own dark-green/coral/gold — same DNA,
-    // lifted out of near-black so it works as a default site theme.
-    bg: "#FAF6ED",
+    description: "Modern Glam Playhouse: emerald, ruby and brass.",
+    // Emerald/ruby/brass on warm cream, with organic shapes and a
+    // handwritten marker accent - a livelier, more playful read than the
+    // original sage-and-gold flyer look.
+    bg: "#FCFBF7",
     surface: "#FFFFFF",
-    primary: "#1F5C3D",
-    primaryDeep: "#154A31",
-    accent: "#F0684B",
-    gold: "#D9A441",
-    // A darker antique-gold for text set directly on the light bg/surface
+    primary: "#17724F",
+    primaryDeep: "#0B4933",
+    accent: "#E0115F",
+    gold: "#D9AE45",
+    // A darker antique-brass for text set directly on the light bg/surface
     // colors above. The bright `gold` reads clearly against a dark
-    // background (roughly 4.5:1 against primaryDeep) but drops to about
+    // background (roughly 4.9:1 against primaryDeep) but drops to about
     // 2:1 against this palette's own cream bg - unreadable for body-sized
     // text. Use goldDeep for any gold-colored text (eyebrow labels, italic
     // accent lines) that sits on bg/surface; keep `gold` for buttons,
     // icons, and text on dark sections.
-    goldDeep: "#8C6417",
-    ink: "#2E2A22",
-    line: "#E7DFC8",
-    muted: "#6A6353",
+    goldDeep: "#8A6A1E",
+    ink: "#12201A",
+    line: "#EAE3D3",
+    muted: "#5A5F54",
     photos: emptyPhotos(),
   },
   {

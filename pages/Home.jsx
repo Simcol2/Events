@@ -47,7 +47,8 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
-/* ─── Hero: photos crossfade behind a fixed headline ─── */
+/* ─── Hero: kicker, headline, blobs and a rotated polaroid collage ─── */
+const HERO_KICKER = "psst... Toronto & the GTA";
 const HERO_LEAD_LINE = "We create celebrations people don't just attend. They experience.";
 const HERO_HEADLINE_LINES = ["Rent the pieces", "Create the keepsakes", "Enjoy the memories"];
 const HERO_SUPPORTING =
@@ -56,204 +57,234 @@ const HERO_ACCENT_LINE = "Because the best celebrations are the ones where every
 const HERO_CTA_LABEL = "EXPLORE EXPERIENCES";
 const HERO_CTA_TARGET = "/experiences";
 
-const HERO_STATES = [
-  {
-    image: essentialsImage,
-    alt: "Interactive baby shower experience set up by A Slice of G Events in Toronto",
-  },
-  {
-    image: heroFullBleed,
-    alt: "Time capsule keepsake experience available for event rental in Toronto and the GTA",
-  },
-  {
-    image: wallPuzzleEngagementPhoto,
-    alt: "Guest-built wall puzzle keepsake at an engagement party in Toronto",
-  },
-  {
-    image: babyTriviaPhoto,
-    alt: "Guests playing baby trivia at a celebration in the Greater Toronto Area",
-  },
-  {
-    image: nurseryRhymePhoto,
-    alt: "Custom keepsake art piece created by guests at a Toronto celebration",
-  },
-];
+function Blob({ style }) {
+  return <div style={{ position: "absolute", pointerEvents: "none", ...style }} />;
+}
 
 function Hero({ fonts, palette, navigate }) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % HERO_STATES.length);
-    }, 6500);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <section
       style={{
         position: "relative",
-        width: "100%",
-        minHeight: "100svh",
         overflow: "hidden",
-        isolation: "isolate",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        background: palette.bg,
+        padding: "56px 24px 80px",
       }}
     >
-      {HERO_STATES.map((state, i) => (
-        <img
-          key={state.image}
-          src={state.image}
-          alt={state.alt}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            zIndex: 0,
-            opacity: i === index ? 1 : 0,
-            transition: "opacity 1400ms ease",
-          }}
-        />
-      ))}
-
-      <div
+      {/* Organic accent shapes, the same trio as the reference direction:
+          a deep emerald arch, a ruby blob, and a small brass-ringed dot. */}
+      <Blob
         style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 1,
-          background:
-            "linear-gradient(180deg, rgba(20,12,16,.80) 0%, rgba(20,12,16,.72) 35%, rgba(20,12,16,.70) 65%, rgba(20,12,16,.74) 100%)",
+          width: "min(46vw, 420px)",
+          height: "min(46vw, 420px)",
+          top: "-8%",
+          right: "-6%",
+          background: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
+          border: `3px solid ${palette.gold}`,
+          borderRadius: "45% 45% 8% 8%",
+          zIndex: 0,
         }}
       />
-
-      {/* A second, tighter scrim centered behind the text block itself.
-          The linear gradient above keeps the photo readable at the edges,
-          but on its own still lets a busy or light part of the rotating
-          photos show through directly behind the words (this is what made
-          the accent line unreadable against the mailbox photo). This darkens
-          just the text's own footprint, regardless of which photo is
-          showing. */}
-      <div
+      <Blob
         style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 1,
-          background:
-            "radial-gradient(ellipse 640px 620px at 50% 48%, rgba(15,9,12,.42) 0%, rgba(15,9,12,0) 72%)",
+          width: "min(16vw, 150px)",
+          height: "min(15vw, 140px)",
+          bottom: "6%",
+          left: "-3%",
+          background: "linear-gradient(135deg, #F03C7E 0%, #B60D46 100%)",
+          borderRadius: "41% 59% 37% 63% / 55% 40% 60% 45%",
+          opacity: 0.85,
+          zIndex: 0,
+        }}
+      />
+      <Blob
+        style={{
+          width: "min(9vw, 96px)",
+          height: "min(9vw, 96px)",
+          top: "38%",
+          right: "16%",
+          background: "linear-gradient(140deg, #FFDE6E 0%, #C99A2E 100%)",
+          border: `3px solid ${palette.gold}`,
+          borderRadius: "50%",
+          zIndex: 0,
+          display: "none",
         }}
       />
 
       <div
-        style={{
-          position: "relative",
-          zIndex: 2,
-          width: "100%",
-          maxWidth: "1000px",
-          margin: "0 auto",
-          padding: "clamp(90px, 15vw, 120px) 28px clamp(56px, 10vw, 80px)",
-          textAlign: "center",
-        }}
+        className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10"
+        style={{ position: "relative", zIndex: 2 }}
       >
-        <p
-          style={{
-            ...fonts.bodyFont,
-            maxWidth: "560px",
-            margin: "0 auto 0.75rem",
-            color: "#FDF6EEC2",
-            fontSize: "clamp(13px, 1.6vw, 15px)",
-            fontWeight: 600,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            lineHeight: 1.5,
-          }}
-        >
-          {HERO_LEAD_LINE}
-        </p>
-
-        <h1
-          style={{
-            ...fonts.displayFont,
-            margin: "0 auto 1.25rem",
-            fontSize: "clamp(2rem, 5vw, 4.2rem)",
-            fontWeight: 500,
-            lineHeight: 1.15,
-            color: "#FDF6EE",
-            textShadow: "0 8px 24px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4)",
-            textAlign: "center",
-          }}
-        >
-          {HERO_HEADLINE_LINES.map((line, i) => (
-            <React.Fragment key={line}>
-              {i > 0 && <br />}
-              {line}
-            </React.Fragment>
-          ))}
-        </h1>
-
-        <p
-          style={{
-            ...fonts.bodyFont,
-            maxWidth: "580px",
-            margin: "0 auto",
-            color: "#FDF6EEE6",
-            fontSize: "clamp(16px, 2.1vw, 19px)",
-            lineHeight: 1.6,
-          }}
-        >
-          {HERO_SUPPORTING}
-        </p>
-
-        <p
-          style={{
-            ...fonts.displayFont,
-            maxWidth: "560px",
-            margin: "1.1rem auto 0",
-            color: "#F2D9A3",
-            fontSize: "clamp(17px, 2.2vw, 21px)",
-            fontStyle: "italic",
-            lineHeight: 1.5,
-          }}
-        >
-          {HERO_ACCENT_LINE}
-        </p>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            gap: "20px",
-            width: "100%",
-            marginTop: "36px",
-          }}
-        >
-          <button
-            onClick={() => navigate(HERO_CTA_TARGET)}
+        <div className="max-w-xl">
+          <span
+            className="inline-block"
             style={{
-              ...fonts.bodyFont,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "12px",
-              padding: "16px 28px",
-              border: "0",
-              borderRadius: "2px",
-              background: "#FFFFFF",
-              color: palette.primaryDeep,
-              fontSize: "14px",
-              fontWeight: 600,
-              letterSpacing: "0.1em",
-              whiteSpace: "nowrap",
+              ...fonts.scriptFont,
+              fontSize: "17px",
+              color: palette.accent,
+              transform: "rotate(-3deg)",
+              marginBottom: "10px",
             }}
           >
-            {HERO_CTA_LABEL}
-            <ArrowRight size={17} />
-          </button>
+            {HERO_KICKER}
+          </span>
+
+          <p
+            style={{
+              ...fonts.bodyFont,
+              color: palette.goldDeep,
+              fontSize: "clamp(13px, 1.6vw, 15px)",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              lineHeight: 1.5,
+              margin: "6px 0 14px",
+            }}
+          >
+            {HERO_LEAD_LINE}
+          </p>
+
+          <h1
+            style={{
+              ...fonts.displayFont,
+              fontSize: "clamp(2.2rem, 4.6vw, 3.6rem)",
+              fontWeight: 600,
+              lineHeight: 1.08,
+              color: palette.primaryDeep,
+              margin: "0 0 22px",
+            }}
+          >
+            {HERO_HEADLINE_LINES.map((line, i) => (
+              <React.Fragment key={line}>
+                {i > 0 && <br />}
+                {line}
+              </React.Fragment>
+            ))}
+          </h1>
+
+          <p
+            style={{
+              ...fonts.bodyFont,
+              maxWidth: "480px",
+              color: palette.ink,
+              fontSize: "16px",
+              lineHeight: 1.65,
+              margin: "0 0 18px",
+            }}
+          >
+            {HERO_SUPPORTING}
+          </p>
+
+          <p
+            style={{
+              ...fonts.displayFont,
+              maxWidth: "440px",
+              color: palette.accent,
+              fontSize: "19px",
+              fontStyle: "italic",
+              lineHeight: 1.5,
+              margin: "0 0 30px",
+            }}
+          >
+            {HERO_ACCENT_LINE}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <button
+              onClick={() => navigate(HERO_CTA_TARGET)}
+              className="inline-flex items-center gap-3 rounded-full transition-transform hover:-translate-y-0.5"
+              style={{
+                ...fonts.bodyFont,
+                background: "linear-gradient(135deg, #17724F 0%, #0A3B2A 100%)",
+                color: "#FFFFFF",
+                padding: "16px 30px",
+                fontSize: "14px",
+                fontWeight: 600,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                boxShadow: "0 10px 24px rgba(14,92,65,0.3)",
+                border: `1px solid ${palette.gold}`,
+              }}
+            >
+              {HERO_CTA_LABEL}
+              <ArrowRight size={16} />
+            </button>
+            <button
+              onClick={() => navigate("/how-it-works")}
+              style={{
+                ...fonts.bodyFont,
+                color: palette.ink,
+                fontWeight: 600,
+                fontSize: "14px",
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                borderBottom: `2px solid ${palette.gold}`,
+                paddingBottom: "3px",
+              }}
+            >
+              How It Works
+            </button>
+          </div>
+        </div>
+
+        {/* Polaroid collage, layered over the blobs */}
+        <div className="relative mx-auto hidden h-[420px] w-full max-w-[420px] sm:block lg:h-[480px]">
+          <div
+            className="absolute overflow-hidden bg-white shadow-xl"
+            style={{
+              width: "58%",
+              aspectRatio: "4/4.6",
+              top: "0",
+              left: "8%",
+              padding: "10px 10px 34px",
+              transform: "rotate(-4deg)",
+              borderRadius: "2px",
+            }}
+          >
+            <img src={essentialsImage} alt="Baby shower experience by A Slice of G Events" className="h-full w-full object-cover" />
+          </div>
+          <div
+            className="absolute overflow-hidden bg-white shadow-xl"
+            style={{
+              width: "50%",
+              aspectRatio: "4/4.6",
+              top: "34%",
+              right: "0",
+              padding: "10px 10px 34px",
+              transform: "rotate(5deg)",
+              borderRadius: "2px",
+              zIndex: 2,
+            }}
+          >
+            <img src={TUTU_IMAGE} alt="Tutu Twirls pop-up dress-up experience" className="h-full w-full object-cover" />
+          </div>
+          <div
+            className="absolute overflow-hidden bg-white shadow-xl"
+            style={{
+              width: "44%",
+              aspectRatio: "4/4.6",
+              bottom: "0",
+              left: "0",
+              padding: "10px 10px 34px",
+              transform: "rotate(2.5deg)",
+              borderRadius: "2px",
+            }}
+          >
+            <img src={wallPuzzleEngagementPhoto} alt="Guest-built keepsake at a milestone celebration" className="h-full w-full object-cover" />
+          </div>
+
+          <span
+            className="absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
+            style={{ top: "44%", left: "-2%", color: "#2451D9", transform: "rotate(-5deg)" }}
+          >
+            custom keepsakes
+          </span>
+          <span
+            className="absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
+            style={{ bottom: "2%", right: "4%", color: palette.accent, transform: "rotate(6deg)" }}
+          >
+            tutu pop-ups
+          </span>
         </div>
       </div>
     </section>
@@ -312,6 +343,48 @@ const HOW_IT_WORKS_STEPS = [
     icon: Gift,
     title: "You keep the memories",
     body: "Photos, messages, keepsakes, and stories that continue long after the celebration ends.",
+  },
+];
+
+// The four numbered cards from the reference direction, each with its own
+// tilt and its own accent gradient, matching that direction's gallery
+// exactly rather than reusing the site's single accent color four times.
+const DECOR_GALLERY = [
+  {
+    num: "01",
+    lead: "A place to leave a message.",
+    rotate: "-2deg",
+    marginTop: "26px",
+    background: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
+    textColor: "#FFFFFF",
+    numColor: "#D9AE45",
+  },
+  {
+    num: "02",
+    lead: "A moment to try something new.",
+    rotate: "1.5deg",
+    marginTop: "0px",
+    background: "#FFFFFF",
+    textColor: "#12201A",
+    numColor: "#12201A",
+  },
+  {
+    num: "03",
+    lead: "A reason to laugh together.",
+    rotate: "-1.5deg",
+    marginTop: "16px",
+    background: "linear-gradient(150deg, #D3B9F2 0%, #8F63C9 100%)",
+    textColor: "#12201A",
+    numColor: "#12201A",
+  },
+  {
+    num: "04",
+    lead: "A keepsake that tells the story later.",
+    rotate: "1deg",
+    marginTop: "40px",
+    background: "linear-gradient(150deg, #6F9CEB 0%, #2451D9 100%)",
+    textColor: "#FFFFFF",
+    numColor: "#FFFFFF",
   },
 ];
 
@@ -479,10 +552,10 @@ export default function Home({ navigate }) {
       </section>
 
       {/* ═══════════════════════════════════════
-          MORE THAN DÉCOR
+          MORE THAN DÉCOR - now the numbered, rotated gallery
           ═══════════════════════════════════════ */}
-      <section style={{ background: `${palette.primary}0D`, padding: "80px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
+      <section style={{ background: `${palette.primary}0D`, padding: "100px 40px" }}>
+        <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto", textAlign: "center" }}>
           <h2
             className="text-3xl font-semibold sm:text-4xl"
             style={{ ...fonts.displayFont, color: palette.primaryDeep }}
@@ -490,7 +563,7 @@ export default function Home({ navigate }) {
             More than décor. More than a rental.
           </h2>
 
-          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
             We are not here to create another pretty corner that guests walk
             past.
           </p>
@@ -498,21 +571,36 @@ export default function Home({ navigate }) {
             We create experiences that invite people in.
           </p>
 
-          <div className="mx-auto mt-8 max-w-md space-y-3">
-            {[
-              "A place to leave a message.",
-              "A moment to try something new.",
-              "A reason to laugh together.",
-              "A keepsake that tells the story later.",
-            ].map((line) => (
-              <p key={line} className="text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                {line}
-              </p>
+          <div className="mx-auto mt-16 flex max-w-[1000px] flex-wrap items-start justify-center gap-8">
+            {DECOR_GALLERY.map((card) => (
+              <div
+                key={card.num}
+                className="w-[260px] rounded-2xl px-8 py-9 text-left shadow-xl"
+                style={{
+                  background: card.background,
+                  transform: `rotate(${card.rotate})`,
+                  marginTop: card.marginTop,
+                  border: card.background === "#FFFFFF" ? `1px solid ${palette.line}` : "none",
+                }}
+              >
+                <span
+                  className="mb-4 block italic"
+                  style={{ ...fonts.displayFont, fontSize: "15px", color: card.numColor, opacity: 0.75 }}
+                >
+                  {card.num}
+                </span>
+                <p
+                  className="text-2xl font-semibold leading-tight"
+                  style={{ ...fonts.displayFont, color: card.textColor }}
+                >
+                  {card.lead}
+                </p>
+              </div>
             ))}
           </div>
 
           <p
-            className="mx-auto mt-8 max-w-xl text-lg font-semibold leading-8"
+            className="mx-auto mt-16 max-w-xl text-lg font-semibold leading-8"
             style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
           >
             The details matter because the feelings matter.
@@ -532,6 +620,12 @@ export default function Home({ navigate }) {
           >
             Why people choose A Slice of G
           </h2>
+          <span
+            className="mt-2 inline-block"
+            style={{ ...fonts.scriptFont, fontSize: "16px", color: palette.accent, transform: "rotate(-2deg)" }}
+          >
+            (besides the fact that we're just really fun)
+          </span>
 
           <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
             Because celebrations do not have to look the same.
@@ -544,7 +638,8 @@ export default function Home({ navigate }) {
           </p>
 
           <p className="mt-6 text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-            The ideas that make guests say, "Wait, this is so cool."
+            The ideas that make guests say, "Wait, this is so cool." That's
+            the reaction we design every piece for.
           </p>
 
           <p
@@ -593,7 +688,12 @@ export default function Home({ navigate }) {
       {/* ═══════════════════════════════════════
           FINAL CTA
           ═══════════════════════════════════════ */}
-      <section style={{ background: palette.primaryDeep }}>
+      <section
+        style={{
+          background:
+            "linear-gradient(160deg, rgba(23,114,79,0.92) 0%, rgba(10,59,42,0.96) 100%)",
+        }}
+      >
         <div className="mx-auto max-w-4xl px-5 py-20 text-center sm:px-8 sm:py-28">
           <Reveal>
             <Sparkles className="mx-auto" style={{ color: palette.gold }} size={22} strokeWidth={1.2} />
@@ -621,8 +721,8 @@ export default function Home({ navigate }) {
               </button>
               <button
                 onClick={() => openPickerForBuilder()}
-                className="inline-flex items-center gap-3 rounded-sm px-7 py-4 text-base font-semibold tracking-[0.1em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ ...fonts.bodyFont, background: palette.gold }}
+                className="inline-flex items-center gap-3 rounded-full px-7 py-4 text-base font-semibold tracking-[0.1em] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                style={{ ...fonts.bodyFont, background: palette.gold, color: palette.primaryDeep }}
               >
                 START PLANNING <ArrowRight size={17} />
               </button>

@@ -483,11 +483,11 @@ export default function BabyShower() {
             show up. They become part of the story.
           </p>
 
-          <p className="mx-auto mt-8 max-w-xl text-xl italic leading-8" style={{ ...fonts.displayFont, color: "#D7B77C" }}>
+          <p className="mx-auto mt-8 max-w-xl text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.gold }}>
             Ready to create your baby shower experience?
           </p>
 
-          <p className="mt-5 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: "#D7B77C" }}>
+          <p className="mt-5 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
             STARTING AT $1,295
           </p>
 

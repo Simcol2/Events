@@ -468,7 +468,7 @@ export default function TutuTwirlsTea() {
               style={{ background: palette.primaryDeep }}
             >
               <div>
-                <SectionLabel palette={{ ...palette, goldDeep: "#D7B77C" }} fonts={fonts}>
+                <SectionLabel palette={{ ...palette, goldDeep: palette.gold }} fonts={fonts}>
                   THE TUTU TWIRLS FEELING
                 </SectionLabel>
 
@@ -504,7 +504,7 @@ export default function TutuTwirlsTea() {
 
                 <p
                   className="mt-2 text-xl italic leading-8"
-                  style={{ ...fonts.displayFont, color: "#D7B77C" }}
+                  style={{ ...fonts.displayFont, color: palette.gold }}
                 >
                   It's creating a memory.
                 </p>
@@ -531,7 +531,7 @@ export default function TutuTwirlsTea() {
 
           <p
             className="mx-auto mt-6 max-w-xl text-xl italic leading-8"
-            style={{ ...fonts.displayFont, color: "#D7B77C" }}
+            style={{ ...fonts.displayFont, color: palette.gold }}
           >
             Let's create a Tutu Pop-Up that people will talk about long
             after the last twirl.

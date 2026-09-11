@@ -182,7 +182,7 @@ export default function Decor({ navigate }) {
 
   return (
     <div>
-      <section className="border-b border-[#E4DCC8]">
+      <section className="border-b border-[#EAE3D3]">
         <div className="mx-auto max-w-7xl px-5 pb-14 pt-20 sm:px-8">
           <SectionHeading
             eyebrow="THE COLLECTION"
@@ -194,11 +194,11 @@ export default function Decor({ navigate }) {
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
         <div className="mb-3 flex items-center justify-between">
-          <span className="font-[Jost] text-sm font-semibold tracking-[0.16em] text-[#4E5A44]">CHOOSE A DECOR ITEM</span>
+          <span className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-[#0B4933]">CHOOSE A DECOR ITEM</span>
           {selectedCategory && (
             <button
               onClick={() => setSelectedCategory(null)}
-              className="flex items-center gap-1 font-[Jost] text-sm font-medium tracking-[0.1em] text-[#8C846F] underline underline-offset-4"
+              className="flex items-center gap-1 font-[Space_Grotesk] text-sm font-medium tracking-[0.1em] text-[#8C846F] underline underline-offset-4"
             >
               <ChevronLeft size={13} /> ALL CATEGORIES
             </button>
@@ -214,11 +214,11 @@ export default function Decor({ navigate }) {
                 type="button"
                 onClick={() => selectCategory(cat.id)}
                 className={`rounded-sm border px-5 py-6 text-center transition-colors ${
-                  active ? "border-[#4E5A44] bg-[#4E5A44] text-white" : "border-[#D8D0BC] bg-white text-[#5C5645] hover:border-[#4E5A44]"
+                  active ? "border-[#0B4933] bg-[#0B4933] text-white" : "border-[#D8D0BC] bg-white text-[#5C5645] hover:border-[#0B4933]"
                 }`}
               >
-                <div className="font-[Jost] text-sm font-semibold tracking-[0.1em]">{cat.label.toUpperCase()}</div>
-                <div className={`mt-1 font-[Jost] text-sm ${active ? "text-white/80" : "text-[#A69C7E]"}`}>
+                <div className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em]">{cat.label.toUpperCase()}</div>
+                <div className={`mt-1 font-[Space_Grotesk] text-sm ${active ? "text-white/80" : "text-[#5A5F54]"}`}>
                   {categoryCounts[cat.id] || 0} {categoryCounts[cat.id] === 1 ? "item" : "items"}
                 </div>
               </button>
@@ -227,9 +227,9 @@ export default function Decor({ navigate }) {
         </div>
 
         {selectedCategory && (
-          <div className="mt-10 border-t border-[#E4DCC8] pt-8">
+          <div className="mt-10 border-t border-[#EAE3D3] pt-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <h2 className="font-['Cormorant_Garamond'] text-2xl font-semibold text-[#4E5A44]">
+              <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
                 {CATEGORIES.find((c) => c.id === selectedCategory)?.label}
               </h2>
               <div className="flex gap-2">
@@ -237,8 +237,8 @@ export default function Decor({ navigate }) {
                   <button
                     key={a.id}
                     onClick={() => setAvailability(a.id)}
-                    className={`rounded-sm border px-4 py-2 font-[Jost] text-sm font-medium tracking-[0.08em] ${
-                      availability === a.id ? "border-[#4E5A44] bg-[#4E5A44] text-white" : "border-[#D8D0BC] text-[#716B5C]"
+                    className={`rounded-sm border px-4 py-2 font-[Space_Grotesk] text-sm font-medium tracking-[0.08em] ${
+                      availability === a.id ? "border-[#0B4933] bg-[#0B4933] text-white" : "border-[#D8D0BC] text-[#716B5C]"
                     }`}
                   >
                     {a.label.toUpperCase()}
@@ -248,20 +248,20 @@ export default function Decor({ navigate }) {
             </div>
 
             <div className="relative mt-6 max-w-sm">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A69C7E]" />
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5A5F54]" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search this category"
-                className="w-full border-b border-[#D8D0BC] bg-transparent py-3 pl-9 pr-3 font-[Jost] text-base text-[#3A342A] outline-none placeholder:text-[#A69C7E] focus:border-[#4E5A44]"
+                className="w-full border-b border-[#D8D0BC] bg-transparent py-3 pl-9 pr-3 font-[Space_Grotesk] text-base text-[#12201A] outline-none placeholder:text-[#5A5F54] focus:border-[#0B4933]"
               />
             </div>
 
             <div className="mt-10">
-              {loading && <p className="py-20 text-center font-[Jost] text-base text-[#A69C7E]">Curating the collection…</p>}
-              {error && <p className="py-20 text-center font-[Jost] text-base text-red-700">Couldn't load the collection: {error}</p>}
+              {loading && <p className="py-20 text-center font-[Space_Grotesk] text-base text-[#5A5F54]">Curating the collection…</p>}
+              {error && <p className="py-20 text-center font-[Space_Grotesk] text-base text-red-700">Couldn't load the collection: {error}</p>}
               {!loading && !error && visible.length === 0 && (
-                <p className="py-20 text-center font-[Jost] text-base text-[#A69C7E]">Nothing matches yet.</p>
+                <p className="py-20 text-center font-[Space_Grotesk] text-base text-[#5A5F54]">Nothing matches yet.</p>
               )}
               <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
                 {groupedVisible.map((entry) => (
@@ -297,11 +297,11 @@ export default function Decor({ navigate }) {
           />
         )}
 
-        <div className="mt-20 border-t border-[#E4DCC8] pt-7 text-center">
-          <p className="font-[Jost] text-sm tracking-[0.18em] text-[#8C846F]">
+        <div className="mt-20 border-t border-[#EAE3D3] pt-7 text-center">
+          <p className="font-[Space_Grotesk] text-sm tracking-[0.18em] text-[#8C846F]">
             WANT AN EXPERIENCE YOUR GUESTS BECOME PART OF, NOT JUST A ROOM FULL OF DECOR?
           </p>
-          <button onClick={() => openPickerForBuilder()} className="mt-4 border border-[#B8935A] px-6 py-3 font-[Jost] text-sm font-semibold tracking-[0.2em] text-[#4E5A44]">
+          <button onClick={() => openPickerForBuilder()} className="mt-4 border border-[#8A6A1E] px-6 py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-[#0B4933]">
             BUILD MY EXPERIENCE
           </button>
         </div>

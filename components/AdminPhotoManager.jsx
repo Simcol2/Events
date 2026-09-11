@@ -65,7 +65,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
           <div key={url + i} className="relative h-24 w-24 overflow-hidden rounded-sm border border-[#D8D0BC]">
             <img src={url} alt="" className="h-full w-full object-cover" />
             {i === 0 && (
-              <span className="absolute left-1 top-1 rounded-sm bg-[#4E5A44] px-1.5 py-0.5 font-[Jost] text-[8px] font-semibold text-white">
+              <span className="absolute left-1 top-1 rounded-sm bg-[#0B4933] px-1.5 py-0.5 font-[Space_Grotesk] text-[8px] font-semibold text-white">
                 FIRST
               </span>
             )}
@@ -74,7 +74,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
                 type="button"
                 onClick={() => moveUp(i)}
                 disabled={i === 0}
-                className="flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-[#4E5A44] disabled:opacity-30"
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-[#0B4933] disabled:opacity-30"
                 aria-label="Move earlier"
               >
                 <ChevronUp size={11} />
@@ -83,7 +83,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
                 type="button"
                 onClick={() => moveDown(i)}
                 disabled={i === list.length - 1}
-                className="flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-[#4E5A44] disabled:opacity-30"
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-[#0B4933] disabled:opacity-30"
                 aria-label="Move later"
               >
                 <ChevronDown size={11} />
@@ -101,7 +101,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
         ))}
         <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-[#D8D0BC] text-[#8C846F]">
           <Upload size={16} />
-          <span className="font-[Jost] text-[9px]">{uploading ? "Uploading..." : "Add photo"}</span>
+          <span className="font-[Space_Grotesk] text-[9px]">{uploading ? "Uploading..." : "Add photo"}</span>
           <input
             ref={fileInputRef}
             type="file"
@@ -113,8 +113,8 @@ export default function AdminPhotoManager({ photos, onChange }) {
           />
         </label>
       </div>
-      {error && <p className="mt-2 font-[Jost] text-xs text-red-700">{error}</p>}
-      <p className="mt-2 font-[Jost] text-[10px] text-[#A69C7E]">
+      {error && <p className="mt-2 font-[Space_Grotesk] text-xs text-red-700">{error}</p>}
+      <p className="mt-2 font-[Space_Grotesk] text-[10px] text-[#5A5F54]">
         The first photo is what shows on the site. Use the arrows to reorder, the X to remove.
       </p>
     </div>

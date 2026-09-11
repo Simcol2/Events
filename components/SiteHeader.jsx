@@ -39,11 +39,11 @@ export default function SiteHeader({ current, navigate, nav }) {
 
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <button onClick={() => go({ path: "/" })} className="group text-left">
-          <div className="font-[Jost] text-sm font-semibold tracking-[0.42em]" style={{ color: palette.goldDeep }}>
+          <div className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.42em]" style={{ color: palette.goldDeep }}>
             A SLICE OF G
           </div>
           <div
-            className="font-['Cormorant_Garamond'] text-[25px] font-semibold leading-none tracking-[0.03em]"
+            className="font-['Fraunces'] text-[25px] font-semibold leading-none tracking-[0.03em]"
             style={{ color: palette.primaryDeep }}
           >
             EVENTS
@@ -59,7 +59,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                 <button
                   key={path}
                   onClick={() => go(item)}
-                  className="rounded-full px-4 py-2.5 font-[Jost] text-sm font-semibold tracking-[0.1em] text-white transition-transform hover:-translate-y-0.5"
+                  className="rounded-full px-4 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em] text-white transition-transform hover:-translate-y-0.5"
                   style={{ background: palette.primaryDeep }}
                 >
                   {label.toUpperCase()}
@@ -72,7 +72,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                 <div key={path} className="group relative">
                   <button
                     onClick={() => go(item)}
-                    className="relative flex items-center gap-1 whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.02em] transition-colors"
+                    className="relative flex items-center gap-1 whitespace-nowrap py-2 font-[Space_Grotesk] text-sm font-medium tracking-[0.02em] transition-colors"
                     style={{ color: active || childActive ? palette.primaryDeep : palette.muted }}
                   >
                     {label.toUpperCase()}
@@ -92,7 +92,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                         <button
                           key={child.path + (child.eventTypeId || "")}
                           onClick={() => go(child)}
-                          className="block w-full whitespace-nowrap px-5 py-3 text-left font-[Jost] text-sm font-medium tracking-[0.1em] transition-colors hover:opacity-70"
+                          className="block w-full whitespace-nowrap px-5 py-3 text-left font-[Space_Grotesk] text-sm font-medium tracking-[0.1em] transition-colors hover:opacity-70"
                           style={{ color: current === child.path.slice(1) ? palette.primaryDeep : palette.ink }}
                         >
                           {child.label.toUpperCase()}
@@ -107,7 +107,7 @@ export default function SiteHeader({ current, navigate, nav }) {
               <button
                 key={path}
                 onClick={() => go(item)}
-                className="relative whitespace-nowrap py-2 font-[Jost] text-sm font-medium tracking-[0.02em] transition-colors"
+                className="relative whitespace-nowrap py-2 font-[Space_Grotesk] text-sm font-medium tracking-[0.02em] transition-colors"
                 style={{ color: active ? palette.primaryDeep : palette.muted }}
               >
                 {label.toUpperCase()}
@@ -143,8 +143,8 @@ export default function SiteHeader({ current, navigate, nav }) {
                     onClick={() => (item.children ? toggleExpanded(item.path) : go(item))}
                     className={
                       item.cta
-                        ? "mt-3 rounded-full py-3.5 text-center font-[Jost] text-sm font-semibold tracking-[0.22em] text-white"
-                        : "flex items-center justify-between py-4 text-left font-[Jost] text-sm font-medium tracking-[0.22em]"
+                        ? "mt-3 rounded-full py-3.5 text-center font-[Space_Grotesk] text-sm font-semibold tracking-[0.22em] text-white"
+                        : "flex items-center justify-between py-4 text-left font-[Space_Grotesk] text-sm font-medium tracking-[0.22em]"
                     }
                     style={
                       item.cta
@@ -164,7 +164,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                       <button
                         key={child.path + (child.eventTypeId || "")}
                         onClick={() => go(child)}
-                        className="py-3 pl-5 text-left font-[Jost] text-sm font-medium tracking-[0.18em]"
+                        className="py-3 pl-5 text-left font-[Space_Grotesk] text-sm font-medium tracking-[0.18em]"
                         style={{ borderBottom: `1px solid ${palette.line}CC`, color: palette.muted }}
                       >
                         {child.label.toUpperCase()}
