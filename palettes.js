@@ -31,12 +31,13 @@ export const PALETTES = [
   {
     id: "signature",
     name: "Signature",
-    description: "Modern Glam Playhouse: emerald, ruby and brass.",
-    // Emerald/ruby/brass on warm cream, with organic shapes and a
-    // handwritten marker accent - a livelier, more playful read than the
-    // original sage-and-gold flyer look.
-    bg: "#FCFBF7",
-    surface: "#FFFFFF",
+    description: "Editorial MCM event house: emerald, ruby, brass and warm ivory.",
+    // Emerald/ruby/brass on a warm ivory (not pale, not near-white), with
+    // organic shapes, a handwritten marker accent, and full-bleed
+    // photography treated as a structural part of the page rather than
+    // decoration.
+    bg: "#F8F3E8",
+    surface: "#FFFDF8",
     primary: "#17724F",
     primaryDeep: "#0B4933",
     accent: "#E0115F",
@@ -50,7 +51,7 @@ export const PALETTES = [
     // icons, and text on dark sections.
     goldDeep: "#8A6A1E",
     ink: "#12201A",
-    line: "#EAE3D3",
+    line: "#E5D8BD",
     muted: "#5A5F54",
     photos: emptyPhotos(),
   },

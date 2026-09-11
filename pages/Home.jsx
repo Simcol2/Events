@@ -10,8 +10,34 @@ import babyTriviaPhoto from "../media/babytrivia.png";
 import nurseryRhymePhoto from "../media/poem.png";
 
 const TUTU_IMAGE = "/photos/tutu-twirls-tea-hero.jpg";
+const TUTU_STARTING_PRICE = 495;
 
-/* ─── Scroll reveal wrapper ─── */
+// Converts a "#RRGGBB" palette color into an rgba() string at the given
+// alpha, so the subtle paper-grain texture and glow accents below always
+// derive from the live palette instead of a second, hardcoded set of
+// hex values that could drift out of sync with it.
+function hexToRgba(hex, alpha) {
+  const clean = hex.replace("#", "");
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function paperTexture(palette) {
+  return {
+    backgroundColor: palette.bg,
+    backgroundImage: [
+      `radial-gradient(circle at 18% 10%, ${hexToRgba(palette.gold, 0.08)}, transparent 28%)`,
+      `radial-gradient(circle at 85% 18%, ${hexToRgba(palette.accent, 0.045)}, transparent 24%)`,
+      `repeating-linear-gradient(0deg, ${hexToRgba(palette.ink, 0.018)} 0, ${hexToRgba(palette.ink, 0.018)} 1px, transparent 1px, transparent 4px)`,
+    ].join(", "),
+  };
+}
+
+const elevatedShadow =
+  "0 2px 4px rgba(18,32,26,0.05), 0 18px 42px rgba(18,32,26,0.10), 0 32px 70px rgba(18,32,26,0.06)";
+
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -38,8 +64,8 @@ function Reveal({ children, className = "", delay = 0 }) {
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(28px)",
-        transition: `opacity 800ms ease ${delay}ms, transform 800ms cubic-bezier(.22,1,.36,1) ${delay}ms`,
+        transform: visible ? "translateY(0)" : "translateY(26px)",
+        transition: `opacity 760ms ease ${delay}ms, transform 760ms cubic-bezier(.22,1,.36,1) ${delay}ms`,
       }}
     >
       {children}
@@ -47,280 +73,280 @@ function Reveal({ children, className = "", delay = 0 }) {
   );
 }
 
-/* ─── Hero: kicker, headline, blobs and a rotated polaroid collage ─── */
-const HERO_KICKER = "psst... Toronto & the GTA";
-const HERO_LEAD_LINE = "We create celebrations people don't just attend. They experience.";
-const HERO_HEADLINE_LINES = ["Rent the pieces", "Create the keepsakes", "Enjoy the memories"];
-const HERO_SUPPORTING =
-  "From Tutu Pop-Ups that bring dress-up fun back, to thoughtful baby showers and milestone celebrations, we design interactive experiences that give guests something to do, something to feel, and something to remember.";
-const HERO_ACCENT_LINE = "Because the best celebrations are the ones where everyone becomes part of the story.";
-const HERO_CTA_LABEL = "EXPLORE EXPERIENCES";
-const HERO_CTA_TARGET = "/experiences";
-
-function Blob({ style, className }) {
-  return <div className={className} style={{ position: "absolute", pointerEvents: "none", ...style }} />;
+function Blob({ style, className = "" }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={className}
+      style={{ position: "absolute", pointerEvents: "none", ...style }}
+    />
+  );
 }
 
 function Hero({ fonts, palette, navigate }) {
   return (
     <section
+      className="relative overflow-hidden"
       style={{
-        position: "relative",
-        overflow: "hidden",
-        background: palette.bg,
-        padding: "56px 24px 64px",
+        ...paperTexture(palette),
+        padding: "58px 24px 72px",
+        borderBottom: `1px solid ${hexToRgba(palette.gold, 0.35)}`,
       }}
     >
-      {/* A small pink blob peeking from the hero's own edge, clear of the
-          text column at every width. The large arch shape lives with the
-          polaroid collage below instead, since that's the pairing the
-          reference direction actually shows - shapes framing the photos,
-          not floating alone over a paragraph. */}
       <Blob
-        className="shape-in"
         style={{
-          width: "min(13vw, 120px)",
-          height: "min(12vw, 110px)",
-          bottom: "4%",
-          left: "-2%",
-          background: "linear-gradient(135deg, #F03C7E 0%, #B60D46 100%)",
-          borderRadius: "41% 59% 37% 63% / 55% 40% 60% 45%",
-          opacity: 0.85,
-          zIndex: 0,
-          animationDelay: "0.3s",
+          width: "min(36vw, 420px)",
+          height: "min(36vw, 420px)",
+          right: "-10%",
+          top: "-18%",
+          borderRadius: "50%",
+          background: hexToRgba(palette.accent, 0.085),
+        }}
+      />
+      <Blob
+        style={{
+          width: "min(17vw, 170px)",
+          height: "min(17vw, 170px)",
+          left: "-4%",
+          bottom: "-4%",
+          borderRadius: "38% 62% 53% 47% / 48% 39% 61% 52%",
+          background: palette.accent,
+          opacity: 0.88,
         }}
       />
 
-      <div
-        className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10"
-        style={{ position: "relative", zIndex: 2 }}
-      >
+      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr]">
         <div className="max-w-xl">
-          <span
-            className="inline-block shape-in"
-            style={{
-              ...fonts.displayFont,
-              fontStyle: "italic",
-              fontWeight: 500,
-              fontSize: "clamp(28px, 4.4vw, 40px)",
-              color: palette.accent,
-              transform: "rotate(-3deg)",
-              marginBottom: "14px",
-              animationDelay: "0.05s",
-            }}
-          >
-            {HERO_KICKER}
-          </span>
-
           <p
             style={{
               ...fonts.bodyFont,
-              color: palette.goldDeep,
-              fontSize: "clamp(16px, 2.2vw, 19px)",
-              fontWeight: 600,
-              letterSpacing: "0.06em",
+              color: palette.primary,
+              fontSize: "12px",
+              fontWeight: 700,
+              letterSpacing: "0.16em",
               textTransform: "uppercase",
-              lineHeight: 1.4,
-              margin: "6px 0 16px",
+              marginBottom: "18px",
             }}
           >
-            {HERO_LEAD_LINE}
+            Toronto & the GTA
           </p>
 
           <h1
             style={{
               ...fonts.displayFont,
-              fontSize: "clamp(2.2rem, 4.6vw, 3.6rem)",
-              fontWeight: 600,
-              lineHeight: 1.08,
               color: palette.primaryDeep,
-              margin: "0 0 22px",
+              fontSize: "clamp(2.75rem, 5.8vw, 5.4rem)",
+              fontWeight: 620,
+              lineHeight: 0.98,
+              letterSpacing: "-0.035em",
+              margin: 0,
             }}
           >
-            {HERO_HEADLINE_LINES.map((line, i) => (
-              <React.Fragment key={line}>
-                {i > 0 && <br />}
-                {line}
-              </React.Fragment>
-            ))}
+            We create celebrations people don't just attend.
           </h1>
 
           <p
             style={{
-              ...fonts.bodyFont,
-              maxWidth: "480px",
-              color: palette.ink,
-              fontSize: "16px",
-              lineHeight: 1.65,
-              margin: "0 0 18px",
+              ...fonts.scriptFont,
+              color: palette.accent,
+              fontSize: "clamp(2rem, 5vw, 4.4rem)",
+              lineHeight: 1,
+              margin: "14px 0 26px",
+              transform: "rotate(-2deg)",
+              transformOrigin: "left center",
             }}
           >
-            {HERO_SUPPORTING}
+            They experience.
           </p>
 
           <p
             style={{
-              ...fonts.displayFont,
-              maxWidth: "440px",
-              color: palette.accent,
-              fontSize: "19px",
-              fontStyle: "italic",
-              lineHeight: 1.5,
+              ...fonts.bodyFont,
+              maxWidth: "560px",
+              color: palette.ink,
+              fontSize: "17px",
+              lineHeight: 1.72,
+              margin: "0 0 22px",
+            }}
+          >
+            Interactive experiences, keepsakes, décor and rentals for baby showers,
+            birthdays and milestone celebrations across Toronto and the GTA.
+          </p>
+
+          <p
+            style={{
+              ...fonts.bodyFont,
+              color: palette.goldDeep,
+              fontSize: "14px",
+              fontWeight: 700,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
               margin: "0 0 30px",
             }}
           >
-            {HERO_ACCENT_LINE}
+            Tutu Twirls & Tea starting at ${TUTU_STARTING_PRICE}
           </p>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-5">
             <button
-              onClick={() => navigate(HERO_CTA_TARGET)}
+              onClick={() => navigate("/experiences")}
               className="inline-flex items-center gap-3 rounded-full transition-transform hover:-translate-y-0.5"
               style={{
                 ...fonts.bodyFont,
-                background: "linear-gradient(135deg, #17724F 0%, #0A3B2A 100%)",
+                background: `linear-gradient(135deg, ${palette.primary} 0%, ${palette.primaryDeep} 100%)`,
                 color: "#FFFFFF",
-                padding: "16px 30px",
-                fontSize: "14px",
-                fontWeight: 600,
-                letterSpacing: "0.04em",
+                padding: "16px 28px",
+                fontSize: "13px",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                boxShadow: "0 10px 24px rgba(14,92,65,0.3)",
+                boxShadow: `0 14px 30px ${hexToRgba(palette.primaryDeep, 0.24)}`,
                 border: `1px solid ${palette.gold}`,
               }}
             >
-              {HERO_CTA_LABEL}
+              Explore experiences
               <ArrowRight size={16} />
             </button>
+
             <button
               onClick={() => navigate("/how-it-works")}
               style={{
                 ...fonts.bodyFont,
-                color: palette.ink,
-                fontWeight: 600,
-                fontSize: "14px",
-                letterSpacing: "0.04em",
+                color: palette.primaryDeep,
+                fontWeight: 700,
+                fontSize: "13px",
+                letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 borderBottom: `2px solid ${palette.gold}`,
                 paddingBottom: "3px",
               }}
             >
-              How It Works
+              How it works
             </button>
           </div>
         </div>
 
-        {/* Polaroid collage - stacks below the text on narrow screens
-            instead of disappearing, so mobile visitors get the same
-            playful moment as desktop. The arch shape lives in here too,
-            scoped to this container so it always frames the photos and
-            never drifts over the text column at any width. */}
-        <div className="relative mx-auto mt-6 h-[360px] w-full max-w-[380px] sm:h-[420px] sm:max-w-[420px] lg:mt-0 lg:h-[480px]">
+        <div className="relative mx-auto h-[390px] w-full max-w-[450px] sm:h-[480px] lg:h-[560px]">
           <Blob
-            className="shape-in"
             style={{
-              width: "58%",
-              height: "62%",
-              top: "-8%",
-              right: "-6%",
-              background: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
+              width: "64%",
+              height: "68%",
+              right: "-4%",
+              top: "-5%",
+              background: `linear-gradient(150deg, ${palette.primary} 0%, ${palette.primaryDeep} 100%)`,
               border: `3px solid ${palette.gold}`,
-              borderRadius: "45% 45% 8% 8%",
-              zIndex: 0,
-              animationDelay: "0.1s",
+              borderRadius: "46% 46% 8% 8%",
+              boxShadow: `0 26px 64px ${hexToRgba(palette.primaryDeep, 0.22)}`,
             }}
           />
-          <div
-            className="shape-in-rot absolute overflow-hidden bg-white shadow-xl"
+          <Blob
             style={{
-              width: "58%",
-              aspectRatio: "4/4.6",
-              top: "0",
-              left: "8%",
-              padding: "10px 10px 34px",
-              transform: "rotate(-4deg)",
-              borderRadius: "2px",
-              "--rot": "-4deg",
-              animationDelay: "0.5s",
+              width: "36%",
+              height: "31%",
+              left: "-6%",
+              bottom: "5%",
+              background: palette.accent,
+              borderRadius: "45% 55% 50% 50% / 58% 46% 54% 42%",
+              opacity: 0.92,
             }}
-          >
-            <img src={essentialsImage} alt="Baby shower experience by A Slice of G Events" className="h-full w-full object-cover" />
-          </div>
-          <div
-            className="shape-in-rot absolute overflow-hidden bg-white shadow-xl"
-            style={{
-              width: "50%",
-              aspectRatio: "4/4.6",
-              top: "34%",
-              right: "0",
-              padding: "10px 10px 34px",
-              transform: "rotate(5deg)",
-              borderRadius: "2px",
-              zIndex: 2,
-              "--rot": "5deg",
-              animationDelay: "0.65s",
-            }}
-          >
-            <img src={TUTU_IMAGE} alt="Tutu Twirls pop-up dress-up experience" className="h-full w-full object-cover" />
-          </div>
-          <div
-            className="shape-in-rot absolute overflow-hidden bg-white shadow-xl"
-            style={{
-              width: "44%",
-              aspectRatio: "4/4.6",
-              bottom: "0",
-              left: "0",
-              padding: "10px 10px 34px",
-              transform: "rotate(2.5deg)",
-              borderRadius: "2px",
-              "--rot": "2.5deg",
-              animationDelay: "0.8s",
-            }}
-          >
-            <img src={wallPuzzleEngagementPhoto} alt="Guest-built keepsake at a milestone celebration" className="h-full w-full object-cover" />
-          </div>
+          />
 
-          <span
-            className="shape-in-rot absolute rounded-[10px] bg-white px-3 py-2 text-xs font-semibold shadow-lg"
-            style={{ bottom: "2%", right: "4%", color: palette.accent, transform: "rotate(6deg)", "--rot": "6deg", animationDelay: "1.05s" }}
+          {[
+            {
+              src: essentialsImage,
+              alt: "Baby shower experience by A Slice of G Events",
+              style: { width: "58%", top: "0", left: "4%", transform: "rotate(-4deg)", zIndex: 2 },
+            },
+            {
+              src: wallPuzzleEngagementPhoto,
+              alt: "Guest-built keepsake at a celebration",
+              style: { width: "52%", top: "34%", right: "-1%", transform: "rotate(4.5deg)", zIndex: 3 },
+            },
+            {
+              src: TUTU_IMAGE,
+              alt: "Tutu Twirls pop-up dress-up experience",
+              style: { width: "45%", bottom: "0", left: "1%", transform: "rotate(2deg)", zIndex: 4 },
+            },
+          ].map((photo) => (
+            <div
+              key={photo.alt}
+              className="absolute overflow-hidden bg-white"
+              style={{
+                aspectRatio: "4 / 4.7",
+                padding: "10px 10px 34px",
+                borderRadius: "2px",
+                boxShadow: elevatedShadow,
+                ...photo.style,
+              }}
+            >
+              <img src={photo.src} alt={photo.alt} className="h-full w-full object-cover" />
+            </div>
+          ))}
+
+          <div
+            className="absolute right-[5%] top-[6%] z-20 flex h-28 w-28 items-center justify-center rounded-full p-5 text-center sm:h-32 sm:w-32"
+            style={{
+              ...fonts.bodyFont,
+              background: `radial-gradient(circle at 34% 28%, #F5D982 0%, ${palette.gold} 72%, #B98724 100%)`,
+              color: palette.primaryDeep,
+              fontSize: "11px",
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              lineHeight: 1.35,
+              textTransform: "uppercase",
+              boxShadow: "0 16px 34px rgba(18,32,26,0.18)",
+              border: "1px solid rgba(255,255,255,0.55)",
+            }}
           >
-            tutu pop-ups
-          </span>
+            Events that bring people together
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-const EXPERIENCE_CARDS = [
+const CELEBRATION_CARDS = [
   {
-    image: TUTU_IMAGE,
-    alt: "Tutu Twirls pop-up dress-up experience",
-    title: "Tutu Pop-Ups",
-    tagline: "Dress-up is back, and everyone gets invited.",
-    body: "A playful pop-up experience filled with statement pieces, tutus, accessories, and creative moments where kids and grown-ups can step into something a little more fun.",
-    accent: "Because getting dressed up should not have an age limit.",
-    ctaLabel: "EXPLORE TUTU TWIRLS",
-    action: "tutu",
-  },
-  {
+    title: "Baby Showers",
     image: essentialsImage,
-    alt: "Interactive baby shower experience set up by A Slice of G Events",
-    title: "Baby Shower Experiences",
-    tagline: "More than games. More than decorations.",
-    body: "We create thoughtful moments that bring guests together and give the parents-to-be something meaningful to keep.",
-    accent: "From advice and wishes to memories that baby can discover years later, these experiences turn a gathering into a story.",
-    ctaLabel: "EXPLORE BABY SHOWERS",
     action: "babyShower",
   },
   {
-    image: wallPuzzleEngagementPhoto,
-    alt: "Guest-built keepsake at a milestone celebration",
-    title: "Milestone & Custom Celebrations",
-    tagline: "Some moments deserve more than a standard setup.",
-    body: "Whether it is a special birthday, family celebration, or an idea you have been dreaming up, we create experiences designed around the people you are celebrating.",
-    ctaLabel: "CREATE SOMETHING CUSTOM",
+    title: "Tutu Twirls & Tea",
+    image: TUTU_IMAGE,
+    action: "tutu",
+  },
+  {
+    title: "Milestone Celebrations",
+    image: heroFullBleed,
     action: "custom",
+  },
+  {
+    title: "Custom Moments",
+    image: wallPuzzleEngagementPhoto,
+    action: "custom",
+  },
+];
+
+const FEATURED = [
+  {
+    title: "Picture This",
+    image: babyTriviaPhoto,
+    body: "Guests capture a photo and leave a message or memory for the future.",
+    action: "babyShower",
+  },
+  {
+    title: "Hello World Kindness Station",
+    image: nurseryRhymePhoto,
+    body: "Guests share advice, hopes and kind words while passing a little kindness forward.",
+    action: "babyShower",
+  },
+  {
+    title: "Tutu Twirls & Tea",
+    image: TUTU_IMAGE,
+    body: "A dress-up experience filled with sparkle, play and confidence.",
+    action: "tutu",
   },
 ];
 
@@ -328,85 +354,30 @@ const HOW_IT_WORKS_STEPS = [
   {
     icon: CalendarHeart,
     title: "Choose your experience",
-    body: "Start with one of our signature experiences or tell us what you are imagining.",
-    tint: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
-    iconColor: "#FFFFFF",
-    rotate: "-3deg",
+    body: "Pick from our signature experiences or build something custom.",
   },
   {
     icon: Truck,
-    title: "We bring the pieces",
-    body: "We provide the interactive elements, styled details, and thoughtful touches that bring the experience to life.",
-    tint: "linear-gradient(140deg, #FFDE6E 0%, #C99A2E 100%)",
-    iconColor: "#12201A",
-    rotate: "2deg",
+    title: "We prepare everything",
+    body: "Your activities, keepsakes and details are prepared for self setup or full-service styling.",
   },
   {
     icon: Users,
     title: "Your guests take part",
-    body: "They play, connect, create, and contribute to the moment.",
-    tint: "linear-gradient(150deg, #D3B9F2 0%, #8F63C9 100%)",
-    iconColor: "#12201A",
-    rotate: "-2deg",
+    body: "They play, connect, create and contribute to the moment.",
   },
   {
     icon: Gift,
     title: "You keep the memories",
-    body: "Photos, messages, keepsakes, and stories that continue long after the celebration ends.",
-    tint: "linear-gradient(135deg, #F03C7E 0%, #B60D46 100%)",
-    iconColor: "#FFFFFF",
-    rotate: "3deg",
+    body: "The photos, messages, keepsakes and stories live on after the event.",
   },
 ];
 
-// The four numbered cards from the reference direction, each with its own
-// tilt and its own accent gradient, matching that direction's gallery
-// exactly rather than reusing the site's single accent color four times.
-const DECOR_GALLERY = [
-  {
-    num: "01",
-    lead: "A place to leave a message.",
-    rotate: "-2deg",
-    marginTop: "26px",
-    background: "linear-gradient(150deg, #17724F 0%, #0A3B2A 100%)",
-    textColor: "#FFFFFF",
-    numColor: "#D9AE45",
-  },
-  {
-    num: "02",
-    lead: "A moment to try something new.",
-    rotate: "1.5deg",
-    marginTop: "0px",
-    background: "#FFFFFF",
-    textColor: "#12201A",
-    numColor: "#12201A",
-  },
-  {
-    num: "03",
-    lead: "A reason to laugh together.",
-    rotate: "-1.5deg",
-    marginTop: "16px",
-    background: "linear-gradient(150deg, #D3B9F2 0%, #8F63C9 100%)",
-    textColor: "#12201A",
-    numColor: "#12201A",
-  },
-  {
-    num: "04",
-    lead: "A keepsake that tells the story later.",
-    rotate: "1deg",
-    marginTop: "40px",
-    background: "linear-gradient(150deg, #6F9CEB 0%, #2451D9 100%)",
-    textColor: "#FFFFFF",
-    numColor: "#FFFFFF",
-  },
-];
-
-/* ─── Main page ─── */
 export default function Home({ navigate }) {
   const { palette, fonts } = usePalette();
   const { openPickerForBuilder, chooseEventType } = useEventType();
 
-  const handleCardAction = (action) => {
+  const handleAction = (action) => {
     if (action === "tutu") {
       navigate("/birthdays/tutu-twirls-tea");
       return;
@@ -420,160 +391,349 @@ export default function Home({ navigate }) {
   };
 
   return (
-    <div className="overflow-hidden" style={{ background: palette.bg }}>
+    <div className="overflow-hidden" style={{ background: palette.bg, color: palette.ink }}>
       <Hero fonts={fonts} palette={palette} navigate={navigate} />
 
-      {/* ═══════════════════════════════════════
-          CELEBRATIONS ARE BETTER WHEN PEOPLE ARE PART OF THEM
-          ═══════════════════════════════════════ */}
-      <section style={{ background: palette.bg, padding: "80px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
-          <h2
-            className="text-3xl font-semibold sm:text-4xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            Celebrations are better when people are part of them.
-          </h2>
-
-          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            A beautiful setup is nice.
-          </p>
-          <p className="mt-3 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            But the moments people talk about later are usually the ones
-            where something happened.
-          </p>
-
-          <div className="mx-auto mt-8 max-w-md space-y-3">
-            {[
-              "Someone wrote a message for the future.",
-              "Someone dressed up and surprised themselves.",
-              "Someone laughed harder than they expected.",
-              "Someone created something they got to take home.",
-            ].map((line) => (
-              <p key={line} className="text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                {line}
-              </p>
-            ))}
-          </div>
-
+      {/* Celebration selector */}
+      <section style={{ ...paperTexture(palette), padding: "32px 24px 64px" }}>
+        <div className="mx-auto max-w-7xl">
           <p
-            className="mx-auto mt-8 max-w-xl text-lg font-semibold leading-8"
-            style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+            className="mb-6 text-center"
+            style={{
+              ...fonts.bodyFont,
+              color: palette.primaryDeep,
+              fontSize: "12px",
+              fontWeight: 800,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+            }}
           >
-            We create the details that turn guests from people watching into
-            people participating.
+            What are you celebrating?
           </p>
-        </div>
-      </section>
 
-      {/* ═══════════════════════════════════════
-          EXPERIENCES DESIGNED AROUND CONNECTION
-          ═══════════════════════════════════════ */}
-      <section style={{ background: `${palette.primary}0D`, padding: "80px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}>
-          <h2
-            className="mx-auto max-w-2xl text-center text-3xl font-semibold sm:text-4xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            Experiences designed around connection, creativity, and a little
-            bit of fun.
-          </h2>
-
-          <div className="mt-14 grid gap-8 lg:grid-cols-3">
-            {EXPERIENCE_CARDS.map((card, i) => (
-              <Reveal key={card.title} delay={i * 80}>
-                <div
-                  className="flex h-full flex-col overflow-hidden rounded-xl"
-                  style={{ background: palette.surface, border: `1px solid ${palette.line}` }}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {CELEBRATION_CARDS.map((card, i) => (
+              <Reveal key={card.title} delay={i * 70}>
+                <button
+                  onClick={() => handleAction(card.action)}
+                  className="group block w-full text-left"
                 >
-                  <div className="overflow-hidden" style={{ aspectRatio: "4 / 3" }}>
-                    <img src={card.image} alt={card.alt} className="h-full w-full object-cover" />
+                  <div
+                    className="overflow-hidden rounded-[4px]"
+                    style={{
+                      aspectRatio: "16 / 10",
+                      boxShadow: elevatedShadow,
+                      border: `1px solid ${hexToRgba(palette.gold, 0.35)}`,
+                    }}
+                  >
+                    <img
+                      src={card.image}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                    />
                   </div>
-                  <div className="flex flex-1 flex-col p-7">
-                    <h3
-                      className="text-2xl font-semibold"
-                      style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    <span
+                      style={{
+                        ...fonts.bodyFont,
+                        color: palette.primaryDeep,
+                        fontSize: "13px",
+                        fontWeight: 800,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                      }}
                     >
                       {card.title}
-                    </h3>
-                    <p className="mt-2 text-base italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-                      {card.tagline}
-                    </p>
-                    <p className="mt-3 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                      {card.body}
-                    </p>
-                    {card.accent && (
-                      <p className="mt-3 text-sm leading-relaxed" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                        {card.accent}
-                      </p>
-                    )}
-                    <button
-                      onClick={() => handleCardAction(card.action)}
-                      className="mt-6 inline-flex items-center gap-2 self-start text-sm font-semibold tracking-[0.1em]"
-                      style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-                    >
-                      {card.ctaLabel}
-                      <ArrowRight size={15} />
-                    </button>
+                    </span>
+                    <ArrowRight size={15} color={palette.primaryDeep} />
                   </div>
-                </div>
+                </button>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          HOW IT WORKS
-          ═══════════════════════════════════════ */}
-      <section style={{ background: palette.bg, padding: "90px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto" }}>
-          <h2
-            className="text-center text-3xl font-semibold sm:text-4xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            How it works
-          </h2>
-          <span
-            className="mx-auto mt-3 block text-center"
-            style={{ ...fonts.scriptFont, fontSize: "clamp(20px, 2.8vw, 26px)", color: palette.accent, transform: "rotate(-2deg)" }}
-          >
-            (it's easier than picking a theme)
-          </span>
+      {/* Featured experiences */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${palette.primaryDeep} 0%, #063725 100%)`,
+          padding: "88px 24px 96px",
+        }}
+      >
+        <Blob
+          style={{
+            width: "520px",
+            height: "520px",
+            right: "-240px",
+            top: "-220px",
+            borderRadius: "50%",
+            background: hexToRgba(palette.gold, 0.1),
+          }}
+        />
+        <Blob
+          style={{
+            width: "300px",
+            height: "300px",
+            left: "-130px",
+            bottom: "-160px",
+            borderRadius: "50%",
+            background: hexToRgba(palette.accent, 0.16),
+          }}
+        />
 
-          <div className="mt-16 grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
+            <div>
+              <p
+                style={{
+                  ...fonts.bodyFont,
+                  color: palette.gold,
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  letterSpacing: "0.17em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Featured experiences
+              </p>
+              <h2
+                className="mt-4"
+                style={{
+                  ...fonts.displayFont,
+                  color: palette.surface,
+                  fontSize: "clamp(2.7rem, 5vw, 4.8rem)",
+                  lineHeight: 1.02,
+                  fontWeight: 600,
+                }}
+              >
+                More than décor.
+                <br />
+                More than a rental.
+              </h2>
+              <p
+                className="mt-6 max-w-xl"
+                style={{
+                  ...fonts.bodyFont,
+                  color: "rgba(255,253,248,0.82)",
+                  fontSize: "17px",
+                  lineHeight: 1.75,
+                }}
+              >
+                We create experiences that invite people in. A place to leave a message.
+                A moment to try something new. A reason to laugh together. A keepsake
+                that tells the story later.
+              </p>
+
+              <button
+                onClick={() => navigate("/experiences")}
+                className="mt-8 inline-flex items-center gap-3 rounded-full"
+                style={{
+                  ...fonts.bodyFont,
+                  background: palette.gold,
+                  color: palette.primaryDeep,
+                  padding: "14px 24px",
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  boxShadow: "0 12px 26px rgba(0,0,0,0.16)",
+                }}
+              >
+                Explore all experiences
+                <ArrowRight size={15} />
+              </button>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-3">
+              {FEATURED.map((card, i) => (
+                <Reveal key={card.title} delay={i * 90}>
+                  <button
+                    onClick={() => handleAction(card.action)}
+                    className="group flex h-full w-full flex-col overflow-hidden text-left"
+                    style={{
+                      background: palette.surface,
+                      borderRadius: "5px",
+                      boxShadow: "0 24px 64px rgba(0,0,0,0.24)",
+                      border: `1px solid ${hexToRgba(palette.gold, 0.28)}`,
+                    }}
+                  >
+                    <div className="overflow-hidden" style={{ aspectRatio: "4 / 3" }}>
+                      <img
+                        src={card.image}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-6">
+                      <h3
+                        style={{
+                          ...fonts.displayFont,
+                          color: palette.primaryDeep,
+                          fontSize: "1.45rem",
+                          fontWeight: 700,
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        {card.title}
+                      </h3>
+                      <p
+                        className="mt-3"
+                        style={{
+                          ...fonts.bodyFont,
+                          color: palette.muted,
+                          fontSize: "14px",
+                          lineHeight: 1.65,
+                        }}
+                      >
+                        {card.body}
+                      </p>
+                      <span
+                        className="mt-6 inline-flex items-center gap-2"
+                        style={{
+                          ...fonts.bodyFont,
+                          color: palette.primaryDeep,
+                          fontSize: "11px",
+                          fontWeight: 800,
+                          letterSpacing: "0.09em",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Learn more <ArrowRight size={13} />
+                      </span>
+                    </div>
+                  </button>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Full-bleed brand statement */}
+      <section
+        className="relative min-h-[430px] overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(90deg, rgba(5,33,23,0.88) 0%, rgba(5,33,23,0.60) 52%, rgba(5,33,23,0.26) 100%), url(${heroFullBleed})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <div className="mx-auto w-full max-w-7xl px-6 py-20 sm:px-10">
+          <Reveal className="max-w-2xl">
+            <h2
+              style={{
+                ...fonts.displayFont,
+                color: "#FFFFFF",
+                fontSize: "clamp(2.5rem, 5.2vw, 4.9rem)",
+                lineHeight: 1.02,
+                fontWeight: 600,
+                textShadow: "0 4px 24px rgba(0,0,0,0.18)",
+              }}
+            >
+              Celebrations are better when people are part of them.
+            </h2>
+            <p
+              className="mt-6 max-w-xl"
+              style={{
+                ...fonts.bodyFont,
+                color: "rgba(255,255,255,0.88)",
+                fontSize: "17px",
+                lineHeight: 1.7,
+              }}
+            >
+              We design interactive experiences that turn guests from people watching
+              into people participating.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section style={{ ...paperTexture(palette), padding: "84px 24px 100px" }}>
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            <h2
+              style={{
+                ...fonts.displayFont,
+                color: palette.primaryDeep,
+                fontSize: "clamp(2.5rem, 4vw, 4rem)",
+                fontWeight: 650,
+              }}
+            >
+              How it works
+            </h2>
+            <p
+              className="mt-2"
+              style={{
+                ...fonts.scriptFont,
+                color: palette.accent,
+                fontSize: "clamp(1.25rem, 2.6vw, 2rem)",
+                transform: "rotate(-1deg)",
+              }}
+            >
+              (it's easier than picking a theme)
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {HOW_IT_WORKS_STEPS.map((step, i) => {
               const Icon = step.icon;
               return (
-                <Reveal key={step.title} delay={i * 100}>
-                  <div className="relative text-center">
-                    <div
-                      className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-[26px] shadow-lg"
-                      style={{ background: step.tint, transform: `rotate(${step.rotate})` }}
-                    >
-                      <Icon size={30} color={step.iconColor} strokeWidth={1.8} />
-                      <span
-                        className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold shadow-md"
+                <Reveal key={step.title} delay={i * 80}>
+                  <div
+                    className="h-full p-7"
+                    style={{
+                      background: palette.surface,
+                      borderRadius: "5px",
+                      border: `1px solid ${hexToRgba(palette.gold, 0.32)}`,
+                      boxShadow: elevatedShadow,
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div
+                        className="flex h-11 w-11 items-center justify-center rounded-full"
                         style={{
-                          ...fonts.displayFont,
-                          background: palette.surface,
-                          color: palette.primaryDeep,
-                          border: `2px solid ${palette.gold}`,
-                          transform: `rotate(${step.rotate})`,
+                          background: i === 1 ? palette.gold : palette.primaryDeep,
+                          color: i === 1 ? palette.primaryDeep : "#FFFFFF",
+                          boxShadow: "0 8px 20px rgba(18,32,26,0.10)",
                         }}
                       >
-                        {i + 1}
+                        <Icon size={20} strokeWidth={1.8} />
+                      </div>
+                      <span
+                        style={{
+                          ...fonts.displayFont,
+                          color: palette.gold,
+                          fontSize: "1.45rem",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {String(i + 1).padStart(2, "0")}
                       </span>
                     </div>
-                    <p
-                      className="mt-5 text-lg font-semibold"
-                      style={{ ...fonts.displayFont, color: palette.primaryDeep }}
+                    <h3
+                      className="mt-6"
+                      style={{
+                        ...fonts.displayFont,
+                        color: palette.primaryDeep,
+                        fontSize: "1.35rem",
+                        fontWeight: 700,
+                      }}
                     >
                       {step.title}
-                    </p>
+                    </h3>
                     <p
-                      className="mx-auto mt-2 max-w-[220px] text-base leading-relaxed"
-                      style={{ ...fonts.bodyFont, color: palette.muted }}
+                      className="mt-3"
+                      style={{
+                        ...fonts.bodyFont,
+                        color: palette.muted,
+                        fontSize: "14px",
+                        lineHeight: 1.65,
+                      }}
                     >
                       {step.body}
                     </p>
@@ -585,236 +745,179 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          MORE THAN DÉCOR - now the numbered, rotated gallery
-          ═══════════════════════════════════════ */}
-      <section style={{ background: `${palette.primary}0D`, padding: "100px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "1100px", margin: "0 auto", textAlign: "center" }}>
-          <h2
-            className="text-3xl font-semibold sm:text-4xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            More than décor.
-            <br />
-            More than a rental.
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            We are not here to create another pretty corner that guests walk
-            past.
-          </p>
-          <p className="mt-3 text-xl italic leading-8" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-            We create experiences that invite people in.
-          </p>
-
-          <div className="mx-auto mt-16 flex max-w-[1000px] flex-wrap items-start justify-center gap-8">
-            {DECOR_GALLERY.map((card) => (
-              <div
-                key={card.num}
-                className="w-[260px] rounded-2xl px-8 py-9 text-left shadow-xl"
-                style={{
-                  background: card.background,
-                  transform: `rotate(${card.rotate})`,
-                  marginTop: card.marginTop,
-                  border: card.background === "#FFFFFF" ? `1px solid ${palette.line}` : "none",
-                }}
-              >
-                <span
-                  className="mb-4 block italic"
-                  style={{ ...fonts.displayFont, fontSize: "15px", color: card.numColor, opacity: 0.75 }}
-                >
-                  {card.num}
-                </span>
-                <p
-                  className="text-2xl font-semibold leading-tight"
-                  style={{ ...fonts.displayFont, color: card.textColor }}
-                >
-                  {card.lead}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <p
-            className="mx-auto mt-16 max-w-xl text-lg font-semibold leading-8"
-            style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-          >
-            The details matter because the feelings matter.
-          </p>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════
-          WHY PEOPLE CHOOSE A SLICE OF G
-          ═══════════════════════════════════════ */}
-      <section style={{ background: palette.bg, padding: "80px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
-          <Sparkles className="mx-auto mb-4" size={22} strokeWidth={1.2} style={{ color: palette.goldDeep }} />
-          <h2
-            className="text-3xl font-semibold sm:text-4xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            Why people choose A Slice of G
-          </h2>
-          <span
-            className="mt-3 inline-block"
-            style={{ ...fonts.scriptFont, fontSize: "clamp(20px, 2.8vw, 26px)", color: palette.accent, transform: "rotate(-2deg)" }}
-          >
-            (besides the fact that we're just really fun)
-          </span>
-
-          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            Because celebrations do not have to look the same.
-          </p>
-          <p className="mt-3 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            We love the unexpected details.
-          </p>
-          <p className="mt-1 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            The moments that make people smile.
-          </p>
-
-          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            The ideas that make guests say, "Wait, this is so cool."
-          </p>
-
-          <p
-            className="mx-auto mt-6 max-w-xl text-lg leading-8"
-            style={{ ...fonts.bodyFont, color: palette.ink }}
-          >
-            From playful dress-up experiences to meaningful keepsakes,
-            everything we create is designed to help people connect.
-          </p>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════
-          "WAIT, THIS IS SO COOL" QUOTE BAND
-          ═══════════════════════════════════════ */}
+      {/* Real celebrations */}
       <section
-        className="relative overflow-hidden text-center"
-        style={{ background: palette.primaryDeep, padding: "90px 40px" }}
-      >
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute select-none whitespace-nowrap"
-          style={{
-            ...fonts.scriptFont,
-            fontSize: "clamp(60px, 14vw, 160px)",
-            color: "#FFFFFF",
-            opacity: 0.06,
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%) rotate(-4deg)",
-          }}
-        >
-          everyday magic
-        </span>
-        <Blob
-          style={{
-            width: "min(50vw, 420px)",
-            height: "min(50vw, 420px)",
-            top: "-15%",
-            left: "-12%",
-            background: palette.gold,
-            opacity: 0.14,
-            borderRadius: "50%",
-          }}
-        />
-
-        <div className="relative mx-auto max-w-2xl">
-          <p
-            className="text-2xl leading-tight sm:text-4xl"
-            style={{ ...fonts.displayFont, fontStyle: "italic", color: "#FFFFFF" }}
-          >
-            "Wait, this is so cool." That's the reaction we design every
-            piece for.
-          </p>
-          <button
-            onClick={() => openPickerForBuilder()}
-            className="mt-9 inline-flex items-center gap-3 rounded-full px-8 py-4 text-sm font-semibold tracking-[0.1em] transition-transform hover:-translate-y-0.5"
-            style={{ ...fonts.bodyFont, background: "#FFFFFF", color: palette.primaryDeep, textTransform: "uppercase" }}
-          >
-            Start Planning
-          </button>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════
-          THE EXPERIENCE DOES NOT END WHEN THE EVENT DOES
-          ═══════════════════════════════════════ */}
-      <section style={{ background: `${palette.primary}0D`, padding: "80px 40px" }}>
-        <div style={{ width: "100%", maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
-          <h2
-            className="text-3xl font-semibold sm:text-4xl"
-            style={{ ...fonts.displayFont, color: palette.primaryDeep }}
-          >
-            The experience does not end when the event does.
-          </h2>
-
-          <p className="mt-6 text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-            The best celebrations leave something behind.
-          </p>
-
-          <div className="mx-auto mt-8 max-w-md space-y-3">
-            {["A photo.", "A message.", "A memory.", "A story someone tells years later."].map((line) => (
-              <p key={line} className="text-lg leading-8" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                {line}
-              </p>
-            ))}
-          </div>
-
-          <p
-            className="mx-auto mt-8 max-w-xl text-lg font-semibold leading-8"
-            style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
-          >
-            That is what we create.
-          </p>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════
-          FINAL CTA
-          ═══════════════════════════════════════ */}
-      <section
+        className="relative overflow-hidden"
         style={{
-          background:
-            "linear-gradient(160deg, rgba(23,114,79,0.92) 0%, rgba(10,59,42,0.96) 100%)",
+          background: `linear-gradient(135deg, ${palette.primaryDeep} 0%, #073B2A 100%)`,
+          padding: "82px 24px",
         }}
       >
-        <div className="mx-auto max-w-4xl px-5 py-20 text-center sm:px-8 sm:py-28">
-          <Reveal>
-            <Sparkles className="mx-auto" style={{ color: palette.gold }} size={22} strokeWidth={1.2} />
-            <h2
-              className="mt-5 text-4xl font-semibold sm:text-5xl"
-              style={{ ...fonts.displayFont, color: "#FFFFFF" }}
-            >
-              Ready to create something people will remember?
-            </h2>
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+          <div>
             <p
-              className="mx-auto mt-5 max-w-lg text-lg leading-8"
-              style={{ ...fonts.bodyFont, color: `${palette.bg}DD` }}
+              style={{
+                ...fonts.bodyFont,
+                color: palette.gold,
+                fontSize: "12px",
+                fontWeight: 800,
+                letterSpacing: "0.17em",
+                textTransform: "uppercase",
+              }}
             >
-              Whether you are planning a baby shower, a milestone
-              celebration, or a Tutu Pop-Up full of personality and fun, we
-              would love to help bring your idea to life.
+              Real celebrations
             </p>
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-5">
-              <button
-                onClick={() => navigate("/experiences")}
-                className="text-base font-semibold tracking-[0.1em] text-white underline underline-offset-4"
-                style={fonts.bodyFont}
+            <h2
+              className="mt-4"
+              style={{
+                ...fonts.displayFont,
+                color: "#FFFFFF",
+                fontSize: "clamp(2.6rem, 5vw, 4.7rem)",
+                lineHeight: 1,
+                fontWeight: 600,
+              }}
+            >
+              Real people.
+              <br />
+              Unforgettable moments.
+            </h2>
+            <button
+              onClick={() => navigate("/past-events")}
+              className="mt-8 inline-flex items-center gap-3 rounded-full"
+              style={{
+                ...fonts.bodyFont,
+                background: palette.gold,
+                color: palette.primaryDeep,
+                padding: "14px 24px",
+                fontSize: "12px",
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
+              See past events <ArrowRight size={15} />
+            </button>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-[1.1fr_0.9fr]">
+            <div
+              className="flex flex-col justify-center p-7"
+              style={{
+                background: palette.surface,
+                borderRadius: "5px",
+                boxShadow: "0 24px 64px rgba(0,0,0,0.24)",
+              }}
+            >
+              <p
+                style={{
+                  ...fonts.displayFont,
+                  color: palette.primaryDeep,
+                  fontSize: "1.45rem",
+                  lineHeight: 1.5,
+                }}
               >
-                EXPLORE EXPERIENCES
-              </button>
+                Every celebration we style becomes a set of real photos, real
+                reactions, and a few keepsakes nobody throws away.
+              </p>
               <button
-                onClick={() => openPickerForBuilder()}
-                className="inline-flex items-center gap-3 rounded-full px-7 py-4 text-base font-semibold tracking-[0.1em] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-                style={{ ...fonts.bodyFont, background: palette.gold, color: palette.primaryDeep }}
+                onClick={() => navigate("/reviews")}
+                className="mt-6 inline-flex items-center gap-2 self-start"
+                style={{
+                  ...fonts.bodyFont,
+                  color: palette.primaryDeep,
+                  fontSize: "12px",
+                  fontWeight: 800,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  borderBottom: `2px solid ${palette.gold}`,
+                  paddingBottom: "2px",
+                }}
               >
-                START PLANNING <ArrowRight size={17} />
+                Read reviews from real hosts
               </button>
             </div>
-          </Reveal>
+
+            <div
+              className="overflow-hidden"
+              style={{
+                minHeight: "310px",
+                borderRadius: "5px",
+                boxShadow: "0 24px 64px rgba(0,0,0,0.24)",
+                border: `1px solid ${hexToRgba(palette.gold, 0.3)}`,
+              }}
+            >
+              <img
+                src={wallPuzzleEngagementPhoto}
+                alt="A Slice of G event setup"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="grid lg:grid-cols-2">
+        <div className="min-h-[380px]">
+          <img
+            src={heroFullBleed}
+            alt="Styled event details"
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        <div
+          className="flex items-center"
+          style={{
+            background: `linear-gradient(145deg, #073B2A 0%, ${palette.primaryDeep} 100%)`,
+            padding: "68px 36px",
+          }}
+        >
+          <div className="mx-auto max-w-xl">
+            <Sparkles size={22} color={palette.gold} strokeWidth={1.4} />
+            <h2
+              className="mt-5"
+              style={{
+                ...fonts.displayFont,
+                color: "#FFFFFF",
+                fontSize: "clamp(2.7rem, 5vw, 4.6rem)",
+                lineHeight: 1.02,
+                fontWeight: 600,
+              }}
+            >
+              Let's create something unforgettable together.
+            </h2>
+            <p
+              className="mt-5"
+              style={{
+                ...fonts.bodyFont,
+                color: "rgba(255,255,255,0.78)",
+                fontSize: "16px",
+                lineHeight: 1.7,
+              }}
+            >
+              Start with one of our signature experiences or build something
+              around the people you're celebrating.
+            </p>
+
+            <button
+              onClick={() => openPickerForBuilder()}
+              className="mt-8 inline-flex items-center gap-3 rounded-full transition-transform hover:-translate-y-0.5"
+              style={{
+                ...fonts.bodyFont,
+                background: palette.gold,
+                color: palette.primaryDeep,
+                padding: "15px 25px",
+                fontSize: "12px",
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                boxShadow: "0 12px 28px rgba(0,0,0,0.18)",
+              }}
+            >
+              Build my experience <ArrowRight size={15} />
+            </button>
+          </div>
         </div>
       </section>
     </div>

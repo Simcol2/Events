@@ -15,13 +15,23 @@ export const scriptFont = { fontFamily: "'Permanent Marker', cursive" };
 export const bodyFont = { fontFamily: "'Space Grotesk', sans-serif" };
 
 const FONT_IMPORT_ID = "aslice-fonts";
+const FONT_IMPORT_URL =
+  "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=Permanent+Marker&display=swap";
 export function ensureFonts() {
   if (typeof document === "undefined") return;
-  if (document.getElementById(FONT_IMPORT_ID)) return;
+  const existing = document.getElementById(FONT_IMPORT_ID);
+  if (existing) {
+    // Prerendered HTML can bake in a stale href from a previous font
+    // direction; keep it in sync instead of trusting the id alone,
+    // otherwise a font change never reaches already-prerendered pages.
+    if (existing.getAttribute("href") !== FONT_IMPORT_URL) {
+      existing.setAttribute("href", FONT_IMPORT_URL);
+    }
+    return;
+  }
   const link = document.createElement("link");
   link.id = FONT_IMPORT_ID;
   link.rel = "stylesheet";
-  link.href =
-    "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=Permanent+Marker&display=swap";
+  link.href = FONT_IMPORT_URL;
   document.head.appendChild(link);
 }
