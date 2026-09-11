@@ -39,7 +39,7 @@ export function parseColorOptions(item) {
 // the tag list only live in one place.
 export function getItemFlags(item) {
   const tags = parseItemTags(item);
-  const outOfStock = (item.quantity_owned ?? 0) <= 0;
+  const outOfStock = !item.made_to_order && (item.quantity_owned ?? 0) <= 0;
   const isPurchasable = item.purchase_price != null;
   const isPurchaseOnly = tags.some((t) => PURCHASE_ONLY_TAGS.includes(String(t).toLowerCase().trim()));
   const isRentable = item.rental_price != null && !isPurchaseOnly;
@@ -151,7 +151,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
                   }}
                   className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em] text-[#0B4933] underline underline-offset-4"
                 >
-                  {active.quantity_owned} AVAILABLE - INQUIRE
+                  {active.made_to_order ? "MADE TO ORDER" : `${active.quantity_owned} AVAILABLE`} - INQUIRE
                 </button>
               )}
             </div>

@@ -9,6 +9,7 @@ const EMPTY = {
   color: "",
   gender: "",
   quantity_owned: 1,
+  made_to_order: false,
   rental_price: "",
   purchase_price: "",
   condition_notes: "",
@@ -28,6 +29,7 @@ function toFormState(item) {
     color: item.color || "",
     gender: item.gender || "",
     quantity_owned: item.quantity_owned ?? 1,
+    made_to_order: item.made_to_order === true,
     rental_price: item.rental_price ?? "",
     purchase_price: item.purchase_price ?? "",
     condition_notes: item.condition_notes || "",
@@ -63,7 +65,7 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
     const payload = {
       ...form,
       category: TAGS.filter((t) => tagIds.includes(t.id)).map((t) => t.label).join(", "),
-      quantity_owned: form.quantity_owned === "" ? null : Number(form.quantity_owned),
+      quantity_owned: form.made_to_order ? null : (form.quantity_owned === "" ? null : Number(form.quantity_owned)),
       rental_price: form.rental_price === "" ? null : Number(form.rental_price),
       purchase_price: form.purchase_price === "" ? null : Number(form.purchase_price),
       variant_group: form.variant_group.trim() || null,
@@ -121,7 +123,22 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
       <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">QUANTITY OWNED</label>
-          <input type="number" min="0" value={form.quantity_owned} onChange={set("quantity_owned")} className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+          <input
+            type="number"
+            min="0"
+            value={form.quantity_owned}
+            onChange={set("quantity_owned")}
+            disabled={form.made_to_order}
+            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933] disabled:opacity-50"
+          />
+          <label className="mt-2 flex items-center gap-2 font-[Space_Grotesk] text-xs text-[#5A5F54]">
+            <input
+              type="checkbox"
+              checked={form.made_to_order}
+              onChange={(e) => setForm({ ...form, made_to_order: e.target.checked })}
+            />
+            Made to order (customized, always available)
+          </label>
         </div>
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">RENTAL PRICE</label>
