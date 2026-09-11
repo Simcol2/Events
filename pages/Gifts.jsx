@@ -274,7 +274,7 @@ export default function Gifts() {
             fonts={fonts}
           />
 
-          <div className="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
             {KEEPSAKES.map((k, i) => {
               const name = resolveKeepsakeName(k, eventTypeId);
               const photos = k.photoUrls || (k.photoUrl ? [k.photoUrl] : []);
@@ -316,7 +316,7 @@ export default function Gifts() {
               light
             />
 
-            <div className="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
               {gifts.map((g, i) => (
                 <Reveal key={g.id} delay={i * 55}>
                   <GiftTile
@@ -358,7 +358,7 @@ export default function Gifts() {
                 align="left"
               />
 
-              <div className="mt-12 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
                 {wrapAndStationeryItems.map((item) => (
                   <GiftTile
                     key={item.id}
@@ -409,7 +409,7 @@ export default function Gifts() {
               </p>
             )}
 
-            <div className="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
               {giftItems.map((item) => (
                 <GiftTile
                   key={item.id}
