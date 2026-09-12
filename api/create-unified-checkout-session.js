@@ -202,6 +202,10 @@ async function createReservation({ customer, lines, rentalDates, rentalSubtotalC
     .from("reservations")
     .insert({
       customer_id: customer.id,
+      // The cart never builds off a curated package, so this is always a
+      // standalone (a_la_carte) reservation - package_id stays null to
+      // satisfy the table's source/package_id pairing check.
+      source: "a_la_carte",
       booking_number: bookingNumber,
       status: "checkout_pending",
       pickup_date: rentalDates.pickup,
@@ -209,6 +213,7 @@ async function createReservation({ customer, lines, rentalDates, rentalSubtotalC
       event_date: rentalDates.event || rentalDates.pickup,
       rental_subtotal_cents: rentalSubtotalCents,
       rental_total_cents: rentalSubtotalCents,
+      total_price: rentalSubtotalCents / 100,
       booking_deposit_cents: bookingDepositCents,
       security_deposit_cents: securityDepositCents,
       balance_due_cents: Math.max(0, rentalSubtotalCents - bookingDepositCents),
