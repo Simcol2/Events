@@ -3,6 +3,7 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
+  Circle,
   CreditCard,
   FileText,
   LogOut,
@@ -15,6 +16,39 @@ import {
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
 
+// Covers every status the reservations table allows (see
+// reservations_status_check in the SQL) so nothing falls back to a
+// default green pill that misrepresents where a booking actually stands.
+const STATUS_META = {
+  checkout_pending: { label: "Checkout in progress", tone: "gold" },
+  pending: { label: "Pending confirmation", tone: "gold" },
+  confirmed: { label: "Confirmed", tone: "green" },
+  preparing: { label: "Being prepared", tone: "green" },
+  ready_for_pickup: { label: "Ready for pickup", tone: "green" },
+  out_for_delivery: { label: "Out for delivery", tone: "green" },
+  with_you: { label: "With you", tone: "green" },
+  returned: { label: "Returned", tone: "neutral" },
+  completed: { label: "Completed", tone: "neutral" },
+  cancelled: { label: "Cancelled", tone: "coral" },
+};
+
+function statusMeta(status) {
+  return STATUS_META[status] || { label: String(status || "pending").replaceAll("_", " "), tone: "neutral" };
+}
+
+function ChecklistItem({ done, label }) {
+  return (
+    <div className="flex items-center gap-2">
+      {done ? (
+        <CheckCircle2 size={16} className="shrink-0 text-[#17724F]" />
+      ) : (
+        <Circle size={16} className="shrink-0 text-[#C9C0AA]" />
+      )}
+      <span className={`font-[Space_Grotesk] text-sm ${done ? "text-[#12201A]" : "text-[#9A927F]"}`}>{label}</span>
+    </div>
+  );
+}
+
 const money = (cents, currency = "CAD") =>
   new Intl.NumberFormat("en-CA", {
     style: "currency",
@@ -24,6 +58,13 @@ const money = (cents, currency = "CAD") =>
 function dateLabel(value) {
   if (!value) return "Not set";
   const date = new Date(`${String(value).slice(0, 10)}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function dateTimeLabel(value) {
+  if (!value) return "";
+  const date = new Date(value);
   if (Number.isNaN(date.getTime())) return String(value);
   return date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
 }
@@ -49,31 +90,34 @@ function Panel({ children, className = "" }) {
   );
 }
 
-function PaymentRow({ label, due, paid, refundable, onPay, busy }) {
+function PaymentRow({ label, due, paid, refundable, onPay, busy, note }) {
   const complete = due > 0 && paid >= due;
   const remaining = Math.max(0, due - paid);
 
   return (
-    <div className="flex flex-col gap-3 border-t border-[#EEE7D8] py-4 first:border-t-0 first:pt-0 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">{label}</p>
-          {refundable && <StatusPill tone="gold">Refundable</StatusPill>}
-          {complete && <StatusPill>Paid</StatusPill>}
+    <div className="border-t border-[#EEE7D8] py-4 first:border-t-0 first:pt-0">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">{label}</p>
+            {refundable && <StatusPill tone="gold">Refundable</StatusPill>}
+            {complete && <StatusPill>Paid</StatusPill>}
+          </div>
+          <p className="mt-1 font-[Space_Grotesk] text-sm text-[#7E7767]">
+            {due > 0 ? `${money(paid)} paid of ${money(due)}` : "Not required for this booking"}
+          </p>
         </div>
-        <p className="mt-1 font-[Space_Grotesk] text-sm text-[#7E7767]">
-          {due > 0 ? `${money(paid)} paid of ${money(due)}` : "Not required for this booking"}
-        </p>
+        {remaining > 0 && (
+          <button
+            onClick={onPay}
+            disabled={busy}
+            className="rounded-full bg-[#0B4933] px-5 py-2.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-white disabled:opacity-50"
+          >
+            {busy ? "OPENING..." : `PAY ${money(remaining)}`}
+          </button>
+        )}
       </div>
-      {remaining > 0 && (
-        <button
-          onClick={onPay}
-          disabled={busy}
-          className="rounded-full bg-[#0B4933] px-5 py-2.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-white disabled:opacity-50"
-        >
-          {busy ? "OPENING..." : `PAY ${money(remaining)}`}
-        </button>
-      )}
+      {note && <p className="mt-2 font-[Space_Grotesk] text-xs text-[#7B7464]">{note}</p>}
     </div>
   );
 }
@@ -337,18 +381,37 @@ export default function ClientPortal() {
               const contract = contracts.find((row) => row.reservation_id === reservation.id);
               const dropoff = reservation.drop_off_date || reservation.dropoff_date || reservation.return_date;
               const balanceDue = Number(reservation.balance_due_cents || 0) || Math.max(0, Number(reservation.rental_total_cents || 0) - Number(reservation.booking_deposit_cents || 0));
+              const meta = statusMeta(reservation.status);
+
+              const bookingDepositDue = Number(reservation.booking_deposit_cents || 0);
+              const securityDepositDue = Number(reservation.security_deposit_cents || 0);
+              const bookingDepositPaidFlag = bookingDepositDue <= 0 || paid("booking_deposit") >= bookingDepositDue;
+              const securityDepositPaidFlag = securityDepositDue <= 0 || paid("security_deposit") >= securityDepositDue;
+              const contractSignedFlag = Boolean(
+                contract?.status === "signed" || contract?.signed_at || reservation.contract_status === "signed"
+              );
+              const balancePaidFlag = balanceDue <= 0 || paid("balance") >= balanceDue;
+              const bookingConfirmedFlag = !["checkout_pending", "pending", "cancelled"].includes(reservation.status);
+
+              const paidSecurityTx = tx.find((row) => row.kind === "security_deposit" && row.status === "paid");
+              const securityDepositNote =
+                securityDepositDue > 0 && paidSecurityTx
+                  ? paidSecurityTx.refunded_at
+                    ? `Released on ${dateLabel(paidSecurityTx.refunded_at)}.`
+                    : "Held until your items are returned in good condition, then released. It is not applied to your remaining balance."
+                  : undefined;
+
+              const paymentHistory = [...tx].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
               return (
                 <Panel key={reservation.id}>
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <StatusPill>{String(reservation.status || "pending").replaceAll("_", " ")}</StatusPill>
-                        <span className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-[#9A927F]">
-                          {reservation.booking_number || `BOOKING ${reservation.id}`}
-                        </span>
-                      </div>
-                      <h2 className="mt-3 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
+                      <StatusPill tone={meta.tone}>{meta.label}</StatusPill>
+                      <p className="mt-3 font-[Space_Grotesk] text-2xl font-bold tracking-[0.02em] text-[#0B4933]">
+                        {reservation.booking_number || `BOOKING ${reservation.id}`}
+                      </p>
+                      <h2 className="mt-1 font-['Fraunces'] text-lg font-semibold text-[#5C5645]">
                         {reservation.event_name || reservation.package_name || "Event rental"}
                       </h2>
                       <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-[Space_Grotesk] text-sm text-[#6F6859]">
@@ -365,17 +428,34 @@ export default function ClientPortal() {
                     </div>
                   </div>
 
+                  <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
+                    <ChecklistItem done={bookingDepositPaidFlag} label="Deposit paid" />
+                    <ChecklistItem done={securityDepositPaidFlag} label="Security deposit paid" />
+                    <ChecklistItem done={contractSignedFlag} label="Contract signed" />
+                    <ChecklistItem done={balancePaidFlag} label="Balance paid" />
+                    <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
+                  </div>
+
                   {!!rows.length && (
                     <div className="mt-6 rounded-xl bg-[#F8F3E8] p-4">
                       <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.15em] text-[#8A6A1E]">YOUR RENTALS</p>
                       <div className="mt-3 space-y-2">
-                        {rows.map((item) => (
-                          <div key={item.id} className="flex justify-between gap-4 font-[Space_Grotesk] text-sm text-[#3E3A31]">
-                            <span>{item.item?.name || item.description || "Rental item"}</span>
-                            <span className="font-semibold">x{item.quantity || 1}</span>
-                          </div>
-                        ))}
+                        {rows.map((item) => {
+                          const lineTotal = item.line_total_cents || (item.unit_price_cents || 0) * (item.quantity || 1);
+                          return (
+                            <div key={item.id} className="flex justify-between gap-4 font-[Space_Grotesk] text-sm text-[#3E3A31]">
+                              <span>
+                                {item.item?.name || item.description || "Rental item"}{" "}
+                                <span className="text-[#9A927F]">x{item.quantity || 1}</span>
+                              </span>
+                              <span className="font-semibold">{lineTotal ? money(lineTotal, reservation.currency) : ""}</span>
+                            </div>
+                          );
+                        })}
                       </div>
+                      <p className="mt-3 font-[Space_Grotesk] text-xs text-[#9A927F]">
+                        Pickup {dateLabel(reservation.pickup_date)} · Return {dateLabel(dropoff)}
+                      </p>
                     </div>
                   )}
 
@@ -399,6 +479,7 @@ export default function ClientPortal() {
                         refundable
                         onPay={() => openInvoice(reservation.id, "security_deposit")}
                         busy={busyAction === `${reservation.id}:security_deposit`}
+                        note={securityDepositNote}
                       />
                       <PaymentRow
                         label="Remaining balance"
@@ -407,6 +488,33 @@ export default function ClientPortal() {
                         onPay={() => openInvoice(reservation.id, "balance")}
                         busy={busyAction === `${reservation.id}:balance`}
                       />
+
+                      {paymentHistory.length > 0 && (
+                        <div className="mt-5 border-t border-[#EEE7D8] pt-4">
+                          <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-[#8A6A1E]">
+                            PAYMENT HISTORY
+                          </p>
+                          <div className="mt-3 space-y-2">
+                            {paymentHistory.map((row) => (
+                              <div
+                                key={row.id}
+                                className="flex items-center justify-between gap-3 font-[Space_Grotesk] text-sm text-[#4C473C]"
+                              >
+                                <span className="capitalize">
+                                  {row.kind.replaceAll("_", " ")}
+                                  {row.created_at ? ` · ${dateTimeLabel(row.created_at)}` : ""}
+                                </span>
+                                <span className="flex items-center gap-2">
+                                  {money(row.amount_cents, row.currency)}
+                                  <StatusPill tone={row.status === "paid" ? "green" : row.status === "failed" ? "coral" : "gold"}>
+                                    {row.status}
+                                  </StatusPill>
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="rounded-xl border border-[#E7DFCE] bg-white p-4">
@@ -417,10 +525,19 @@ export default function ClientPortal() {
                       <div className="mt-4 space-y-3 font-[Space_Grotesk] text-sm">
                         <div className="flex items-center justify-between gap-3">
                           <span className="text-[#5C5645]">Rental agreement</span>
-                          <StatusPill tone={(contract?.status === "signed" || contract?.signed_at || reservation.contract_status === "signed") ? "green" : "gold"}>
-                            {contract?.status || reservation.contract_status || "Pending"}
-                          </StatusPill>
+                          {contract ? (
+                            <StatusPill tone={contractSignedFlag ? "green" : "gold"}>
+                              {contract?.status || reservation.contract_status || "Pending"}
+                            </StatusPill>
+                          ) : (
+                            <StatusPill tone="neutral">Not yet ready</StatusPill>
+                          )}
                         </div>
+                        {!contract && (
+                          <p className="text-xs text-[#9A927F]">
+                            Your rental agreement will appear here once it is ready to review and sign.
+                          </p>
+                        )}
                         {contract?.document_url && (
                           <a href={contract.document_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-semibold text-[#0B4933] underline underline-offset-4">
                             <FileText size={15} /> View agreement

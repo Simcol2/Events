@@ -71,7 +71,7 @@ export default function CheckoutSuccess({ navigate }) {
             onClick={() => navigate("/client")}
             className="rounded-full bg-[#0B4933] px-6 py-3 font-[Space_Grotesk] text-sm font-semibold text-white"
           >
-            CLIENT PORTAL
+            VIEW MY BOOKING
           </button>
           <button
             onClick={() => navigate("/decor")}
