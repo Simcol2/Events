@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { CalendarDays, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { CalendarDays, Info, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "../CartContext";
 import { supabase } from "../supabaseClient";
+import RentalDateFields from "./RentalDateFields";
+import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 
 const MIN_RENTAL_CENTS = 5000;
 
@@ -94,6 +96,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const purchaseSubtotalCents = resolved
     .filter((line) => line.mode === "purchase")
     .reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
+
+  const bookingDepositEstimateCents = rentalItems.length > 0 ? estimateBookingDepositCents(rentalSubtotalCents) : 0;
+  const securityDepositEstimateCents = rentalItems.length > 0 ? estimateSecurityDepositCents(rentalSubtotalCents) : 0;
+  const dueTodayCents = purchaseSubtotalCents + bookingDepositEstimateCents + securityDepositEstimateCents;
+  const remainingBalanceCents = Math.max(0, rentalSubtotalCents - bookingDepositEstimateCents);
 
   const rentalMinimumMet = rentalItems.length === 0 || rentalSubtotalCents >= MIN_RENTAL_CENTS;
   const rentalDatesReady =
@@ -232,34 +239,8 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 <p className="mt-2 font-[Space_Grotesk] text-sm leading-6 text-[#7B7464]">
                   These dates apply to every rental item in this order. Availability is checked for the whole cart.
                 </p>
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  <label className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] text-[#5C5645]">
-                    PICKUP
-                    <input
-                      type="date"
-                      value={rentalDates.pickup}
-                      onChange={(e) => setRentalDates({ ...rentalDates, pickup: e.target.value })}
-                      className="mt-1 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 text-sm text-[#12201A]"
-                    />
-                  </label>
-                  <label className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] text-[#5C5645]">
-                    EVENT
-                    <input
-                      type="date"
-                      value={rentalDates.event}
-                      onChange={(e) => setRentalDates({ ...rentalDates, event: e.target.value })}
-                      className="mt-1 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 text-sm text-[#12201A]"
-                    />
-                  </label>
-                  <label className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] text-[#5C5645]">
-                    RETURN
-                    <input
-                      type="date"
-                      value={rentalDates.dropoff}
-                      onChange={(e) => setRentalDates({ ...rentalDates, dropoff: e.target.value })}
-                      className="mt-1 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 text-sm text-[#12201A]"
-                    />
-                  </label>
+                <div className="mt-4">
+                  <RentalDateFields dates={rentalDates} onChange={setRentalDates} />
                 </div>
               </section>
             )}
@@ -362,6 +343,87 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 )}
               </div>
             </section>
+
+            <section className="mt-6 rounded-xl border border-[#E6DDC7] bg-white p-5">
+              <h3 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Order summary</h3>
+              <div className="mt-4 space-y-2">
+                {resolved.map((line) => (
+                  <div
+                    key={`summary-${line.kind}-${line.id}-${JSON.stringify(line.meta || {})}`}
+                    className="flex items-center justify-between gap-3 font-[Space_Grotesk] text-sm text-[#3E3A31]"
+                  >
+                    <span>
+                      {line.name} <span className="text-[#9A927F]">x{line.quantity}</span>
+                      {line.mode === "rental" && <span className="text-[#9A927F]"> (rental)</span>}
+                    </span>
+                    <span className="font-semibold">{money(line.unitCents * line.quantity)}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 space-y-2 border-t border-[#EEE7D8] pt-4 font-[Space_Grotesk] text-sm">
+                {purchaseSubtotalCents > 0 && (
+                  <div className="flex items-center justify-between text-[#3E3A31]">
+                    <span>Purchases</span>
+                    <span>{money(purchaseSubtotalCents)}</span>
+                  </div>
+                )}
+                {rentalItems.length > 0 && (
+                  <>
+                    <div className="flex items-center justify-between text-[#3E3A31]">
+                      <span>Booking deposit (50% of rentals)</span>
+                      <span>{money(bookingDepositEstimateCents)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[#3E3A31]">
+                      <span>Refundable security deposit</span>
+                      <span>{money(securityDepositEstimateCents)}</span>
+                    </div>
+                  </>
+                )}
+                <div className="flex items-center justify-between border-t border-[#EEE7D8] pt-2 font-semibold text-[#0B4933]">
+                  <span>Due today</span>
+                  <span>{money(dueTodayCents)}</span>
+                </div>
+                {rentalItems.length > 0 && (
+                  <div className="flex items-center justify-between text-[#7B7464]">
+                    <span>Remaining rental balance (invoiced later)</span>
+                    <span>{money(remainingBalanceCents)}</span>
+                  </div>
+                )}
+              </div>
+
+              {rentalItems.length > 0 && (
+                <p className="mt-3 font-[Space_Grotesk] text-xs leading-5 text-[#9A927F]">
+                  Deposit amounts shown are an estimate. The exact amount is confirmed on the secure checkout page.
+                </p>
+              )}
+            </section>
+
+            {rentalItems.length > 0 && (
+              <section className="mt-6 rounded-xl bg-[#F4EFE3] p-5">
+                <div className="flex items-center gap-2">
+                  <Info size={16} className="text-[#8A6A1E]" />
+                  <h3 className="font-[Space_Grotesk] text-sm font-bold tracking-[0.1em] text-[#8A6A1E]">
+                    HOW RENTAL PAYMENTS WORK
+                  </h3>
+                </div>
+                <ul className="mt-3 space-y-2 font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
+                  <li>
+                    <strong className="text-[#12201A]">Booking deposit</strong> - 50% of your rental total, paid now to
+                    reserve your date.
+                  </li>
+                  <li>
+                    <strong className="text-[#12201A]">Refundable security deposit</strong> - a separate flat amount
+                    based on your rental total, also paid now. It is not applied toward your remaining balance. It is
+                    released after your items are returned.
+                  </li>
+                  <li>
+                    <strong className="text-[#12201A]">Remaining balance</strong> - the rest of your rental total,
+                    invoiced separately and payable through your client portal.
+                  </li>
+                </ul>
+              </section>
+            )}
 
             <section className="mt-6 rounded-xl border border-[#E6DDC7] bg-white p-5">
               <h3 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Your details</h3>

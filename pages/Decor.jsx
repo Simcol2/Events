@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, Search, Sparkles } from "lucide-react";
+import { CalendarDays, ChevronLeft, Search, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import DecorCard, { parseItemTags } from "../components/DecorCard";
 import { normalizePhotos } from "../components/PhotoCarousel";
 import DecorDetailModal from "../components/DecorDetailModal";
+import RentalDatesModal from "../components/RentalDatesModal";
+import { rentalDatesValid } from "../components/RentalDateFields";
 import { useCart } from "../CartContext";
-import { useEventDate } from "../EventDateContext";
 import { useEventType } from "../EventTypeContext";
 import { usePalette } from "../PaletteContext";
 import { TAGS as CATALOG_TAGS } from "../decorTags";
@@ -51,11 +52,17 @@ function itemTags(item) {
   return [...sheetTags, ...derived];
 }
 
+function formatDate(value) {
+  if (!value) return "";
+  const date = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
+}
+
 export default function Decor() {
   const { palette, fonts } = usePalette();
   const { openPickerForBuilder } = useEventType();
-  const { requestEventDate } = useEventDate();
-  const { addToCart, addRental } = useCart();
+  const { addToCart, addRental, rentalDates } = useCart();
 
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -64,6 +71,12 @@ export default function Decor() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [detailItem, setDetailItem] = useState(null);
+  const [showDatesModal, setShowDatesModal] = useState(false);
+  const [pendingRentItem, setPendingRentItem] = useState(null);
+  const [rentalNotice, setRentalNotice] = useState("");
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
+
+  const datesReady = rentalDatesValid(rentalDates);
 
   useEffect(() => {
     if (!supabase) {
@@ -175,16 +188,52 @@ export default function Decor() {
     setQuery("");
   };
 
-  const handleRent = async (item) => {
-    const date = await requestEventDate();
-    if (!date) return;
-    setDetailItem(null);
+  const attemptAddRental = async (item, dates) => {
+    setRentalNotice("");
+
+    if (!supabase) {
+      addRental(item.id);
+      return;
+    }
+
+    setCheckingAvailability(true);
+    const { data, error: availabilityError } = await supabase.rpc("get_reservation_item_availability", {
+      p_item_id: Number(item.id),
+      p_pickup: dates.pickup,
+      p_dropoff: dates.dropoff,
+    });
+    setCheckingAvailability(false);
+
+    if (availabilityError || Number(data || 0) < 1) {
+      setRentalNotice(`${item.name} isn't available for ${formatDate(dates.pickup)} to ${formatDate(dates.dropoff)}.`);
+      return;
+    }
+
     addRental(item.id);
+  };
+
+  const handleRent = async (item) => {
+    setDetailItem(null);
+    if (!datesReady) {
+      setPendingRentItem(item);
+      setShowDatesModal(true);
+      return;
+    }
+    await attemptAddRental(item, rentalDates);
   };
 
   const handleBuy = (item) => {
     setDetailItem(null);
     addToCart(item.id, "catalog");
+  };
+
+  const handleDatesSaved = async (savedDates) => {
+    setShowDatesModal(false);
+    if (pendingRentItem) {
+      const item = pendingRentItem;
+      setPendingRentItem(null);
+      await attemptAddRental(item, savedDates);
+    }
   };
 
   return (
@@ -347,22 +396,56 @@ export default function Decor() {
                 </div>
               </div>
 
-              <ElevatedCard palette={palette} className="mt-8 max-w-lg px-5">
-                <div className="relative">
-                  <Search
-                    size={16}
-                    className="absolute left-0 top-1/2 -translate-y-1/2"
-                    color={palette.muted}
-                  />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search this category"
-                    className="w-full bg-transparent py-4 pl-7 pr-3 text-base outline-none"
-                    style={{ ...fonts.bodyFont, color: palette.ink }}
-                  />
-                </div>
-              </ElevatedCard>
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <ElevatedCard palette={palette} className="max-w-lg flex-1 px-5">
+                  <div className="relative">
+                    <Search
+                      size={16}
+                      className="absolute left-0 top-1/2 -translate-y-1/2"
+                      color={palette.muted}
+                    />
+                    <input
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search this category"
+                      className="w-full bg-transparent py-4 pl-7 pr-3 text-base outline-none"
+                      style={{ ...fonts.bodyFont, color: palette.ink }}
+                    />
+                  </div>
+                </ElevatedCard>
+
+                <button
+                  type="button"
+                  onClick={() => setShowDatesModal(true)}
+                  className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold"
+                  style={{
+                    ...fonts.bodyFont,
+                    background: palette.surface,
+                    border: `1px solid ${datesReady ? palette.primaryDeep : palette.line}`,
+                    color: palette.primaryDeep,
+                  }}
+                >
+                  <CalendarDays size={15} color={palette.goldDeep} />
+                  {datesReady
+                    ? `Renting ${formatDate(rentalDates.pickup)} – ${formatDate(rentalDates.dropoff)} · Change`
+                    : "Set your rental dates"}
+                </button>
+              </div>
+
+              {checkingAvailability && (
+                <p className="mt-4 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Checking availability for your dates...
+                </p>
+              )}
+
+              {rentalNotice && (
+                <p
+                  className="mt-4 rounded-sm px-4 py-3 text-sm"
+                  style={{ ...fonts.bodyFont, background: rgba("#B8305F", 0.08), color: "#8A3142" }}
+                >
+                  {rentalNotice}
+                </p>
+              )}
 
               <div className="mt-12">
                 {loading && (
@@ -432,6 +515,16 @@ export default function Decor() {
           onClose={() => setDetailItem(null)}
           onRent={handleRent}
           onBuy={handleBuy}
+        />
+      )}
+
+      {showDatesModal && (
+        <RentalDatesModal
+          onClose={() => {
+            setShowDatesModal(false);
+            setPendingRentItem(null);
+          }}
+          onSaved={handleDatesSaved}
         />
       )}
     </main>
