@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Plus } from "lucide-react";
 import PhotoCarousel, { normalizePhotos } from "./PhotoCarousel";
 import { itemAltText } from "../seo";
+import { useCart } from "../CartContext";
 
 // Gift wrap and disposables are purchase-only by business rule, enforced
 // here rather than relying only on the sheet leaving rental_price blank.
@@ -53,6 +54,7 @@ export function getItemFlags(item) {
 // separate card per row. `groupName` is the shared display name (the
 // variant_group value) used in place of the individual row's own name.
 export default function DecorCard({ item, variants, groupName, onRent, onBuy, onOpenDetail }) {
+  const { isInCart, removeFromCart } = useCart();
   const hasVariants = Array.isArray(variants) && variants.length > 1;
   const [selectedId, setSelectedId] = useState(item.id);
   // Native <select> values are always strings, but item ids are numeric
@@ -63,6 +65,8 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
     : item;
 
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(active);
+  const inPurchaseCart = isInCart(active.id, "catalog");
+  const inRentalCart = isInCart(active.id, "rental");
   const displayName = hasVariants ? groupName || active.name : active.name;
   const colorOptions = parseColorOptions(active);
   const [selectedColor, setSelectedColor] = useState(colorOptions[0] || "");
@@ -147,11 +151,12 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onBuy?.(active);
+                    inPurchaseCart ? removeFromCart(active.id, "catalog") : onBuy?.(active);
                   }}
-                  className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em] text-[#0B4933] underline underline-offset-4"
+                  className="flex items-center gap-1.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em] text-[#0B4933] underline underline-offset-4"
                 >
-                  {active.made_to_order ? "MADE TO ORDER" : `${active.quantity_owned} AVAILABLE`} - INQUIRE
+                  {inPurchaseCart ? <Check size={13} /> : <Plus size={13} />}
+                  {inPurchaseCart ? "IN CART" : "ADD TO CART"}
                 </button>
               )}
             </div>
@@ -165,11 +170,12 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onRent?.(active);
+                  inRentalCart ? removeFromCart(active.id, "rental") : onRent?.(active);
                 }}
-                className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em] text-[#0B4933] underline underline-offset-4"
+                className="flex items-center gap-1.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.14em] text-[#0B4933] underline underline-offset-4"
               >
-                CHECK DATES
+                {inRentalCart ? <Check size={13} /> : <Plus size={13} />}
+                {inRentalCart ? "IN CART" : "ADD TO CART"}
               </button>
             </div>
           )}

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { Check, Plus, X } from "lucide-react";
 import { getItemFlags, parseColorOptions } from "./DecorCard";
 import { itemAltText } from "../seo";
 import { useEventType } from "../EventTypeContext";
+import { useCart } from "../CartContext";
 
 function photoList(photos) {
   if (!Array.isArray(photos)) return [];
@@ -16,6 +17,9 @@ function photoList(photos) {
 // the live catalog, so this modal doesn't add straight to a package).
 export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
   const { openPickerForBuilder } = useEventType();
+  const { isInCart, removeFromCart } = useCart();
+  const inPurchaseCart = isInCart(item.id, "catalog");
+  const inRentalCart = isInCart(item.id, "rental");
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
   const photos = photoList(item.photos);
   const [activePhoto, setActivePhoto] = useState(0);
@@ -109,10 +113,16 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
                   <span className="font-[Space_Grotesk] text-sm tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
                 ) : (
                   <button
-                    onClick={() => onBuy?.(item)}
-                    className="rounded-full bg-[#0B4933] px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-white"
+                    onClick={() => (inPurchaseCart ? removeFromCart(item.id, "catalog") : onBuy?.(item))}
+                    className="flex items-center gap-2 rounded-full px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em]"
+                    style={{
+                      background: inPurchaseCart ? "transparent" : "#0B4933",
+                      color: inPurchaseCart ? "#0B4933" : "#FFFFFF",
+                      border: "1px solid #0B4933",
+                    }}
                   >
-                    PURCHASE
+                    {inPurchaseCart ? <Check size={14} /> : <Plus size={14} />}
+                    {inPurchaseCart ? "IN CART" : "ADD TO CART"}
                   </button>
                 )}
               </div>
@@ -122,10 +132,16 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
               <div className="flex items-center justify-between">
                 <span className="font-[Space_Grotesk] text-base font-medium text-[#8A6A1E]">RENT ${item.rental_price} / EVENT</span>
                 <button
-                  onClick={() => onRent?.(item)}
-                  className="rounded-full border border-[#0B4933] px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-[#0B4933]"
+                  onClick={() => (inRentalCart ? removeFromCart(item.id, "rental") : onRent?.(item))}
+                  className="flex items-center gap-2 rounded-full px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em]"
+                  style={{
+                    background: inRentalCart ? "#0B4933" : "transparent",
+                    color: inRentalCart ? "#FFFFFF" : "#0B4933",
+                    border: "1px solid #0B4933",
+                  }}
                 >
-                  CHECK DATES
+                  {inRentalCart ? <Check size={14} /> : <Plus size={14} />}
+                  {inRentalCart ? "IN CART" : "ADD TO CART"}
                 </button>
               </div>
             )}
