@@ -102,10 +102,73 @@ async function syncPurchaseCheckout(supabase, session) {
       paid_at: session.payment_status === "paid" ? new Date().toISOString() : null,
       metadata: { source: "purchase_checkout" },
     },
-    { onConflict: "stripe_checkout_session_id" }
+    { onConflict: "stripe_checkout_session_id,kind" }
   );
 
   if (ledgerError) throw ledgerError;
+}
+
+async function syncMixedCheckout(supabase, session) {
+  const metadata = session.metadata || {};
+  const customerId = Number(metadata.customer_id || 0) || null;
+  const reservationId = Number(metadata.reservation_id || 0) || null;
+  const purchaseSubtotalCents = Number(metadata.purchase_subtotal_cents || 0);
+  const bookingDepositCents = Number(metadata.booking_deposit_cents || 0);
+  const securityDepositCents = Number(metadata.security_deposit_cents || 0);
+  const invoice = session.invoice ? await stripe.invoices.retrieve(session.invoice) : null;
+  const now = new Date().toISOString();
+
+  if (reservationId) {
+    const nextStatus = session.payment_status === "paid" ? "pending" : "checkout_pending";
+
+    await supabase
+      .from("reservations")
+      .update({
+        status: nextStatus,
+        checkout_expires_at: null,
+        stripe_customer_id:
+          typeof session.customer === "string" ? session.customer : session.customer?.id || null,
+      })
+      .eq("id", reservationId);
+
+    for (const row of [
+      ["booking_deposit", bookingDepositCents],
+      ["security_deposit", securityDepositCents],
+    ]) {
+      const [kind, amount] = row;
+      if (amount <= 0) continue;
+
+      const { error } = await supabase.from("stripe_transactions").upsert(
+        {
+          customer_id: customerId,
+          reservation_id: reservationId,
+          kind,
+          stripe_customer_id:
+            typeof session.customer === "string" ? session.customer : session.customer?.id || null,
+          stripe_invoice_id:
+            typeof session.invoice === "string" ? session.invoice : session.invoice?.id || null,
+          stripe_checkout_session_id: session.id,
+          stripe_payment_intent_id:
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : session.payment_intent?.id || null,
+          amount_cents: amount,
+          currency: session.currency || "cad",
+          status: session.payment_status === "paid" ? "paid" : session.payment_status || "pending",
+          hosted_invoice_url: invoice?.hosted_invoice_url || null,
+          invoice_pdf: invoice?.invoice_pdf || null,
+          paid_at: session.payment_status === "paid" ? now : null,
+          metadata: { source: "mixed_checkout" },
+        },
+        { onConflict: "stripe_checkout_session_id,kind" }
+      );
+      if (error) throw error;
+    }
+  }
+
+  if (purchaseSubtotalCents > 0) {
+    await syncPurchaseCheckout(supabase, session);
+  }
 }
 
 async function syncRentalInvoice(supabase, invoice, status) {
@@ -159,6 +222,10 @@ export default async function handler(req, res) {
       const session = event.data.object;
       if (session.metadata?.source === "purchase") {
         await syncPurchaseCheckout(supabase, session);
+      }
+
+      if (session.metadata?.source === "mixed_checkout") {
+        await syncMixedCheckout(supabase, session);
       }
     }
 

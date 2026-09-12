@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 import DecorCard, { parseItemTags } from "../components/DecorCard";
 import { normalizePhotos } from "../components/PhotoCarousel";
 import DecorDetailModal from "../components/DecorDetailModal";
-import RentalRequestModal from "../components/RentalRequestModal";
+import { useCart } from "../CartContext";
 import { useEventDate } from "../EventDateContext";
 import { useEventType } from "../EventTypeContext";
 import { usePalette } from "../PaletteContext";
@@ -55,6 +55,7 @@ export default function Decor() {
   const { palette, fonts } = usePalette();
   const { openPickerForBuilder } = useEventType();
   const { requestEventDate } = useEventDate();
+  const { addToCart, addRental } = useCart();
 
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -62,7 +63,6 @@ export default function Decor() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [request, setRequest] = useState(null);
   const [detailItem, setDetailItem] = useState(null);
 
   useEffect(() => {
@@ -179,12 +179,12 @@ export default function Decor() {
     const date = await requestEventDate();
     if (!date) return;
     setDetailItem(null);
-    setRequest({ item, requestType: "rental" });
+    addRental(item.id);
   };
 
   const handleBuy = (item) => {
     setDetailItem(null);
-    setRequest({ item, requestType: "purchase" });
+    addToCart(item.id, "catalog");
   };
 
   return (
@@ -426,20 +426,12 @@ export default function Decor() {
         </div>
       </section>
 
-      {detailItem && !request && (
+      {detailItem && (
         <DecorDetailModal
           item={detailItem}
           onClose={() => setDetailItem(null)}
           onRent={handleRent}
           onBuy={handleBuy}
-        />
-      )}
-
-      {request && (
-        <RentalRequestModal
-          item={request.item}
-          requestType={request.requestType}
-          onClose={() => setRequest(null)}
         />
       )}
     </main>

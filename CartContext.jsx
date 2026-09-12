@@ -1,25 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-const STORAGE_KEY = "asliceofg-cart-items";
+const STORAGE_KEY = "asliceofg-cart-items-v2";
+const DATES_KEY = "asliceofg-rental-dates-v1";
 
 const CartContext = createContext(null);
 
-// Standalone purchase cart for the Gifts page - separate from
-// PackageContext on purpose, since gifts are bought outright and aren't
-// part of an event package. `kind` distinguishes a real catalog item
-// (Supabase items, priced by purchase_price) from a static dessert gift
-// (Grown Folks Loot Bags, priced in cateringContent.js) from a customizable
-// gift (public.gifts, priced by price/custom_price), since each comes from
-// a different data source.
-//
-// `meta`, when passed, carries a customization (e.g. a Pop Up Nostalgia
-// Cards design choice or custom request) - two lines with the same id/kind
-// but different meta are genuinely different picks and stay separate cart
-// lines rather than merging quantity, matched by a stable JSON key so key
-// order in the meta object never causes a false mismatch.
-function metaKey(meta) {
+function stableMetaKey(meta) {
   if (!meta) return "";
   return JSON.stringify(meta, Object.keys(meta).sort());
+}
+
+function lineKey(line) {
+  return `${line.kind}:${line.id}:${stableMetaKey(line.meta)}`;
 }
 
 export function CartProvider({ children }) {
@@ -33,48 +25,96 @@ export function CartProvider({ children }) {
     }
   });
 
+  const [rentalDates, setRentalDatesState] = useState(() => {
+    if (typeof window === "undefined") return { pickup: "", event: "", dropoff: "" };
+    try {
+      const raw = window.localStorage.getItem(DATES_KEY);
+      return raw ? JSON.parse(raw) : { pickup: "", event: "", dropoff: "" };
+    } catch {
+      return { pickup: "", event: "", dropoff: "" };
+    }
+  });
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (id, kind, meta = null) => {
-    const key = metaKey(meta);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(DATES_KEY, JSON.stringify(rentalDates));
+  }, [rentalDates]);
+
+  const addToCart = (id, kind, meta = null, quantity = 1) => {
+    const incoming = { id, kind, meta, quantity: Math.max(1, Number(quantity) || 1) };
+    const key = lineKey(incoming);
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === id && i.kind === kind && metaKey(i.meta) === key);
-      if (existing) {
-        return prev.map((i) => (i === existing ? { ...i, quantity: i.quantity + 1 } : i));
-      }
-      return [...prev, { id, kind, meta, quantity: 1 }];
+      const existing = prev.find((item) => lineKey(item) === key);
+      if (!existing) return [...prev, incoming];
+      return prev.map((item) =>
+        lineKey(item) === key ? { ...item, quantity: item.quantity + incoming.quantity } : item
+      );
     });
   };
 
+  const addRental = (id, meta = null, quantity = 1) => addToCart(id, "rental", meta, quantity);
+
   const removeFromCart = (id, kind, meta = null) => {
-    const key = metaKey(meta);
-    setItems((prev) => prev.filter((i) => !(i.id === id && i.kind === kind && metaKey(i.meta) === key)));
+    const key = lineKey({ id, kind, meta });
+    setItems((prev) => prev.filter((item) => lineKey(item) !== key));
   };
 
   const setQuantity = (id, kind, quantity, meta = null) => {
-    if (quantity <= 0) {
+    const nextQuantity = Math.floor(Number(quantity) || 0);
+    if (nextQuantity <= 0) {
       removeFromCart(id, kind, meta);
       return;
     }
-    const key = metaKey(meta);
-    setItems((prev) => prev.map((i) => (i.id === id && i.kind === kind && metaKey(i.meta) === key ? { ...i, quantity } : i)));
+    const key = lineKey({ id, kind, meta });
+    setItems((prev) =>
+      prev.map((item) => (lineKey(item) === key ? { ...item, quantity: nextQuantity } : item))
+    );
   };
 
   const isInCart = (id, kind, meta = null) => {
-    const key = metaKey(meta);
-    return items.some((i) => i.id === id && i.kind === kind && metaKey(i.meta) === key);
+    const key = lineKey({ id, kind, meta });
+    return items.some((item) => lineKey(item) === key);
   };
-  const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
-  // Called once the Gifts page sees ?checkout=success on return from
-  // Stripe - the cart it was holding has just been paid for.
-  const clearCart = () => setItems([]);
+  const setRentalDates = (dates) => {
+    setRentalDatesState({
+      pickup: dates?.pickup || "",
+      event: dates?.event || "",
+      dropoff: dates?.dropoff || "",
+    });
+  };
+
+  const purchaseItems = useMemo(() => items.filter((item) => item.kind !== "rental"), [items]);
+  const rentalItems = useMemo(() => items.filter((item) => item.kind === "rental"), [items]);
+  const cartCount = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+
+  const clearCart = () => {
+    setItems([]);
+    setRentalDatesState({ pickup: "", event: "", dropoff: "" });
+  };
 
   return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, setQuantity, isInCart, cartCount, clearCart }}>
+    <CartContext.Provider
+      value={{
+        items,
+        purchaseItems,
+        rentalItems,
+        rentalDates,
+        setRentalDates,
+        addToCart,
+        addRental,
+        removeFromCart,
+        setQuantity,
+        isInCart,
+        cartCount,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
@@ -82,8 +122,6 @@ export function CartProvider({ children }) {
 
 export function useCart() {
   const ctx = useContext(CartContext);
-  if (!ctx) {
-    throw new Error("useCart() must be called inside a <CartProvider>");
-  }
+  if (!ctx) throw new Error("useCart() must be called inside a <CartProvider>");
   return ctx;
 }
