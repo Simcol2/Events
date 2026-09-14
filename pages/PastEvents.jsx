@@ -39,7 +39,7 @@ const EVENTS = [
     label: "Baby Shower",
     body:
       "A beautiful day to celebrate an even bigger chapter. From the custom display to the sweet little details, everything came together to create a warm and memorable experience for the guest of honour.",
-    note: "Sweet moments everywhere.",
+    note: "The winning photo.\nPhoto challenge activity",
     photos: [
       { src: "/photos/baby-shower-photo-challenge-arch.jpg", ratio: 0.73, alt: "Bump portraits taken for The Photo Challenge" },
       { src: "/photos/baby-shower-welcome-poem.jpg", ratio: 1.4, alt: "A custom welcome poem greeting guests" },
@@ -101,7 +101,13 @@ function Print({ photo, className = "", style = {}, rotate = 0, gold = false, on
 // headlines use, set larger and in charcoal rather than a brand colour.
 const NOTE_INK = "#333333";
 
-function HandNote({ children, color = NOTE_INK, rotate = -3, size = "clamp(1.35rem, 2.3vw, 1.85rem)", className = "", style = {} }) {
+// The vw term collapses on narrow screens, so the floor is what actually
+// applies on a phone. It needs to be large enough to hold its own next to
+// the photos rather than sitting in a sea of white space.
+// Display comes from the class, not an inline style: an inline `display`
+// beats a class, which silently defeated `hidden sm:*` and left these notes
+// sitting on top of the photos on phones.
+function HandNote({ children, color = NOTE_INK, rotate = -3, size = "clamp(2rem, 5vw, 2.7rem)", className = "inline-block", style = {} }) {
   return (
     <span
       className={className}
@@ -111,7 +117,6 @@ function HandNote({ children, color = NOTE_INK, rotate = -3, size = "clamp(1.35r
         color,
         fontSize: size,
         lineHeight: 1.2,
-        display: "inline-block",
         transform: `rotate(${rotate}deg)`,
         ...style,
       }}
@@ -250,7 +255,7 @@ export default function PastEvents() {
           <div>
             <Label color={GOLD_DEEP}>Past Events</Label>
 
-            <HandNote rotate={-2} size="clamp(1.7rem, 3.2vw, 2.5rem)" className="mt-4">
+            <HandNote rotate={-2} size="clamp(2.4rem, 7vw, 3.4rem)" className="mt-4 inline-block">
               We&apos;ve been busy...
             </HandNote>
 
@@ -298,7 +303,7 @@ export default function PastEvents() {
               className="mt-8 inline-block px-6 py-3"
               style={{ border: `2px solid ${GOLD}`, borderRadius: "999px", transform: "rotate(-2.5deg)" }}
             >
-              <HandNote color={GOLD_DEEP} rotate={0} size="clamp(1.25rem, 2.1vw, 1.65rem)">
+              <HandNote color={GOLD_DEEP} rotate={0} size="clamp(1.5rem, 3.6vw, 2rem)">
                 Consider this your permission to get inspired.
               </HandNote>
             </div>
@@ -312,11 +317,10 @@ export default function PastEvents() {
             <div className="relative z-10 -mt-[12%] ml-auto w-[44%]">
               <Print photo={babyShower.photos[9]} rotate={-4} onClick={show(babyShower)} />
             </div>
-            <HandNote
-              rotate={-8}
-              className="absolute hidden sm:block"
-              style={{ left: "0%", bottom: "4%", maxWidth: "190px" }}
-            >
+            {/* In flow rather than absolutely positioned: the free space at
+                the cluster's bottom-left only exists at some widths, so an
+                absolute note landed on top of the photo at others. */}
+            <HandNote rotate={-6} className="mt-5 inline-block">
               Real people. Amazing parties.
             </HandNote>
           </div>
@@ -342,7 +346,7 @@ export default function PastEvents() {
           </div>
 
           <div className="mt-6 lg:mt-0">
-            <HandNote rotate={-4} size="clamp(1.1rem, 1.8vw, 1.4rem)" className="hidden lg:inline-block">
+            <HandNote rotate={-4} size="clamp(1.35rem, 2vw, 1.8rem)" className="hidden lg:inline-block">
               &#8598; That entrance
             </HandNote>
 
@@ -372,7 +376,7 @@ export default function PastEvents() {
             </PhotoButton>
 
             <div className="mt-8">
-              <HandNote rotate={-3} style={{ maxWidth: "300px" }}>
+              <HandNote rotate={-3} style={{ maxWidth: "440px" }}>
                 {oscars.note}
               </HandNote>
             </div>
@@ -451,11 +455,7 @@ export default function PastEvents() {
               <Print photo={babyShower.photos[3]} rotate={3} onClick={show(babyShower)} />
             </div>
 
-            <HandNote
-              rotate={-7}
-              className="absolute hidden sm:block"
-              style={{ left: "2%", bottom: "2%", maxWidth: "200px" }}
-            >
+            <HandNote rotate={-5} className="mt-5 inline-block" style={{ whiteSpace: "pre-line" }}>
               {babyShower.note}
             </HandNote>
           </div>
@@ -509,7 +509,7 @@ export default function PastEvents() {
               </PhotoButton>
 
               <div className="mt-8">
-                <HandNote color={GOLD_DEEP} rotate={-3} style={{ maxWidth: "280px" }}>
+                <HandNote color={GOLD_DEEP} rotate={-3} style={{ maxWidth: "400px" }}>
                   &ldquo;{oscarsNight.note}&rdquo;
                 </HandNote>
               </div>
