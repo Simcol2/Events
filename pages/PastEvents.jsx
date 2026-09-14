@@ -62,6 +62,7 @@ const EVENTS = [
       { src: "/photos/oscars-guest-black-dress.jpg", ratio: 0.88, alt: "A guest posing at the Oscars backdrop" },
       { src: "/photos/guest-red-dress.jpg", ratio: 0.75, alt: "A guest laughing in front of a red, gold and black balloon arch" },
       { src: "/photos/oscars-60th-guest-card-exchange.jpg", ratio: 0.75, alt: "A guest leaving a note at the Take One, Leave One station" },
+      { src: "/photos/oscars-60th-floral-centerpiece.jpg", ratio: 0.75, alt: "A gold script topper in a white floral centerpiece" },
     ],
   },
 ];
@@ -504,9 +505,10 @@ export default function PastEvents() {
             </div>
           </div>
 
-          <div className="mt-24 grid gap-6 sm:grid-cols-2">
+          <div className="mt-24 grid gap-6 sm:grid-cols-3">
             <Print photo={oscarsNight.photos[1]} rotate={-1} onClick={show(oscarsNight)} />
-            <Print photo={oscarsNight.photos[3]} rotate={1.5} onClick={show(oscarsNight)} className="sm:mt-10" />
+            <Print photo={oscarsNight.photos[5]} rotate={2} onClick={show(oscarsNight)} className="sm:mt-10" />
+            <Print photo={oscarsNight.photos[3]} rotate={-1.5} onClick={show(oscarsNight)} className="sm:mt-20" />
           </div>
         </div>
       </section>
