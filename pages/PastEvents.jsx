@@ -126,6 +126,27 @@ function HandNote({ children, color = NOTE_INK, rotate = -3, size = "clamp(2rem,
   );
 }
 
+// Hand-drawn arrow tying a margin note to the photo above it. Drawn rather
+// than an icon so it keeps the same uneven, pen-on-paper feel as the notes.
+function NoteArrow({ color = NOTE_INK, className = "", style = {} }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      fill="none"
+      stroke={color}
+      strokeWidth="7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+      style={{ width: "clamp(104px, 15vw, 160px)", height: "auto", ...style }}
+    >
+      <path d="M14 94 C 6 56, 48 64, 73 14" />
+      <path d="M72 38 L76 10 L52 25" />
+    </svg>
+  );
+}
+
 function Label({ children, color = NAVY }) {
   const { fonts } = usePalette();
   return (
@@ -455,9 +476,12 @@ export default function PastEvents() {
               <Print photo={babyShower.photos[3]} rotate={3} onClick={show(babyShower)} />
             </div>
 
-            <HandNote rotate={-5} className="mt-5 inline-block" style={{ whiteSpace: "pre-line" }}>
-              {babyShower.note}
-            </HandNote>
+            <div className="mt-4">
+              <NoteArrow className="ml-1 block" style={{ transform: "rotate(-4deg)" }} />
+              <HandNote rotate={-5} className="mt-1 inline-block" style={{ whiteSpace: "pre-line" }}>
+                {babyShower.note}
+              </HandNote>
+            </div>
           </div>
         </div>
       </section>
