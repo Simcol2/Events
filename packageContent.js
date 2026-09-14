@@ -1152,6 +1152,30 @@ export const DISPLAYS = [
       ],
     },
   },
+  {
+    id: "everythingFloral",
+    icon: Flower2,
+    name: "Everything Floral",
+    tagline: "Blooms and light, ready to go.",
+    description:
+      "A floral-wrapped umbrella centerpiece paired with two arch backdrop panels, with a neon sign reading 'Hey Baby Hey' front and center. Florals arrive in the colors pictured, with custom flower colors and custom neon wording both available as upgrades.",
+    photoUrl: "/photos/everything-floral-display.png",
+    details: {
+      summary: "A floral umbrella centerpiece with two arch backdrop panels and a 'Hey Baby Hey' neon sign, with color and wording upgrades available.",
+      howItWorks: [
+        "It arrives styled exactly as pictured, with the 'Hey Baby Hey' neon sign.",
+        "Ask about custom flower colors or custom neon wording, each available as an upgrade.",
+        "We build and bring the display to your event.",
+        "It's set up free standing, no mounting needed.",
+      ],
+      goodToKnow: [
+        "Included as pictured: the floral colors shown and the 'Hey Baby Hey' neon sign.",
+        "Custom flower colors and custom neon wording are available as upgrades, contact us for pricing.",
+        "Requires a nearby outlet for the neon sign.",
+        "Setup pricing is separate, see Setup Pricing below.",
+      ],
+    },
+  },
 ];
 
 // Memory Display setup tiers. "No Display" is the implicit default
