@@ -27,7 +27,7 @@ const EVENTS = [
       { src: "/photos/oscars-60th-take-one-leave-one-station.jpg", ratio: 1.16, alt: "The Take One, Leave One station" },
       { src: "/photos/oscars-60th-drinks-sign.jpg", ratio: 1.06, alt: "A humorous sign at the bar" },
       { src: "/photos/oscars-60th-red-carpet-entrance.jpg", ratio: 0.75, alt: "The red carpet entrance with stanchions" },
-      { src: "/photos/oscars-60th-sweetheart-table-wide.jpg", ratio: 0.94, alt: "The head table framed in gold candlelight" },
+      { src: "/photos/oscars-60th-sweetheart-table-wide.jpg", ratio: 1, alt: "The draped head table framed in gold candlelight" },
       { src: "/photos/oscars-60th-guest-card-exchange.jpg", ratio: 0.75, alt: "A guest leaving a note at the station" },
       { src: "/photos/oscars-60th-saxophonist.jpg", ratio: 0.75, alt: "A live saxophonist performing" },
       { src: "/photos/oscars-60th-red-carpet-welcome.jpg", ratio: 0.752, alt: "The welcome sign and red carpet walk-in" },
