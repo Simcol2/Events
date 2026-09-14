@@ -57,9 +57,9 @@ const EVENTS = [
       "Guests arrived dressed for the occasion, and the backdrop did the rest. Give people a corner worth standing in, and they will use it.",
     note: "Happiness looks so good on them.",
     photos: [
-      { src: "/photos/oscars-guests-pair.jpg", ratio: 0.89, alt: "Two guests dressed up at the Oscars backdrop" },
+      { src: "/photos/oscars-guests-pair.jpg", ratio: 0.704, alt: "Two guests dressed up at the Oscars backdrop" },
       { src: "/photos/oscars-60th-saxophonist.jpg", ratio: 0.75, alt: "A live saxophonist performing" },
-      { src: "/photos/oscars-guest-black-dress.jpg", ratio: 0.88, alt: "A guest posing at the Oscars backdrop" },
+      { src: "/photos/oscars-guest-black-dress.jpg", ratio: 0.875, alt: "A guest posing at the Oscars backdrop" },
       { src: "/photos/guest-red-dress.jpg", ratio: 0.75, alt: "A guest laughing in front of a red, gold and black balloon arch" },
       { src: "/photos/oscars-60th-guest-card-exchange.jpg", ratio: 0.75, alt: "A guest leaving a note at the Take One, Leave One station" },
       { src: "/photos/oscars-60th-floral-centerpiece.jpg", ratio: 0.75, alt: "A gold script topper in a white floral centerpiece" },
@@ -467,9 +467,9 @@ export default function PastEvents() {
                 className="absolute"
                 style={{ left: "-3%", top: "-4%", width: "38%", height: "26px", background: FUCHSIA, transform: "rotate(-6deg)", opacity: 0.9 }}
               />
-              <Print photo={oscarsNight.photos[0]} rotate={-1.5} onClick={show(oscarsNight)} className="relative w-[82%]" />
+              <Print photo={oscarsNight.photos[2]} rotate={-1.5} onClick={show(oscarsNight)} className="relative w-[82%]" />
               <div className="relative z-10 -mt-[10%] ml-auto w-[40%]">
-                <Print photo={oscarsNight.photos[2]} rotate={4} onClick={show(oscarsNight)} />
+                <Print photo={oscarsNight.photos[0]} rotate={4} onClick={show(oscarsNight)} />
               </div>
             </div>
 
