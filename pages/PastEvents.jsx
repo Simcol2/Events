@@ -50,6 +50,7 @@ const EVENTS = [
       { src: "/photos/baby-shower-framed-keepsake.jpg", ratio: 0.74, alt: "A framed portrait and poem keepsake" },
       { src: "/photos/baby-shower-photo-challenge-portrait.jpg", ratio: 0.75, alt: "Another Photo Challenge capture" },
       { src: "/photos/baby-shower-drink-station.jpg", ratio: 1.5, alt: "Mocktails being made at the drink station" },
+      { src: "/photos/baby-shower-gift-table.jpg", ratio: 0.658, alt: "The gift table with a trivia challenge sign and baby outfits" },
     ],
   },
   {
@@ -95,16 +96,21 @@ function Print({ photo, className = "", style = {}, rotate = 0, gold = false, on
   );
 }
 
-function HandNote({ children, color = FUCHSIA, rotate = -3, size = "clamp(0.95rem, 1.6vw, 1.25rem)", className = "", style = {} }) {
-  const { fonts } = usePalette();
+// Margin notes read as something a person scribbled next to the photo, so
+// they use a thin handwriting face rather than the heavy marker the
+// headlines use, set larger and in charcoal rather than a brand colour.
+const NOTE_INK = "#333333";
+
+function HandNote({ children, color = NOTE_INK, rotate = -3, size = "clamp(1.35rem, 2.3vw, 1.85rem)", className = "", style = {} }) {
   return (
     <span
       className={className}
       style={{
-        ...fonts.scriptFont,
+        fontFamily: "'Caveat', 'Bradley Hand', cursive",
+        fontWeight: 600,
         color,
         fontSize: size,
-        lineHeight: 1.25,
+        lineHeight: 1.2,
         display: "inline-block",
         transform: `rotate(${rotate}deg)`,
         ...style,
@@ -244,7 +250,7 @@ export default function PastEvents() {
           <div>
             <Label color={GOLD_DEEP}>Past Events</Label>
 
-            <HandNote color={CORAL} rotate={-2} size="clamp(1.05rem, 2vw, 1.5rem)" className="mt-4">
+            <HandNote rotate={-2} size="clamp(1.7rem, 3.2vw, 2.5rem)" className="mt-4">
               We&apos;ve been busy...
             </HandNote>
 
@@ -292,7 +298,7 @@ export default function PastEvents() {
               className="mt-8 inline-block px-6 py-3"
               style={{ border: `2px solid ${GOLD}`, borderRadius: "999px", transform: "rotate(-2.5deg)" }}
             >
-              <HandNote color={GOLD_DEEP} rotate={0} size="clamp(0.95rem, 1.7vw, 1.2rem)">
+              <HandNote color={GOLD_DEEP} rotate={0} size="clamp(1.25rem, 2.1vw, 1.65rem)">
                 Consider this your permission to get inspired.
               </HandNote>
             </div>
@@ -304,13 +310,12 @@ export default function PastEvents() {
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <Print photo={babyShower.photos[6]} rotate={2.5} onClick={show(babyShower)} className="w-[72%]" />
             <div className="relative z-10 -mt-[12%] ml-auto w-[44%]">
-              <Print photo={oscars.photos[3]} rotate={-4} onClick={show(oscars)} />
+              <Print photo={babyShower.photos[9]} rotate={-4} onClick={show(babyShower)} />
             </div>
             <HandNote
-              color={FUCHSIA}
               rotate={-8}
               className="absolute hidden sm:block"
-              style={{ left: "0%", bottom: "6%", maxWidth: "140px" }}
+              style={{ left: "0%", bottom: "4%", maxWidth: "190px" }}
             >
               Real people. Amazing parties.
             </HandNote>
@@ -337,7 +342,7 @@ export default function PastEvents() {
           </div>
 
           <div className="mt-6 lg:mt-0">
-            <HandNote color={NAVY} rotate={-4} size="clamp(0.85rem, 1.4vw, 1rem)" className="hidden lg:inline-block">
+            <HandNote rotate={-4} size="clamp(1.1rem, 1.8vw, 1.4rem)" className="hidden lg:inline-block">
               &#8598; That entrance
             </HandNote>
 
@@ -367,7 +372,7 @@ export default function PastEvents() {
             </PhotoButton>
 
             <div className="mt-8">
-              <HandNote color={FUCHSIA} rotate={-3} style={{ maxWidth: "260px" }}>
+              <HandNote rotate={-3} style={{ maxWidth: "300px" }}>
                 {oscars.note}
               </HandNote>
             </div>
@@ -447,10 +452,9 @@ export default function PastEvents() {
             </div>
 
             <HandNote
-              color={CORAL}
               rotate={-7}
               className="absolute hidden sm:block"
-              style={{ left: "2%", bottom: "4%", maxWidth: "150px" }}
+              style={{ left: "2%", bottom: "2%", maxWidth: "200px" }}
             >
               {babyShower.note}
             </HandNote>
@@ -505,7 +509,7 @@ export default function PastEvents() {
               </PhotoButton>
 
               <div className="mt-8">
-                <HandNote color={GOLD_DEEP} rotate={-3} style={{ maxWidth: "240px" }}>
+                <HandNote color={GOLD_DEEP} rotate={-3} style={{ maxWidth: "280px" }}>
                   &ldquo;{oscarsNight.note}&rdquo;
                 </HandNote>
               </div>

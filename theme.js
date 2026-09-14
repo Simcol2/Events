@@ -87,7 +87,7 @@ export function paperTexture(palette) {
 
 const FONT_IMPORT_ID = "aslice-fonts";
 const FONT_IMPORT_URL =
-  "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=Permanent+Marker&display=swap";
+  "https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@400;500;600;700&family=Permanent+Marker&display=swap";
 export function ensureFonts() {
   if (typeof document === "undefined") return;
   const existing = document.getElementById(FONT_IMPORT_ID);
