@@ -37,7 +37,31 @@ const ROUTES = [
   "/reviews",
 ];
 
+// Pass routes to rebuild only those snapshots, e.g.
+// `npm run prerender -- /past-events`. Rebuilding all fifteen takes about
+// ten minutes, and a typical change touches one page. An unknown route is
+// a hard error rather than a no-op, so a typo can't quietly leave a page's
+// snapshot stale while the run still reports success.
+function routesToBuild() {
+  const requested = process.argv.slice(2).filter((arg) => !arg.startsWith("-"));
+  if (requested.length === 0) return ROUTES;
+
+  const normalized = requested.map((r) => (r.startsWith("/") ? r : `/${r}`));
+  const unknown = normalized.filter((r) => !ROUTES.includes(r));
+  if (unknown.length) {
+    throw new Error(
+      `Unknown route(s): ${unknown.join(", ")}\nKnown routes:\n  ${ROUTES.join("\n  ")}`
+    );
+  }
+  return normalized;
+}
+
 async function run() {
+  const routes = routesToBuild();
+  if (routes.length !== ROUTES.length) {
+    console.log(`Prerendering ${routes.length} of ${ROUTES.length} routes: ${routes.join(", ")}\n`);
+  }
+
   const server = await preview({ preview: { port: 4173, strictPort: false } });
   const base = server.resolvedUrls.local[0].replace(/\/$/, "");
 
@@ -55,7 +79,7 @@ async function run() {
     localStorage.setItem("asliceofg-event-date", "2026-06-15");
   });
 
-  for (const route of ROUTES) {
+  for (const route of routes) {
     await page.goto(`${base}${route}`, { waitUntil: "networkidle" });
     await page.waitForTimeout(1000);
     const html = await page.content();
