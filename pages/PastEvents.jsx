@@ -30,6 +30,8 @@ const EVENTS = [
       { src: "/photos/oscars-60th-sweetheart-table-wide.jpg", ratio: 0.94, alt: "The head table framed in gold candlelight" },
       { src: "/photos/oscars-60th-guest-card-exchange.jpg", ratio: 0.75, alt: "A guest leaving a note at the station" },
       { src: "/photos/oscars-60th-saxophonist.jpg", ratio: 0.75, alt: "A live saxophonist performing" },
+      { src: "/photos/oscars-60th-red-carpet-welcome.jpg", ratio: 0.752, alt: "The welcome sign and red carpet walk-in" },
+      { src: "/photos/oscars-60th-gold-florals.jpg", ratio: 0.831, alt: "Gold and white florals with black feathers" },
     ],
   },
   {
@@ -323,15 +325,20 @@ export default function PastEvents() {
               off the bottom-right corner into reserved padding, so it frames
               the hero instead of covering it. */}
           <div className="relative">
-            <Print photo={oscars.photos[0]} gold onClick={show(oscars)} className="w-[80%]" />
-            <div className="relative z-10 -mt-[11%] ml-auto w-[44%]">
-              <Print photo={oscars.photos[1]} rotate={3} onClick={show(oscars)} />
+            <Print photo={oscars.photos[7]} gold onClick={show(oscars)} className="w-[80%]" />
+            <div className="relative z-10 -mt-[8%] ml-auto flex w-[82%] items-start gap-3 sm:-mt-[11%] sm:w-[66%] sm:gap-4">
+              <div className="flex-1">
+                <Print photo={oscars.photos[1]} rotate={3} onClick={show(oscars)} />
+              </div>
+              <div className="mt-8 flex-1">
+                <Print photo={oscars.photos[8]} rotate={-3} onClick={show(oscars)} />
+              </div>
             </div>
           </div>
 
           <div className="mt-6 lg:mt-0">
             <HandNote color={NAVY} rotate={-4} size="clamp(0.85rem, 1.4vw, 1rem)" className="hidden lg:inline-block">
-              &#8598; This texture
+              &#8598; That entrance
             </HandNote>
 
             <h2
