@@ -1229,7 +1229,7 @@ export const DISPLAY_PRICING_TIERS = [
     includes: [
       "Your choice of display wall",
       "Two coordinating arches",
-      "Floral or balloon styling",
+      "Standard floral or balloon styling on two coordinating arches",
       "Personalized wording where available",
       "Professional setup",
       "Teardown after your event",

@@ -138,7 +138,7 @@ export default function DisplayOptions() {
               Make It Even More Yours
             </h3>
             <p className="mt-3 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Want something beyond what's included? Add custom signage, specialty florals, additional balloons, personalized details or other finishing touches to make your display completely your own.
+              Looking for something bigger? Extra-full balloon installations, specialty florals, custom signage and additional styling can be added to any display.
             </p>
             <p className="mt-2 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Custom upgrades are quoted separately.
