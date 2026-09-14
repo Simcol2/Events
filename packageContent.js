@@ -1055,7 +1055,7 @@ export const DISPLAYS = [
       ],
       goodToKnow: [
         "Needs a nearby outlet, extension cords included.",
-        "Setup pricing is separate, see Setup Pricing below.",
+        "Pricing is separate, see Pricing below.",
       ],
     },
   },
@@ -1077,7 +1077,7 @@ export const DISPLAYS = [
       ],
       goodToKnow: [
         "Needs about 6 feet of wall or floor space.",
-        "Setup pricing is separate, see Setup Pricing below.",
+        "Pricing is separate, see Pricing below.",
       ],
     },
   },
@@ -1101,7 +1101,7 @@ export const DISPLAYS = [
         "Approximately 10 feet wide and 6 feet tall.",
         "Requires a nearby outlet.",
         "Draping color can be customized, contact us for requests.",
-        "Setup pricing is separate, see Setup Pricing below.",
+        "Pricing is separate, see Pricing below.",
       ],
     },
   },
@@ -1128,7 +1128,7 @@ export const DISPLAYS = [
       goodToKnow: [
         "The styling shown in the photos reflects past installations, exact styling is customized per event.",
         "Requires a nearby outlet.",
-        "Setup pricing is separate, see Setup Pricing below.",
+        "Pricing is separate, see Pricing below.",
       ],
     },
   },
@@ -1151,7 +1151,7 @@ export const DISPLAYS = [
       goodToKnow: [
         "Approximately 10 feet wide and 6 feet tall.",
         "Requires a nearby outlet.",
-        "Setup pricing is separate, see Setup Pricing below.",
+        "Pricing is separate, see Pricing below.",
       ],
     },
   },
@@ -1175,9 +1175,66 @@ export const DISPLAYS = [
         "Included as pictured: the floral colors shown and the 'Hey Baby Hey' neon sign.",
         "Custom flower colors and custom neon wording are available as upgrades, contact us for pricing.",
         "Requires a nearby outlet for the neon sign.",
-        "Setup pricing is separate, see Setup Pricing below.",
+        "Pricing is separate, see Pricing below.",
       ],
     },
+  },
+];
+
+// Standalone pricing for the Display Walls page (pages/DisplayOptions.jsx)
+// only - a customer choosing a display straight from that page, not
+// through the Package Builder. Separate on purpose from
+// DISPLAY_SETUP_OPTIONS below, which prices the Memory Display step
+// inside the builder and is not affected by this.
+export const DISPLAY_PRICING_TIERS = [
+  {
+    id: "signature",
+    name: "Signature Display",
+    price: 595,
+    description: "Choose any display wall from our collection and make it yours.",
+    subDescription: "Your display includes personalized styling, professional installation and teardown.",
+    includes: [
+      "Your choice of display wall",
+      "Styling customized to your event",
+      "Personalized wording where available",
+      "Professional setup",
+      "Teardown after your event",
+    ],
+    ctaLabel: "CHOOSE YOUR DISPLAY",
+  },
+  {
+    id: "illuminated",
+    name: "Illuminated Display",
+    price: 695,
+    description:
+      "Everything included in our Signature Display, with lighting incorporated into the design for a little extra glow.",
+    subDescription: "Perfect for evening events, moodier spaces, or anyone who believes subtlety has had quite enough attention.",
+    includes: [
+      "Your choice of display wall",
+      "Customized styling",
+      "Integrated display lighting",
+      "Personalized wording where available",
+      "Professional setup",
+      "Teardown after your event",
+    ],
+    ctaLabel: "ADD A LITTLE GLOW",
+  },
+  {
+    id: "full",
+    name: "Full Display",
+    price: 995,
+    description: "Go bigger.",
+    subDescription:
+      "Pair your favourite display wall with two coordinating arches, finished with your choice of floral or balloon styling to create one complete statement installation.",
+    includes: [
+      "Your choice of display wall",
+      "Two coordinating arches",
+      "Floral or balloon styling",
+      "Personalized wording where available",
+      "Professional setup",
+      "Teardown after your event",
+    ],
+    ctaLabel: "CREATE YOUR DISPLAY",
   },
 ];
 

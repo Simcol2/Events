@@ -1,9 +1,9 @@
 import React from "react";
-import { Sparkles } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import FeatureCard from "../components/FeatureCard";
-import { DISPLAYS, DISPLAY_SETUP_OPTIONS } from "../packageContent";
+import { DISPLAYS, DISPLAY_PRICING_TIERS } from "../packageContent";
 import {
   ElevatedCard,
   JewelBand,
@@ -74,50 +74,76 @@ export default function DisplayOptions() {
       <section style={{ ...paperTexture(palette), padding: "94px 24px" }}>
         <div className="mx-auto max-w-6xl">
           <SectionIntro
-            eyebrow="SETUP OPTIONS"
-            title="Choose how hands-on you want to be."
-            body="The display itself stays the star. You are simply choosing whether setup day involves you or not."
+            eyebrow="PRICING"
+            title="One Display. Your Style. We Set It Up."
+            body="Choose your favourite display and we'll turn it into a finished backdrop designed for your celebration. Every display includes professional setup and teardown, so when you arrive, your photo moment is ready for you."
             palette={palette}
             fonts={fonts}
           />
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2">
-            {DISPLAY_SETUP_OPTIONS.map((option, i) => (
-              <Reveal key={option.id} delay={i * 80}>
-                <ElevatedCard palette={palette} className="h-full p-8">
-                  <div className="flex items-start justify-between gap-5">
-                    <div>
-                      <span
-                        style={{
-                          ...fonts.bodyFont,
-                          color: palette.goldDeep,
-                          fontSize: "11px",
-                          fontWeight: 800,
-                          letterSpacing: "0.16em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        Option {i + 1}
-                      </span>
-                      <h3 className="mt-3 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-                        {option.label}
-                      </h3>
-                    </div>
-                    <span className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.accent }}>
-                      ${option.price}
-                    </span>
-                  </div>
-                  <p className="mt-5 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                    {option.description}
+          <div className="mt-14 grid gap-6 lg:grid-cols-3">
+            {DISPLAY_PRICING_TIERS.map((tier, i) => (
+              <Reveal key={tier.id} delay={i * 80}>
+                <ElevatedCard palette={palette} className="flex h-full flex-col p-8">
+                  <h3 className="text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+                    {tier.name}
+                  </h3>
+                  <span className="mt-2 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.accent }}>
+                    ${tier.price}
+                  </span>
+                  <p className="mt-4 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                    {tier.description}
                   </p>
+                  <p className="mt-3 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                    {tier.subDescription}
+                  </p>
+
+                  <div className="mt-6 flex-1">
+                    <p
+                      style={{
+                        ...fonts.bodyFont,
+                        color: palette.goldDeep,
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        letterSpacing: "0.16em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Includes
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      {tier.includes.map((line) => (
+                        <li key={line} className="flex items-start gap-2 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                          <Check size={16} className="mt-1 flex-shrink-0" color={palette.primaryDeep} />
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <button
+                    onClick={() => openPickerForBuilder()}
+                    className="mt-7 rounded-full py-3.5 text-sm font-semibold tracking-[0.16em]"
+                    style={{ ...fonts.bodyFont, background: palette.primaryDeep, color: "#FFFFFF" }}
+                  >
+                    {tier.ctaLabel}
+                  </button>
                 </ElevatedCard>
               </Reveal>
             ))}
           </div>
 
-          <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            Self setup includes easy-to-follow instructions. Floral arrangements arrive already arranged. Light-up displays require a nearby outlet and extension cords are included.
-          </p>
+          <div className="mx-auto mt-14 max-w-2xl text-center">
+            <h3 className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+              Make It Even More Yours
+            </h3>
+            <p className="mt-3 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Want something beyond what's included? Add custom signage, specialty florals, additional balloons, personalized details or other finishing touches to make your display completely your own.
+            </p>
+            <p className="mt-2 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Custom upgrades are quoted separately.
+            </p>
+          </div>
         </div>
       </section>
 
