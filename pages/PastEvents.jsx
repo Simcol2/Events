@@ -6,12 +6,11 @@ import { FAMILIES } from "../pageColors";
 
 const EMERALD = FAMILIES.emerald.base;
 const EMERALD_DEEP = FAMILIES.emerald.deep;
-const FUCHSIA = FAMILIES.fuchsia.base;
-const CORAL = FAMILIES.coral.base;
 const NAVY = FAMILIES.navy.base;
 const YELLOW = FAMILIES.yellow.base;
 const GOLD = FAMILIES.gold.base;
 const GOLD_DEEP = FAMILIES.gold.deep;
+const CHARCOAL = "#292929";
 
 // Each frame carries the real aspect ratio of its photo, so a collage print
 // is never a crop of someone's face - the frame changes shape, not the photo.
@@ -270,7 +269,7 @@ export default function PastEvents() {
         <div
           aria-hidden="true"
           className="absolute rounded-full"
-          style={{ width: "460px", height: "460px", right: "-170px", top: "-200px", background: `${FUCHSIA}14` }}
+          style={{ width: "460px", height: "460px", right: "-170px", top: "-200px", background: `${CHARCOAL}0D` }}
         />
         <div className="relative mx-auto grid max-w-7xl gap-10 px-5 pb-16 pt-14 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:pb-24 lg:pt-20">
           <div>
@@ -296,7 +295,7 @@ export default function PastEvents() {
                 <span
                   style={{
                     ...fonts.scriptFont,
-                    color: FUCHSIA,
+                    color: GOLD_DEEP,
                     fontSize: "clamp(2.6rem, 6vw, 4.9rem)",
                     display: "inline-block",
                     transform: "rotate(-3deg)",
@@ -414,7 +413,7 @@ export default function PastEvents() {
       </section>
 
       {/* ------------------------------------------------- fuchsia statement strip */}
-      <section className="relative mt-24 overflow-hidden py-10 sm:py-12" style={{ background: FUCHSIA }}>
+      <section className="relative mt-24 overflow-hidden py-10 sm:py-12" style={{ background: CHARCOAL }}>
         <div
           aria-hidden="true"
           className="absolute rounded-full"
@@ -438,7 +437,7 @@ export default function PastEvents() {
         <div
           aria-hidden="true"
           className="absolute rounded-full"
-          style={{ width: "180px", height: "180px", right: "6%", top: "12%", background: `${CORAL}14` }}
+          style={{ width: "180px", height: "180px", right: "6%", top: "12%", background: `${CHARCOAL}0D` }}
         />
 
         <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-28">
@@ -500,7 +499,7 @@ export default function PastEvents() {
               <div
                 aria-hidden="true"
                 className="absolute"
-                style={{ left: "-3%", top: "-4%", width: "38%", height: "26px", background: FUCHSIA, transform: "rotate(-6deg)", opacity: 0.9 }}
+                style={{ left: "-3%", top: "-4%", width: "38%", height: "26px", background: GOLD, transform: "rotate(-6deg)", opacity: 0.9 }}
               />
               <Print photo={oscarsNight.photos[2]} rotate={-1.5} onClick={show(oscarsNight)} className="relative w-[82%]" />
               <div className="relative z-10 -mt-[10%] ml-auto w-[40%]">
@@ -509,13 +508,13 @@ export default function PastEvents() {
             </div>
 
             <div className="mt-6 lg:mt-0">
-              <Label color={FUCHSIA}>{oscarsNight.label}</Label>
+              <Label color={GOLD_DEEP}>{oscarsNight.label}</Label>
 
               <h2
                 className="mt-4"
                 style={{
                   ...fonts.scriptFont,
-                  color: FUCHSIA,
+                  color: GOLD_DEEP,
                   fontSize: "clamp(1.9rem, 3.8vw, 3rem)",
                   lineHeight: 1.05,
                   transform: "rotate(-1.5deg)",
@@ -528,7 +527,7 @@ export default function PastEvents() {
                 {oscarsNight.body}
               </p>
 
-              <PhotoButton onClick={show(oscarsNight)} color={FUCHSIA}>
+              <PhotoButton onClick={show(oscarsNight)} color={GOLD_DEEP}>
                 SEE MORE PHOTOS
               </PhotoButton>
 
