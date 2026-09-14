@@ -13,6 +13,12 @@ import {
   SectionIntro,
   paperTexture,
 } from "../components/EditorialKit";
+import { FAMILIES } from "../pageColors";
+import { metallicGoldGradient, hexToRgba } from "../theme";
+
+// Signature / Illuminated / Full Display, in that order - each tier gets
+// its own accent color instead of every card leaning on the same one.
+const TIER_ACCENTS = [FAMILIES.emerald.base, FAMILIES.fuchsia.base, FAMILIES.coral.base];
 
 export default function DisplayOptions() {
   const { palette, fonts } = usePalette();
@@ -71,8 +77,31 @@ export default function DisplayOptions() {
         </div>
       </JewelBand>
 
-      <section style={{ ...paperTexture(palette), padding: "94px 24px" }}>
-        <div className="mx-auto max-w-6xl">
+      <section className="relative overflow-hidden" style={{ ...paperTexture(palette), padding: "94px 24px" }}>
+        <div
+          aria-hidden="true"
+          className="absolute rounded-full"
+          style={{
+            width: "560px",
+            height: "560px",
+            right: "-260px",
+            top: "-180px",
+            background: hexToRgba(palette.secondary, 0.12),
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute rounded-full"
+          style={{
+            width: "260px",
+            height: "260px",
+            left: "-100px",
+            bottom: "40px",
+            background: hexToRgba(palette.primary, 0.1),
+          }}
+        />
+
+        <div className="relative z-10 mx-auto max-w-6xl">
           <SectionIntro
             eyebrow="PRICING"
             title="One Display. Your Style. We Set It Up."
@@ -82,55 +111,65 @@ export default function DisplayOptions() {
           />
 
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {DISPLAY_PRICING_TIERS.map((tier, i) => (
-              <Reveal key={tier.id} delay={i * 80}>
-                <ElevatedCard palette={palette} className="flex h-full flex-col p-8">
-                  <h3 className="text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-                    {tier.name}
-                  </h3>
-                  <span className="mt-2 text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.accent }}>
-                    ${tier.price}
-                  </span>
-                  <p className="mt-4 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                    {tier.description}
-                  </p>
-                  <p className="mt-3 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                    {tier.subDescription}
-                  </p>
-
-                  <div className="mt-6 flex-1">
-                    <p
-                      style={{
-                        ...fonts.bodyFont,
-                        color: palette.goldDeep,
-                        fontSize: "11px",
-                        fontWeight: 800,
-                        letterSpacing: "0.16em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      Includes
-                    </p>
-                    <ul className="mt-3 space-y-2">
-                      {tier.includes.map((line) => (
-                        <li key={line} className="flex items-start gap-2 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                          <Check size={16} className="mt-1 flex-shrink-0" color={palette.primaryDeep} />
-                          {line}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <button
-                    onClick={() => openPickerForBuilder()}
-                    className="mt-7 rounded-full py-3.5 text-sm font-semibold tracking-[0.16em]"
-                    style={{ ...fonts.bodyFont, background: palette.primaryDeep, color: "#FFFFFF" }}
+            {DISPLAY_PRICING_TIERS.map((tier, i) => {
+              const tierAccent = TIER_ACCENTS[i % TIER_ACCENTS.length];
+              return (
+                <Reveal key={tier.id} delay={i * 80}>
+                  <ElevatedCard
+                    palette={palette}
+                    className="flex h-full flex-col p-8"
+                    style={{
+                      border: "2px solid transparent",
+                      borderImage: `${metallicGoldGradient(palette, { onDark: false, angle: "120deg" })} 1`,
+                    }}
                   >
-                    {tier.ctaLabel}
-                  </button>
-                </ElevatedCard>
-              </Reveal>
-            ))}
+                    <h3 className="text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primary }}>
+                      {tier.name}
+                    </h3>
+                    <span className="mt-2 text-2xl font-semibold" style={{ ...fonts.displayFont, color: tierAccent }}>
+                      ${tier.price}
+                    </span>
+                    <p className="mt-4 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                      {tier.description}
+                    </p>
+                    <p className="mt-3 text-base leading-7" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {tier.subDescription}
+                    </p>
+
+                    <div className="mt-6 flex-1">
+                      <p
+                        style={{
+                          ...fonts.bodyFont,
+                          color: palette.goldDeep,
+                          fontSize: "11px",
+                          fontWeight: 800,
+                          letterSpacing: "0.16em",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Includes
+                      </p>
+                      <ul className="mt-3 space-y-2">
+                        {tier.includes.map((line) => (
+                          <li key={line} className="flex items-start gap-2 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.ink }}>
+                            <Check size={16} className="mt-1 flex-shrink-0" color={palette.primary} />
+                            {line}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <button
+                      onClick={() => openPickerForBuilder()}
+                      className="mt-7 rounded-full py-3.5 text-sm font-semibold tracking-[0.16em]"
+                      style={{ ...fonts.bodyFont, background: tierAccent, color: "#FFFFFF" }}
+                    >
+                      {tier.ctaLabel}
+                    </button>
+                  </ElevatedCard>
+                </Reveal>
+              );
+            })}
           </div>
 
           <div className="mx-auto mt-14 max-w-2xl text-center">

@@ -13,7 +13,7 @@
 import { tintHex } from "./theme";
 
 export const FAMILIES = {
-  emerald: { base: "#007A4D", deep: "#00563A" },
+  emerald: { base: "#008B57", deep: "#005338" },
   fuchsia: { base: "#E5006D", deep: "#B80056" },
   coral: { base: "#FF5B57", deep: "#D83C45", bright: "#FF746B" },
   navy: { base: "#082B49", deep: "#041D33", companion: "#164563" },

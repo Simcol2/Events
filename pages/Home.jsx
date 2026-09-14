@@ -3,6 +3,7 @@ import { ArrowRight, Sparkles, Truck, Users, Gift, CalendarHeart } from "lucide-
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import { hexToRgba, paperTexture } from "../theme";
+import { FAMILIES } from "../pageColors";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -436,30 +437,26 @@ export default function Home({ navigate }) {
       {/* Featured experiences */}
       <section
         className="relative overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${palette.primaryDeep} 0%, ${palette.primary} 100%)`,
-          padding: "88px 24px 96px",
-        }}
+        style={{ ...paperTexture(palette), padding: "88px 24px 96px" }}
       >
-        <div aria-hidden="true" className="hero-streak" />
         <Blob
           style={{
-            width: "520px",
-            height: "520px",
-            right: "-240px",
-            top: "-220px",
+            width: "560px",
+            height: "560px",
+            right: "-260px",
+            top: "-200px",
             borderRadius: "50%",
-            background: hexToRgba(palette.gold, 0.1),
+            background: hexToRgba(palette.accent, 0.14),
           }}
         />
         <Blob
           style={{
-            width: "300px",
-            height: "300px",
-            left: "-130px",
-            bottom: "-160px",
+            width: "220px",
+            height: "220px",
+            left: "-90px",
+            bottom: "-100px",
             borderRadius: "50%",
-            background: hexToRgba(palette.accent, 0.16),
+            background: hexToRgba(FAMILIES.yellow.base, 0.18),
           }}
         />
 
@@ -469,7 +466,7 @@ export default function Home({ navigate }) {
               <p
                 style={{
                   ...fonts.bodyFont,
-                  color: palette.gold,
+                  color: palette.goldDeep,
                   fontSize: "12px",
                   fontWeight: 800,
                   letterSpacing: "0.17em",
@@ -482,21 +479,20 @@ export default function Home({ navigate }) {
                 className="mt-4"
                 style={{
                   ...fonts.displayFont,
-                  color: palette.surface,
                   fontSize: "clamp(2.7rem, 5vw, 4.8rem)",
                   lineHeight: 1.02,
                   fontWeight: 600,
                 }}
               >
-                More than décor.
+                <span style={{ color: palette.primary }}>More than décor.</span>
                 <br />
-                More than a rental.
+                <span style={{ color: palette.accentBright }}>More than a rental.</span>
               </h2>
               <p
                 className="mt-6 max-w-xl"
                 style={{
                   ...fonts.bodyFont,
-                  color: "rgba(255,253,248,0.82)",
+                  color: palette.muted,
                   fontSize: "17px",
                   lineHeight: 1.75,
                 }}
@@ -511,14 +507,14 @@ export default function Home({ navigate }) {
                 className="mt-8 inline-flex items-center gap-3 rounded-full"
                 style={{
                   ...fonts.bodyFont,
-                  background: palette.gold,
-                  color: palette.primaryDeep,
+                  background: palette.primary,
+                  color: "#FFFFFF",
                   padding: "14px 24px",
                   fontSize: "12px",
                   fontWeight: 800,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
-                  boxShadow: "0 12px 26px rgba(0,0,0,0.16)",
+                  boxShadow: `0 12px 26px ${hexToRgba(palette.primaryDeep, 0.28)}`,
                 }}
               >
                 Explore all experiences

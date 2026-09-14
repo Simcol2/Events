@@ -78,10 +78,16 @@ export function metallicGoldTextStyle(palette, opts) {
 export function paperTexture(palette) {
   return {
     backgroundColor: palette.bg,
+    // Fixed pixel sizes here on purpose: a percentage-based radial (the
+    // previous version) sizes itself to the element's full diagonal, so on
+    // a tall page the "faint" gold wash actually covered the whole visible
+    // viewport at real strength - reading as a beige/yellow background
+    // instead of the near-white it was supposed to be. A bounded circle
+    // stays a small corner glow regardless of how tall the section is.
     backgroundImage: [
-      `radial-gradient(circle at 18% 10%, ${hexToRgba(palette.gold, 0.16)}, transparent 28%)`,
-      `radial-gradient(circle at 85% 18%, ${hexToRgba(palette.accent, 0.09)}, transparent 24%)`,
-      `repeating-linear-gradient(0deg, ${hexToRgba(palette.ink, 0.035)} 0, ${hexToRgba(palette.ink, 0.035)} 1px, transparent 1px, transparent 4px)`,
+      `radial-gradient(600px circle at 12% 0%, ${hexToRgba(palette.gold, 0.05)}, transparent 70%)`,
+      `radial-gradient(500px circle at 92% 8%, ${hexToRgba(palette.accent, 0.035)}, transparent 70%)`,
+      `repeating-linear-gradient(0deg, ${hexToRgba(palette.ink, 0.02)} 0, ${hexToRgba(palette.ink, 0.02)} 1px, transparent 1px, transparent 4px)`,
     ].join(", "),
   };
 }

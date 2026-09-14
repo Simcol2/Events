@@ -17,10 +17,14 @@ export function rgba(hex, alpha) {
 export function paperTexture(palette) {
   return {
     backgroundColor: palette.bg,
+    // Fixed pixel sizes here on purpose: a percentage-based radial sizes
+    // itself to the element's full diagonal, so on a tall page the "faint"
+    // gold wash actually covered the whole visible viewport at real
+    // strength - reading as beige instead of the near-white it should be.
     backgroundImage: [
-      `radial-gradient(circle at 10% 8%, ${rgba(palette.gold, 0.18)}, transparent 28%)`,
-      `radial-gradient(circle at 86% 12%, ${rgba(palette.accent, 0.09)}, transparent 24%)`,
-      `repeating-linear-gradient(0deg, ${rgba(palette.ink, 0.035)} 0, ${rgba(palette.ink, 0.035)} 1px, transparent 1px, transparent 4px)`,
+      `radial-gradient(600px circle at 8% 0%, ${rgba(palette.gold, 0.05)}, transparent 70%)`,
+      `radial-gradient(500px circle at 90% 6%, ${rgba(palette.accent, 0.035)}, transparent 70%)`,
+      `repeating-linear-gradient(0deg, ${rgba(palette.ink, 0.02)} 0, ${rgba(palette.ink, 0.02)} 1px, transparent 1px, transparent 4px)`,
     ].join(","),
   };
 }
