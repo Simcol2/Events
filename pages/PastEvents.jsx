@@ -1,60 +1,103 @@
-import React from "react";
-import { ArrowRight, ImagePlus } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import SectionHeading from "../components/SectionHeading";
 import { paperTexture } from "../theme";
 
-// Section 38: each past event is a mini before/during/after story, not a
-// gallery of decor photos, proving the "guest interaction becomes a
-// keepsake" concept in three beats. Photography for these is still being
-// gathered - each beat uses the same "coming soon" placeholder look as the
-// rest of the site until real photos are dropped in.
-const STORIES = [
+// Real photos from real events, one story per celebration. Each event is a
+// simple slideshow (one photo + a short caption at a time) rather than a
+// forced before/during/after grid - some events won't have a clean "before"
+// or "after" shot, and a slideshow doesn't leave empty placeholder boxes
+// for the photos that don't exist yet.
+const EVENTS = [
   {
-    title: "A 60th birthday, Old Hollywood style, where every guest left something behind.",
-    beats: [
-      {
-        label: "BEFORE",
-        body: "A \"Take One, Leave One\" station waited by the entrance: a card with a story from the guest of honor's life to take, and a blank one to leave a note in return.",
-        image: "/photos/oscars-60th-take-one-leave-one-station.jpg",
-      },
-      {
-        label: "DURING",
-        body: "Guests picked up a fact from 1966, then wrote back a wish, a memory, or a kind word for the guest of honor.",
-        image: "/photos/oscars-60th-guest-card-exchange.jpg",
-      },
-      {
-        label: "AFTER",
-        body: "A stack of handwritten notes from everyone who came, ready for her to read whenever she wants to feel celebrated all over again.",
-      },
-    ],
-  },
-  {
-    title: "A baby shower where everyone helped create baby's first story.",
-    beats: [
-      { label: "BEFORE", body: "An empty storybook waited for its first page." },
-      { label: "DURING", body: "Guests each contributed a page: a doodle, a wish, a little piece of their imagination." },
-      { label: "AFTER", body: "The finished storybook, ready for baby's nursery." },
-    ],
-  },
-  {
-    title: "An engagement party where every guest became part of the picture.",
-    beats: [
-      { label: "BEFORE", body: "An unassembled puzzle sat waiting near the guest book." },
-      { label: "DURING", body: "Guests pieced it together throughout the celebration, one piece at a time." },
-      { label: "AFTER", body: "The finished portrait, framed and hanging in their home." },
-    ],
-  },
-  {
-    title: "A milestone birthday time capsule filled by everyone who came.",
-    beats: [
-      { label: "BEFORE", body: "An empty capsule sat ready to be filled." },
-      { label: "DURING", body: "Guests added messages, wishes, and photos throughout the party." },
-      { label: "AFTER", body: "Sealed and ready to open again years from now." },
+    title: "A Night at the Oscars: Jullett's 60th birthday.",
+    photos: [
+      { image: "/photos/oscars-60th-backdrop-wall.jpg", caption: "A Night at the Oscars, dressed in black and gold." },
+      { image: "/photos/oscars-60th-red-carpet-entrance.jpg", caption: "The red carpet welcome, stanchions and all." },
+      { image: "/photos/oscars-60th-floral-detail.jpg", caption: "Black feathers and cream blooms, finished in gold." },
+      { image: "/photos/oscars-60th-sweetheart-table.jpg", caption: "The sweetheart table, ready for the guest of honor." },
+      { image: "/photos/oscars-60th-sweetheart-table-wide.jpg", caption: "Gold candlelight framed the head table." },
+      { image: "/photos/oscars-60th-take-one-leave-one-station.jpg", caption: "Take a fact from 1966, leave a note in return." },
+      { image: "/photos/oscars-60th-guest-card-exchange.jpg", caption: "A guest leaves her note at the Take One, Leave One station." },
+      { image: "/photos/oscars-60th-saxophonist.jpg", caption: "Live saxophone kept the night moving." },
+      { image: "/photos/oscars-60th-drinks-sign.jpg", caption: "A little humor at the bar." },
     ],
   },
 ];
+
+const AUTO_ADVANCE_MS = 5000;
+
+function EventSlideshow({ event, palette, fonts }) {
+  const [index, setIndex] = useState(0);
+  const count = event.photos.length;
+
+  useEffect(() => {
+    if (count < 2) return;
+    const timer = setInterval(() => setIndex((i) => (i + 1) % count), AUTO_ADVANCE_MS);
+    return () => clearInterval(timer);
+  }, [count]);
+
+  const go = (next) => setIndex((i) => (i + next + count) % count);
+  const current = event.photos[index];
+
+  return (
+    <div>
+      <h2 className="mb-6 text-2xl font-semibold sm:text-3xl" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+        {event.title}
+      </h2>
+
+      <div className="relative mx-auto max-w-3xl overflow-hidden rounded-sm" style={{ border: `1px solid ${palette.line}` }}>
+        <div className="aspect-[4/3]">
+          <img src={current.image} alt={current.caption} className="h-full w-full object-cover" />
+        </div>
+
+        {count > 1 && (
+          <>
+            <button
+              onClick={() => go(-1)}
+              aria-label="Previous photo"
+              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-2"
+              style={{ background: "rgba(255,255,255,0.85)", color: palette.primaryDeep }}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={() => go(1)}
+              aria-label="Next photo"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2"
+              style={{ background: "rgba(255,255,255,0.85)", color: palette.primaryDeep }}
+            >
+              <ChevronRight size={18} />
+            </button>
+          </>
+        )}
+      </div>
+
+      <p
+        className="mx-auto mt-4 max-w-3xl text-center text-base leading-relaxed"
+        style={{ ...fonts.bodyFont, color: palette.ink }}
+      >
+        {current.caption}
+      </p>
+
+      {count > 1 && (
+        <div className="mt-4 flex justify-center gap-2">
+          {event.photos.map((photo, i) => (
+            <button
+              key={photo.image}
+              onClick={() => setIndex(i)}
+              aria-label={`Go to photo ${i + 1}`}
+              className="h-2 w-2 rounded-full"
+              style={{ background: i === index ? palette.primaryDeep : palette.line }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function PastEvents() {
   const { palette, fonts } = usePalette();
@@ -74,39 +117,8 @@ export default function PastEvents() {
 
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
         <div className="space-y-20">
-          {STORIES.map((story) => (
-            <div key={story.title}>
-              <h2 className="mb-6 text-2xl font-semibold sm:text-3xl" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-                {story.title}
-              </h2>
-              <div className="grid gap-6 sm:grid-cols-3">
-                {story.beats.map((beat) => (
-                  <div key={beat.label}>
-                    {beat.image ? (
-                      <div className="aspect-[4/3] overflow-hidden rounded-sm" style={{ border: `1px solid ${palette.line}` }}>
-                        <img src={beat.image} alt={beat.body} className="h-full w-full object-cover" />
-                      </div>
-                    ) : (
-                      <div
-                        className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-sm"
-                        style={{ background: `${palette.primary}0D`, border: `1.5px dashed ${palette.line}` }}
-                      >
-                        <ImagePlus size={20} color={palette.muted} />
-                        <span className="px-4 text-center text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                          Photo coming soon
-                        </span>
-                      </div>
-                    )}
-                    <p className="mt-3 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
-                      {beat.label}
-                    </p>
-                    <p className="mt-1 text-base leading-relaxed" style={{ ...fonts.bodyFont, color: palette.ink }}>
-                      {beat.body}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {EVENTS.map((event) => (
+            <EventSlideshow key={event.title} event={event} palette={palette} fonts={fonts} />
           ))}
         </div>
 
