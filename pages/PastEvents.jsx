@@ -12,6 +12,25 @@ import { paperTexture } from "../theme";
 // rest of the site until real photos are dropped in.
 const STORIES = [
   {
+    title: "A 60th birthday, Old Hollywood style, where every guest left something behind.",
+    beats: [
+      {
+        label: "BEFORE",
+        body: "A \"Take One, Leave One\" station waited by the entrance: a card with a story from the guest of honor's life to take, and a blank one to leave a note in return.",
+        image: "/photos/oscars-60th-take-one-leave-one-station.jpg",
+      },
+      {
+        label: "DURING",
+        body: "Guests picked up a fact from 1966, then wrote back a wish, a memory, or a kind word for the guest of honor.",
+        image: "/photos/oscars-60th-guest-card-exchange.jpg",
+      },
+      {
+        label: "AFTER",
+        body: "A stack of handwritten notes from everyone who came, ready for her to read whenever she wants to feel celebrated all over again.",
+      },
+    ],
+  },
+  {
     title: "A baby shower where everyone helped create baby's first story.",
     beats: [
       { label: "BEFORE", body: "An empty storybook waited for its first page." },
@@ -63,15 +82,21 @@ export default function PastEvents() {
               <div className="grid gap-6 sm:grid-cols-3">
                 {story.beats.map((beat) => (
                   <div key={beat.label}>
-                    <div
-                      className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-sm"
-                      style={{ background: `${palette.primary}0D`, border: `1.5px dashed ${palette.line}` }}
-                    >
-                      <ImagePlus size={20} color={palette.muted} />
-                      <span className="px-4 text-center text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                        Photo coming soon
-                      </span>
-                    </div>
+                    {beat.image ? (
+                      <div className="aspect-[4/3] overflow-hidden rounded-sm" style={{ border: `1px solid ${palette.line}` }}>
+                        <img src={beat.image} alt={beat.body} className="h-full w-full object-cover" />
+                      </div>
+                    ) : (
+                      <div
+                        className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-sm"
+                        style={{ background: `${palette.primary}0D`, border: `1.5px dashed ${palette.line}` }}
+                      >
+                        <ImagePlus size={20} color={palette.muted} />
+                        <span className="px-4 text-center text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                          Photo coming soon
+                        </span>
+                      </div>
+                    )}
                     <p className="mt-3 text-sm font-semibold tracking-[0.2em]" style={{ ...fonts.bodyFont, color: palette.goldDeep }}>
                       {beat.label}
                     </p>
