@@ -7,6 +7,8 @@
 // up to Supabase storage later) — PhotoSlot.jsx already knows how to render
 // whichever is present and fall back to a placeholder otherwise.
 
+import { shadeHex, tintHex } from "./theme";
+
 const PHOTO_KEYS = [
   "essentials",
   "itLastsForever",
@@ -31,28 +33,46 @@ export const PALETTES = [
   {
     id: "signature",
     name: "Signature",
-    description: "Editorial MCM event house: emerald, ruby, brass and bright off-white.",
-    // Emerald/ruby/brass on a bright, creamy off-white (not a saturated
-    // beige/khaki), with organic shapes, a handwritten marker accent, and
-    // full-bleed photography treated as a structural part of the page
-    // rather than decoration.
-    bg: "#FEFCF6",
-    surface: "#FFFDF8",
-    primary: "#17724F",
-    primaryDeep: "#0B4933",
-    accent: "#E0115F",
-    gold: "#D9AE45",
-    // A darker antique-brass for text set directly on the light bg/surface
-    // colors above. The bright `gold` reads clearly against a dark
-    // background (roughly 4.9:1 against primaryDeep) but drops to about
-    // 2:1 against this palette's own cream bg - unreadable for body-sized
-    // text. Use goldDeep for any gold-colored text (eyebrow labels, italic
-    // accent lines) that sits on bg/surface; keep `gold` for buttons,
-    // icons, and text on dark sections.
-    goldDeep: "#8A6A1E",
-    ink: "#12201A",
-    line: "#EFE9DC",
-    muted: "#5A5F54",
+    description: "Emerald & Fuchsia: saturated jewel green, hot fuchsia, warm gold and clean cream.",
+    // The brand's official "Emerald & Fuchsia" palette - full saturation
+    // throughout, on purpose. A previous pass on this palette leaned toward
+    // dustier, desaturated tones (sage-green, mustard-gold, beige) that read
+    // as muted heritage stationery rather than this business's actual
+    // bold, colourful event work. Every value below is a named brand color
+    // (or a directly-derived shade/tint of one via shadeHex/tintHex) - keep
+    // it that way; don't reintroduce desaturation via opacity overlays or
+    // gray-leaning "safe" tones.
+    bg: "#FFFDF5", // Clean Cream
+    surface: "#FFFFFF",
+    primary: "#007A4D", // Emerald
+    primaryDeep: "#005C3B", // Deep Emerald
+    accent: "#E5006D", // Fuchsia
+    accentBright: "#FF3B8D", // Bright Pink - secondary accent for small highlight moments
+    gold: "#D9A928", // Warm Gold
+    // A darker shade of the same gold for text set directly on the light
+    // bg/surface above (the bright `gold` reads clearly on a dark section
+    // but is too low-contrast for body-sized text on cream).
+    goldDeep: shadeHex("#D9A928", 0.35),
+    ink: "#17211D", // Ink
+    line: "#E8E1D6", // Warm Taupe
+    muted: tintHex("#17211D", 0.35),
+    photos: emptyPhotos(),
+  },
+  {
+    id: "playful-navy",
+    name: "Playful: Navy & Coral",
+    description: "Coral & Navy: navy anchor, coral and sunshine yellow energy, for the playful event types.",
+    bg: "#FFFDF5", // Clean Cream (shared core neutral)
+    surface: "#FFFFFF",
+    primary: tintHex("#102A43", 0.16), // a lighter navy, for gradient depth
+    primaryDeep: "#102A43", // Navy
+    accent: "#FF5F57", // Coral
+    accentBright: "#FFD23F", // Sunshine Yellow - secondary accent
+    gold: "#D9A928", // Warm Gold (shared bridge color across both palettes)
+    goldDeep: shadeHex("#D9A928", 0.35),
+    ink: "#17211D", // Ink (shared)
+    line: "#E8E1D6", // Warm Taupe (shared)
+    muted: tintHex("#17211D", 0.35),
     photos: emptyPhotos(),
   },
   {

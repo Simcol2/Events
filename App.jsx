@@ -6,10 +6,13 @@ import SeoHead from "./components/SeoHead";
 import ValuePropBar from "./components/ValuePropBar";
 import EventTypePicker from "./components/EventTypePicker";
 import EventDatePicker from "./components/EventDatePicker";
-import { EventTypeProvider } from "./EventTypeContext";
+import { EventTypeProvider, useEventType } from "./EventTypeContext";
 import { EventDateProvider } from "./EventDateContext";
 import { PackageProvider } from "./PackageContext";
 import { CartProvider } from "./CartContext";
+import { usePalette } from "./PaletteContext";
+import { EVENT_TYPE_PALETTE_MAP } from "./eventTypes";
+import { DEFAULT_PALETTE_ID } from "./palettes";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
@@ -147,9 +150,30 @@ function AppRoutes() {
   );
 }
 
+// The site's whole color system (see palettes.js) follows whichever event
+// type the visitor is currently planning for - baby showers and
+// engagements get the sophisticated Emerald & Fuchsia palette, the more
+// playful types (birthdays, Tutu Twirls, holidays, special moments) get
+// the brighter Navy & Coral palette. This keeps the entire visit (not just
+// the one page they're on) feeling like a single, intentional choice
+// rather than the palette silently staying stuck on one default everywhere.
+function PaletteEventTypeSync() {
+  const { eventTypeId } = useEventType();
+  const { paletteId, setPaletteId } = usePalette();
+
+  useEffect(() => {
+    const target = EVENT_TYPE_PALETTE_MAP[eventTypeId] || DEFAULT_PALETTE_ID;
+    if (target !== paletteId) setPaletteId(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventTypeId]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <EventTypeProvider>
+      <PaletteEventTypeSync />
       <EventDateProvider>
         <PackageProvider>
           <CartProvider>

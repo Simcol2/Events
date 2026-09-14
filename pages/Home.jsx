@@ -437,7 +437,7 @@ export default function Home({ navigate }) {
       <section
         className="relative overflow-hidden"
         style={{
-          background: `linear-gradient(135deg, ${palette.primaryDeep} 0%, #063725 100%)`,
+          background: `linear-gradient(135deg, ${palette.primaryDeep} 0%, ${shadeHex(palette.primaryDeep, 0.2)} 100%)`,
           padding: "88px 24px 96px",
         }}
       >
@@ -595,7 +595,10 @@ export default function Home({ navigate }) {
       <section
         className="relative min-h-[430px] overflow-hidden"
         style={{
-          backgroundImage: `linear-gradient(90deg, rgba(5,33,23,0.88) 0%, rgba(5,33,23,0.60) 52%, rgba(5,33,23,0.26) 100%), url(${heroFullBleed})`,
+          backgroundImage: `linear-gradient(90deg, ${hexToRgba(palette.primaryDeep, 0.88)} 0%, ${hexToRgba(
+            palette.primaryDeep,
+            0.6
+          )} 52%, ${hexToRgba(palette.primaryDeep, 0.26)} 100%), url(${heroFullBleed})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           display: "flex",
