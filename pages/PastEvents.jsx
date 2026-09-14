@@ -3,6 +3,7 @@ import { ArrowRight, ImagePlus } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import SectionHeading from "../components/SectionHeading";
+import { paperTexture } from "../theme";
 
 // Section 38: each past event is a mini before/during/after story, not a
 // gallery of decor photos, proving the "guest interaction becomes a
@@ -41,7 +42,7 @@ export default function PastEvents() {
   const { openPickerForBuilder } = useEventType();
 
   return (
-    <div style={{ background: palette.bg, color: palette.ink }}>
+    <div style={{ ...paperTexture(palette), color: palette.ink }}>
       <section className="border-b" style={{ borderColor: palette.line }}>
         <div className="mx-auto max-w-7xl px-5 pb-14 pt-20 sm:px-8">
           <SectionHeading

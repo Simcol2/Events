@@ -110,7 +110,7 @@ export default function HowItWorks() {
   const { openPickerForBuilder } = useEventType();
 
   return (
-    <main style={{ background: palette.bg, color: palette.ink }}>
+    <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <PageHero
         eyebrow="HOW IT WORKS"
         title="You bring the people. We create the experience."

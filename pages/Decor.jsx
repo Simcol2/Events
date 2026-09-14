@@ -237,7 +237,7 @@ export default function Decor() {
   };
 
   return (
-    <main style={{ background: palette.bg, color: palette.ink }}>
+    <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <PageHero
         eyebrow="THE RENTAL COLLECTION"
         title="The pieces that make the room feel intentional."

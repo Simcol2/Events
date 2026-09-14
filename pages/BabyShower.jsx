@@ -99,7 +99,7 @@ export default function BabyShower() {
   const { palette, fonts } = usePalette();
 
   return (
-    <main style={{ background: palette.bg, color: palette.ink }}>
+    <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <PageHero
         eyebrow="BABY SHOWER EXPERIENCES"
         title="A baby shower where every guest becomes part of the story."

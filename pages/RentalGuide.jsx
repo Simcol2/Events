@@ -419,7 +419,7 @@ export default function RentalGuide() {
   ];
 
   return (
-    <main style={{ background: palette.bg, color: palette.ink }}>
+    <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <PageHero
         eyebrow="RENTAL GUIDE"
         title="The practical stuff, without the tiny-print scavenger hunt."

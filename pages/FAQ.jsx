@@ -115,7 +115,7 @@ export default function FAQ() {
   const { openPickerForBuilder } = useEventType();
 
   return (
-    <main style={{ background: palette.bg, color: palette.ink }}>
+    <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <FaqJsonLd />
 
       <PageHero

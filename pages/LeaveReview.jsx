@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Star, X, Loader2, Check } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { resizeImageFile, blobToBase64 } from "../imageResize";
+import { paperTexture } from "../theme";
 
 const MAX_PHOTOS = 5;
 
@@ -168,7 +169,7 @@ export default function LeaveReview({ navigate }) {
   };
 
   const shell = (children) => (
-    <div className="min-h-screen px-5 py-16 sm:px-8" style={{ background: palette.bg }}>
+    <div className="min-h-screen px-5 py-16 sm:px-8" style={{ ...paperTexture(palette) }}>
       <div className="mx-auto w-full max-w-xl">{children}</div>
     </div>
   );

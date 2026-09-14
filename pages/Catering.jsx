@@ -3,6 +3,7 @@ import { Check, X as XIcon, Plus, ShoppingBag, ChevronDown, ArrowUpRight } from 
 import { usePalette } from "../PaletteContext";
 import { useCart } from "../CartContext";
 import { supabase } from "../supabaseClient";
+import { paperTexture } from "../theme";
 import CateringRequestModal from "../components/CateringRequestModal";
 import CartModal from "../components/CartModal";
 import {
@@ -150,7 +151,7 @@ export default function Catering() {
   };
 
   return (
-    <div style={{ background: palette.bg, color: palette.ink }}>
+    <div style={{ ...paperTexture(palette), color: palette.ink }}>
       {/* HERO */}
       <section className="relative overflow-hidden" style={{ background: palette.primaryDeep }}>
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-2 lg:items-center">

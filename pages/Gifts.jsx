@@ -257,7 +257,7 @@ export default function Gifts() {
   };
 
   return (
-    <main style={{ background: palette.bg, color: palette.ink }}>
+    <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <PageHero
         eyebrow="GIFTS & KEEPSAKES"
         title="The games are played. The memories are made."

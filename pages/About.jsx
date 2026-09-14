@@ -115,7 +115,7 @@ export default function About() {
   const texture = paperTexture(palette);
 
   return (
-    <div className="min-h-screen overflow-hidden" style={{ background: palette.bg, color: palette.ink }}>
+    <div className="min-h-screen overflow-hidden" style={{ ...texture, color: palette.ink }}>
       <section className="relative overflow-hidden" style={{ ...texture, padding: "74px 24px 90px" }}>
         <div
           aria-hidden="true"

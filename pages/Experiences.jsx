@@ -92,7 +92,7 @@ export default function Experiences({ navigate }) {
   const { openPickerForBuilder } = useEventType();
 
   return (
-    <main style={{ background: palette.bg, color: palette.ink }}>
+    <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <PageHero
         eyebrow="EXPERIENCES"
         title="Celebrations where guests become part of the story."

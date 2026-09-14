@@ -370,7 +370,7 @@ export default function Home({ navigate }) {
   };
 
   return (
-    <div className="overflow-hidden" style={{ background: palette.bg, color: palette.ink }}>
+    <div className="overflow-hidden" style={{ ...paperTexture(palette), color: palette.ink }}>
       <Hero fonts={fonts} palette={palette} navigate={navigate} />
 
       {/* Celebration selector */}

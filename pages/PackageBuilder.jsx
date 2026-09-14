@@ -4,6 +4,7 @@ import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import { useEventDate } from "../EventDateContext";
 import { supabase } from "../supabaseClient";
+import { paperTexture } from "../theme";
 import FeatureCard from "../components/FeatureCard";
 import PackageRequestModal from "../components/PackageRequestModal";
 import { getEventConfig } from "../eventConfig";
@@ -534,7 +535,7 @@ export default function PackageBuilder() {
   }
 
   return (
-    <div className="min-h-screen pb-32" style={{ background: palette.bg, color: palette.ink }}>
+    <div className="min-h-screen pb-32" style={{ ...paperTexture(palette), color: palette.ink }}>
       <div className="px-6 py-14 text-center" style={{ background: palette.primaryDeep }}>
         <p className="text-sm tracking-[0.3em] font-semibold" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A CURATED {eventType.label.toUpperCase()} EXPERIENCE

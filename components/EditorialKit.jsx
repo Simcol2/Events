@@ -17,9 +17,9 @@ export function paperTexture(palette) {
   return {
     backgroundColor: palette.bg,
     backgroundImage: [
-      `radial-gradient(circle at 10% 8%, ${rgba(palette.gold, 0.10)}, transparent 28%)`,
-      `radial-gradient(circle at 86% 12%, ${rgba(palette.accent, 0.05)}, transparent 24%)`,
-      "repeating-linear-gradient(0deg, rgba(18,32,26,0.017) 0, rgba(18,32,26,0.017) 1px, transparent 1px, transparent 4px)",
+      `radial-gradient(circle at 10% 8%, ${rgba(palette.gold, 0.18)}, transparent 28%)`,
+      `radial-gradient(circle at 86% 12%, ${rgba(palette.accent, 0.09)}, transparent 24%)`,
+      `repeating-linear-gradient(0deg, ${rgba(palette.ink, 0.035)} 0, ${rgba(palette.ink, 0.035)} 1px, transparent 1px, transparent 4px)`,
     ].join(","),
   };
 }

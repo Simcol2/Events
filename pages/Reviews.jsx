@@ -3,6 +3,7 @@ import { Star, Quote } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { paperTexture } from "../theme";
 
 // Only approved reviews are readable with the public key (see the RLS
 // policy in supabase/reviews_setup.sql), so this page cannot accidentally
@@ -66,7 +67,7 @@ export default function Reviews() {
   }, [reviews]);
 
   return (
-    <div className="min-h-screen" style={{ background: palette.bg, color: palette.ink }}>
+    <div className="min-h-screen" style={{ ...paperTexture(palette), color: palette.ink }}>
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
         <p className="text-sm font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A SLICE OF G EVENTS
