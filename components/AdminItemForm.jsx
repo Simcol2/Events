@@ -80,12 +80,12 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">NAME</label>
-        <input required value={form.name} onChange={set("name")} className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+        <input required value={form.name} onChange={set("name")} className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
       </div>
 
       <div>
         <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">DESCRIPTION</label>
-        <textarea rows={3} value={form.description} onChange={set("description")} className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+        <textarea rows={3} value={form.description} onChange={set("description")} className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
       </div>
 
       <div>
@@ -103,15 +103,15 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
       <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">SIZE</label>
-          <input value={form.size} onChange={set("size")} placeholder="e.g. 6 x 8 in" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+          <input value={form.size} onChange={set("size")} placeholder="e.g. 6 x 8 in" className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
         </div>
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">COLOR</label>
-          <input value={form.color} onChange={set("color")} placeholder="e.g. Gold" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+          <input value={form.color} onChange={set("color")} placeholder="e.g. Gold" className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
         </div>
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">GENDER</label>
-          <select value={form.gender} onChange={set("gender")} className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]">
+          <select value={form.gender} onChange={set("gender")} className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]">
             <option value="">Not gendered</option>
             <option value="girl">Girl</option>
             <option value="boy">Boy</option>
@@ -129,9 +129,9 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
             value={form.quantity_owned}
             onChange={set("quantity_owned")}
             disabled={form.made_to_order}
-            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933] disabled:opacity-50"
+            className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933] disabled:opacity-50"
           />
-          <label className="mt-2 flex items-center gap-2 font-[Space_Grotesk] text-xs text-[#5A5F54]">
+          <label className="mt-2 flex items-center gap-2 font-[Space_Grotesk] text-xs text-[#6B6B6B]">
             <input
               type="checkbox"
               checked={form.made_to_order}
@@ -142,28 +142,28 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
         </div>
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">RENTAL PRICE</label>
-          <input type="number" min="0" step="0.01" value={form.rental_price} onChange={set("rental_price")} placeholder="Blank = not rentable" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+          <input type="number" min="0" step="0.01" value={form.rental_price} onChange={set("rental_price")} placeholder="Blank = not rentable" className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
         </div>
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">PURCHASE PRICE</label>
-          <input type="number" min="0" step="0.01" value={form.purchase_price} onChange={set("purchase_price")} placeholder="Blank = not purchasable" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+          <input type="number" min="0" step="0.01" value={form.purchase_price} onChange={set("purchase_price")} placeholder="Blank = not purchasable" className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">VARIANT GROUP</label>
-          <input value={form.variant_group} onChange={set("variant_group")} placeholder="Same text on every row that shares one card" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+          <input value={form.variant_group} onChange={set("variant_group")} placeholder="Same text on every row that shares one card" className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
         </div>
         <div>
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">VARIANT LABEL</label>
-          <input value={form.variant_label} onChange={set("variant_label")} placeholder="e.g. Large, Small" className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+          <input value={form.variant_label} onChange={set("variant_label")} placeholder="e.g. Large, Small" className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
         </div>
       </div>
 
       <div>
         <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">CONDITION NOTES</label>
-        <textarea rows={2} value={form.condition_notes} onChange={set("condition_notes")} className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
+        <textarea rows={2} value={form.condition_notes} onChange={set("condition_notes")} className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
       </div>
 
       <div>
@@ -178,12 +178,12 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
         <span className="font-[Space_Grotesk] text-xs text-[#5C5645]">Active (visible on the site)</span>
       </label>
 
-      <div className="flex items-center justify-between border-t border-[#EAE3D3] pt-5">
+      <div className="flex items-center justify-between border-t border-[#E6E6E6] pt-5">
         <div className="flex gap-3">
           <button type="submit" disabled={saving} className="rounded-full bg-[#0B4933] px-6 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.16em] text-white disabled:opacity-50">
             {saving ? "SAVING..." : isEdit ? "SAVE CHANGES" : "ADD ITEM"}
           </button>
-          <button type="button" onClick={onCancel} className="rounded-full border border-[#D8D0BC] px-6 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.16em] text-[#0B4933]">
+          <button type="button" onClick={onCancel} className="rounded-full border border-[#D9D9D9] px-6 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.16em] text-[#0B4933]">
             CANCEL
           </button>
         </div>

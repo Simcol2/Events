@@ -85,18 +85,18 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#5A5F54]">PHOTO COMING SOON</span>
+            <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#6B6B6B]">PHOTO COMING SOON</span>
           </div>
         )}
         {outOfStock && (
-          <div className="absolute left-3 top-3 bg-[#FCFBF7]/95 px-3 py-1.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-[#7B7464]">
+          <div className="absolute left-3 top-3 bg-[#FFFFFF]/95 px-3 py-1.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-[#6B6B6B]">
             OUT OF STOCK
           </div>
         )}
       </div>
 
       <div className="px-1 pb-3 pt-4">
-        <div className="font-[Space_Grotesk] text-sm font-medium uppercase tracking-[0.18em] text-[#5A5F54]">
+        <div className="font-[Space_Grotesk] text-sm font-medium uppercase tracking-[0.18em] text-[#6B6B6B]">
           {tags.length ? tags.join(" · ") : "Decor"}
         </div>
         <h3 className="mt-1 font-['Fraunces'] text-[25px] font-semibold leading-[1] text-[#0B4933]">
@@ -108,7 +108,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
             <select
               value={selectedColor}
               onChange={(e) => setSelectedColor(e.target.value)}
-              className="rounded-sm border border-[#D8D0BC] bg-white px-2 py-1 font-[Space_Grotesk] text-sm text-[#0B4933] outline-none focus:border-[#0B4933]"
+              className="rounded-sm border border-[#D9D9D9] bg-white px-2 py-1 font-[Space_Grotesk] text-sm text-[#0B4933] outline-none focus:border-[#0B4933]"
             >
               {colorOptions.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -127,7 +127,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
             <select
               value={selectedId}
               onChange={(e) => setSelectedId(e.target.value)}
-              className="w-full appearance-none border border-[#D8D0BC] bg-white px-3 py-2 font-[Space_Grotesk] text-sm text-[#12201A] outline-none focus:border-[#0B4933]"
+              className="w-full appearance-none border border-[#D9D9D9] bg-white px-3 py-2 font-[Space_Grotesk] text-sm text-[#292929] outline-none focus:border-[#0B4933]"
             >
               {variants.map((v) => (
                 <option key={v.id} value={v.id}>
@@ -139,7 +139,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
           </div>
         )}
 
-        <div className="mt-3 space-y-2 border-t border-[#EAE3D3] pt-3">
+        <div className="mt-3 space-y-2 border-t border-[#E6E6E6] pt-3">
           {isPurchasable && (
             <div className="flex items-end justify-between">
               <span className="font-[Space_Grotesk] text-sm font-medium tracking-[0.08em] text-[#8A6A1E]">

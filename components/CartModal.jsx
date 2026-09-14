@@ -86,12 +86,12 @@ export default function CartModal({ catalog, gifts, onClose }) {
       aria-label="Your cart"
     >
       <div
-        className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-[#FCFBF7] px-6 py-8 sm:px-8"
+        className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-[#FFFFFF] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6B6B6B]"
           aria-label="Close"
         >
           <X size={19} />
@@ -105,7 +105,7 @@ export default function CartModal({ catalog, gifts, onClose }) {
           <>
             <div className="mt-5 space-y-4">
               {lines.map((line) => (
-                <div key={`${line.id}-${line.kind}-${JSON.stringify(line.meta)}`} className="flex items-start justify-between gap-3 border-b border-[#EAE3D3] pb-4">
+                <div key={`${line.id}-${line.kind}-${JSON.stringify(line.meta)}`} className="flex items-start justify-between gap-3 border-b border-[#E6E6E6] pb-4">
                   <div>
                     <p className="font-[Space_Grotesk] text-base font-semibold text-[#0B4933]">{line.name}</p>
                     {line.description && (
@@ -115,15 +115,15 @@ export default function CartModal({ catalog, gifts, onClose }) {
                     <div className="mt-2 flex items-center gap-2">
                       <button
                         onClick={() => setQuantity(line.id, line.kind, line.quantity - 1, line.meta)}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D8D0BC] text-[#0B4933]"
+                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D9D9D9] text-[#0B4933]"
                         aria-label="Decrease quantity"
                       >
                         <Minus size={11} />
                       </button>
-                      <span className="font-[Space_Grotesk] text-sm text-[#12201A]">{line.quantity}</span>
+                      <span className="font-[Space_Grotesk] text-sm text-[#292929]">{line.quantity}</span>
                       <button
                         onClick={() => setQuantity(line.id, line.kind, line.quantity + 1, line.meta)}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D8D0BC] text-[#0B4933]"
+                        className="flex h-6 w-6 items-center justify-center rounded-full border border-[#D9D9D9] text-[#0B4933]"
                         aria-label="Increase quantity"
                       >
                         <Plus size={11} />
@@ -136,7 +136,7 @@ export default function CartModal({ catalog, gifts, onClose }) {
                     </span>
                     <button
                       onClick={() => removeFromCart(line.id, line.kind, line.meta)}
-                      className="text-[#5A5F54]"
+                      className="text-[#6B6B6B]"
                       aria-label={`Remove ${line.name}`}
                     >
                       <Trash2 size={14} />

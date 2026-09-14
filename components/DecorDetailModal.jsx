@@ -35,12 +35,12 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
       aria-label={item.name}
     >
       <div
-        className="relative grid max-h-[90vh] w-full max-w-3xl grid-cols-1 overflow-y-auto rounded-2xl bg-[#FCFBF7] sm:grid-cols-2"
+        className="relative grid max-h-[90vh] w-full max-w-3xl grid-cols-1 overflow-y-auto rounded-2xl bg-[#FFFFFF] sm:grid-cols-2"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#FCFBF7]/90 text-[#0B4933]"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#FFFFFF]/90 text-[#0B4933]"
           aria-label="Close"
         >
           <X size={19} />
@@ -55,7 +55,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
             />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#5A5F54]">PHOTO COMING SOON</span>
+              <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#6B6B6B]">PHOTO COMING SOON</span>
             </div>
           )}
           {photos.length > 1 && (
@@ -80,7 +80,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
         </div>
 
         <div className="px-6 py-8 sm:px-8">
-          <div className="font-[Space_Grotesk] text-sm font-medium uppercase tracking-[0.18em] text-[#5A5F54]">
+          <div className="font-[Space_Grotesk] text-sm font-medium uppercase tracking-[0.18em] text-[#6B6B6B]">
             {tags.length ? tags.join(" · ") : "Decor"}
           </div>
           <h2 className="mt-1 font-['Fraunces'] text-3xl font-semibold text-[#0B4933]">{item.name}</h2>
@@ -90,7 +90,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
               <select
                 value={selectedColor}
                 onChange={(e) => setSelectedColor(e.target.value)}
-                className="rounded-sm border border-[#D8D0BC] bg-white px-2 py-1 font-[Space_Grotesk] text-sm text-[#0B4933] outline-none focus:border-[#0B4933]"
+                className="rounded-sm border border-[#D9D9D9] bg-white px-2 py-1 font-[Space_Grotesk] text-sm text-[#0B4933] outline-none focus:border-[#0B4933]"
               >
                 {colorOptions.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -105,7 +105,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
             <p className="mt-4 font-[Space_Grotesk] text-base leading-6 text-[#5C5645]">{item.description}</p>
           )}
 
-          <div className="mt-6 space-y-3 border-t border-[#EAE3D3] pt-5">
+          <div className="mt-6 space-y-3 border-t border-[#E6E6E6] pt-5">
             {isPurchasable && (
               <div className="flex items-center justify-between">
                 <span className="font-[Space_Grotesk] text-base font-medium text-[#8A6A1E]">BUY ${item.purchase_price}</span>

@@ -47,7 +47,7 @@ function TextSection({ heading, text, emphasize }) {
   return (
     <div className="mt-7">
       <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.2em] text-[#0B4933]">{heading}</p>
-      <p className={`mt-2 font-[Space_Grotesk] leading-6 text-[#12201A] ${emphasize ? "text-base font-semibold" : "text-base"}`}>
+      <p className={`mt-2 font-[Space_Grotesk] leading-6 text-[#292929] ${emphasize ? "text-base font-semibold" : "text-base"}`}>
         {text}
       </p>
     </div>
@@ -88,12 +88,12 @@ export default function ItemDetailPopup({ name, tagline, details, onClose }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-[#FCFBF7] px-6 py-8 sm:px-8"
+        className="relative max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-[#FFFFFF] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6B6B6B]"
           aria-label="Close"
         >
           <X size={19} />
@@ -107,7 +107,7 @@ export default function ItemDetailPopup({ name, tagline, details, onClose }) {
         <h2 className="mt-1 font-['Fraunces'] text-3xl font-semibold text-[#0B4933]">{name}</h2>
 
         {stats && (
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 border-t border-[#EAE3D3] pt-4">
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 border-t border-[#E6E6E6] pt-4">
             <StatRow label="Best for" value={stats.bestFor} />
             <StatRow label="Length" value={stats.length} />
             <StatRow label="Guests" value={stats.guests} />
@@ -127,7 +127,7 @@ export default function ItemDetailPopup({ name, tagline, details, onClose }) {
                   <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#0B4933] font-[Space_Grotesk] text-sm font-semibold text-white">
                     {i + 1}
                   </span>
-                  <p className="mt-0.5 font-[Space_Grotesk] text-base leading-5 text-[#12201A]">{step}</p>
+                  <p className="mt-0.5 font-[Space_Grotesk] text-base leading-5 text-[#292929]">{step}</p>
                 </div>
               ))}
             </div>

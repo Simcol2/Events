@@ -39,12 +39,12 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
       aria-label={`Customize ${gift.name}`}
     >
       <div
-        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[#FCFBF7] px-6 py-8 sm:px-8"
+        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[#FFFFFF] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6B6B6B]"
           aria-label="Close"
         >
           <X size={19} />
@@ -55,7 +55,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
             <img src={photo} alt={selectedOption?.label || gift.name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center">
-              <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#5A5F54]">PHOTO COMING SOON</span>
+              <span className="font-[Space_Grotesk] text-sm tracking-[0.2em] text-[#6B6B6B]">PHOTO COMING SOON</span>
             </div>
           )}
         </div>
@@ -71,7 +71,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
           <select
             value={selected}
             onChange={(e) => setSelected(e.target.value)}
-            className="w-full appearance-none rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]"
+            className="w-full appearance-none rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-base text-[#292929] outline-none focus:border-[#0B4933]"
           >
             {(gift.options || []).map((o) => (
               <option key={o.label} value={o.label}>
@@ -92,7 +92,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
               value={customText}
               onChange={(e) => setCustomText(e.target.value)}
               placeholder="e.g. Bluey, Sesame Street, Paw Patrol..."
-              className="mt-2 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]"
+              className="mt-2 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-base text-[#292929] outline-none focus:border-[#0B4933]"
             />
             <p className="mt-2 font-[Space_Grotesk] text-sm text-[#8C846F]">
               We'll create this design for you. Custom requests are priced at ${gift.custom_price ?? gift.price}.
@@ -100,7 +100,7 @@ export default function CustomizableGiftModal({ gift, onClose, onAdd }) {
           </div>
         )}
 
-        <div className="mt-6 flex items-center justify-between border-t border-[#EAE3D3] pt-4">
+        <div className="mt-6 flex items-center justify-between border-t border-[#E6E6E6] pt-4">
           <span className="font-[Space_Grotesk] text-base font-semibold text-[#8A6A1E]">${price}</span>
           <button
             disabled={!canAdd}

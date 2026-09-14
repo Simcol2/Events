@@ -15,7 +15,7 @@ const TUTU_IMAGE = "/photos/tutu-twirls-tea-hero.jpg";
 const TUTU_STARTING_PRICE = 495;
 
 const elevatedShadow =
-  "0 2px 4px rgba(18,32,26,0.05), 0 18px 42px rgba(18,32,26,0.10), 0 32px 70px rgba(18,32,26,0.06)";
+  "0 2px 4px rgba(41,41,41,0.05), 0 18px 42px rgba(41,41,41,0.10), 0 32px 70px rgba(41,41,41,0.06)";
 
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
@@ -79,7 +79,7 @@ function Hero({ fonts, palette, navigate }) {
           right: "-10%",
           top: "-18%",
           borderRadius: "50%",
-          background: hexToRgba(palette.accent, 0.085),
+          background: hexToRgba(palette.decorTint, 0.085),
         }}
       />
       <Blob
@@ -274,7 +274,7 @@ function Hero({ fonts, palette, navigate }) {
               letterSpacing: "0.08em",
               lineHeight: 1.35,
               textTransform: "uppercase",
-              boxShadow: "0 16px 34px rgba(18,32,26,0.18)",
+              boxShadow: "0 16px 34px rgba(41,41,41,0.18)",
               border: "1px solid rgba(255,255,255,0.55)",
             }}
           >
@@ -446,7 +446,7 @@ export default function Home({ navigate }) {
             right: "-260px",
             top: "-200px",
             borderRadius: "50%",
-            background: hexToRgba(palette.accent, 0.14),
+            background: hexToRgba(palette.decorTint, 0.13),
           }}
         />
         <Blob
@@ -719,7 +719,7 @@ export default function Home({ navigate }) {
                         style={{
                           background: i === 1 ? palette.gold : palette.primaryDeep,
                           color: i === 1 ? palette.primaryDeep : "#FFFFFF",
-                          boxShadow: "0 8px 20px rgba(18,32,26,0.10)",
+                          boxShadow: "0 8px 20px rgba(41,41,41,0.10)",
                         }}
                       >
                         <Icon size={20} strokeWidth={1.8} />

@@ -20,7 +20,7 @@ export default function RentalDateFields({ dates, onChange }) {
           min={today}
           value={dates.pickup}
           onChange={(e) => onChange({ ...dates, pickup: e.target.value })}
-          className="mt-1 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 text-sm text-[#12201A]"
+          className="mt-1 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 text-sm text-[#292929]"
         />
       </label>
       <label className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] text-[#5C5645]">
@@ -30,7 +30,7 @@ export default function RentalDateFields({ dates, onChange }) {
           min={dates.pickup || today}
           value={dates.event}
           onChange={(e) => onChange({ ...dates, event: e.target.value })}
-          className="mt-1 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 text-sm text-[#12201A]"
+          className="mt-1 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 text-sm text-[#292929]"
         />
       </label>
       <label className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] text-[#5C5645]">
@@ -40,7 +40,7 @@ export default function RentalDateFields({ dates, onChange }) {
           min={dates.event || dates.pickup || today}
           value={dates.dropoff}
           onChange={(e) => onChange({ ...dates, dropoff: e.target.value })}
-          className="mt-1 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 text-sm text-[#12201A]"
+          className="mt-1 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 text-sm text-[#292929]"
         />
       </label>
     </div>

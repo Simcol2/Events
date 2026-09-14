@@ -5,10 +5,10 @@
 export const SAGE = "#17724F";
 export const SAGE_DEEP = "#0B4933";
 export const GOLD = "#D9AE45";
-export const CREAM = "#FCFBF7";
-export const INK = "#12201A";
-export const LINE = "#EAE3D3";
-export const MUTED = "#5A5F54";
+export const CREAM = "#FFFFFF";
+export const INK = "#292929";
+export const LINE = "#E6E6E6";
+export const MUTED = "#6B6B6B";
 
 export const displayFont = { fontFamily: "'Fraunces', serif" };
 export const scriptFont = { fontFamily: "'Permanent Marker', cursive" };
@@ -78,17 +78,10 @@ export function metallicGoldTextStyle(palette, opts) {
 export function paperTexture(palette) {
   return {
     backgroundColor: palette.bg,
-    // Fixed pixel sizes here on purpose: a percentage-based radial (the
-    // previous version) sizes itself to the element's full diagonal, so on
-    // a tall page the "faint" gold wash actually covered the whole visible
-    // viewport at real strength - reading as a beige/yellow background
-    // instead of the near-white it was supposed to be. A bounded circle
-    // stays a small corner glow regardless of how tall the section is.
-    backgroundImage: [
-      `radial-gradient(600px circle at 12% 0%, ${hexToRgba(palette.gold, 0.05)}, transparent 70%)`,
-      `radial-gradient(500px circle at 92% 8%, ${hexToRgba(palette.accent, 0.035)}, transparent 70%)`,
-      `repeating-linear-gradient(0deg, ${hexToRgba(palette.ink, 0.02)} 0, ${hexToRgba(palette.ink, 0.02)} 1px, transparent 1px, transparent 4px)`,
-    ].join(", "),
+    // Texture only, no tint: the gold/accent washes that used to sit here
+    // composited into a beige cast over the whole canvas. `ink` is a
+    // neutral charcoal, so this hairline stays grey.
+    backgroundImage: `repeating-linear-gradient(0deg, ${hexToRgba(palette.ink, 0.018)} 0, ${hexToRgba(palette.ink, 0.018)} 1px, transparent 1px, transparent 4px)`,
   };
 }
 

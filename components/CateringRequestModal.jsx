@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 
 const inputClass =
-  "w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]";
+  "w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-base text-[#292929] outline-none focus:border-[#0B4933]";
 
 // Bulk catering sizes don't have a fixed price (they're quoted per order),
 // so there's no cart to add these to. This is the clickable seam instead:
@@ -56,12 +56,12 @@ export default function CateringRequestModal({ itemName, sizes, initialSize, onC
       aria-label={`Order ${itemName}`}
     >
       <div
-        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[#FCFBF7] px-6 py-8 sm:px-8"
+        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-[#FFFFFF] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6B6B6B]"
           aria-label="Close"
         >
           <X size={19} />
@@ -109,7 +109,7 @@ export default function CateringRequestModal({ itemName, sizes, initialSize, onC
                 min={1}
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
-                className="w-20 rounded-sm border border-[#D8D0BC] bg-white px-3 py-2 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]"
+                className="w-20 rounded-sm border border-[#D9D9D9] bg-white px-3 py-2 font-[Space_Grotesk] text-base text-[#292929] outline-none focus:border-[#0B4933]"
               />
             </div>
 

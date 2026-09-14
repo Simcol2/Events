@@ -19,7 +19,7 @@ export default function SectionHeading({ eyebrow, title, subtitle, align = "cent
         <span className="h-px w-10 bg-[#8A6A1E]" />
       </div>
       {subtitle && (
-        <p className={`mt-5 max-w-2xl font-[Space_Grotesk] text-base leading-7 text-[#716B5C] ${centered ? "mx-auto" : ""}`}>
+        <p className={`mt-5 max-w-2xl font-[Space_Grotesk] text-base leading-7 text-[#6B6B6B] ${centered ? "mx-auto" : ""}`}>
           {subtitle}
         </p>
       )}

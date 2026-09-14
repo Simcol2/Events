@@ -44,7 +44,7 @@ function ChecklistItem({ done, label }) {
       ) : (
         <Circle size={16} className="shrink-0 text-[#C9C0AA]" />
       )}
-      <span className={`font-[Space_Grotesk] text-sm ${done ? "text-[#12201A]" : "text-[#9A927F]"}`}>{label}</span>
+      <span className={`font-[Space_Grotesk] text-sm ${done ? "text-[#292929]" : "text-[#9A9A9A]"}`}>{label}</span>
     </div>
   );
 }
@@ -99,7 +99,7 @@ function PaymentRow({ label, due, paid, refundable, onPay, busy, note }) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <p className="font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">{label}</p>
+            <p className="font-[Space_Grotesk] text-sm font-semibold text-[#292929]">{label}</p>
             {refundable && <StatusPill tone="gold">Refundable</StatusPill>}
             {complete && <StatusPill>Paid</StatusPill>}
           </div>
@@ -117,7 +117,7 @@ function PaymentRow({ label, due, paid, refundable, onPay, busy, note }) {
           </button>
         )}
       </div>
-      {note && <p className="mt-2 font-[Space_Grotesk] text-xs text-[#7B7464]">{note}</p>}
+      {note && <p className="mt-2 font-[Space_Grotesk] text-xs text-[#6B6B6B]">{note}</p>}
     </div>
   );
 }
@@ -173,14 +173,14 @@ function SignIn() {
             </div>
           ) : (
             <form onSubmit={submit}>
-              <label className="font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">Email address</label>
+              <label className="font-[Space_Grotesk] text-sm font-semibold text-[#292929]">Email address</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
-                className="mt-2 w-full rounded-xl border border-[#D8D0BC] bg-white px-4 py-3 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]"
+                className="mt-2 w-full rounded-xl border border-[#D9D9D9] bg-white px-4 py-3 font-[Space_Grotesk] text-base text-[#292929] outline-none focus:border-[#0B4933]"
               />
               {error && <p className="mt-3 font-[Space_Grotesk] text-sm text-red-700">{error}</p>}
               <button
@@ -350,7 +350,7 @@ export default function ClientPortal() {
               key={id}
               onClick={() => setTab(id)}
               className={`inline-flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold ${
-                tab === id ? "bg-[#0B4933] text-white" : "border border-[#D8D0BC] bg-[#FFFDF8] text-[#0B4933]"
+                tab === id ? "bg-[#0B4933] text-white" : "border border-[#D9D9D9] bg-[#FFFDF8] text-[#0B4933]"
               }`}
             >
               <Icon size={15} /> {label}
@@ -421,7 +421,7 @@ export default function ClientPortal() {
                       </div>
                     </div>
                     <div className="sm:text-right">
-                      <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.15em] text-[#9A927F]">RENTAL TOTAL</p>
+                      <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.15em] text-[#9A9A9A]">RENTAL TOTAL</p>
                       <p className="mt-1 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
                         {money(reservation.rental_total_cents, reservation.currency)}
                       </p>
@@ -446,14 +446,14 @@ export default function ClientPortal() {
                             <div key={item.id} className="flex justify-between gap-4 font-[Space_Grotesk] text-sm text-[#3E3A31]">
                               <span>
                                 {item.item?.name || item.description || "Rental item"}{" "}
-                                <span className="text-[#9A927F]">x{item.quantity || 1}</span>
+                                <span className="text-[#9A9A9A]">x{item.quantity || 1}</span>
                               </span>
                               <span className="font-semibold">{lineTotal ? money(lineTotal, reservation.currency) : ""}</span>
                             </div>
                           );
                         })}
                       </div>
-                      <p className="mt-3 font-[Space_Grotesk] text-xs text-[#9A927F]">
+                      <p className="mt-3 font-[Space_Grotesk] text-xs text-[#9A9A9A]">
                         Pickup {dateLabel(reservation.pickup_date)} · Return {dateLabel(dropoff)}
                       </p>
                     </div>
@@ -534,7 +534,7 @@ export default function ClientPortal() {
                           )}
                         </div>
                         {!contract && (
-                          <p className="text-xs text-[#9A927F]">
+                          <p className="text-xs text-[#9A9A9A]">
                             Your rental agreement will appear here once it is ready to review and sign.
                           </p>
                         )}
@@ -575,7 +575,7 @@ export default function ClientPortal() {
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <StatusPill>{order.status || "paid"}</StatusPill>
-                        <span className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-[#9A927F]">{order.order_number || "ONLINE ORDER"}</span>
+                        <span className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-[#9A9A9A]">{order.order_number || "ONLINE ORDER"}</span>
                       </div>
                       <p className="mt-2 font-[Space_Grotesk] text-sm text-[#6F6859]">Purchased {dateLabel(order.purchased_at)}</p>
                     </div>
@@ -584,7 +584,7 @@ export default function ClientPortal() {
                   <div className="mt-4 divide-y divide-[#EEE7D8]">
                     {rows.map((item) => (
                       <div key={item.id} className="flex justify-between gap-3 py-3 font-[Space_Grotesk] text-sm text-[#4C473C]">
-                        <span>{item.name} <span className="text-[#9A927F]">x{item.quantity}</span></span>
+                        <span>{item.name} <span className="text-[#9A9A9A]">x{item.quantity}</span></span>
                         <span className="font-semibold">{money(item.total_amount_cents, item.currency)}</span>
                       </div>
                     ))}
@@ -629,7 +629,7 @@ export default function ClientPortal() {
                     className="flex items-center justify-between gap-4 rounded-xl bg-[#F8F3E8] px-4 py-3"
                   >
                     <div>
-                      <p className="font-[Space_Grotesk] text-sm font-semibold capitalize text-[#12201A]">{row.kind.replaceAll("_", " ")}</p>
+                      <p className="font-[Space_Grotesk] text-sm font-semibold capitalize text-[#292929]">{row.kind.replaceAll("_", " ")}</p>
                       <p className="mt-0.5 font-[Space_Grotesk] text-xs text-[#8C846F]">{row.status} · {money(row.amount_cents, row.currency)}</p>
                     </div>
                     <ChevronRight size={16} className="text-[#0B4933]" />

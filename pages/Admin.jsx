@@ -38,7 +38,7 @@ function PasscodeGate({ onUnlocked }) {
           autoFocus
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          className="w-full rounded-sm border border-[#D8D0BC] px-3 py-3 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
+          className="w-full rounded-sm border border-[#D9D9D9] px-3 py-3 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
           placeholder="Passcode"
         />
         {error && <p className="mt-2 font-[Space_Grotesk] text-xs text-red-700">{error}</p>}
@@ -127,9 +127,9 @@ function ItemsTab() {
           <Plus size={13} /> ADD ITEM
         </button>
       </div>
-      {loading && <p className="font-[Space_Grotesk] text-sm text-[#5A5F54]">Loading...</p>}
+      {loading && <p className="font-[Space_Grotesk] text-sm text-[#6B6B6B]">Loading...</p>}
       {error && <p className="font-[Space_Grotesk] text-sm text-red-700">{error}</p>}
-      <div className="divide-y divide-[#EAE3D3]">
+      <div className="divide-y divide-[#E6E6E6]">
         {items.map((item) => (
           <button
             key={item.id}
@@ -137,8 +137,8 @@ function ItemsTab() {
             className="flex w-full items-center justify-between py-3 text-left"
           >
             <div>
-              <p className="font-[Space_Grotesk] text-sm font-medium text-[#12201A]">
-                {item.name} {!item.active && <span className="text-[#5A5F54]">(inactive)</span>}
+              <p className="font-[Space_Grotesk] text-sm font-medium text-[#292929]">
+                {item.name} {!item.active && <span className="text-[#6B6B6B]">(inactive)</span>}
               </p>
               <p className="font-[Space_Grotesk] text-xs text-[#8C846F]">{item.category || "No tags"}</p>
             </div>
@@ -223,9 +223,9 @@ function GiftsTab() {
           <Plus size={13} /> ADD GIFT
         </button>
       </div>
-      {loading && <p className="font-[Space_Grotesk] text-sm text-[#5A5F54]">Loading...</p>}
+      {loading && <p className="font-[Space_Grotesk] text-sm text-[#6B6B6B]">Loading...</p>}
       {error && <p className="font-[Space_Grotesk] text-sm text-red-700">{error}</p>}
-      <div className="divide-y divide-[#EAE3D3]">
+      <div className="divide-y divide-[#E6E6E6]">
         {gifts.map((gift) => (
           <button
             key={gift.id}
@@ -233,8 +233,8 @@ function GiftsTab() {
             className="flex w-full items-center justify-between py-3 text-left"
           >
             <div>
-              <p className="font-[Space_Grotesk] text-sm font-medium text-[#12201A]">
-                {gift.name} {!gift.active && <span className="text-[#5A5F54]">(inactive)</span>}
+              <p className="font-[Space_Grotesk] text-sm font-medium text-[#292929]">
+                {gift.name} {!gift.active && <span className="text-[#6B6B6B]">(inactive)</span>}
               </p>
               <p className="font-[Space_Grotesk] text-xs text-[#8C846F]">${gift.price}</p>
             </div>
@@ -269,7 +269,7 @@ export default function Admin() {
         </button>
       </div>
 
-      <div className="mb-8 flex gap-2 border-b border-[#EAE3D3]">
+      <div className="mb-8 flex gap-2 border-b border-[#E6E6E6]">
         {[
           { id: "gifts", label: "Gifts" },
           { id: "items", label: "Decor Items" },
@@ -281,7 +281,7 @@ export default function Admin() {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`px-4 py-2.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] ${
-              tab === t.id ? "border-b-2 border-[#0B4933] text-[#0B4933]" : "text-[#5A5F54]"
+              tab === t.id ? "border-b-2 border-[#0B4933] text-[#0B4933]" : "text-[#6B6B6B]"
             }`}
           >
             {t.label.toUpperCase()}

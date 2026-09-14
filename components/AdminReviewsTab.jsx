@@ -121,7 +121,7 @@ export default function AdminReviewsTab() {
             className={`rounded-sm border px-3 py-1.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] ${
               filter === f.id
                 ? "border-[#0B4933] bg-[#0B4933] text-white"
-                : "border-[#D8D0BC] bg-white text-[#5C5645]"
+                : "border-[#D9D9D9] bg-white text-[#5C5645]"
             }`}
           >
             {f.label.toUpperCase()}
@@ -144,7 +144,7 @@ export default function AdminReviewsTab() {
         {visible.map((review) => {
           const photos = Array.isArray(review.photos) ? review.photos.filter(Boolean) : [];
           return (
-            <div key={review.id} className="rounded-sm border border-[#EAE3D3] bg-white p-4">
+            <div key={review.id} className="rounded-sm border border-[#E6E6E6] bg-white p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-0.5">
@@ -153,12 +153,12 @@ export default function AdminReviewsTab() {
                         key={n}
                         size={15}
                         strokeWidth={1.5}
-                        className={n <= review.rating ? "text-[#8A6A1E]" : "text-[#EAE3D3]"}
+                        className={n <= review.rating ? "text-[#8A6A1E]" : "text-[#E6E6E6]"}
                         fill={n <= review.rating ? "#8A6A1E" : "transparent"}
                       />
                     ))}
                   </div>
-                  <p className="mt-2 font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">
+                  <p className="mt-2 font-[Space_Grotesk] text-sm font-semibold text-[#292929]">
                     {review.customer_name}
                     <span className="ml-2 font-normal text-[#8C846F]">{review.customer_email}</span>
                   </p>
@@ -170,7 +170,7 @@ export default function AdminReviewsTab() {
               </div>
 
               {review.body && (
-                <p className="mt-3 font-[Space_Grotesk] text-sm leading-relaxed text-[#12201A]">{review.body}</p>
+                <p className="mt-3 font-[Space_Grotesk] text-sm leading-relaxed text-[#292929]">{review.body}</p>
               )}
 
               {photos.length > 0 && (
@@ -197,7 +197,7 @@ export default function AdminReviewsTab() {
                   <button
                     onClick={() => setStatus(review, "rejected")}
                     disabled={busyId === review.id}
-                    className="rounded-full border border-[#D8D0BC] px-4 py-2 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.12em] text-[#5C5645] disabled:opacity-50"
+                    className="rounded-full border border-[#D9D9D9] px-4 py-2 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.12em] text-[#5C5645] disabled:opacity-50"
                   >
                     {review.status === "approved" ? "TAKE DOWN" : "REJECT"}
                   </button>

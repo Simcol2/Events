@@ -3,11 +3,11 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { metallicGoldTextStyle, metallicGoldGradient } from "../theme";
 
 export const editorialShadow =
-  "0 3px 6px rgba(18,32,26,0.05), 0 18px 44px rgba(18,32,26,0.10), 0 36px 70px rgba(18,32,26,0.06)";
+  "0 3px 6px rgba(41,41,41,0.05), 0 18px 44px rgba(41,41,41,0.10), 0 36px 70px rgba(41,41,41,0.06)";
 
 export function rgba(hex, alpha) {
   const value = String(hex || "").replace("#", "");
-  if (value.length !== 6) return `rgba(18,32,26,${alpha})`;
+  if (value.length !== 6) return `rgba(41,41,41,${alpha})`;
   const r = parseInt(value.slice(0, 2), 16);
   const g = parseInt(value.slice(2, 4), 16);
   const b = parseInt(value.slice(4, 6), 16);
@@ -17,15 +17,10 @@ export function rgba(hex, alpha) {
 export function paperTexture(palette) {
   return {
     backgroundColor: palette.bg,
-    // Fixed pixel sizes here on purpose: a percentage-based radial sizes
-    // itself to the element's full diagonal, so on a tall page the "faint"
-    // gold wash actually covered the whole visible viewport at real
-    // strength - reading as beige instead of the near-white it should be.
-    backgroundImage: [
-      `radial-gradient(600px circle at 8% 0%, ${rgba(palette.gold, 0.05)}, transparent 70%)`,
-      `radial-gradient(500px circle at 90% 6%, ${rgba(palette.accent, 0.035)}, transparent 70%)`,
-      `repeating-linear-gradient(0deg, ${rgba(palette.ink, 0.02)} 0, ${rgba(palette.ink, 0.02)} 1px, transparent 1px, transparent 4px)`,
-    ].join(","),
+    // Texture only, no tint: the gold/accent washes that used to sit here
+    // composited into a beige cast over the whole canvas. `ink` is a
+    // neutral charcoal, so this hairline stays grey.
+    backgroundImage: `repeating-linear-gradient(0deg, ${rgba(palette.ink, 0.018)} 0, ${rgba(palette.ink, 0.018)} 1px, transparent 1px, transparent 4px)`,
   };
 }
 
@@ -122,7 +117,7 @@ export function PageHero({
           height: "420px",
           right: "-180px",
           top: "-220px",
-          background: rgba(palette.accent, 0.09),
+          background: rgba(palette.decorTint, 0.09),
         }}
       />
       <div
@@ -247,7 +242,7 @@ export function JewelBand({ children, palette, className = "", style = {}, tone 
           height: "520px",
           right: "-240px",
           top: "-250px",
-          background: rgba(palette.gold, 0.11),
+          background: rgba(palette.decorTint, 0.10),
         }}
       />
       <div
@@ -315,14 +310,12 @@ export function ElevatedCard({ children, palette, className = "", style = {} }) 
     <div
       className={`card-satin ${className}`}
       style={{
+        // Cards stay clean white. The gold lives in the border, never as a
+        // wash over the card's own surface.
         background: palette.surface,
-        // A tiny colored reflection in one corner, not a wash across the
-        // card - 6% is deliberate: enough to feel intentional, nowhere
-        // near enough to tint the card's own white/cream base.
-        backgroundImage: `radial-gradient(160px 120px at 100% 0%, ${rgba(palette.gold, 0.06)}, transparent 70%)`,
         border: `1px solid ${rgba(palette.gold, 0.35)}`,
         borderRadius: "6px",
-        boxShadow: "0 1px 2px rgba(18,32,26,0.04), 0 10px 22px rgba(18,32,26,0.08)",
+        boxShadow: "0 1px 2px rgba(41,41,41,0.04), 0 10px 22px rgba(41,41,41,0.08)",
         ...style,
       }}
     >

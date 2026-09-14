@@ -3,9 +3,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "../supabaseClient";
 
 const SAGE_DEEP = "#0B4933";
-const LINE = "#D8D0BC";
-const MUTED = "#5A5F54";
-const INK = "#12201A";
+const LINE = "#D9D9D9";
+const MUTED = "#6B6B6B";
+const INK = "#292929";
 
 function toISODate(y, m, d) {
   const mm = String(m + 1).padStart(2, "0");
@@ -165,7 +165,7 @@ export default function RentalCalendar({ itemId, pickup, dropoff, onSelectRange 
           <span className="h-2.5 w-2.5 rounded-full" style={{ background: SAGE_DEEP }} /> Selected
         </span>
       </div>
-      {loading && <p className="mt-2 font-[Space_Grotesk] text-sm text-[#5A5F54]">Loading availability...</p>}
+      {loading && <p className="mt-2 font-[Space_Grotesk] text-sm text-[#6B6B6B]">Loading availability...</p>}
     </div>
   );
 }

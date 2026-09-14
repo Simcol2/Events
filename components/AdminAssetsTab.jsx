@@ -57,7 +57,7 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
           quantity: Number(quantity) || 1,
         });
       }}
-      className="mb-6 rounded-sm border border-[#EAE3D3] bg-white p-5"
+      className="mb-6 rounded-sm border border-[#E6E6E6] bg-white p-5"
     >
       <h3 className="mb-4 font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Add assets</h3>
 
@@ -71,10 +71,10 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
             type="button"
             onClick={() => setKind(k.id)}
             className={`flex-1 rounded-sm border p-3 text-left ${
-              kind === k.id ? "border-[#0B4933] bg-[#F4F7F2]" : "border-[#D8D0BC] bg-white"
+              kind === k.id ? "border-[#0B4933] bg-[#F4F7F2]" : "border-[#D9D9D9] bg-white"
             }`}
           >
-            <span className="block font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">{k.label}</span>
+            <span className="block font-[Space_Grotesk] text-sm font-semibold text-[#292929]">{k.label}</span>
             <span className="block font-[Space_Grotesk] text-xs text-[#8C846F]">{k.hint}</span>
           </button>
         ))}
@@ -88,7 +88,7 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
           <select
             value={itemId}
             onChange={(e) => pickItem(e.target.value)}
-            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
+            className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
           >
             <option value="">Not tied to a catalogue item</option>
             {items.map((i) => (
@@ -110,7 +110,7 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             placeholder={kind === "box" ? "e.g. Box 1" : "What this object is"}
-            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
+            className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
           />
         </div>
         <div>
@@ -123,7 +123,7 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
             max="50"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="mt-1.5 w-full rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
+            className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]"
           />
         </div>
       </div>
@@ -151,7 +151,7 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-full border border-[#D8D0BC] px-6 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.16em] text-[#0B4933]"
+          className="rounded-full border border-[#D9D9D9] px-6 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.16em] text-[#0B4933]"
         >
           CANCEL
         </button>
@@ -288,7 +288,7 @@ export default function AdminAssetsTab() {
           <button
             onClick={print}
             disabled={!toPrint.length}
-            className="inline-flex items-center gap-2 rounded-full border border-[#D8D0BC] px-5 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.14em] text-[#0B4933] disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full border border-[#D9D9D9] px-5 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.14em] text-[#0B4933] disabled:opacity-50"
           >
             <Printer size={13} />
             PRINT {selected.length ? `${selected.length} LABEL${selected.length === 1 ? "" : "S"}` : "ALL LABELS"}
@@ -334,7 +334,7 @@ export default function AdminAssetsTab() {
         {assets.map((asset) => (
           <div
             key={asset.id}
-            className="flex flex-wrap items-center gap-4 rounded-sm border border-[#EAE3D3] bg-white p-3"
+            className="flex flex-wrap items-center gap-4 rounded-sm border border-[#E6E6E6] bg-white p-3"
           >
             <input
               type="checkbox"
@@ -347,11 +347,11 @@ export default function AdminAssetsTab() {
               <img src={qrByCode[asset.code]} alt="" className="h-12 w-12" />
             ) : (
               <div className="flex h-12 w-12 items-center justify-center">
-                <Loader2 size={14} className="animate-spin text-[#5A5F54]" />
+                <Loader2 size={14} className="animate-spin text-[#6B6B6B]" />
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">{asset.label}</p>
+              <p className="font-[Space_Grotesk] text-sm font-semibold text-[#292929]">{asset.label}</p>
               <p className="font-[Space_Grotesk] text-xs tracking-[0.08em] text-[#8C846F]">
                 {asset.code} · {asset.kind === "box" ? "Counted box" : "Single asset"}
                 {asset.item_name ? ` · ${asset.item_name}` : ""}

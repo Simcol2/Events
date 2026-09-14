@@ -207,10 +207,10 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
       aria-modal="true"
       aria-label="Your order"
     >
-      <div className="relative max-h-[94vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-[#FCFBF7] p-5 sm:p-8">
+      <div className="relative max-h-[94vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-[#FFFFFF] p-5 sm:p-8">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6B6B6B]"
           aria-label="Close cart"
         >
           <X size={19} />
@@ -236,7 +236,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                   <CalendarDays size={18} className="text-[#8A6A1E]" />
                   <h3 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Rental dates</h3>
                 </div>
-                <p className="mt-2 font-[Space_Grotesk] text-sm leading-6 text-[#7B7464]">
+                <p className="mt-2 font-[Space_Grotesk] text-sm leading-6 text-[#6B6B6B]">
                   These dates apply to every rental item in this order. Availability is checked for the whole cart.
                 </p>
                 <div className="mt-4">
@@ -251,7 +251,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 return (
                   <div
                     key={`${line.kind}-${line.id}-${JSON.stringify(line.meta || {})}`}
-                    className="flex gap-4 rounded-xl border border-[#EAE3D3] bg-white p-4"
+                    className="flex gap-4 rounded-xl border border-[#E6E6E6] bg-white p-4"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -264,7 +264,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                         >
                           {line.mode === "rental" ? "RENTAL" : "PURCHASE"}
                         </span>
-                        <h4 className="truncate font-[Space_Grotesk] text-sm font-semibold text-[#12201A]">
+                        <h4 className="truncate font-[Space_Grotesk] text-sm font-semibold text-[#292929]">
                           {line.name}
                         </h4>
                       </div>
@@ -272,7 +272,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                         {money(line.unitCents)} each
                       </p>
                       {line.mode === "rental" && rentalDatesReady && (
-                        <p className="mt-1 font-[Space_Grotesk] text-xs text-[#7B7464]">
+                        <p className="mt-1 font-[Space_Grotesk] text-xs text-[#6B6B6B]">
                           {checking
                             ? "Checking availability..."
                             : av?.available == null
@@ -295,7 +295,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setQuantity(line.id, line.kind, line.quantity - 1, line.meta)}
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D8D0BC]"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D9D9D9]"
                           aria-label="Decrease quantity"
                         >
                           <Minus size={12} />
@@ -303,7 +303,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                         <span className="min-w-6 text-center font-[Space_Grotesk] text-sm">{line.quantity}</span>
                         <button
                           onClick={() => setQuantity(line.id, line.kind, line.quantity + 1, line.meta)}
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D8D0BC]"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D9D9D9]"
                           aria-label="Increase quantity"
                         >
                           <Plus size={12} />
@@ -353,8 +353,8 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                     className="flex items-center justify-between gap-3 font-[Space_Grotesk] text-sm text-[#3E3A31]"
                   >
                     <span>
-                      {line.name} <span className="text-[#9A927F]">x{line.quantity}</span>
-                      {line.mode === "rental" && <span className="text-[#9A927F]"> (rental)</span>}
+                      {line.name} <span className="text-[#9A9A9A]">x{line.quantity}</span>
+                      {line.mode === "rental" && <span className="text-[#9A9A9A]"> (rental)</span>}
                     </span>
                     <span className="font-semibold">{money(line.unitCents * line.quantity)}</span>
                   </div>
@@ -385,7 +385,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                   <span>{money(dueTodayCents)}</span>
                 </div>
                 {rentalItems.length > 0 && (
-                  <div className="flex items-center justify-between text-[#7B7464]">
+                  <div className="flex items-center justify-between text-[#6B6B6B]">
                     <span>Remaining rental balance (invoiced later)</span>
                     <span>{money(remainingBalanceCents)}</span>
                   </div>
@@ -393,7 +393,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
               </div>
 
               {rentalItems.length > 0 && (
-                <p className="mt-3 font-[Space_Grotesk] text-xs leading-5 text-[#9A927F]">
+                <p className="mt-3 font-[Space_Grotesk] text-xs leading-5 text-[#9A9A9A]">
                   Deposit amounts shown are an estimate. The exact amount is confirmed on the secure checkout page.
                 </p>
               )}
@@ -409,16 +409,16 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 </div>
                 <ul className="mt-3 space-y-2 font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
                   <li>
-                    <strong className="text-[#12201A]">Booking deposit</strong> - 50% of your rental total, paid now to
+                    <strong className="text-[#292929]">Booking deposit</strong> - 50% of your rental total, paid now to
                     reserve your date.
                   </li>
                   <li>
-                    <strong className="text-[#12201A]">Refundable security deposit</strong> - a separate flat amount
+                    <strong className="text-[#292929]">Refundable security deposit</strong> - a separate flat amount
                     based on your rental total, also paid now. It is not applied toward your remaining balance. It is
                     released after your items are returned.
                   </li>
                   <li>
-                    <strong className="text-[#12201A]">Remaining balance</strong> - the rest of your rental total,
+                    <strong className="text-[#292929]">Remaining balance</strong> - the rest of your rental total,
                     invoiced separately and payable through your client portal.
                   </li>
                 </ul>
@@ -432,21 +432,21 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Full name"
-                  className="rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm"
+                  className="rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm"
                 />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"
-                  className="rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm"
+                  className="rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm"
                 />
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Phone"
-                  className="rounded-sm border border-[#D8D0BC] px-3 py-2.5 font-[Space_Grotesk] text-sm sm:col-span-2"
+                  className="rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm sm:col-span-2"
                 />
               </div>
             </section>

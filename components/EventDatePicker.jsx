@@ -22,12 +22,12 @@ export default function EventDatePicker() {
       aria-label="When is your event?"
     >
       <div
-        className="relative w-full max-w-sm rounded-2xl bg-[#FCFBF7] px-6 py-8 text-center sm:px-8"
+        className="relative w-full max-w-sm rounded-2xl bg-[#FFFFFF] px-6 py-8 text-center sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={closePicker}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6B6B6B]"
           aria-label="Close"
         >
           <X size={19} />
@@ -46,7 +46,7 @@ export default function EventDatePicker() {
           min={today}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          className="mt-6 w-full rounded-sm border border-[#D8D0BC] bg-white px-4 py-3 font-[Space_Grotesk] text-base text-[#12201A] outline-none focus:border-[#0B4933]"
+          className="mt-6 w-full rounded-sm border border-[#D9D9D9] bg-white px-4 py-3 font-[Space_Grotesk] text-base text-[#292929] outline-none focus:border-[#0B4933]"
         />
 
         <button

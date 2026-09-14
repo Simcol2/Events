@@ -28,12 +28,12 @@ export default function RentalDatesModal({ onClose, onSaved }) {
       aria-label="Your rental dates"
     >
       <div
-        className="relative w-full max-w-md rounded-2xl bg-[#FCFBF7] px-6 py-8 sm:px-8"
+        className="relative w-full max-w-md rounded-2xl bg-[#FFFFFF] px-6 py-8 sm:px-8"
         style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#5A5F54]"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6B6B6B]"
           aria-label="Close"
         >
           <X size={19} />

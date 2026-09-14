@@ -62,7 +62,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
     <div>
       <div className="flex flex-wrap gap-3">
         {list.map((url, i) => (
-          <div key={url + i} className="relative h-24 w-24 overflow-hidden rounded-sm border border-[#D8D0BC]">
+          <div key={url + i} className="relative h-24 w-24 overflow-hidden rounded-sm border border-[#D9D9D9]">
             <img src={url} alt="" className="h-full w-full object-cover" />
             {i === 0 && (
               <span className="absolute left-1 top-1 rounded-sm bg-[#0B4933] px-1.5 py-0.5 font-[Space_Grotesk] text-[8px] font-semibold text-white">
@@ -99,7 +99,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
             </div>
           </div>
         ))}
-        <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-[#D8D0BC] text-[#8C846F]">
+        <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-[#D9D9D9] text-[#8C846F]">
           <Upload size={16} />
           <span className="font-[Space_Grotesk] text-[9px]">{uploading ? "Uploading..." : "Add photo"}</span>
           <input
@@ -114,7 +114,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
         </label>
       </div>
       {error && <p className="mt-2 font-[Space_Grotesk] text-xs text-red-700">{error}</p>}
-      <p className="mt-2 font-[Space_Grotesk] text-[10px] text-[#5A5F54]">
+      <p className="mt-2 font-[Space_Grotesk] text-[10px] text-[#6B6B6B]">
         The first photo is what shows on the site. Use the arrows to reorder, the X to remove.
       </p>
     </div>

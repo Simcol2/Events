@@ -19,12 +19,14 @@ export const FAMILIES = {
   navy: { base: "#082B49", deep: "#041D33", companion: "#164563" },
   yellow: { base: "#FFD23F", deep: "#FFD23F" },
   gold: { base: "#D9A928", deep: "#8A6A1E" },
-  cream: { base: "#FFFDF5", deep: "#FFFDF5" },
+  // "cream" is now a soft white, used only where a section needs to read as
+  // a shade off the main canvas. Never a warm/beige tone.
+  cream: { base: "#FFFEFC", deep: "#FFFEFC" },
 };
 
-export const INK = "#17211D";
-export const LINE = "#E8E1D6"; // Warm Taupe
-export const CREAM = "#FFFDF5";
+export const INK = "#292929"; // Neutral charcoal
+export const LINE = "#E6E6E6"; // Neutral hairline
+export const CREAM = "#FFFFFF";
 export const SURFACE = "#FFFFFF";
 
 // route `current` key -> { dominant, secondary, accent, accentBright }
@@ -74,6 +76,12 @@ export function buildPalette(colorKey) {
   const acc = FAMILIES[accent];
   const bright = FAMILIES[accentBright || accent];
 
+  // Big decorative shapes sit behind content on a white canvas, so a warm
+  // family at low alpha composites straight back into the beige cast. Pick
+  // the first saturated (non-warm) family available for those fills.
+  const warm = new Set(["gold", "yellow", "cream"]);
+  const decorKey = [accent, secondary, dominant].find((k) => !warm.has(k)) || dominant;
+
   return {
     bg: CREAM,
     surface: SURFACE,
@@ -87,6 +95,7 @@ export function buildPalette(colorKey) {
     accent: acc.base,
     accentDeep: acc.deep,
     accentBright: bright.base,
+    decorTint: FAMILIES[decorKey].base,
     gold: FAMILIES.gold.base,
     goldDeep: FAMILIES.gold.deep,
     ink: INK,

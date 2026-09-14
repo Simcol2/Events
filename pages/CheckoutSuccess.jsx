@@ -29,7 +29,7 @@ export default function CheckoutSuccess({ navigate }) {
   }, []);
 
   return (
-    <main className="min-h-[70vh] bg-[#FCFBF7] px-5 py-20">
+    <main className="min-h-[70vh] bg-[#FFFFFF] px-5 py-20">
       <div className="mx-auto max-w-2xl rounded-2xl border border-[#E8E0CF] bg-white p-8 text-center sm:p-12">
         <CheckCircle2 size={42} className="mx-auto text-[#17724F]" />
         <p className="mt-5 font-[Space_Grotesk] text-xs font-bold tracking-[0.2em] text-[#8A6A1E]">

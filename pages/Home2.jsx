@@ -304,7 +304,7 @@ export default function Home({ navigate }) {
 
             <p
               className="mx-auto mt-5 max-w-2xl text-sm leading-7 sm:text-base"
-              style={{ ...bodyFont, color: "#716B5C" }}
+              style={{ ...bodyFont, color: "#6B6B6B" }}
             >
               Choose a complete collection, or rent only the pieces you need.
               Either way, everything is designed to work together.
@@ -395,7 +395,7 @@ export default function Home({ navigate }) {
 
             <p
               className="mt-6 max-w-md text-sm leading-7"
-              style={{ ...bodyFont, color: "#716B5C" }}
+              style={{ ...bodyFont, color: "#6B6B6B" }}
             >
               Flip through the collection like a little lookbook. See the
               setup, the details, and how the pieces come together before you
@@ -607,7 +607,7 @@ export default function Home({ navigate }) {
 
                   <p
                     className="mt-6 text-sm leading-7"
-                    style={{ ...bodyFont, color: "#716B5C" }}
+                    style={{ ...bodyFont, color: "#6B6B6B" }}
                   >
                     {GALLERY_IMAGES[activeImage].caption}
                   </p>

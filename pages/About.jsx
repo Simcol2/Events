@@ -17,7 +17,7 @@ import eventImage from "../media/file_00000000a204822f9ab953201c8b7043.png";
 import ownerPortrait from "../media/owner-portrait.jpg";
 
 const shadow =
-  "0 3px 6px rgba(18,32,26,0.05), 0 18px 44px rgba(18,32,26,0.10), 0 36px 70px rgba(18,32,26,0.06)";
+  "0 3px 6px rgba(41,41,41,0.05), 0 18px 44px rgba(41,41,41,0.10), 0 36px 70px rgba(41,41,41,0.06)";
 
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
@@ -125,7 +125,7 @@ export default function About() {
             height: "420px",
             right: "-180px",
             top: "-210px",
-            background: hexToRgba(palette.accent, 0.1),
+            background: hexToRgba(palette.decorTint, 0.1),
           }}
         />
         <div
@@ -535,7 +535,7 @@ export default function About() {
                   style={{
                     background: palette.surface,
                     border: `1px solid ${hexToRgba(palette.gold, 0.3)}`,
-                    boxShadow: "0 8px 20px rgba(18,32,26,0.05)",
+                    boxShadow: "0 8px 20px rgba(41,41,41,0.05)",
                   }}
                 >
                   <Sparkles size={15} color={palette.gold} className="mt-1 shrink-0" />
@@ -564,7 +564,7 @@ export default function About() {
             style={{
               borderColor: palette.line,
               background: palette.surface,
-              boxShadow: "0 8px 30px rgba(18,32,26,0.04)",
+              boxShadow: "0 8px 30px rgba(41,41,41,0.04)",
             }}
           >
             <p
@@ -838,7 +838,7 @@ export default function About() {
             height: "420px",
             right: "-160px",
             bottom: "-240px",
-            background: hexToRgba(palette.gold, 0.13),
+            background: hexToRgba(palette.decorTint, 0.12),
           }}
         />
 
