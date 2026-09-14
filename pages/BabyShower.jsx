@@ -350,7 +350,7 @@ export default function BabyShower() {
         </div>
       </section>
 
-      <JewelBand palette={palette} tone="accent" style={{ padding: "82px 24px" }}>
+      <JewelBand palette={palette} tone="secondary" style={{ padding: "82px 24px" }}>
         <div className="mx-auto max-w-4xl text-center">
           <Sparkles className="mx-auto" size={20} color={palette.gold} />
           <h2

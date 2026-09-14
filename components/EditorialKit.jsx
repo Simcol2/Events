@@ -208,13 +208,29 @@ export function PageHero({
 }
 
 export function JewelBand({ children, palette, className = "", style = {}, tone = "primary", glass = false }) {
-  const base = tone === "accent" ? palette.accent : palette.primary;
-  const deep = tone === "accent" ? palette.accentDeep : palette.primaryDeep;
+  const isSecondary = tone === "secondary";
+  const base = isSecondary ? palette.secondary : palette.primary;
+  const deep = isSecondary ? palette.secondaryDeep : palette.primaryDeep;
+  const bright = isSecondary ? palette.secondaryBright : palette.primaryBright;
+  // A third, brighter stop only shows up for a family that actually has one
+  // defined (coral does) - other families stay a clean two-stop gradient
+  // between their own real deep/base tones rather than gaining an
+  // artificial third stop.
+  const background =
+    bright && bright !== base
+      ? `linear-gradient(145deg, ${deep} 0%, ${base} 55%, ${bright} 120%)`
+      : `linear-gradient(145deg, ${deep} 0%, ${base} 120%)`;
+  // The smaller decorative shape gets a real, intentional companion color
+  // (e.g. navy's own #164563) at a visible-but-soft opacity, rather than a
+  // translucent smear of whatever the sparing "accent" color happens to be.
+  const companionTone = isSecondary ? palette.accent : palette.primaryCompanion;
+  const companionAlpha = isSecondary ? 0.18 : 0.4;
+
   return (
     <section
       className={`relative overflow-hidden ${className}`}
       style={{
-        background: `linear-gradient(145deg, ${deep} 0%, ${base} 120%)`,
+        background,
         ...style,
       }}
     >
@@ -238,7 +254,7 @@ export function JewelBand({ children, palette, className = "", style = {}, tone 
           height: "280px",
           left: "-140px",
           bottom: "-160px",
-          background: rgba(tone === "accent" ? palette.gold : palette.accent, 0.16),
+          background: rgba(companionTone, companionAlpha),
         }}
       />
       <div className="relative z-10">{children}</div>
@@ -295,10 +311,14 @@ export function ElevatedCard({ children, palette, className = "", style = {} }) 
     <div
       className={`card-satin ${className}`}
       style={{
-        background: `linear-gradient(165deg, #FFFFFF 0%, ${palette.surface} 55%, ${rgba(palette.gold, 0.05)} 100%)`,
-        border: `1px solid ${rgba(palette.gold, 0.28)}`,
+        background: palette.surface,
+        // A tiny colored reflection in one corner, not a wash across the
+        // card - 6% is deliberate: enough to feel intentional, nowhere
+        // near enough to tint the card's own white/cream base.
+        backgroundImage: `radial-gradient(160px 120px at 100% 0%, ${rgba(palette.gold, 0.06)}, transparent 70%)`,
+        border: `1px solid ${rgba(palette.gold, 0.35)}`,
         borderRadius: "6px",
-        boxShadow: `${editorialShadow}, 0 26px 46px ${rgba(palette.ink, 0.07)}`,
+        boxShadow: "0 1px 2px rgba(18,32,26,0.04), 0 10px 22px rgba(18,32,26,0.08)",
         ...style,
       }}
     >

@@ -263,7 +263,7 @@ export default function Experiences({ navigate }) {
       <section
         className="relative overflow-hidden text-center"
         style={{
-          background: `linear-gradient(145deg, ${palette.accentDeep} 0%, ${palette.accent} 120%)`,
+          background: `linear-gradient(145deg, ${palette.secondaryDeep} 0%, ${palette.secondary} 120%)`,
           padding: "90px 40px",
         }}
       >

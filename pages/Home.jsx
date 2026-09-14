@@ -773,7 +773,7 @@ export default function Home({ navigate }) {
       <section
         className="relative overflow-hidden"
         style={{
-          background: `linear-gradient(135deg, ${palette.accent} 0%, ${palette.accentDeep} 100%)`,
+          background: `linear-gradient(135deg, ${palette.secondary} 0%, ${palette.secondaryDeep} 100%)`,
           padding: "82px 24px",
         }}
       >

@@ -11,8 +11,7 @@ import { EventDateProvider } from "./EventDateContext";
 import { PackageProvider } from "./PackageContext";
 import { CartProvider } from "./CartContext";
 import { usePalette } from "./PaletteContext";
-import { EVENT_TYPE_PALETTE_MAP } from "./eventTypes";
-import { DEFAULT_PALETTE_ID } from "./palettes";
+import { buildPageColorKey } from "./pageColors";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
@@ -68,6 +67,7 @@ const NAV = [
   { label: "FAQ", path: "/faq" },
   { label: "Catering", path: "/catering" },
   { label: "Past Events", path: "/past-events" },
+  { label: "Client Portal", path: "/client" },
   {
     label: "Celebrating You",
     path: "/package-builder",
@@ -139,6 +139,7 @@ function AppRoutes() {
   return (
     <>
       <SeoHead path={page} />
+      <PaletteRouteSync current={current} />
       <SiteHeader current={current} navigate={navigate} nav={NAV} />
       <ValuePropBar />
       {component}
@@ -150,22 +151,21 @@ function AppRoutes() {
   );
 }
 
-// The site's whole color system (see palettes.js) follows whichever event
-// type the visitor is currently planning for - baby showers and
-// engagements get the sophisticated Emerald & Fuchsia palette, the more
-// playful types (birthdays, Tutu Twirls, holidays, special moments) get
-// the brighter Navy & Coral palette. This keeps the entire visit (not just
-// the one page they're on) feeling like a single, intentional choice
-// rather than the palette silently staying stuck on one default everywhere.
-function PaletteEventTypeSync() {
+// The site's color system (see pageColors.js) is assigned per page, not per
+// visitor choice - each page has its own dominant/secondary/accent colors
+// so the same handful of brand colors recur recognizably without forcing
+// every color into every page. Package Builder is the one exception: its
+// own content already varies by the selected event type, so its colors
+// follow that instead of the fixed per-route assignment.
+function PaletteRouteSync({ current }) {
   const { eventTypeId } = useEventType();
-  const { paletteId, setPaletteId } = usePalette();
+  const { colorKey, setColorKey } = usePalette();
 
   useEffect(() => {
-    const target = EVENT_TYPE_PALETTE_MAP[eventTypeId] || DEFAULT_PALETTE_ID;
-    if (target !== paletteId) setPaletteId(target);
+    const target = buildPageColorKey(current, eventTypeId);
+    if (target !== colorKey) setColorKey(target);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventTypeId]);
+  }, [current, eventTypeId]);
 
   return null;
 }
@@ -173,7 +173,6 @@ function PaletteEventTypeSync() {
 export default function App() {
   return (
     <EventTypeProvider>
-      <PaletteEventTypeSync />
       <EventDateProvider>
         <PackageProvider>
           <CartProvider>

@@ -20,7 +20,12 @@ html, body, #root {
   margin: 0;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  /* `hidden` (rather than `clip`) here computes overflow-y to `auto` too,
+     per spec, which turns body/html into their own scroll container and
+     silently breaks `position: sticky` on the header - it looked correctly
+     coded but never actually stuck. `clip` prevents the same horizontal
+     bleed without that side effect. */
+  overflow-x: clip;
 }
 
 body {

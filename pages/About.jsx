@@ -826,7 +826,7 @@ export default function About() {
       <section
         className="relative overflow-hidden"
         style={{
-          background: `linear-gradient(145deg, ${palette.accent} 0%, ${palette.accentDeep} 72%, ${palette.ink} 100%)`,
+          background: `linear-gradient(145deg, ${palette.secondary} 0%, ${palette.secondaryDeep} 72%, ${palette.ink} 100%)`,
           padding: "92px 24px",
         }}
       >
