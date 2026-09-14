@@ -53,6 +53,7 @@ import babyNaptimeRelayPhoto2 from "./media/babynaptimerelay-2.jpg";
 import photoChallengeMomPhoto1 from "./media/photochallenge-mom-1.jpg";
 import photoChallengeMomPhoto2 from "./media/photochallenge-mom-2.png";
 import photoChallengePillowBumpPhoto from "./media/photochallenge-pillowbump.png";
+import priceIsRightPhoto from "./media/priceisright-babyedition.jpg";
 
 // Per-event pricing/pool/guest-gift/builder-step configuration now lives in
 // eventConfig.js (the "one experience, priced and shaped per event type"
@@ -591,7 +592,7 @@ export const SETUP_ONLY_ITEMS = [
           "From diapers and detergent to strollers and everything Mom actually registered for, put your pricing skills to the test. Guess the price. Guess where it's cheaper. Guess what Mom bought. Rack up the points, play solo or team up with friends.",
       },
     },
-    photos: { default: null },
+    photos: { default: priceIsRightPhoto, babyShower: [priceIsRightPhoto] },
     details: {
       stats: { bestFor: "Competitive groups", length: "15-20 minutes", guests: "Individuals or teams", createsKeepsake: "No", energy: 4 },
       whatItIs: "A baby-themed guessing game inspired by the classic price-guessing format.",
