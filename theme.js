@@ -54,12 +54,13 @@ export function tintHex(hex, amount) {
 
 // A moving-metal gradient built from the palette's own gold tones instead of
 // a second, hardcoded gold scale - bronze/gold/champagne stops that track
-// whatever `gold`/`goldDeep` a given palette defines. `onDark` picks a
-// brighter run of stops (for gold set on a dark section) vs a darker run
-// (for gold text set directly on the light cream bg, which needs more
-// contrast to stay readable).
+// whatever `gold`/`goldDeep` a given palette defines. `goldDeep` is already
+// a real, fixed bronze tone (not computed by darkening `gold`), per the
+// brand sheet's rule against manufacturing "deep" colors by mixing toward
+// black. `onDark` only affects how pale the champagne highlight runs (for
+// gold set on a dark section vs gold text on the light cream bg).
 export function metallicGoldGradient(palette, { onDark = false, angle = "100deg" } = {}) {
-  const bronze = shadeHex(palette.goldDeep, onDark ? 0.05 : 0.2);
+  const bronze = palette.goldDeep;
   const champagne = tintHex(palette.gold, onDark ? 0.65 : 0.4);
   return `linear-gradient(${angle}, ${bronze} 0%, ${palette.gold} 32%, ${champagne} 50%, ${palette.gold} 68%, ${bronze} 100%)`;
 }

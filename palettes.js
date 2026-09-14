@@ -7,7 +7,14 @@
 // up to Supabase storage later) — PhotoSlot.jsx already knows how to render
 // whichever is present and fall back to a placeholder otherwise.
 
-import { shadeHex, tintHex } from "./theme";
+import { tintHex } from "./theme";
+
+// A fixed bronze tone (not computed by darkening the bright gold - see the
+// brand sheet's own "don't darken with black, it kills the energy" rule)
+// used only for small body-sized gold text on the light cream bg, where the
+// bright `gold` itself doesn't have enough contrast to read. Shared by both
+// palettes, same as `gold` itself.
+const GOLD_TEXT = "#8A6A1E";
 
 const PHOTO_KEYS = [
   "essentials",
@@ -35,24 +42,21 @@ export const PALETTES = [
     name: "Signature",
     description: "Emerald & Fuchsia: saturated jewel green, hot fuchsia, warm gold and clean cream.",
     // The brand's official "Emerald & Fuchsia" palette - full saturation
-    // throughout, on purpose. A previous pass on this palette leaned toward
-    // dustier, desaturated tones (sage-green, mustard-gold, beige) that read
-    // as muted heritage stationery rather than this business's actual
-    // bold, colourful event work. Every value below is a named brand color
-    // (or a directly-derived shade/tint of one via shadeHex/tintHex) - keep
-    // it that way; don't reintroduce desaturation via opacity overlays or
-    // gray-leaning "safe" tones.
+    // throughout, on purpose. Every color below is a named tone straight off
+    // the brand color sheet, including the "deep" companion tones used for
+    // two-stop gradients. Per that sheet's own explicit rule: never darken
+    // one of these by mixing toward black/gray to manufacture a "deep"
+    // variant - it reads as muted no matter how it's computed. If a section
+    // needs a darker tone, it uses the sheet's own named deep color.
     bg: "#FFFDF5", // Clean Cream
     surface: "#FFFFFF",
     primary: "#007A4D", // Emerald
-    primaryDeep: "#005C3B", // Deep Emerald
+    primaryDeep: "#00563A", // Deep Emerald
     accent: "#E5006D", // Fuchsia
+    accentDeep: "#B80056", // Deep Fuchsia
     accentBright: "#FF3B8D", // Bright Pink - secondary accent for small highlight moments
     gold: "#D9A928", // Warm Gold
-    // A darker shade of the same gold for text set directly on the light
-    // bg/surface above (the bright `gold` reads clearly on a dark section
-    // but is too low-contrast for body-sized text on cream).
-    goldDeep: shadeHex("#D9A928", 0.35),
+    goldDeep: GOLD_TEXT,
     ink: "#17211D", // Ink
     line: "#E8E1D6", // Warm Taupe
     muted: tintHex("#17211D", 0.35),
@@ -64,12 +68,13 @@ export const PALETTES = [
     description: "Coral & Navy: navy anchor, coral and sunshine yellow energy, for the playful event types.",
     bg: "#FFFDF5", // Clean Cream (shared core neutral)
     surface: "#FFFFFF",
-    primary: tintHex("#102A43", 0.16), // a lighter navy, for gradient depth
-    primaryDeep: "#102A43", // Navy
+    primary: "#102A43", // Navy
+    primaryDeep: "#081E34", // Deep Navy
     accent: "#FF5F57", // Coral
+    accentDeep: "#E0434A", // Deep Coral
     accentBright: "#FFD23F", // Sunshine Yellow - secondary accent
     gold: "#D9A928", // Warm Gold (shared bridge color across both palettes)
-    goldDeep: shadeHex("#D9A928", 0.35),
+    goldDeep: GOLD_TEXT,
     ink: "#17211D", // Ink (shared)
     line: "#E8E1D6", // Warm Taupe (shared)
     muted: tintHex("#17211D", 0.35),

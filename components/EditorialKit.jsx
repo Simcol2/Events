@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { shadeHex, metallicGoldTextStyle, metallicGoldGradient } from "../theme";
+import { metallicGoldTextStyle, metallicGoldGradient } from "../theme";
 
 export const editorialShadow =
   "0 3px 6px rgba(18,32,26,0.05), 0 18px 44px rgba(18,32,26,0.10), 0 36px 70px rgba(18,32,26,0.06)";
@@ -209,7 +209,7 @@ export function PageHero({
 
 export function JewelBand({ children, palette, className = "", style = {}, tone = "primary", glass = false }) {
   const base = tone === "accent" ? palette.accent : palette.primary;
-  const deep = tone === "accent" ? shadeHex(palette.accent, 0.45) : palette.primaryDeep;
+  const deep = tone === "accent" ? palette.accentDeep : palette.primaryDeep;
   return (
     <section
       className={`relative overflow-hidden ${className}`}
@@ -316,7 +316,7 @@ export function PrimaryButton({ children, onClick, palette, fonts, light = false
         ...fonts.bodyFont,
         background: light
           ? metallicGoldGradient(palette, { onDark: false, angle: "170deg" })
-          : `linear-gradient(160deg, ${palette.primary} 0%, ${palette.primaryDeep} 55%, ${shadeHex(palette.primaryDeep, 0.28)} 100%)`,
+          : `linear-gradient(160deg, ${palette.primary} 0%, ${palette.primaryDeep} 100%)`,
         color: light ? palette.primaryDeep : "#FFFFFF",
         padding: "15px 26px",
         fontSize: "12px",

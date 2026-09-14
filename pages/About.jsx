@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
-import { hexToRgba, paperTexture, shadeHex } from "../theme";
+import { hexToRgba, paperTexture } from "../theme";
 
 import keepsakeImage from "../media/timecapsul.png";
 import kindnessImage from "../media/poem.png";
@@ -826,7 +826,7 @@ export default function About() {
       <section
         className="relative overflow-hidden"
         style={{
-          background: `linear-gradient(145deg, ${palette.accent} 0%, ${shadeHex(palette.accent, 0.45)} 72%, ${palette.ink} 100%)`,
+          background: `linear-gradient(145deg, ${palette.accent} 0%, ${palette.accentDeep} 72%, ${palette.ink} 100%)`,
           padding: "92px 24px",
         }}
       >

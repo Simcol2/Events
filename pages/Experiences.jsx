@@ -2,7 +2,6 @@ import React from "react";
 import { Camera, Gift, Heart, Sparkles, WandSparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
-import { shadeHex } from "../theme";
 import {
   ElevatedCard,
   FullBleedStatement,
@@ -264,7 +263,7 @@ export default function Experiences({ navigate }) {
       <section
         className="relative overflow-hidden text-center"
         style={{
-          background: `linear-gradient(145deg, ${shadeHex(palette.accent, 0.45)} 0%, ${palette.accent} 120%)`,
+          background: `linear-gradient(145deg, ${palette.accentDeep} 0%, ${palette.accent} 120%)`,
           padding: "90px 40px",
         }}
       >
