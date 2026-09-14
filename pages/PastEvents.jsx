@@ -16,13 +16,20 @@ const EVENTS = [
     photos: [
       { image: "/photos/oscars-60th-backdrop-wall.jpg", caption: "A Night at the Oscars, dressed in black and gold." },
       { image: "/photos/oscars-60th-red-carpet-entrance.jpg", caption: "The red carpet welcome, stanchions and all." },
-      { image: "/photos/oscars-60th-floral-detail.jpg", caption: "Black feathers and cream blooms, finished in gold." },
-      { image: "/photos/oscars-60th-sweetheart-table.jpg", caption: "The sweetheart table, ready for the guest of honor." },
-      { image: "/photos/oscars-60th-sweetheart-table-wide.jpg", caption: "Gold candlelight framed the head table." },
+      { image: "/photos/oscars-60th-sweetheart-table-wide.jpg", caption: "The sweetheart table, framed in gold candlelight." },
       { image: "/photos/oscars-60th-take-one-leave-one-station.jpg", caption: "Take a fact from 1966, leave a note in return." },
       { image: "/photos/oscars-60th-guest-card-exchange.jpg", caption: "A guest leaves her note at the Take One, Leave One station." },
       { image: "/photos/oscars-60th-saxophonist.jpg", caption: "Live saxophone kept the night moving." },
       { image: "/photos/oscars-60th-drinks-sign.jpg", caption: "A little humor at the bar." },
+    ],
+  },
+  {
+    title: "A \"Mom-to-Bee\" baby shower for Britt.",
+    photos: [
+      { image: "/photos/britt-baby-shower-welcome-poem.jpg", caption: "\"Britt the B\": a custom welcome poem, ready to greet every guest." },
+      { image: "/photos/britt-baby-shower-framed-keepsake.jpg", caption: "A framed portrait and poem, one of the day's most treasured keepsakes." },
+      { image: "/photos/britt-baby-shower-favor-table.jpg", caption: "A table of sweet treats and favor jars for guests to take home." },
+      { image: "/photos/britt-baby-shower-drink-station.jpg", caption: "Mocktails in the making, mid taste test." },
     ],
   },
 ];
