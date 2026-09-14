@@ -299,7 +299,7 @@ export default function PastEvents() {
           {/* Overlap via negative margin keeps both prints in flow, so the
               amount they overlap is fixed no matter each photo's shape. */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <Print photo={babyShower.photos[2]} rotate={2.5} onClick={show(babyShower)} className="w-[74%]" />
+            <Print photo={babyShower.photos[6]} rotate={2.5} onClick={show(babyShower)} className="w-[72%]" />
             <div className="relative z-10 -mt-[12%] ml-auto w-[44%]">
               <Print photo={oscars.photos[3]} rotate={-4} onClick={show(oscars)} />
             </div>
@@ -366,10 +366,12 @@ export default function PastEvents() {
           </div>
         </div>
 
-        {/* two offset prints, so the night gets more than one frame */}
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:mt-20">
-          <Print photo={oscars.photos[4]} rotate={-1.5} onClick={show(oscars)} className="sm:ml-[8%] sm:w-[92%]" />
-          <Print photo={oscars.photos[2]} rotate={2} onClick={show(oscars)} className="sm:mt-12 sm:w-[86%]" />
+        {/* Three offset prints. DOM order is also the phone stacking order:
+            sweetheart table, then the note, then the drinks sign. */}
+        <div className="mt-16 grid gap-6 sm:grid-cols-3 lg:mt-20">
+          <Print photo={oscars.photos[4]} rotate={-1.5} onClick={show(oscars)} />
+          <Print photo={oscars.photos[5]} rotate={1.5} onClick={show(oscars)} className="sm:mt-10" />
+          <Print photo={oscars.photos[2]} rotate={-2} onClick={show(oscars)} className="sm:mt-20" />
         </div>
       </section>
 
