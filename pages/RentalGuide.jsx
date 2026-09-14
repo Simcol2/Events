@@ -479,7 +479,7 @@ export default function RentalGuide() {
         </div>
       </section>
 
-      <JewelBand palette={palette} style={{ padding: "92px 24px" }}>
+      <JewelBand palette={palette} glass style={{ padding: "92px 24px" }}>
         <div className="mx-auto max-w-6xl">
           <SectionIntro
             eyebrow="SECURITY DEPOSITS"

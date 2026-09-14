@@ -69,6 +69,7 @@ export default function Reviews() {
   return (
     <div className="min-h-screen" style={{ ...paperTexture(palette), color: palette.ink }}>
       <div className="relative overflow-hidden px-6 py-20 text-center" style={{ background: palette.primaryDeep }}>
+        <div aria-hidden="true" className="hero-streak" />
         <p className="text-sm font-semibold tracking-[0.35em]" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A SLICE OF G EVENTS
         </p>

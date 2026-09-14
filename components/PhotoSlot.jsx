@@ -35,7 +35,7 @@ export default function PhotoSlot({ photoKey, photoUrl, photoUrls, label, aspect
   if (slides.length) {
     return (
       <div
-        className={`relative w-full ${aspect} overflow-hidden flex items-center justify-center`}
+        className={`glossy-frame relative w-full ${aspect} overflow-hidden flex items-center justify-center`}
         style={{ borderBottom: `1px solid ${palette.line}`, background: fit === "contain" ? `${palette.primary}0D` : "transparent" }}
       >
         {slides.map((url, i) => (
@@ -43,13 +43,15 @@ export default function PhotoSlot({ photoKey, photoUrl, photoUrls, label, aspect
             key={url}
             src={url}
             alt={label}
-            className={`absolute inset-0 w-full h-full ${fit === "contain" ? "object-contain" : "object-cover"}`}
+            className={`glossy-photo absolute inset-0 w-full h-full ${fit === "contain" ? "object-contain" : "object-cover"}`}
             style={{
               opacity: i === index ? 1 : 0,
               transition: `opacity ${CROSSFADE_MS}ms ease`,
             }}
           />
         ))}
+        <div aria-hidden="true" className="glossy-sheen" />
+        <div aria-hidden="true" className="glossy-glaze" />
       </div>
     );
   }

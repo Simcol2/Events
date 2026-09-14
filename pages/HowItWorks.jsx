@@ -170,7 +170,7 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+      <JewelBand palette={palette} glass style={{ padding: "94px 24px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
             eyebrow="GOOD TO KNOW"

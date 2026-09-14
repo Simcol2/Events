@@ -154,7 +154,8 @@ export default function Catering() {
     <div style={{ ...paperTexture(palette), color: palette.ink }}>
       {/* HERO */}
       <section className="relative overflow-hidden" style={{ background: palette.primaryDeep }}>
-        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-2 lg:items-center">
+        <div aria-hidden="true" className="hero-streak" />
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-2 lg:items-center">
           <div>
             <div className="flex items-center gap-3">
               <span className="h-px w-8" style={{ background: palette.gold }} />

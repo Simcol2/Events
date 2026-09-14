@@ -154,7 +154,7 @@ export default function TutuTwirlsTea() {
         </div>
       </section>
 
-      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+      <JewelBand palette={palette} glass style={{ padding: "94px 24px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
             eyebrow="MORE THAN TUTUS"
@@ -283,7 +283,7 @@ export default function TutuTwirlsTea() {
         </div>
       </section>
 
-      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+      <JewelBand palette={palette} tone="accent" style={{ padding: "94px 24px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
             eyebrow="ADD-ON EXPERIENCES"

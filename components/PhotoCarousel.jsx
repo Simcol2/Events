@@ -26,7 +26,13 @@ export default function PhotoCarousel({ photos, alt, className, intervalMs = 400
   if (!list.length) return null;
 
   if (list.length === 1) {
-    return <img src={list[0]} alt={alt} className={className} />;
+    return (
+      <>
+        <img src={list[0]} alt={alt} className={`glossy-photo ${className}`} />
+        <div aria-hidden="true" className="glossy-sheen" />
+        <div aria-hidden="true" className="glossy-glaze" />
+      </>
+    );
   }
 
   return (
@@ -40,10 +46,12 @@ export default function PhotoCarousel({ photos, alt, className, intervalMs = 400
           // screen reader) as duplicate content rather than as different
           // views of the same piece.
           alt={i === 0 ? alt : `${alt}, photo ${i + 1}`}
-          className={`${className} absolute inset-0 transition-opacity duration-1000 ease-in-out`}
+          className={`glossy-photo ${className} absolute inset-0 transition-opacity duration-1000 ease-in-out`}
           style={{ opacity: i === index ? 1 : 0 }}
         />
       ))}
+      <div aria-hidden="true" className="glossy-sheen" />
+      <div aria-hidden="true" className="glossy-glaze" />
     </>
   );
 }

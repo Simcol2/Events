@@ -145,7 +145,7 @@ export default function FAQ() {
         </div>
       </section>
 
-      <JewelBand palette={palette} style={{ padding: "82px 24px" }}>
+      <JewelBand palette={palette} glass style={{ padding: "82px 24px" }}>
         <div className="mx-auto max-w-4xl text-center">
           <Sparkles className="mx-auto" size={20} color={palette.gold} />
           <h2

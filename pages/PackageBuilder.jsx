@@ -536,7 +536,8 @@ export default function PackageBuilder() {
 
   return (
     <div className="min-h-screen pb-32" style={{ ...paperTexture(palette), color: palette.ink }}>
-      <div className="px-6 py-14 text-center" style={{ background: palette.primaryDeep }}>
+      <div className="relative overflow-hidden px-6 py-14 text-center" style={{ background: palette.primaryDeep }}>
+        <div aria-hidden="true" className="hero-streak" />
         <p className="text-sm tracking-[0.3em] font-semibold" style={{ ...fonts.bodyFont, color: palette.gold }}>
           A CURATED {eventType.label.toUpperCase()} EXPERIENCE
         </p>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { shadeHex, metallicGoldTextStyle, metallicGoldGradient } from "../theme";
 
 export const editorialShadow =
   "0 3px 6px rgba(18,32,26,0.05), 0 18px 44px rgba(18,32,26,0.10), 0 36px 70px rgba(18,32,26,0.06)";
@@ -64,7 +65,7 @@ export function Kicker({ children, palette, fonts, light = false }) {
     <p
       style={{
         ...fonts.bodyFont,
-        color: light ? palette.gold : palette.goldDeep,
+        ...metallicGoldTextStyle(palette, { onDark: light }),
         fontSize: "12px",
         fontWeight: 800,
         letterSpacing: "0.18em",
@@ -82,9 +83,9 @@ export function ScriptNote({ children, palette, fonts, light = false, style = {}
       style={{
         ...fonts.scriptFont,
         display: "inline-block",
-        color: light ? palette.gold : palette.accent,
         lineHeight: 1,
         transform: "rotate(-2deg)",
+        ...(light ? metallicGoldTextStyle(palette, { onDark: true }) : { color: palette.accent }),
         ...style,
       }}
     >
@@ -185,15 +186,20 @@ export function PageHero({
 
         {split && (
           <div
-            className="mt-12 overflow-hidden lg:mt-0"
+            className="relative mt-12 overflow-hidden lg:mt-0"
             style={{
               minHeight: "520px",
               borderRadius: "5px",
-              boxShadow: editorialShadow,
+              boxShadow: `${editorialShadow}, 0 30px 60px ${rgba(palette.ink, 0.10)}`,
               border: `1px solid ${rgba(palette.gold, 0.36)}`,
             }}
           >
-            <img src={image} alt={imageAlt} className="h-full min-h-[520px] w-full object-cover" />
+            <img
+              src={image}
+              alt={imageAlt}
+              className="glossy-photo h-full min-h-[520px] w-full object-cover"
+            />
+            <div aria-hidden="true" className="glossy-sheen" />
           </div>
         )}
       </div>
@@ -201,15 +207,18 @@ export function PageHero({
   );
 }
 
-export function JewelBand({ children, palette, className = "", style = {} }) {
+export function JewelBand({ children, palette, className = "", style = {}, tone = "primary", glass = false }) {
+  const base = tone === "accent" ? palette.accent : palette.primary;
+  const deep = tone === "accent" ? shadeHex(palette.accent, 0.45) : palette.primaryDeep;
   return (
     <section
       className={`relative overflow-hidden ${className}`}
       style={{
-        background: `linear-gradient(145deg, ${palette.primaryDeep} 0%, ${palette.primary} 120%)`,
+        background: `linear-gradient(145deg, ${deep} 0%, ${base} 120%)`,
         ...style,
       }}
     >
+      {glass && <div aria-hidden="true" className="hero-streak" />}
       <div
         aria-hidden="true"
         className="absolute rounded-full"
@@ -229,7 +238,7 @@ export function JewelBand({ children, palette, className = "", style = {} }) {
           height: "280px",
           left: "-140px",
           bottom: "-160px",
-          background: rgba(palette.accent, 0.16),
+          background: rgba(tone === "accent" ? palette.gold : palette.accent, 0.16),
         }}
       />
       <div className="relative z-10">{children}</div>
@@ -284,12 +293,12 @@ export function SectionIntro({
 export function ElevatedCard({ children, palette, className = "", style = {} }) {
   return (
     <div
-      className={className}
+      className={`card-satin ${className}`}
       style={{
-        background: palette.surface,
+        background: `linear-gradient(165deg, #FFFFFF 0%, ${palette.surface} 55%, ${rgba(palette.gold, 0.05)} 100%)`,
         border: `1px solid ${rgba(palette.gold, 0.28)}`,
         borderRadius: "6px",
-        boxShadow: editorialShadow,
+        boxShadow: `${editorialShadow}, 0 26px 46px ${rgba(palette.ink, 0.07)}`,
         ...style,
       }}
     >
@@ -302,17 +311,21 @@ export function PrimaryButton({ children, onClick, palette, fonts, light = false
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center gap-3 rounded-full transition-transform hover:-translate-y-0.5"
+      className="btn-gloss inline-flex items-center gap-3 rounded-full transition-transform hover:-translate-y-0.5"
       style={{
         ...fonts.bodyFont,
-        background: light ? palette.gold : `linear-gradient(135deg, ${palette.primary} 0%, ${palette.primaryDeep} 100%)`,
+        background: light
+          ? metallicGoldGradient(palette, { onDark: false, angle: "170deg" })
+          : `linear-gradient(160deg, ${palette.primary} 0%, ${palette.primaryDeep} 55%, ${shadeHex(palette.primaryDeep, 0.28)} 100%)`,
         color: light ? palette.primaryDeep : "#FFFFFF",
         padding: "15px 26px",
         fontSize: "12px",
         fontWeight: 800,
         letterSpacing: "0.09em",
         textTransform: "uppercase",
-        boxShadow: `0 13px 28px ${rgba(palette.primaryDeep, 0.20)}`,
+        boxShadow: light
+          ? `inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 3px rgba(0,0,0,0.12), 0 14px 30px ${rgba(palette.goldDeep, 0.28)}`
+          : `inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -3px 5px rgba(0,0,0,0.30), 0 8px 16px ${rgba(palette.primaryDeep, 0.35)}, 0 18px 34px ${rgba(palette.primaryDeep, 0.22)}`,
         border: light ? "none" : `1px solid ${palette.gold}`,
       }}
     >
@@ -348,7 +361,8 @@ export function FullBleedStatement({
       }}
       aria-label={imageAlt || undefined}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 py-20 sm:px-10">
+      <div aria-hidden="true" className="glossy-sheen" style={{ zIndex: 0 }} />
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-20 sm:px-10">
         <Reveal className="max-w-3xl">
           {eyebrow && <Kicker palette={palette} fonts={fonts} light>{eyebrow}</Kicker>}
           <h2

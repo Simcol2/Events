@@ -340,7 +340,7 @@ export default function Gifts() {
       </section>
 
       {otherGifts.length > 0 && (
-        <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+        <JewelBand palette={palette} glass style={{ padding: "94px 24px" }}>
           <div className="mx-auto max-w-7xl">
             <SectionIntro
               eyebrow="JUST FOR YOU"

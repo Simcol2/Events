@@ -248,7 +248,7 @@ export default function Decor() {
         align="center"
       />
 
-      <JewelBand palette={palette} style={{ padding: "72px 24px" }}>
+      <JewelBand palette={palette} glass style={{ padding: "72px 24px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
             eyebrow="START HERE"

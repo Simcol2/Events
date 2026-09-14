@@ -26,6 +26,54 @@ export function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+function hexToRgb(hex) {
+  const clean = hex.replace("#", "");
+  return [parseInt(clean.slice(0, 2), 16), parseInt(clean.slice(2, 4), 16), parseInt(clean.slice(4, 6), 16)];
+}
+
+function rgbToHex(r, g, b) {
+  const toHex = (v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+// Mixes a palette color toward black (amount 0-1) - used to derive a deep,
+// section-background-worthy tone from a color that's only defined bright
+// (e.g. `accent`), the same way `primaryDeep` already relates to `primary`.
+export function shadeHex(hex, amount) {
+  const [r, g, b] = hexToRgb(hex);
+  const t = 1 - amount;
+  return rgbToHex(r * t, g * t, b * t);
+}
+
+// Mixes a palette color toward white (amount 0-1) - used for a pale
+// "champagne" highlight stop in a metallic gold gradient.
+export function tintHex(hex, amount) {
+  const [r, g, b] = hexToRgb(hex);
+  return rgbToHex(r + (255 - r) * amount, g + (255 - g) * amount, b + (255 - b) * amount);
+}
+
+// A moving-metal gradient built from the palette's own gold tones instead of
+// a second, hardcoded gold scale - bronze/gold/champagne stops that track
+// whatever `gold`/`goldDeep` a given palette defines. `onDark` picks a
+// brighter run of stops (for gold set on a dark section) vs a darker run
+// (for gold text set directly on the light cream bg, which needs more
+// contrast to stay readable).
+export function metallicGoldGradient(palette, { onDark = false, angle = "100deg" } = {}) {
+  const bronze = shadeHex(palette.goldDeep, onDark ? 0.05 : 0.2);
+  const champagne = tintHex(palette.gold, onDark ? 0.65 : 0.4);
+  return `linear-gradient(${angle}, ${bronze} 0%, ${palette.gold} 32%, ${champagne} 50%, ${palette.gold} 68%, ${bronze} 100%)`;
+}
+
+export function metallicGoldTextStyle(palette, opts) {
+  return {
+    backgroundImage: metallicGoldGradient(palette, opts),
+    WebkitBackgroundClip: "text",
+    backgroundClip: "text",
+    color: "transparent",
+    WebkitTextFillColor: "transparent",
+  };
+}
+
 export function paperTexture(palette) {
   return {
     backgroundColor: palette.bg,

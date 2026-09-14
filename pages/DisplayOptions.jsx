@@ -34,7 +34,7 @@ export default function DisplayOptions() {
         </PrimaryButton>
       </PageHero>
 
-      <JewelBand palette={palette} style={{ padding: "92px 24px" }}>
+      <JewelBand palette={palette} glass style={{ padding: "92px 24px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
             eyebrow="CHOOSE YOUR DISPLAY"
@@ -147,7 +147,7 @@ export default function DisplayOptions() {
         </div>
       </section>
 
-      <JewelBand palette={palette} style={{ padding: "84px 24px" }}>
+      <JewelBand palette={palette} tone="accent" style={{ padding: "84px 24px" }}>
         <div className="mx-auto max-w-4xl text-center">
           <Sparkles className="mx-auto" size={20} color={palette.gold} />
           <h2

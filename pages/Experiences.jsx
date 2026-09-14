@@ -2,6 +2,7 @@ import React from "react";
 import { Camera, Gift, Heart, Sparkles, WandSparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { shadeHex } from "../theme";
 import {
   ElevatedCard,
   FullBleedStatement,
@@ -176,7 +177,7 @@ export default function Experiences({ navigate }) {
         </div>
       </section>
 
-      <JewelBand palette={palette} style={{ padding: "94px 24px" }}>
+      <JewelBand palette={palette} glass style={{ padding: "94px 24px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
             eyebrow="MORE WAYS TO MAKE IT YOURS"
@@ -262,7 +263,10 @@ export default function Experiences({ navigate }) {
       {/* "WAIT, THIS IS SO COOL" QUOTE BAND */}
       <section
         className="relative overflow-hidden text-center"
-        style={{ background: palette.primaryDeep, padding: "90px 40px" }}
+        style={{
+          background: `linear-gradient(145deg, ${shadeHex(palette.accent, 0.45)} 0%, ${palette.accent} 120%)`,
+          padding: "90px 40px",
+        }}
       >
         <span
           aria-hidden="true"

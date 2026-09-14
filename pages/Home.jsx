@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles, Truck, Users, Gift, CalendarHeart } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
-import { hexToRgba, paperTexture } from "../theme";
+import { hexToRgba, paperTexture, shadeHex } from "../theme";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -441,6 +441,7 @@ export default function Home({ navigate }) {
           padding: "88px 24px 96px",
         }}
       >
+        <div aria-hidden="true" className="hero-streak" />
         <Blob
           style={{
             width: "520px",
@@ -769,7 +770,7 @@ export default function Home({ navigate }) {
       <section
         className="relative overflow-hidden"
         style={{
-          background: `linear-gradient(135deg, ${palette.primaryDeep} 0%, #073B2A 100%)`,
+          background: `linear-gradient(135deg, ${palette.accent} 0%, ${shadeHex(palette.accent, 0.5)} 100%)`,
           padding: "82px 24px",
         }}
       >
@@ -889,7 +890,7 @@ export default function Home({ navigate }) {
         <div
           className="flex items-center"
           style={{
-            background: `linear-gradient(145deg, #073B2A 0%, ${palette.primaryDeep} 100%)`,
+            background: `linear-gradient(145deg, ${shadeHex(palette.primaryDeep, 0.15)} 0%, ${palette.primaryDeep} 100%)`,
             padding: "68px 36px",
           }}
         >
