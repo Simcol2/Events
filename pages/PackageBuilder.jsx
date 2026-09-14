@@ -7,6 +7,9 @@ import { supabase } from "../supabaseClient";
 import { paperTexture } from "../theme";
 import FeatureCard from "../components/FeatureCard";
 import PackageRequestModal from "../components/PackageRequestModal";
+import BabyShowerBuilderOverview from "../components/BabyShowerBuilderOverview";
+import BuilderStepHeader from "../components/BuilderStepHeader";
+import BabyShowerBuilderSummary from "../components/BabyShowerBuilderSummary";
 import { getEventConfig } from "../eventConfig";
 import {
   MAIN_PACKAGE_ITEMS,
@@ -217,6 +220,42 @@ function StepNav({ steps, step, setStep, palette, fonts }) {
   );
 }
 
+// Small pill rendered above a pool card's name in the Baby Shower builder,
+// so included-vs-paid is legible at a glance instead of only being a small
+// price string beside the title. `included` reflects what clicking the
+// card would DO right now, not just its current state, so a not-yet-picked
+// card with an open slot correctly reads as "included" rather than
+// defaulting to the add-on styling.
+function PricingBadge({ included, additionalPrice, selected, palette, fonts }) {
+  if (included) {
+    return (
+      <span
+        className="inline-flex rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.12em]"
+        style={{
+          ...fonts.bodyFont,
+          background: `${palette.accent}15`,
+          color: palette.accent,
+        }}
+      >
+        INCLUDED CHOICE
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="inline-flex rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.12em]"
+      style={{
+        ...fonts.bodyFont,
+        background: `${palette.gold}16`,
+        color: palette.goldDeep,
+      }}
+    >
+      +${additionalPrice} ADD-ON
+    </span>
+  );
+}
+
 // Games and experiences get "VIEW EXPERIENCE →" on their detail button,
 // decor pieces and logistical add-ons get the more generic "VIEW MORE".
 const ACTIVITY_TYPE_IDS = new Set([
@@ -311,6 +350,9 @@ export default function PackageBuilder() {
   const [decorCatalog, setDecorCatalog] = useState([]);
   const [notice, setNotice] = useState("");
   const [showRequestModal, setShowRequestModal] = useState(false);
+  // Baby Shower only: the marketing overview collapses away once building
+  // starts, per BabyShowerBuilderOverview's onStart handler below.
+  const [builderStarted, setBuilderStarted] = useState(false);
 
   // Keyed by pool step id (e.g. "playConnect"/"createKeep" for Baby Shower,
   // "experiences" for every other event type) -> array of included ids.
@@ -500,112 +542,138 @@ export default function PackageBuilder() {
   };
   const displayIncomplete = Boolean(displayId) && !displaySetupId;
 
-  if (!isBuilt) {
+  // Feeds BabyShowerBuilderSummary's sticky sidebar. Built from the same
+  // state and resolveSetupItem() the pricing engine already uses - nothing
+  // here recalculates a price, it only reshapes existing values into the
+  // {id, name, price} rows the summary groups expect. "playConnect" and
+  // "createKeep" are hardcoded step ids since this summary only ever
+  // renders inside the babyShower branch below.
+  const resolvedPlaySelections = (poolSelections.playConnect || [])
+    .map((id) => {
+      const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+      return item ? { id, name: item.name, price: 0 } : null;
+    })
+    .filter(Boolean);
+  const resolvedKeepSelections = (poolSelections.createKeep || [])
+    .map((id) => {
+      const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+      return item ? { id, name: item.name, price: 0 } : null;
+    })
+    .filter(Boolean);
+  const resolvedGuestGift = { id: keepsake.id, name: resolveKeepsakeName(keepsake, eventTypeId), price: keepsakePrice };
+  const resolvedPaidAddons = [
+    servingDishIncluded && servingDish ? { id: "centerpieceLarge", name: servingDish.name, price: servingDishPrice } : null,
+    ...poolOverflowIds.map((id) => {
+      const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+      return item ? { id, name: item.name, price: item.addonPrice } : null;
+    }),
+    ...selectedAddonIds.map((id) => {
+      const a = nonDigitalAddons.find((x) => x.id === id);
+      return a ? { id, name: a.name, price: a.price } : null;
+    }),
+    ...digitalIds.map((id) => {
+      const a = digitalAddons.find((x) => x.id === id);
+      return a ? { id, name: a.name, price: a.price } : null;
+    }),
+    ...playfulIds.map((id) => {
+      const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+      return item ? { id, name: item.name, price: PLAYFUL_ADDON_PRICE } : null;
+    }),
+  ].filter(Boolean);
+  const resolvedDisplay = displayId
+    ? { id: displayId, name: DISPLAYS.find((d) => d.id === displayId)?.name, price: displayPrice }
+    : null;
+  const resolvedService = { id: serviceStyle.id, name: serviceStyle.label, price: serviceStyle.price };
+
+  // Renders whichever step type is active. `variant` only changes
+  // presentation (heading shown vs. suppressed in favour of
+  // BuilderStepHeader, plain priceLabel vs. PricingBadge on pool cards) -
+  // every handler, price, and piece of state it reads is the same one the
+  // sticky total bar and PackageRequestModal already use below.
+  function renderActiveBuilderStep(variant = "generic") {
+    const showHeading = variant !== "babyShower";
+    const richBadges = variant === "babyShower";
+
     return (
-      <ComingSoon
-        eventType={eventType}
-        palette={palette}
-        fonts={fonts}
-        openPickerForBuilder={openPickerForBuilder}
-      />
-    );
-  }
-
-  if (!hasEventDate) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
-        <div className="max-w-md text-center">
-          <CalendarDays className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.goldDeep }} />
-          <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
-            Let's start with your date.
-          </h1>
-          <p className="mt-3 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-            We check everything in your package against your event date before you build it, so we need that first.
-          </p>
-          <button
-            onClick={() => requestEventDate()}
-            className="mt-6 rounded-full px-8 py-3 text-sm font-semibold tracking-widest text-white"
-            style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
-          >
-            CHOOSE YOUR EVENT DATE
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen pb-32" style={{ ...paperTexture(palette), color: palette.ink }}>
-      <div className="relative overflow-hidden px-6 py-14 text-center" style={{ background: palette.primaryDeep }}>
-        <div aria-hidden="true" className="hero-streak" />
-        <p className="text-sm tracking-[0.3em] font-semibold" style={{ ...fonts.bodyFont, color: palette.gold }}>
-          A CURATED {eventType.label.toUpperCase()} EXPERIENCE
-        </p>
-        <h1 className="mt-2 text-5xl sm:text-6xl font-semibold" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>
-          Build My Experience.
-        </h1>
-        <p className="mt-1 text-2xl italic" style={{ ...fonts.scriptFont, color: palette.accent }}>
-          Choose the experiences that fit your celebration, your people, and the memories you want to make.
-        </p>
-        <p className="mt-4 text-sm tracking-widest" style={{ ...fonts.bodyFont, color: "#FFFFFF99" }}>
-          STARTING AT ${eventConfig.startingPrice.toLocaleString()} + HST
-        </p>
-      </div>
-
-      {(eventTypeId === "birthday" || eventTypeId === "tutuTwirlsTea") && (
-        <div className="px-6">
-          <FullServiceIntro palette={palette} fonts={fonts} />
-          <AdditionalPricingNotes palette={palette} fonts={fonts} />
-        </div>
-      )}
-
-      {(eventTypeId === "birthday" || eventTypeId === "babyShower" || eventTypeId === "tutuTwirlsTea") && (
-        <div className="px-6">
-          <BookingNotice eventTypeId={eventTypeId} palette={palette} fonts={fonts} />
-        </div>
-      )}
-
-      <div className="max-w-5xl mx-auto px-6 py-12">
-        <StepNav steps={steps} step={step} setStep={setStep} palette={palette} fonts={fonts} />
-
-        {currentStep.type === "pool" && (
-          <div>
-            <SectionTitle palette={palette} fonts={fonts}>{currentStep.label}</SectionTitle>
-            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              {currentStep.supportingCopy} {(poolSelections[currentStep.id] || []).length} of {currentStep.chooseCount} selected.
-              Want more? Add the rest as an Additional Keepsake Experience in Make It Yours.
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {poolItemsFor(currentStep).map((item) => {
-                const included = (poolSelections[currentStep.id] || []).includes(item.id);
-                const isAddon = poolOverflowIds.includes(item.id);
-                return (
-                  <FeatureCard
-                    key={item.id}
-                    icon={item.icon}
-                    name={item.name}
-                    tagline={item.tagline}
-                    description={item.description}
-                    photoUrls={item.photoUrls}
-                    priceLabel={included ? "Included" : isAddon ? `+$${item.addonPrice}` : undefined}
-                    selected={included || isAddon}
-                    onClick={() => makePoolHandler(currentStep.id, currentStep.chooseCount)(item.id)}
-                    details={item.details}
-                    viewMoreLabel={viewMoreLabelFor(item.id)}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        )}
+      <>
+        {currentStep.type === "pool" &&
+          (() => {
+            const includedIds = poolSelections[currentStep.id] || [];
+            const isIncludedSelection = (id) => includedIds.includes(id);
+            const isOverflowSelection = (id) => poolOverflowIds.includes(id);
+            const selectedCount = includedIds.length;
+            return (
+              <div>
+                {showHeading && (
+                  <>
+                    <SectionTitle palette={palette} fonts={fonts}>{currentStep.label}</SectionTitle>
+                    <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      {currentStep.supportingCopy} {selectedCount} of {currentStep.chooseCount} selected. Want more?
+                      Add the rest as an Additional Keepsake Experience in Make It Yours.
+                    </p>
+                  </>
+                )}
+                {richBadges && selectedCount >= currentStep.chooseCount && (
+                  <div
+                    className="mb-7 rounded-xl p-4"
+                    style={{ background: `${palette.gold}10`, border: `1px solid ${palette.gold}40` }}
+                  >
+                    <p className="font-semibold" style={{ ...fonts.bodyFont, color: palette.primaryDeep }}>
+                      Your {currentStep.chooseCount} included {currentStep.label} experiences are selected.
+                    </p>
+                    <p className="mt-1 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                      Love another one? You can still add it as an additional experience.
+                    </p>
+                  </div>
+                )}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {poolItemsFor(currentStep).map((item) => {
+                    const included = isIncludedSelection(item.id);
+                    const isAddon = isOverflowSelection(item.id);
+                    const wouldBeIncludedIfPicked = !isAddon && selectedCount < currentStep.chooseCount;
+                    return (
+                      <FeatureCard
+                        key={item.id}
+                        icon={item.icon}
+                        name={item.name}
+                        tagline={item.tagline}
+                        description={item.description}
+                        photoUrls={item.photoUrls}
+                        priceLabel={richBadges ? undefined : included ? "Included" : isAddon ? `+$${item.addonPrice}` : undefined}
+                        badge={
+                          richBadges ? (
+                            <PricingBadge
+                              included={included || (!isAddon && wouldBeIncludedIfPicked)}
+                              additionalPrice={item.addonPrice}
+                              selected={included || isAddon}
+                              palette={palette}
+                              fonts={fonts}
+                            />
+                          ) : undefined
+                        }
+                        selected={included || isAddon}
+                        onClick={() => makePoolHandler(currentStep.id, currentStep.chooseCount)(item.id)}
+                        details={item.details}
+                        viewMoreLabel={viewMoreLabelFor(item.id)}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
 
         {currentStep.type === "guestGift" && (
           <div>
-            <SectionTitle palette={palette} fonts={fonts}>Choose a Guest Gift</SectionTitle>
-            <p className="text-base mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Send your guests home with a little something to remember the day by. Every package includes a guest
-              gift, upgrade if you'd like something different.
-            </p>
+            {showHeading && (
+              <>
+                <SectionTitle palette={palette} fonts={fonts}>Choose a Guest Gift</SectionTitle>
+                <p className="text-base mb-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Send your guests home with a little something to remember the day by. Every package includes a
+                  guest gift, upgrade if you'd like something different.
+                </p>
+              </>
+            )}
             <div className="flex items-center gap-2 mb-5">
               <Users size={16} color={palette.muted} />
               <label className="text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>Guest count</label>
@@ -641,11 +709,15 @@ export default function PackageBuilder() {
 
         {currentStep.type === "addons" && (
           <div>
-            <SectionTitle palette={palette} fonts={fonts}>Make It Yours</SectionTitle>
-            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Add the little details that make your experience feel like yours: another keepsake experience,
-              customization, or a piece for the table.
-            </p>
+            {showHeading && (
+              <>
+                <SectionTitle palette={palette} fonts={fonts}>Make It Yours</SectionTitle>
+                <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Add the little details that make your experience feel like yours: another keepsake experience,
+                  customization, or a piece for the table.
+                </p>
+              </>
+            )}
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {servingDish && (
                 <FeatureCard
@@ -724,10 +796,14 @@ export default function PackageBuilder() {
 
         {currentStep.type === "playful" && (
           <div>
-            <SectionTitle palette={palette} fonts={fonts}>Want Something Playful?</SectionTitle>
-            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Add a game that gets everyone talking, laughing, and competing. Each playful add-on is +${PLAYFUL_ADDON_PRICE}.
-            </p>
+            {showHeading && (
+              <>
+                <SectionTitle palette={palette} fonts={fonts}>Want Something Playful?</SectionTitle>
+                <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Add a game that gets everyone talking, laughing, and competing. Each playful add-on is +${PLAYFUL_ADDON_PRICE}.
+                </p>
+              </>
+            )}
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {PLAYFUL_ADDON_IDS.map((id) => {
                 const item = resolveSetupItem(id, eventTypeId, decorCatalog);
@@ -754,10 +830,14 @@ export default function PackageBuilder() {
 
         {currentStep.type === "service" && (
           <div>
-            <SectionTitle palette={palette} fonts={fonts}>How Involved Do You Want to Be?</SectionTitle>
-            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Self Setup is for Toronto pickup or Toronto drop-off. Need delivery? Please contact us.
-            </p>
+            {showHeading && (
+              <>
+                <SectionTitle palette={palette} fonts={fonts}>How Involved Do You Want to Be?</SectionTitle>
+                <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Self Setup is for Toronto pickup or Toronto drop-off. Need delivery? Please contact us.
+                </p>
+              </>
+            )}
             <div className="grid sm:grid-cols-2 gap-6">
               {SERVICE_STYLE_OPTIONS.map((s) => (
                 <FeatureCard
@@ -776,11 +856,15 @@ export default function PackageBuilder() {
 
         {currentStep.type === "display" && (
           <div>
-            <SectionTitle palette={palette} fonts={fonts}>The Memory Display</SectionTitle>
-            <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              Give the memories a place to shine. No Display is included at no extra charge, this is an optional
-              upgrade you can add either way you set up your experience.
-            </p>
+            {showHeading && (
+              <>
+                <SectionTitle palette={palette} fonts={fonts}>The Memory Display</SectionTitle>
+                <p className="text-base mb-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Give the memories a place to shine. No Display is included at no extra charge, this is an optional
+                  upgrade you can add either way you set up your experience.
+                </p>
+              </>
+            )}
             <div className="grid sm:grid-cols-2 gap-6 mb-8">
               {DISPLAYS.map((d) => (
                 <FeatureCard
@@ -818,6 +902,217 @@ export default function PackageBuilder() {
             )}
           </div>
         )}
+      </>
+    );
+  }
+
+  // Notice toast + sticky total bar + submit modal, shared by both the
+  // generic layout and the babyShower branch below - identical handlers,
+  // identical totals, just mounted from two different return statements.
+  function renderStickyFooterAndModal() {
+    return (
+      <>
+        {notice && (
+          <div
+            className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-5 py-3 text-sm font-semibold tracking-wide text-white shadow-lg"
+            style={{ ...fonts.bodyFont, background: palette.ink }}
+          >
+            {notice}
+          </div>
+        )}
+
+        <div className="fixed bottom-0 left-0 right-0 px-6 py-4" style={{ background: palette.surface, borderTop: `1px solid ${palette.line}` }}>
+          <div className="max-w-5xl mx-auto flex items-center justify-between">
+            <div>
+              <p className="text-sm tracking-widest" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                SUBTOTAL ${subtotal.toLocaleString()} + HST ${hst.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <p className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            </div>
+            <button
+              disabled={isLastStep && displayIncomplete}
+              onClick={isLastStep ? () => setShowRequestModal(true) : goToNextStep}
+              className="px-6 py-3 rounded-full text-sm font-semibold tracking-widest text-white disabled:opacity-30"
+              style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+            >
+              {isLastStep ? "REQUEST MY EXPERIENCE" : "NEXT"}
+            </button>
+          </div>
+        </div>
+
+        {showRequestModal && (
+          <PackageRequestModal
+            total={total}
+            subtotal={subtotal}
+            hst={hst}
+            onClose={() => setShowRequestModal(false)}
+            summary={{
+              eventTypeLabel: eventType.label,
+              startingPrice: eventConfig.startingPrice,
+              experiences: summaryPicks.map(({ id, included }) => {
+                const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+                return item ? { name: item.name, included, price: item.addonPrice } : null;
+              }).filter(Boolean),
+              servingDish: servingDishIncluded && servingDish ? { name: servingDish.name, price: servingDishPrice } : null,
+              playful: playfulIds.map((id) => {
+                const item = resolveSetupItem(id, eventTypeId, decorCatalog);
+                return item ? { name: item.name, price: PLAYFUL_ADDON_PRICE } : null;
+              }).filter(Boolean),
+              guestGift: { name: resolveKeepsakeName(keepsake, eventTypeId), price: keepsakePrice },
+              addons: [
+                ...selectedAddonIds.map((id) => {
+                  const a = nonDigitalAddons.find((x) => x.id === id);
+                  return a ? { name: a.name, price: a.price } : null;
+                }),
+                ...digitalIds.map((id) => {
+                  const a = digitalAddons.find((x) => x.id === id);
+                  return a ? { name: a.name, price: a.price } : null;
+                }),
+              ].filter(Boolean),
+              serviceStyle: { name: serviceStyle.label, price: serviceStyle.price },
+              display: displayId
+                ? { name: DISPLAYS.find((d) => d.id === displayId)?.name, setup: displaySetup?.label, price: displayPrice }
+                : { name: "No Display", price: 0 },
+            }}
+          />
+        )}
+      </>
+    );
+  }
+
+  if (!isBuilt) {
+    return (
+      <ComingSoon
+        eventType={eventType}
+        palette={palette}
+        fonts={fonts}
+        openPickerForBuilder={openPickerForBuilder}
+      />
+    );
+  }
+
+  if (!hasEventDate) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
+        <div className="max-w-md text-center">
+          <CalendarDays className="mx-auto" size={26} strokeWidth={1.3} style={{ color: palette.goldDeep }} />
+          <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
+            Let's start with your date.
+          </h1>
+          <p className="mt-3 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            We check everything in your package against your event date before you build it, so we need that first.
+          </p>
+          <button
+            onClick={() => requestEventDate()}
+            className="mt-6 rounded-full px-8 py-3 text-sm font-semibold tracking-widest text-white"
+            style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+          >
+            CHOOSE YOUR EVENT DATE
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (eventTypeId === "babyShower") {
+    return (
+      <main className="pb-32" style={{ background: palette.bg, color: palette.ink }}>
+        {!builderStarted ? (
+          <>
+            <BabyShowerBuilderOverview
+              startingPrice={eventConfig.startingPrice}
+              onStart={() => {
+                setBuilderStarted(true);
+                requestAnimationFrame(() => {
+                  document.getElementById("baby-shower-builder")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+              }}
+              palette={palette}
+              fonts={fonts}
+            />
+            <BookingNotice eventTypeId={eventTypeId} palette={palette} fonts={fonts} />
+          </>
+        ) : null}
+
+        <section id="baby-shower-builder" className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:py-20">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+            <div>
+              <StepNav steps={steps} step={step} setStep={setStep} palette={palette} fonts={fonts} />
+
+              <BuilderStepHeader
+                stepNumber={stepIndex + 1}
+                totalSteps={steps.length}
+                title={currentStep.customerTitle || currentStep.label}
+                description={currentStep.supportingCopy || ""}
+                includedLabel={
+                  currentStep.type === "pool"
+                    ? `${currentStep.includedLabel} Starting price: $${eventConfig.startingPrice.toLocaleString()}.`
+                    : null
+                }
+                selectedCount={currentStep.type === "pool" ? (poolSelections[currentStep.id] || []).length : undefined}
+                chooseCount={currentStep.type === "pool" ? currentStep.chooseCount : undefined}
+                palette={palette}
+                fonts={fonts}
+              />
+
+              {renderActiveBuilderStep("babyShower")}
+            </div>
+
+            <BabyShowerBuilderSummary
+              basePrice={eventConfig.startingPrice}
+              currentTotal={total}
+              playSelections={resolvedPlaySelections}
+              keepSelections={resolvedKeepSelections}
+              guestGift={resolvedGuestGift}
+              addons={resolvedPaidAddons}
+              display={resolvedDisplay}
+              service={resolvedService}
+              palette={palette}
+              fonts={fonts}
+            />
+          </div>
+        </section>
+
+        {renderStickyFooterAndModal()}
+      </main>
+    );
+  }
+
+  return (
+    <div className="min-h-screen pb-32" style={{ ...paperTexture(palette), color: palette.ink }}>
+      <div className="relative overflow-hidden px-6 py-14 text-center" style={{ background: palette.primaryDeep }}>
+        <div aria-hidden="true" className="hero-streak" />
+        <p className="text-sm tracking-[0.3em] font-semibold" style={{ ...fonts.bodyFont, color: palette.gold }}>
+          A CURATED {eventType.label.toUpperCase()} EXPERIENCE
+        </p>
+        <h1 className="mt-2 text-5xl sm:text-6xl font-semibold" style={{ ...fonts.displayFont, color: "#FFFFFF" }}>
+          Build My Experience.
+        </h1>
+        <p className="mt-1 text-2xl italic" style={{ ...fonts.scriptFont, color: palette.accent }}>
+          Choose the experiences that fit your celebration, your people, and the memories you want to make.
+        </p>
+        <p className="mt-4 text-sm tracking-widest" style={{ ...fonts.bodyFont, color: "#FFFFFF99" }}>
+          STARTING AT ${eventConfig.startingPrice.toLocaleString()} + HST
+        </p>
+      </div>
+
+      {(eventTypeId === "birthday" || eventTypeId === "tutuTwirlsTea") && (
+        <div className="px-6">
+          <FullServiceIntro palette={palette} fonts={fonts} />
+          <AdditionalPricingNotes palette={palette} fonts={fonts} />
+        </div>
+      )}
+
+      {(eventTypeId === "birthday" || eventTypeId === "tutuTwirlsTea") && (
+        <div className="px-6">
+          <BookingNotice eventTypeId={eventTypeId} palette={palette} fonts={fonts} />
+        </div>
+      )}
+
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <StepNav steps={steps} step={step} setStep={setStep} palette={palette} fonts={fonts} />
+
+        {renderActiveBuilderStep("generic")}
 
         {summaryPicks.length > 0 && (
           <div className="mt-14">
@@ -856,71 +1151,7 @@ export default function PackageBuilder() {
         )}
       </div>
 
-      {notice && (
-        <div
-          className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full px-5 py-3 text-sm font-semibold tracking-wide text-white shadow-lg"
-          style={{ ...fonts.bodyFont, background: palette.ink }}
-        >
-          {notice}
-        </div>
-      )}
-
-      {/* Sticky total */}
-      <div className="fixed bottom-0 left-0 right-0 px-6 py-4" style={{ background: palette.surface, borderTop: `1px solid ${palette.line}` }}>
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div>
-            <p className="text-sm tracking-widest" style={{ ...fonts.bodyFont, color: palette.muted }}>
-              SUBTOTAL ${subtotal.toLocaleString()} + HST ${hst.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-            <p className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-          </div>
-          <button
-            disabled={isLastStep && displayIncomplete}
-            onClick={isLastStep ? () => setShowRequestModal(true) : goToNextStep}
-            className="px-6 py-3 rounded-full text-sm font-semibold tracking-widest text-white disabled:opacity-30"
-            style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
-          >
-            {isLastStep ? "REQUEST MY EXPERIENCE" : "NEXT"}
-          </button>
-        </div>
-      </div>
-
-      {showRequestModal && (
-        <PackageRequestModal
-          total={total}
-          subtotal={subtotal}
-          hst={hst}
-          onClose={() => setShowRequestModal(false)}
-          summary={{
-            eventTypeLabel: eventType.label,
-            startingPrice: eventConfig.startingPrice,
-            experiences: summaryPicks.map(({ id, included }) => {
-              const item = resolveSetupItem(id, eventTypeId, decorCatalog);
-              return item ? { name: item.name, included, price: item.addonPrice } : null;
-            }).filter(Boolean),
-            servingDish: servingDishIncluded && servingDish ? { name: servingDish.name, price: servingDishPrice } : null,
-            playful: playfulIds.map((id) => {
-              const item = resolveSetupItem(id, eventTypeId, decorCatalog);
-              return item ? { name: item.name, price: PLAYFUL_ADDON_PRICE } : null;
-            }).filter(Boolean),
-            guestGift: { name: resolveKeepsakeName(keepsake, eventTypeId), price: keepsakePrice },
-            addons: [
-              ...selectedAddonIds.map((id) => {
-                const a = nonDigitalAddons.find((x) => x.id === id);
-                return a ? { name: a.name, price: a.price } : null;
-              }),
-              ...digitalIds.map((id) => {
-                const a = digitalAddons.find((x) => x.id === id);
-                return a ? { name: a.name, price: a.price } : null;
-              }),
-            ].filter(Boolean),
-            serviceStyle: { name: serviceStyle.label, price: serviceStyle.price },
-            display: displayId
-              ? { name: DISPLAYS.find((d) => d.id === displayId)?.name, setup: displaySetup?.label, price: displayPrice }
-              : { name: "No Display", price: 0 },
-          }}
-        />
-      )}
+      {renderStickyFooterAndModal()}
     </div>
   );
 }

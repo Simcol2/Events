@@ -50,6 +50,7 @@ export default function FeatureCard({
   photoUrls,
   fit,
   priceLabel,
+  badge,
   selected,
   onClick,
   details,
@@ -82,6 +83,7 @@ export default function FeatureCard({
     >
       <PhotoSlot photoKey={photoKey} photoUrl={photoUrl} photoUrls={photoUrls} label={name} fit={fit} />
       <div className="p-5 flex-1 flex flex-col">
+        {badge && <div className="mb-2">{badge}</div>}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2.5">
             <div
