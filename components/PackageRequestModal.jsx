@@ -24,9 +24,8 @@ function LineRow({ label, price }) {
 // customer never reaches this screen wondering what exactly they chose.
 // Captures contact info and the running total, writes to package_requests,
 // then the business owner follows up to confirm every pick against real
-// availability and payment. HST is a presentational breakdown only - the
-// stored `total` field is the same grand total shown here.
-export default function PackageRequestModal({ total, subtotal, hst, summary, onClose }) {
+// availability and payment.
+export default function PackageRequestModal({ total, summary, onClose }) {
   const { eventDate } = useEventDate();
 
   const [name, setName] = useState("");
@@ -172,17 +171,9 @@ export default function PackageRequestModal({ total, subtotal, hst, summary, onC
                 )}
 
                 <div className="border-t border-[#E6E6E6] pt-3">
-                  <div className="flex items-center justify-between font-[Space_Grotesk] text-sm text-[#8C846F]">
-                    <span>Subtotal</span>
-                    <span>${subtotal?.toLocaleString()}</span>
-                  </div>
-                  <div className="mt-1 flex items-center justify-between font-[Space_Grotesk] text-sm text-[#8C846F]">
-                    <span>HST (13%)</span>
-                    <span>${hst?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between font-['Fraunces'] text-xl font-semibold text-[#0B4933]">
+                  <div className="flex items-center justify-between font-['Fraunces'] text-xl font-semibold text-[#0B4933]">
                     <span>Total</span>
-                    <span>${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span>${total.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

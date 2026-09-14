@@ -26,7 +26,6 @@ import {
   DISPLAYS,
   DISPLAY_SETUP_OPTIONS,
   SERVICE_STYLE_OPTIONS,
-  HST_RATE,
   resolvePackageItem,
   resolveKeepsakeName,
 } from "../packageContent";
@@ -525,8 +524,7 @@ export default function PackageBuilder() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventConfig, poolOverflowTotal, playfulTotal, servingDishPrice, selectedAddonIds, digitalIds, keepsakePrice, displayPrice, serviceStyle]);
 
-  const hst = subtotal * HST_RATE;
-  const total = subtotal + hst;
+  const total = subtotal;
 
   const summaryPicks = [
     ...poolSteps.flatMap((s) => (poolSelections[s.id] || []).map((id) => ({ id, included: true }))),
@@ -925,9 +923,9 @@ export default function PackageBuilder() {
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <div>
               <p className="text-sm tracking-widest" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                SUBTOTAL ${subtotal.toLocaleString()} + HST ${hst.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                TOTAL
               </p>
-              <p className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              <p className="text-2xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>${total.toLocaleString()}</p>
             </div>
             <button
               disabled={isLastStep && displayIncomplete}
@@ -943,8 +941,6 @@ export default function PackageBuilder() {
         {showRequestModal && (
           <PackageRequestModal
             total={total}
-            subtotal={subtotal}
-            hst={hst}
             onClose={() => setShowRequestModal(false)}
             summary={{
               eventTypeLabel: eventType.label,
@@ -1092,7 +1088,7 @@ export default function PackageBuilder() {
           Choose the experiences that fit your celebration, your people, and the memories you want to make.
         </p>
         <p className="mt-4 text-sm tracking-widest" style={{ ...fonts.bodyFont, color: "#FFFFFF99" }}>
-          STARTING AT ${eventConfig.startingPrice.toLocaleString()} + HST
+          STARTING AT ${eventConfig.startingPrice.toLocaleString()}
         </p>
       </div>
 

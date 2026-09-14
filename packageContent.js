@@ -1277,5 +1277,3 @@ export const SERVICE_STYLE_OPTIONS = [
       "You don't lift a finger. We bring everything, set it up, style it, make sure every detail is ready, and take it all back when the celebration is over.",
   },
 ];
-
-export const HST_RATE = 0.13;
