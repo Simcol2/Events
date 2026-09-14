@@ -62,6 +62,7 @@ export default function DisplayOptions() {
                     tagline={display.tagline}
                     description={display.description}
                     photoUrl={display.photoUrl}
+                    photoUrls={display.photoUrls}
                   />
                 </div>
               </Reveal>

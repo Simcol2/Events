@@ -1106,25 +1106,28 @@ export const DISPLAYS = [
     },
   },
   {
-    id: "ohBabyGridWall",
+    id: "customWallPanelInstallation",
     icon: LayoutGrid,
-    name: "Oh Baby",
-    tagline: "Playful squares, pops of color.",
+    name: "Customized Wall Panel Installation",
+    tagline: "One wall, styled infinite ways.",
     description:
-      "A dimensional grid wall in crisp white, accented with colored cube inserts and warm up-lighting, paired with an arched light-up frame, flowing draping, and a personalized neon sign. Approximately 8 feet wide, with fully customizable draping and accent colors to match your theme.",
-    photoUrl: "/photos/oh-baby-grid-wall-display.jpg",
+      "A modular light-up panel wall that's fully restyled for every event, from disco-ball glam to fresh florals to bold birthday color. The panels, lighting, neon signage, and finishing touches are all customized to match your theme.",
+    photoUrls: [
+      "/photos/wall-panel-oh-baby.png",
+      "/photos/wall-panel-hey-baby-hey.png",
+      "/photos/wall-panel-birthday-vibes.png",
+    ],
     details: {
-      summary: "A dimensional grid wall with colored cube accents, an arched light-up frame, and a personalized neon sign, about 8 feet wide.",
+      summary: "A modular light-up panel wall, fully restyled with different colors, florals, balloons, and neon signage to match any theme.",
       howItWorks: [
-        "Share the wording you want lit up in neon.",
-        "Tell us your draping and accent colors, it's fully customizable.",
+        "Tell us your event theme and the wording you want lit up in neon.",
+        "We style the panels, lighting, and finishing touches to match.",
         "We build and bring the display to your event.",
         "It's set up free standing near a power outlet.",
       ],
       goodToKnow: [
-        "Approximately 8 feet wide.",
+        "The styling shown in the photos reflects past installations, exact styling is customized per event.",
         "Requires a nearby outlet.",
-        "Draping and accent color can be customized, contact us for requests.",
         "Setup pricing is separate, see Setup Pricing below.",
       ],
     },
