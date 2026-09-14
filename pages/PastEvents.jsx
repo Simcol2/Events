@@ -51,18 +51,17 @@ const EVENTS = [
     ],
   },
   {
-    id: "tutu-twirls",
-    label: "Tutu Twirls & Tea",
+    id: "oscars-guests",
+    label: "60th Birthday",
     body:
-      "Sparkles, tutus, big smiles and even bigger imaginations. This pop-up was all about letting kids be exactly who they want to be.",
+      "Guests arrived dressed for the occasion, and the backdrop did the rest. Give people a corner worth standing in, and they will use it.",
     note: "Happiness looks so good on them.",
     photos: [
-      { src: "/photos/tutu-twirls-tea-hero.jpg", ratio: 1.09, alt: "The Tutu Twirls dress-up tent" },
-      { src: "/photos/tutu-twirls-tea-wardrobe.jpg", ratio: 1.5, alt: "A rack of tutus and dress-up costumes" },
-      { src: "/photos/tutu-twirls-tea-photo-wall.jpg", ratio: 0.71, alt: "The Tutu Twirls photo wall" },
-      { src: "/photos/tutu-twirls-tea-table.jpg", ratio: 1.5, alt: "The tea party table setting" },
-      { src: "/photos/tutu-twirls-tea-backyard.jpg", ratio: 1.5, alt: "The backyard setup" },
-      { src: "/photos/tutu-twirls-tea-birthday-star.jpg", ratio: 1.0, alt: "The birthday star in a tulle gown" },
+      { src: "/photos/oscars-guests-pair.jpg", ratio: 0.89, alt: "Two guests dressed up at the Oscars backdrop" },
+      { src: "/photos/oscars-60th-saxophonist.jpg", ratio: 0.75, alt: "A live saxophonist performing" },
+      { src: "/photos/oscars-guest-black-dress.jpg", ratio: 0.88, alt: "A guest posing at the Oscars backdrop" },
+      { src: "/photos/guest-red-dress.jpg", ratio: 0.75, alt: "A guest laughing in front of a red, gold and black balloon arch" },
+      { src: "/photos/oscars-60th-guest-card-exchange.jpg", ratio: 0.75, alt: "A guest leaving a note at the Take One, Leave One station" },
     ],
   },
 ];
@@ -226,7 +225,7 @@ export default function PastEvents() {
   const { openPickerForBuilder } = useEventType();
   const [open, setOpen] = useState(null);
 
-  const [oscars, babyShower, tutu] = EVENTS;
+  const [oscars, babyShower, oscarsNight] = EVENTS;
   const show = (event) => () => setOpen(event);
 
   return (
@@ -300,7 +299,7 @@ export default function PastEvents() {
           {/* Overlap via negative margin keeps both prints in flow, so the
               amount they overlap is fixed no matter each photo's shape. */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            <Print photo={tutu.photos[4]} rotate={2.5} onClick={show(tutu)} className="w-[74%]" />
+            <Print photo={babyShower.photos[2]} rotate={2.5} onClick={show(babyShower)} className="w-[74%]" />
             <div className="relative z-10 -mt-[12%] ml-auto w-[44%]">
               <Print photo={oscars.photos[3]} rotate={-4} onClick={show(oscars)} />
             </div>
@@ -465,14 +464,14 @@ export default function PastEvents() {
                 className="absolute"
                 style={{ left: "-3%", top: "-4%", width: "38%", height: "26px", background: FUCHSIA, transform: "rotate(-6deg)", opacity: 0.9 }}
               />
-              <Print photo={tutu.photos[0]} rotate={-1.5} onClick={show(tutu)} className="relative w-[82%]" />
+              <Print photo={oscarsNight.photos[0]} rotate={-1.5} onClick={show(oscarsNight)} className="relative w-[82%]" />
               <div className="relative z-10 -mt-[10%] ml-auto w-[40%]">
-                <Print photo={tutu.photos[2]} rotate={4} onClick={show(tutu)} />
+                <Print photo={oscarsNight.photos[2]} rotate={4} onClick={show(oscarsNight)} />
               </div>
             </div>
 
             <div className="mt-6 lg:mt-0">
-              <Label color={FUCHSIA}>{tutu.label}</Label>
+              <Label color={FUCHSIA}>{oscarsNight.label}</Label>
 
               <h2
                 className="mt-4"
@@ -484,28 +483,28 @@ export default function PastEvents() {
                   transform: "rotate(-1.5deg)",
                 }}
               >
-                Dress-up fun is always a good idea.
+                Everybody understood the dress code.
               </h2>
 
               <p className="mt-6 max-w-md" style={{ ...fonts.bodyFont, color: "#292929", fontSize: "16px", lineHeight: 1.8 }}>
-                {tutu.body}
+                {oscarsNight.body}
               </p>
 
-              <PhotoButton onClick={show(tutu)} color={FUCHSIA}>
+              <PhotoButton onClick={show(oscarsNight)} color={FUCHSIA}>
                 SEE MORE PHOTOS
               </PhotoButton>
 
               <div className="mt-8">
                 <HandNote color={GOLD_DEEP} rotate={-3} style={{ maxWidth: "240px" }}>
-                  &ldquo;{tutu.note}&rdquo;
+                  &ldquo;{oscarsNight.note}&rdquo;
                 </HandNote>
               </div>
             </div>
           </div>
 
           <div className="mt-24 grid gap-6 sm:grid-cols-2">
-            <Print photo={tutu.photos[1]} rotate={-1} onClick={show(tutu)} />
-            <Print photo={tutu.photos[3]} rotate={1.5} onClick={show(tutu)} className="sm:mt-10" />
+            <Print photo={oscarsNight.photos[1]} rotate={-1} onClick={show(oscarsNight)} />
+            <Print photo={oscarsNight.photos[3]} rotate={1.5} onClick={show(oscarsNight)} className="sm:mt-10" />
           </div>
         </div>
       </section>
