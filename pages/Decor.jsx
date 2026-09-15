@@ -260,7 +260,7 @@ export default function Decor() {
             light
           />
 
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-12 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {CATEGORIES.map((cat, i) => {
               const active = selectedCategory === cat.id;
 
@@ -273,7 +273,7 @@ export default function Decor() {
                   >
                     <ElevatedCard
                       palette={palette}
-                      className="h-full p-3.5 transition-transform group-hover:-translate-y-1 sm:p-6"
+                      className="h-full p-2.5 transition-transform group-hover:-translate-y-1 sm:p-6"
                       style={{
                         background: active ? palette.gold : palette.surface,
                         borderColor: active ? palette.gold : rgba(palette.gold, 0.26),
@@ -293,19 +293,19 @@ export default function Decor() {
                       </span>
 
                       <h3
-                        className="mt-1.5 text-[1.05rem] sm:mt-5 sm:text-[1.55rem]"
+                        className="mt-0.5 text-[0.95rem] sm:mt-5 sm:text-[1.55rem]"
                         style={{
                           ...fonts.displayFont,
                           color: palette.primaryDeep,
                           fontWeight: 700,
-                          lineHeight: 1.1,
+                          lineHeight: 1.05,
                         }}
                       >
                         {cat.label}
                       </h3>
 
                       <p
-                        className="mt-1 text-[12px] sm:mt-2 sm:text-[13px]"
+                        className="mt-0.5 text-[11px] sm:mt-2 sm:text-[13px]"
                         style={{
                           ...fonts.bodyFont,
                           color: active ? palette.primaryDeep : palette.muted,
