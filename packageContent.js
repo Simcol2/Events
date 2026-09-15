@@ -701,8 +701,8 @@ export const SETUP_ONLY_ITEMS = [
 // Baby Shower and Tutu Twirls & Tea are the two-pool event types; every
 // other event type uses a single 4-pick pool plus the separate Playful
 // Add-On step (see PLAYFUL_ADDON_IDS below).
-export const PLAY_CONNECT_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight", "kindnessStation"];
-export const CREATE_KEEP_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "nurseryRhyme", "unsolicitedAdviceBox"];
+export const PLAY_CONNECT_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight", "kindnessStation", "photoChallenge", "guessArrival"];
+export const CREATE_KEEP_IDS = ["pictureThis", "storybook", "wallPuzzle", "timeCapsule", "nurseryRhyme", "unsolicitedAdviceBox"];
 export const ENGAGEMENT_POOL_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
 export const NEUTRAL_POOL_IDS = ["pictureThis", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
 // Tutu Twirls & Tea: two 3-item pools, choose 2 of 3 each (not 3 of 3, so
@@ -752,12 +752,13 @@ export const SETUP_ADDON_PRICE = 125;
 export const CENTERPIECE_LARGE_CATALOG_NAME = "Customizable Serving Dish (Center Piece) - Large";
 
 // Optional upgrades layered on top of the fixed package via the Package
-// Builder's Make It Yours step. nurseryRhyme (Custom Art Piece) also lives
-// in CREATE_KEEP_IDS above as a free-pick candidate - when not chosen free,
-// Make It Yours surfaces it at its price here through the pool-overflow
-// mechanic instead of rendering it twice. pictureThisDigitalAlbum is
-// tech/digital in nature and only enabled once Picture This is in the
-// package - see DIGITAL_ADDON_IDS below.
+// Builder's Make It Yours step. nurseryRhyme (Custom Art Piece) and
+// guessArrival (Guess the Arrival) also live in a pool above as free-pick
+// candidates - when not chosen free, Make It Yours surfaces them at their
+// price here through the pool-overflow mechanic instead of rendering them
+// twice. pictureThisDigitalAlbum is tech/digital in nature and only
+// enabled once Picture This is in the package - see DIGITAL_ADDON_IDS
+// below.
 export const ADDONS = [
   {
     id: "guessArrival",

@@ -332,6 +332,7 @@ function resolveSetupItem(id, eventTypeId, decorCatalog) {
       tagline: addon.tagline,
       description: addon.description,
       photoUrls: addon.photoUrls || (addon.photoUrl ? [addon.photoUrl] : []),
+      fit: addon.fit,
       addonPrice: addon.price ?? SETUP_ADDON_PRICE,
       details: addon.details,
     };
@@ -487,7 +488,7 @@ export default function PackageBuilder() {
     poolSteps.some((s) => (poolSelections[s.id] || []).includes("pictureThis")) || poolOverflowIds.includes("pictureThis");
 
   const nonDigitalAddons = ADDONS.filter(
-    (a) => !DIGITAL_ADDON_IDS.includes(a.id) && a.id !== "nurseryRhyme"
+    (a) => !DIGITAL_ADDON_IDS.includes(a.id) && a.id !== "nurseryRhyme" && a.id !== "guessArrival"
   );
   const digitalAddons = ADDONS.filter((a) => DIGITAL_ADDON_IDS.includes(a.id));
 
