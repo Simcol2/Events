@@ -102,8 +102,8 @@ export const EVENT_CONFIGS = {
         type: "display",
         id: "display",
         label: "Your Display",
-        customerTitle: "How should everything look?",
-        supportingCopy: "Choose whether you want to add a styled display moment to your experience.",
+        customerTitle: "The first thing your guests see",
+        supportingCopy: "A welcome sign is included with every package, ready to greet your guests as they arrive.",
       },
       {
         type: "service",

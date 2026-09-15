@@ -25,6 +25,7 @@ import {
   CUSTOM_SERVING_DISH,
   DISPLAYS,
   DISPLAY_SETUP_OPTIONS,
+  INCLUDED_WELCOME_SIGN,
   SERVICE_STYLE_OPTIONS,
   resolvePackageItem,
   resolveKeepsakeName,
@@ -225,7 +226,7 @@ function StepNav({ steps, step, setStep, palette, fonts }) {
 // card would DO right now, not just its current state, so a not-yet-picked
 // card with an open slot correctly reads as "included" rather than
 // defaulting to the add-on styling.
-function PricingBadge({ included, additionalPrice, selected, palette, fonts }) {
+function PricingBadge({ included, additionalPrice, selected, label = "INCLUDED CHOICE", palette, fonts }) {
   if (included) {
     return (
       <span
@@ -236,7 +237,7 @@ function PricingBadge({ included, additionalPrice, selected, palette, fonts }) {
           color: palette.accent,
         }}
       >
-        INCLUDED CHOICE
+        {label}
       </span>
     );
   }
@@ -559,6 +560,16 @@ export default function PackageBuilder() {
     })
     .filter(Boolean);
   const resolvedGuestGift = { id: keepsake.id, name: resolveKeepsakeName(keepsake, eventTypeId), price: keepsakePrice };
+
+  // The full pool option lists (not just what's been picked), for
+  // BabyShowerBuilderOverview's tiles - so a customer can see what's
+  // available in each category before they ever start building.
+  const playConnectOptionNames = (poolSteps.find((s) => s.id === "playConnect")?.poolIds || [])
+    .map((id) => resolveSetupItem(id, eventTypeId, decorCatalog)?.name)
+    .filter(Boolean);
+  const createKeepOptionNames = (poolSteps.find((s) => s.id === "createKeep")?.poolIds || [])
+    .map((id) => resolveSetupItem(id, eventTypeId, decorCatalog)?.name)
+    .filter(Boolean);
   const resolvedPaidAddons = [
     servingDishIncluded && servingDish ? { id: "centerpieceLarge", name: servingDish.name, price: servingDishPrice } : null,
     ...poolOverflowIds.map((id) => {
@@ -578,9 +589,11 @@ export default function PackageBuilder() {
       return item ? { id, name: item.name, price: PLAYFUL_ADDON_PRICE } : null;
     }),
   ].filter(Boolean);
-  const resolvedDisplay = displayId
-    ? { id: displayId, name: DISPLAYS.find((d) => d.id === displayId)?.name, price: displayPrice }
-    : null;
+  const resolvedDisplay = eventTypeId === "babyShower"
+    ? { id: INCLUDED_WELCOME_SIGN.id, name: INCLUDED_WELCOME_SIGN.name, price: 0 }
+    : displayId
+      ? { id: displayId, name: DISPLAYS.find((d) => d.id === displayId)?.name, price: displayPrice }
+      : null;
   const resolvedService = { id: serviceStyle.id, name: serviceStyle.label, price: serviceStyle.price };
 
   // Renders whichever step type is active. `variant` only changes
@@ -852,7 +865,28 @@ export default function PackageBuilder() {
           </div>
         )}
 
-        {currentStep.type === "display" && (
+        {currentStep.type === "display" && richBadges && (
+          <div>
+            <div className="grid sm:grid-cols-2 gap-6">
+              <FeatureCard
+                icon={INCLUDED_WELCOME_SIGN.icon}
+                name={INCLUDED_WELCOME_SIGN.name}
+                tagline={INCLUDED_WELCOME_SIGN.tagline}
+                description={INCLUDED_WELCOME_SIGN.description}
+                photoUrl={INCLUDED_WELCOME_SIGN.photoUrl}
+                selected
+                details={INCLUDED_WELCOME_SIGN.details}
+                badge={<PricingBadge included label="INCLUDED" selected palette={palette} fonts={fonts} />}
+              />
+            </div>
+            <p className="mt-6 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Want your own colours, wording, or theme instead? Add a Customized Welcome Sign in the Make It Yours
+              step.
+            </p>
+          </div>
+        )}
+
+        {currentStep.type === "display" && !richBadges && (
           <div>
             {showHeading && (
               <>
@@ -966,9 +1000,11 @@ export default function PackageBuilder() {
                 }),
               ].filter(Boolean),
               serviceStyle: { name: serviceStyle.label, price: serviceStyle.price },
-              display: displayId
-                ? { name: DISPLAYS.find((d) => d.id === displayId)?.name, setup: displaySetup?.label, price: displayPrice }
-                : { name: "No Display", price: 0 },
+              display: eventTypeId === "babyShower"
+                ? { name: INCLUDED_WELCOME_SIGN.name, price: 0 }
+                : displayId
+                  ? { name: DISPLAYS.find((d) => d.id === displayId)?.name, setup: displaySetup?.label, price: displayPrice }
+                  : { name: "No Display", price: 0 },
             }}
           />
         )}
@@ -1017,6 +1053,8 @@ export default function PackageBuilder() {
           <>
             <BabyShowerBuilderOverview
               startingPrice={eventConfig.startingPrice}
+              playConnectOptions={playConnectOptionNames}
+              createKeepOptions={createKeepOptionNames}
               onStart={() => {
                 setBuilderStarted(true);
                 requestAnimationFrame(() => {

@@ -46,6 +46,7 @@ import lilRootsPhoto from "./media/lilroots.png";
 import arrivalPhoto from "./media/web_arrival.png";
 import nurseryRhymePhoto from "./media/poem.png";
 import welcomeSignPhoto from "./media/welcomesign.png";
+import includedWelcomeSignPhoto from "./media/welcomesign-included.png";
 import readyToPopPhoto from "./media/readytopop.png";
 import readyToPopPhoto2 from "./media/readytopop-2.jpg";
 import babyNaptimeRelayPhoto1 from "./media/babynaptimerelay-1.png";
@@ -1033,6 +1034,32 @@ export function resolveKeepsakeName(keepsake, eventTypeId) {
   if (!keepsake.nameByEventType) return keepsake.name;
   return keepsake.nameByEventType[eventTypeId] || keepsake.nameByEventType.default;
 }
+
+// The baby shower package's included display: a ready-made welcome sign,
+// no extra charge. Customizing it to match a theme/colours/wording is the
+// existing "Welcome Sign" ADDONS entry above ($125) - a separate product,
+// not a price tier of this one.
+export const INCLUDED_WELCOME_SIGN = {
+  id: "includedWelcomeSign",
+  icon: Hand,
+  name: "Welcome Sign",
+  tagline: "The first thing your guests see.",
+  description:
+    "A ready-made welcome sign on a stand, set up to greet your guests as they arrive. Included with every baby shower package at no extra charge.",
+  photoUrl: includedWelcomeSignPhoto,
+  details: {
+    summary: "A ready-made welcome sign, included with every baby shower package.",
+    howItWorks: [
+      "It arrives ready to go, no design steps needed.",
+      "It's set up on its stand at your entrance.",
+      "It greets your guests for the full length of your event.",
+    ],
+    goodToKnow: [
+      "Included at no extra charge.",
+      "Want your own colours, wording, or theme instead? Add a Customized Welcome Sign in Make It Yours.",
+    ],
+  },
+};
 
 // Backdrop/display setups - never included in a package, always an add-on.
 // Both displays cost the same regardless of which one is chosen; price

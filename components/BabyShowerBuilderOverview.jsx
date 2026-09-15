@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowRight, Check, Gift, Heart, Sparkles } from "lucide-react";
 
-function PackagePiece({ number, title, description, icon: Icon, palette, fonts }) {
+function PackagePiece({ number, title, description, options, icon: Icon, palette, fonts }) {
   return (
     <div
       className="relative rounded-[2rem] p-6 sm:p-7"
@@ -49,11 +49,29 @@ function PackagePiece({ number, title, description, icon: Icon, palette, fonts }
       >
         {description}
       </p>
+
+      {options?.length > 0 && (
+        <ul className="mt-4 space-y-1.5 border-t pt-4" style={{ borderColor: palette.line }}>
+          {options.map((option) => (
+            <li key={option} className="flex items-start gap-2 text-sm leading-5" style={{ ...fonts.bodyFont, color: palette.ink }}>
+              <Check size={13} className="mt-1 flex-shrink-0" style={{ color: palette.accent }} />
+              <span>{option}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
-export default function BabyShowerBuilderOverview({ startingPrice = 1295, onStart, palette, fonts }) {
+export default function BabyShowerBuilderOverview({
+  startingPrice = 1295,
+  playConnectOptions = [],
+  createKeepOptions = [],
+  onStart,
+  palette,
+  fonts,
+}) {
   return (
     <section className="mx-auto max-w-7xl px-5 pb-16 pt-10 sm:px-8 lg:pb-24 lg:pt-16">
       <div className="grid gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
@@ -153,7 +171,8 @@ export default function BabyShowerBuilderOverview({ startingPrice = 1295, onStar
           <PackagePiece
             number="2"
             title="Play & Connect"
-            description="Games and experiences that get people talking, laughing and joining in."
+            description="Choose 2. Games and experiences that get people talking, laughing and joining in."
+            options={playConnectOptions}
             icon={Sparkles}
             palette={palette}
             fonts={fonts}
@@ -162,7 +181,8 @@ export default function BabyShowerBuilderOverview({ startingPrice = 1295, onStar
           <PackagePiece
             number="2"
             title="Create & Keep"
-            description="Meaningful moments your guests help turn into something worth keeping."
+            description="Choose 2. Meaningful moments your guests help turn into something worth keeping."
+            options={createKeepOptions}
             icon={Heart}
             palette={palette}
             fonts={fonts}
@@ -196,8 +216,14 @@ export default function BabyShowerBuilderOverview({ startingPrice = 1295, onStar
           YOUR STARTING PRICE INCLUDES
         </p>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {["4 selected experiences", "1 included guest gift", "Custom preparation", "Activity materials & signage"].map(
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {[
+            "4 selected experiences",
+            "1 included guest gift",
+            "1 welcome sign",
+            "Custom preparation",
+            "Activity materials & signage",
+          ].map(
             (item) => (
               <div key={item} className="flex items-start gap-2.5">
                 <Check size={16} className="mt-0.5 flex-shrink-0" style={{ color: palette.accent }} />
