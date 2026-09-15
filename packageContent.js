@@ -663,15 +663,15 @@ export const SETUP_ONLY_ITEMS = [
     copy: {
       default: {
         name: "Unsolicited Advice Box",
-        tagline: "Everyone has advice. For once, you're actually asking for it.",
+        tagline: "Everyone has advice, whether they asked for it or not. This time, there's actually somewhere to put it.",
         description:
-          "Give guests a chance to share their wisdom, warnings, questionable suggestions, and things they really wish someone had told them. Guests choose from a selection of prompted note cards, write their advice on the back, then drop it into the clear acrylic advice box for you to read later.",
+          "Guests choose a prompted note card and share their best advice, worst advice, hard-earned wisdom, questionable tips, or the thing nobody warned them about. Once written, cards are dropped into the clear acrylic Unsolicited Advice Box for the host to discover later. Prompts include Useful Advice, Terrible Advice, Something Nobody Warned You About, You'll Thank Me Later, We Listen We Don't Judge, and Anything Else You Think We Should Know. It's part activity, part keepsake, and potentially part evidence that some advice should, in fact, remain unsolicited.",
       },
       babyShower: {
         name: "Unsolicited Advice Box",
-        tagline: "Everyone has parenting advice. For once, you're actually asking for it.",
+        tagline: "Everyone has advice for new parents, whether they asked for it or not. This time, there's actually somewhere to put it.",
         description:
-          "Give guests a chance to share their wisdom, warnings, questionable suggestions, and things they really wish someone had told them. Guests choose from a selection of prompted note cards, write their advice on the back, then drop it into the clear acrylic advice box for the parents-to-be to read later.",
+          "Guests choose a prompted note card and share their best advice, worst advice, hard-earned wisdom, questionable parenting tips, or the thing nobody warned them about. Once written, cards are dropped into the clear acrylic Unsolicited Advice Box for the parents-to-be to discover later. Prompts include Useful Advice, Terrible Advice, Something Nobody Warned You About, You'll Thank Me Later, We Listen We Don't Judge, and Anything Else You Think We Should Know. It's part baby-shower activity, part keepsake, and potentially part evidence that some advice should, in fact, remain unsolicited.",
       },
     },
     photos: { default: [unsolicitedAdviceBoxPhoto], babyShower: [unsolicitedAdviceBoxPhoto] },
@@ -684,7 +684,7 @@ export const SETUP_ONLY_ITEMS = [
         "The card gets dropped into the clear acrylic advice box.",
         "You read through every card after the celebration.",
       ],
-      whatsIncluded: ["Clear acrylic Unsolicited Advice box", "Instruction sign", "25 prompted advice cards"],
+      whatsIncluded: ["Clear acrylic Unsolicited Advice Box", "Instruction sign", "Prompted advice cards"],
       whatGuestsDo: "Choose a prompt, write their advice (useful, terrible, or somewhere in between), and drop it in the box.",
       whatTheFamilyKeeps: "A box full of real advice, warnings, and well wishes from the people who came to celebrate, to read whenever you need it.",
       spaceRequired: "Small tabletop or dedicated station.",
