@@ -639,7 +639,7 @@ export default function PackageBuilder() {
                     </p>
                   </div>
                 )}
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
                   {poolItemsFor(currentStep).map((item) => {
                     const included = isIncludedSelection(item.id);
                     const isAddon = isOverflowSelection(item.id);
@@ -700,7 +700,7 @@ export default function PackageBuilder() {
                 style={{ ...fonts.bodyFont, border: `1px solid ${palette.line}`, color: palette.ink }}
               />
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
               {KEEPSAKES.map((k) => (
                 <FeatureCard
                   key={k.id}
@@ -732,7 +732,7 @@ export default function PackageBuilder() {
                 </p>
               </>
             )}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
               {servingDish && (
                 <FeatureCard
                   key="centerpieceLarge"
@@ -819,7 +819,7 @@ export default function PackageBuilder() {
                 </p>
               </>
             )}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
               {PLAYFUL_ADDON_IDS.map((id) => {
                 const item = resolveSetupItem(id, eventTypeId, decorCatalog);
                 if (!item) return null;
