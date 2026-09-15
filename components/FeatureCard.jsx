@@ -106,7 +106,7 @@ export default function FeatureCard({
         <p className="text-sm italic mb-2 sm:text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
           {tagline}
         </p>
-        <p className="text-sm leading-relaxed flex-1 sm:text-base" style={{ ...fonts.bodyFont, color: palette.ink }}>
+        <p className="text-sm leading-relaxed line-clamp-2 sm:text-base" style={{ ...fonts.bodyFont, color: palette.ink }}>
           {description}
         </p>
         <CardStats stats={details?.stats} palette={palette} fonts={fonts} />
