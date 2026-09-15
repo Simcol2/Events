@@ -157,7 +157,8 @@ function BookingNotice({ eventTypeId, palette, fonts }) {
 // picker just swaps what renders here, same as every built type does.
 const BUILT_EVENT_TYPES = ["babyShower", "birthday", "tutuTwirlsTea"];
 
-function ComingSoon({ eventType, palette, fonts, openPickerForBuilder }) {
+function ComingSoon({ eventType, palette, fonts, openPickerForBuilder, navigate }) {
+  const isHoliday = eventType.id === "holiday";
   return (
     <div className="flex min-h-screen items-center justify-center px-6" style={{ background: palette.bg }}>
       <div className="max-w-md text-center">
@@ -165,13 +166,34 @@ function ComingSoon({ eventType, palette, fonts, openPickerForBuilder }) {
         <h1 className="mt-4 text-3xl font-semibold" style={{ ...fonts.displayFont, color: palette.primaryDeep }}>
           {eventType.label} is coming soon.
         </h1>
-        <p className="mt-3 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
-          We're still building this experience out. Only a limited number of event types are open for booking right now, but we'd love to hear what you have in mind, so reach out and we'll help you plan it directly.
-        </p>
+        {isHoliday ? (
+          <p className="mt-3 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            We're still building out the full Holiday Event package, but you don't need to wait for
+            that. If you're hosting at home this year, Build Your Table Box lets you rent individual
+            pieces, glassware, chargers, centrepieces and candles, for your own table.
+          </p>
+        ) : (
+          <p className="mt-3 text-base leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
+            We're still building this experience out. Only a limited number of event types are open for booking right now, but we'd love to hear what you have in mind, so reach out and we'll help you plan it directly.
+          </p>
+        )}
+        {isHoliday && (
+          <button
+            onClick={() => navigate?.("/table-box")}
+            className="mt-6 rounded-full px-8 py-3 text-sm font-semibold tracking-widest text-white"
+            style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+          >
+            BUILD YOUR TABLE BOX
+          </button>
+        )}
         <button
           onClick={() => openPickerForBuilder()}
-          className="mt-6 rounded-full px-8 py-3 text-sm font-semibold tracking-widest text-white"
-          style={{ ...fonts.bodyFont, background: palette.primaryDeep }}
+          className={`rounded-full px-8 py-3 text-sm font-semibold tracking-widest ${isHoliday ? "mt-3" : "mt-6 text-white"}`}
+          style={
+            isHoliday
+              ? { ...fonts.bodyFont, color: palette.primaryDeep, background: "transparent" }
+              : { ...fonts.bodyFont, background: palette.primaryDeep }
+          }
         >
           CHOOSE A DIFFERENT EXPERIENCE
         </button>
@@ -342,7 +364,7 @@ function resolveSetupItem(id, eventTypeId, decorCatalog) {
   return null;
 }
 
-export default function PackageBuilder() {
+export default function PackageBuilder({ navigate }) {
   const { palette, fonts } = usePalette();
   const { eventTypeId, eventType, openPickerForBuilder } = useEventType();
   const { hasEventDate, requestEventDate } = useEventDate();
@@ -1076,6 +1098,7 @@ export default function PackageBuilder() {
         palette={palette}
         fonts={fonts}
         openPickerForBuilder={openPickerForBuilder}
+        navigate={navigate}
       />
     );
   }
