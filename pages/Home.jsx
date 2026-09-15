@@ -434,6 +434,65 @@ export default function Home({ navigate }) {
         </div>
       </section>
 
+      {/* Holiday Table Box teaser */}
+      <section style={{ ...paperTexture(palette), padding: "84px 24px" }}>
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2 lg:items-center">
+          <Reveal>
+            <div
+              className="overflow-hidden rounded-[4px]"
+              style={{ aspectRatio: "4/3", boxShadow: elevatedShadow, border: `1px solid ${hexToRgba(palette.gold, 0.35)}` }}
+            >
+              <img
+                src="/photos/table-box-after.jpg"
+                alt="A home dining table styled for the holidays with rented pieces"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          </Reveal>
+          <Reveal delay={80}>
+            <p
+              style={{
+                ...fonts.bodyFont,
+                color: palette.primaryDeep,
+                fontSize: "12px",
+                fontWeight: 800,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+              }}
+            >
+              THE HOLIDAYS ARE COMING
+            </p>
+            <h2
+              className="mt-4"
+              style={{
+                ...fonts.displayFont,
+                color: palette.primaryDeep,
+                fontSize: "clamp(2.2rem, 4vw, 3.2rem)",
+                fontWeight: 640,
+                lineHeight: 1.05,
+              }}
+            >
+              Your turn to host this year?
+            </h2>
+            <p
+              className="mt-5 max-w-md"
+              style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "16px", lineHeight: 1.7 }}
+            >
+              Rent only what you need. Glassware, chargers, centrepieces and candles, chosen piece by
+              piece for your table, starting at a $50 minimum.
+            </p>
+            <button
+              onClick={() => navigate("/table-box")}
+              className="mt-7 inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-xs font-bold tracking-[0.1em]"
+              style={{ ...fonts.bodyFont, background: palette.primaryDeep, color: "#FFFFFF", textTransform: "uppercase" }}
+            >
+              Build Your Holiday Table Box
+              <ArrowRight size={15} />
+            </button>
+          </Reveal>
+        </div>
+      </section>
+
       {/* Featured experiences */}
       <section
         className="relative overflow-hidden"

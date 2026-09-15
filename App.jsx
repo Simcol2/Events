@@ -15,6 +15,7 @@ import { buildPageColorKey } from "./pageColors";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
+import TableBox from "./pages/TableBox";
 import Gifts from "./pages/Gifts";
 import HowItWorks from "./pages/HowItWorks";
 import Experiences from "./pages/Experiences";
@@ -60,6 +61,7 @@ const NAV = [
       { label: "Decor Collection", path: "/decor" },
       { label: "Display Walls", path: "/display-options" },
       { label: "Gifts & Gift Wrap", path: "/gifts" },
+      { label: "Table Box", path: "/table-box" },
     ],
   },
   { label: "Experiences", path: "/experiences" },
@@ -115,6 +117,7 @@ function AppRoutes() {
   const routeMap = {
     "/": { component: <Home navigate={navigate} />, current: "home" },
     "/decor": { component: <Decor navigate={navigate} />, current: "decor" },
+    "/table-box": { component: <TableBox navigate={navigate} />, current: "table-box" },
     "/gifts": { component: <Gifts navigate={navigate} />, current: "gifts" },
     "/catering": { component: <Catering navigate={navigate} />, current: "catering" },
     "/how-it-works": { component: <HowItWorks navigate={navigate} />, current: "how-it-works" },

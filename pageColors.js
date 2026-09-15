@@ -38,6 +38,7 @@ export const PAGE_COLORS = {
   "display-options": { dominant: "emerald", secondary: "fuchsia", accent: "gold" },
   decor: { dominant: "emerald", secondary: "cream", accent: "fuchsia" }, // Rentals
   "rental-guide": { dominant: "emerald", secondary: "cream", accent: "fuchsia" },
+  "table-box": { dominant: "emerald", secondary: "coral", accent: "gold" },
   gifts: { dominant: "fuchsia", secondary: "emerald", accent: "gold" },
 };
 
