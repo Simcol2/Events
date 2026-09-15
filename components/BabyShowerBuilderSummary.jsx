@@ -121,7 +121,7 @@ export default function BabyShowerBuilderSummary({
         <div className="divide-y px-6" style={{ borderColor: palette.line }}>
           <SummaryGroup label="Play & Connect" items={playSelections} emptyText="Choose 2" palette={palette} fonts={fonts} />
 
-          <SummaryGroup label="Create & Keep" items={keepSelections} emptyText="Choose 2" palette={palette} fonts={fonts} />
+          <SummaryGroup label="Create & Keep" items={keepSelections} emptyText="Choose 3" palette={palette} fonts={fonts} />
 
           <SummaryGroup
             label="Guest Gift"

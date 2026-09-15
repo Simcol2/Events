@@ -23,6 +23,7 @@ import {
   Lightbulb,
   Flower2,
   LayoutGrid,
+  NotebookPen,
 } from "lucide-react";
 import pictureThisPhoto from "./media/picturethis.png";
 import ohBabyCenterPhoto from "./media/ohbabycenter.png";
@@ -46,6 +47,7 @@ import lilRootsPhoto from "./media/lilroots.png";
 import arrivalPhoto from "./media/web_arrival.png";
 import nurseryRhymePhoto from "./media/poem.png";
 import welcomeSignPhoto from "./media/welcomesign.png";
+import unsolicitedAdviceBoxPhoto from "./media/unsolicited-advice-box.png";
 import includedWelcomeSignPhoto from "./media/welcomesign-included.png";
 import readyToPopPhoto from "./media/readytopop.png";
 import readyToPopPhoto2 from "./media/readytopop-2.jpg";
@@ -655,6 +657,40 @@ export const SETUP_ONLY_ITEMS = [
       optionalAddOns: ["Photo printing", "Custom photo album", "Digital gallery", "Prize for challenge winner"],
     },
   },
+  {
+    id: "unsolicitedAdviceBox",
+    icon: NotebookPen,
+    copy: {
+      default: {
+        name: "Unsolicited Advice Box",
+        tagline: "Everyone has advice. For once, you're actually asking for it.",
+        description:
+          "Give guests a chance to share their wisdom, warnings, questionable suggestions, and things they really wish someone had told them. Guests choose from a selection of prompted note cards, write their advice on the back, then drop it into the clear acrylic advice box for you to read later.",
+      },
+      babyShower: {
+        name: "Unsolicited Advice Box",
+        tagline: "Everyone has parenting advice. For once, you're actually asking for it.",
+        description:
+          "Give guests a chance to share their wisdom, warnings, questionable suggestions, and things they really wish someone had told them. Guests choose from a selection of prompted note cards, write their advice on the back, then drop it into the clear acrylic advice box for the parents-to-be to read later.",
+      },
+    },
+    photos: { default: [unsolicitedAdviceBoxPhoto], babyShower: [unsolicitedAdviceBoxPhoto] },
+    details: {
+      stats: { bestFor: "Guests who love giving their two cents", length: "2-5 minutes per guest", guests: "Everyone", createsKeepsake: "Yes", energy: 2 },
+      whatItIs: "A clear acrylic advice box paired with a set of prompted note cards, so guests can share their best (and worst) advice for you to read later.",
+      howItWorks: [
+        "Guests pick a prompt card from the display.",
+        "They write their advice on the back of the card.",
+        "The card gets dropped into the clear acrylic advice box.",
+        "You read through every card after the celebration.",
+      ],
+      whatsIncluded: ["Clear acrylic Unsolicited Advice box", "Instruction sign", "25 prompted advice cards"],
+      whatGuestsDo: "Choose a prompt, write their advice (useful, terrible, or somewhere in between), and drop it in the box.",
+      whatTheFamilyKeeps: "A box full of real advice, warnings, and well wishes from the people who came to celebrate, to read whenever you need it.",
+      spaceRequired: "Small tabletop or dedicated station.",
+      approximateDuration: "Throughout the event.",
+    },
+  },
 ];
 
 // Experience pools, per event type. No id appears in more than one pool for
@@ -666,7 +702,7 @@ export const SETUP_ONLY_ITEMS = [
 // other event type uses a single 4-pick pool plus the separate Playful
 // Add-On step (see PLAYFUL_ADDON_IDS below).
 export const PLAY_CONNECT_IDS = ["babyTrivia", "babyNaptimeRelay", "priceIsRight", "kindnessStation"];
-export const CREATE_KEEP_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "nurseryRhyme"];
+export const CREATE_KEEP_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "nurseryRhyme", "unsolicitedAdviceBox"];
 export const ENGAGEMENT_POOL_IDS = ["pictureThis", "photoChallenge", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
 export const NEUTRAL_POOL_IDS = ["pictureThis", "storybook", "wallPuzzle", "timeCapsule", "kindnessStation"];
 // Tutu Twirls & Tea: two 3-item pools, choose 2 of 3 each (not 3 of 3, so

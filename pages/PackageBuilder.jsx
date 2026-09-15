@@ -271,6 +271,7 @@ const ACTIVITY_TYPE_IDS = new Set([
   "guessArrival",
   "nurseryRhyme",
   "voiceNotes",
+  "unsolicitedAdviceBox",
 ]);
 function viewMoreLabelFor(id) {
   return ACTIVITY_TYPE_IDS.has(id) ? "VIEW EXPERIENCE →" : "VIEW MORE";

@@ -157,7 +157,7 @@ export default function BabyShower() {
               className="rounded-sm border px-6 py-4 text-lg font-semibold"
               style={{ ...fonts.bodyFont, color: palette.primaryDeep, borderColor: palette.line, background: palette.surface }}
             >
-              Choose 2 Keepsake Experiences
+              Choose 3 Keepsake Experiences
             </p>
           </div>
 

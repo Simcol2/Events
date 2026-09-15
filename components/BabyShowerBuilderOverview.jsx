@@ -97,7 +97,7 @@ export default function BabyShowerBuilderOverview({
               letterSpacing: "-0.04em",
             }}
           >
-            Four experiences.
+            Five experiences.
             <br />
             One guest gift.
             <br />
@@ -111,9 +111,9 @@ export default function BabyShowerBuilderOverview({
               color: palette.muted,
             }}
           >
-            Start with four interactive experiences: choose{" "}
+            Start with five interactive experiences: choose{" "}
             <strong style={{ color: palette.ink }}>2 ways to Play & Connect</strong> and{" "}
-            <strong style={{ color: palette.ink }}>2 ways to Create & Keep</strong>. Then choose your included
+            <strong style={{ color: palette.ink }}>3 ways to Create & Keep</strong>. Then choose your included
             guest gift and personalize the celebration with displays, optional extras, or full-service styling.
           </p>
 
@@ -179,9 +179,9 @@ export default function BabyShowerBuilderOverview({
           />
 
           <PackagePiece
-            number="2"
+            number="3"
             title="Create & Keep"
-            description="Choose 2. Meaningful moments your guests help turn into something worth keeping."
+            description="Choose 3. Meaningful moments your guests help turn into something worth keeping."
             options={createKeepOptions}
             icon={Heart}
             palette={palette}
@@ -218,7 +218,7 @@ export default function BabyShowerBuilderOverview({
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {[
-            "4 selected experiences",
+            "5 selected experiences",
             "1 included guest gift",
             "1 welcome sign",
             "Custom preparation",

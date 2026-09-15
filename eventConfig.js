@@ -55,9 +55,9 @@ export const EVENT_CONFIGS = {
     // description come from here, so this stays the one place to edit them.
     overview: {
       eyebrow: "BUILD YOUR BABY SHOWER EXPERIENCE",
-      headline: "Four experiences. One guest gift. Built around your people.",
+      headline: "Five experiences. One guest gift. Built around your people.",
       description:
-        "Start with four interactive experiences: choose 2 ways to Play & Connect and 2 ways to Create & Keep. Then choose your included guest gift and personalize the celebration with displays, extras, or full-service styling.",
+        "Start with five interactive experiences: choose 2 ways to Play & Connect and 3 ways to Create & Keep. Then choose your included guest gift and personalize the celebration with displays, extras, or full-service styling.",
     },
     // A dedicated array (not the shared SERVICE_AND_DISPLAY_STEPS) so its
     // step order, labels, and copy can differ from tutuTwirlsTea's without
@@ -79,10 +79,10 @@ export const EVENT_CONFIGS = {
         label: "Create & Keep",
         customerTitle: "What should you keep from the day?",
         supportingCopy:
-          "Choose 2 experiences that turn your guests' words, photos, and memories into something meaningful to keep.",
-        includedLabel: "Choose 2. Included in your starting price.",
+          "Choose 3 experiences that turn your guests' words, photos, and memories into something meaningful to keep.",
+        includedLabel: "Choose 3. Included in your starting price.",
         poolIds: CREATE_KEEP_IDS,
-        chooseCount: 2,
+        chooseCount: 3,
       },
       {
         type: "guestGift",
