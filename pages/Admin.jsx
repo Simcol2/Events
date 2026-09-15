@@ -22,7 +22,7 @@ function PasscodeGate({ onUnlocked }) {
       onUnlocked();
     } catch (err) {
       clearStoredPasscode();
-      setError("Incorrect passcode.");
+      setError(err.message || "Incorrect passcode.");
     } finally {
       setChecking(false);
     }
