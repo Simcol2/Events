@@ -74,7 +74,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
   return (
     <article
       onClick={() => onOpenDetail?.(active)}
-      className={`group cursor-pointer overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
+      className={`group flex h-full cursor-pointer flex-col overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
     >
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
         {normalizePhotos(active.photos).length ? (
@@ -95,7 +95,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
         )}
       </div>
 
-      <div className="px-1 pb-3 pt-4">
+      <div className="flex flex-1 flex-col px-1 pb-3 pt-4">
         <div className="font-[Space_Grotesk] text-[11px] font-medium uppercase tracking-[0.14em] text-[#6B6B6B] sm:text-sm sm:tracking-[0.18em]">
           {tags.length ? tags.join(" · ") : "Decor"}
         </div>
@@ -139,7 +139,7 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
           </div>
         )}
 
-        <div className="mt-3 space-y-2 border-t border-[#E6E6E6] pt-3">
+        <div className="mt-auto space-y-2 border-t border-[#E6E6E6] pt-3">
           {isPurchasable && (
             <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
               <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
