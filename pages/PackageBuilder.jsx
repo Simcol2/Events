@@ -650,6 +650,7 @@ export default function PackageBuilder() {
                         tagline={item.tagline}
                         description={item.description}
                         photoUrls={item.photoUrls}
+                        fit={item.fit}
                         priceLabel={richBadges ? undefined : included ? "Included" : isAddon ? `+$${item.addonPrice}` : undefined}
                         badge={
                           richBadges ? (
@@ -756,6 +757,7 @@ export default function PackageBuilder() {
                     tagline={item.tagline}
                     description={item.description}
                     photoUrls={item.photoUrls}
+                    fit={item.fit}
                     priceLabel={`Additional Keepsake Experience +$${item.addonPrice}`}
                     selected={poolOverflowIds.includes(id)}
                     onClick={() => togglePoolOverflow(id)}
@@ -827,6 +829,7 @@ export default function PackageBuilder() {
                     tagline={item.tagline}
                     description={item.description}
                     photoUrls={item.photoUrls}
+                    fit={item.fit}
                     priceLabel={`+$${PLAYFUL_ADDON_PRICE}`}
                     selected={playfulIds.includes(id)}
                     onClick={() => togglePlayful(id)}

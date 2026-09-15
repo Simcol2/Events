@@ -529,7 +529,7 @@ export function resolvePackageItem(item, eventTypeId) {
   const copy = item.copy[eventTypeId] || item.copy.default;
   const raw = item.photos[eventTypeId] ?? item.photos.default ?? null;
   const photoUrls = (Array.isArray(raw) ? raw : raw ? [raw] : []).filter(Boolean);
-  return { id: item.id, icon: item.icon, photoUrls, details: item.details, ...copy };
+  return { id: item.id, icon: item.icon, photoUrls, fit: item.fit, details: item.details, ...copy };
 }
 
 // Setup items that don't already exist as one of the MAIN_PACKAGE_ITEMS
@@ -579,6 +579,7 @@ export const SETUP_ONLY_ITEMS = [
   {
     id: "priceIsRight",
     icon: Tag,
+    fit: "contain",
     copy: {
       default: {
         name: "The Price Is Right",
