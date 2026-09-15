@@ -465,7 +465,7 @@ export default function Decor() {
                   </p>
                 )}
 
-                <div className="grid gap-x-7 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-7 sm:gap-y-14 lg:grid-cols-3">
                   {groupedVisible.map((entry) => (
                     <DecorCard
                       key={entry.key}
