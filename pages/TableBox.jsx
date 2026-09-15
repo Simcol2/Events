@@ -58,7 +58,7 @@ function money(n) {
 
 export default function TableBox() {
   const { palette, fonts } = usePalette();
-  const { addRental } = useCart();
+  const { addRental, rentalItems } = useCart();
 
   const [catalogItems, setCatalogItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +66,12 @@ export default function TableBox() {
   const [qty, setQty] = useState({});
   const [openSection, setOpenSection] = useState(SECTIONS[0].key);
   const [justAdded, setJustAdded] = useState(false);
+
+  // Pulls in pricing for whatever is already sitting in the cart's rental
+  // lines too, not just this page's curated section ids - the $50 minimum
+  // check below needs the combined total, and a rental added from the
+  // Decor page (outside this curated list) still counts toward it.
+  const cartRentalIds = useMemo(() => rentalItems.map((item) => item.id), [rentalItems]);
 
   useEffect(() => {
     let ignore = false;
@@ -75,7 +81,7 @@ export default function TableBox() {
         setLoading(false);
         return;
       }
-      const ids = SECTIONS.flatMap((s) => s.itemIds);
+      const ids = Array.from(new Set([...SECTIONS.flatMap((s) => s.itemIds), ...cartRentalIds]));
       const { data, error } = await supabase.from("items").select("*").in("id", ids);
       if (ignore) return;
       if (error) {
@@ -89,7 +95,7 @@ export default function TableBox() {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [cartRentalIds]);
 
   const byId = useMemo(
     () => Object.fromEntries(catalogItems.map((item) => [item.id, item])),
@@ -122,8 +128,23 @@ export default function TableBox() {
   );
 
   const total = selected.reduce((sum, item) => sum + item.lineTotal, 0);
-  const remaining = Math.max(0, MINIMUM - total);
-  const canAdd = total >= MINIMUM && selected.length > 0;
+
+  // The $50 minimum is a whole-order rule, not a per-visit one: pieces
+  // already sitting in the cart from an earlier trip through this page (or
+  // from Decor) count toward it just as much as what's in the box right now.
+  const cartRentalTotal = useMemo(
+    () =>
+      rentalItems.reduce((sum, item) => {
+        const catalogItem = byId[item.id];
+        if (!catalogItem || catalogItem.rental_price == null) return sum;
+        return sum + Number(catalogItem.rental_price) * item.quantity;
+      }, 0),
+    [rentalItems, byId]
+  );
+
+  const combinedTotal = total + cartRentalTotal;
+  const remaining = Math.max(0, MINIMUM - combinedTotal);
+  const canAdd = combinedTotal >= MINIMUM && selected.length > 0;
 
   const setQuantity = (id, next) => {
     const safe = Math.max(0, Math.floor(Number(next) || 0));
@@ -396,13 +417,18 @@ export default function TableBox() {
                 className="mt-3 text-sm font-semibold"
                 style={{ ...fonts.bodyFont, color: canAdd ? palette.accent : palette.muted }}
               >
-                {canAdd ? "$50 minimum reached" : `Add ${money(remaining)} more to complete your box.`}
+                {canAdd ? "$50 minimum reached" : `Add ${money(remaining)} more to reach the $50 rental minimum.`}
               </p>
+              {cartRentalTotal > 0 && (
+                <p className="mt-1 text-xs" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Includes {money(cartRentalTotal)} already in your cart.
+                </p>
+              )}
 
               <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: palette.line }}>
                 <span
                   className="block h-full"
-                  style={{ width: `${Math.min(100, (total / MINIMUM) * 100)}%`, background: palette.accent }}
+                  style={{ width: `${Math.min(100, (combinedTotal / MINIMUM) * 100)}%`, background: palette.accent }}
                 />
               </div>
 
@@ -421,7 +447,7 @@ export default function TableBox() {
               </button>
               {!canAdd && (
                 <p className="mt-2 text-center text-xs" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                  Reach the $50 minimum to add your box.
+                  Reach the $50 rental minimum to add your box.
                 </p>
               )}
               {justAdded && (
