@@ -260,7 +260,7 @@ export default function Decor() {
             light
           />
 
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {CATEGORIES.map((cat, i) => {
               const active = selectedCategory === cat.id;
 
@@ -273,17 +273,17 @@ export default function Decor() {
                   >
                     <ElevatedCard
                       palette={palette}
-                      className="h-full p-6 transition-transform group-hover:-translate-y-1"
+                      className="h-full p-3.5 transition-transform group-hover:-translate-y-1 sm:p-6"
                       style={{
                         background: active ? palette.gold : palette.surface,
                         borderColor: active ? palette.gold : rgba(palette.gold, 0.26),
                       }}
                     >
                       <span
+                        className="text-[10px] sm:text-[11px]"
                         style={{
                           ...fonts.bodyFont,
                           color: active ? palette.primaryDeep : palette.goldDeep,
-                          fontSize: "11px",
                           fontWeight: 800,
                           letterSpacing: "0.16em",
                           textTransform: "uppercase",
@@ -293,24 +293,22 @@ export default function Decor() {
                       </span>
 
                       <h3
-                        className="mt-5"
+                        className="mt-1.5 text-[1.05rem] sm:mt-5 sm:text-[1.55rem]"
                         style={{
                           ...fonts.displayFont,
                           color: palette.primaryDeep,
-                          fontSize: "1.55rem",
                           fontWeight: 700,
-                          lineHeight: 1.05,
+                          lineHeight: 1.1,
                         }}
                       >
                         {cat.label}
                       </h3>
 
                       <p
-                        className="mt-2"
+                        className="mt-1 text-[12px] sm:mt-2 sm:text-[13px]"
                         style={{
                           ...fonts.bodyFont,
                           color: active ? palette.primaryDeep : palette.muted,
-                          fontSize: "13px",
                         }}
                       >
                         {categoryCounts[cat.id] || 0}{" "}
