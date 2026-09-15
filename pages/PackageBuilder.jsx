@@ -26,6 +26,7 @@ import {
   DISPLAYS,
   DISPLAY_SETUP_OPTIONS,
   INCLUDED_WELCOME_SIGN,
+  INCLUDED_GIFT_TABLE_SIGN,
   SERVICE_STYLE_OPTIONS,
   resolvePackageItem,
   resolveKeepsakeName,
@@ -592,7 +593,10 @@ export default function PackageBuilder() {
     }),
   ].filter(Boolean);
   const resolvedDisplay = eventTypeId === "babyShower"
-    ? { id: INCLUDED_WELCOME_SIGN.id, name: INCLUDED_WELCOME_SIGN.name, price: 0 }
+    ? [
+        { id: INCLUDED_WELCOME_SIGN.id, name: INCLUDED_WELCOME_SIGN.name, price: 0 },
+        { id: INCLUDED_GIFT_TABLE_SIGN.id, name: INCLUDED_GIFT_TABLE_SIGN.name, price: 0 },
+      ]
     : displayId
       ? { id: displayId, name: DISPLAYS.find((d) => d.id === displayId)?.name, price: displayPrice }
       : null;
@@ -872,7 +876,7 @@ export default function PackageBuilder() {
 
         {currentStep.type === "display" && richBadges && (
           <div>
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
               <FeatureCard
                 icon={INCLUDED_WELCOME_SIGN.icon}
                 name={INCLUDED_WELCOME_SIGN.name}
@@ -881,6 +885,16 @@ export default function PackageBuilder() {
                 photoUrl={INCLUDED_WELCOME_SIGN.photoUrl}
                 selected
                 details={INCLUDED_WELCOME_SIGN.details}
+                badge={<PricingBadge included label="INCLUDED" selected palette={palette} fonts={fonts} />}
+              />
+              <FeatureCard
+                icon={INCLUDED_GIFT_TABLE_SIGN.icon}
+                name={INCLUDED_GIFT_TABLE_SIGN.name}
+                tagline={INCLUDED_GIFT_TABLE_SIGN.tagline}
+                description={INCLUDED_GIFT_TABLE_SIGN.description}
+                photoUrl={INCLUDED_GIFT_TABLE_SIGN.photoUrl}
+                selected
+                details={INCLUDED_GIFT_TABLE_SIGN.details}
                 badge={<PricingBadge included label="INCLUDED" selected palette={palette} fonts={fonts} />}
               />
             </div>
@@ -1006,7 +1020,10 @@ export default function PackageBuilder() {
               ].filter(Boolean),
               serviceStyle: { name: serviceStyle.label, price: serviceStyle.price },
               display: eventTypeId === "babyShower"
-                ? { name: INCLUDED_WELCOME_SIGN.name, price: 0 }
+                ? [
+                    { name: INCLUDED_WELCOME_SIGN.name, price: 0 },
+                    { name: INCLUDED_GIFT_TABLE_SIGN.name, price: 0 },
+                  ]
                 : displayId
                   ? { name: DISPLAYS.find((d) => d.id === displayId)?.name, setup: displaySetup?.label, price: displayPrice }
                   : { name: "No Display", price: 0 },

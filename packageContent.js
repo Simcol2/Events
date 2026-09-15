@@ -1099,6 +1099,31 @@ export const INCLUDED_WELCOME_SIGN = {
   },
 };
 
+// The baby shower package's included gift table sign, no extra charge.
+// Matches the real "And So The Spoiling Begins" Gift Table Sign rental
+// item in the decor catalogue, including its background colour choices.
+export const INCLUDED_GIFT_TABLE_SIGN = {
+  id: "includedGiftTableSign",
+  icon: Gift,
+  name: '"And So The Spoiling Begins" Gift Table Sign',
+  tagline: "So nobody has to ask where the gifts go.",
+  description:
+    "A clear acrylic sign reading \"And So The Spoiling Begins\" with a simple \"Gifts Go Here\" message, finished with a gold-accented base. Included with every baby shower package at no extra charge, with your choice of background colour insert (Clear, Lavender, Yellow, Pink, Blue, or Sage Green) at no additional cost.",
+  photoUrl: "/photos/spoiling-begins-sign-clear.png",
+  details: {
+    summary: "A ready-made gift table sign, included with every baby shower package.",
+    howItWorks: [
+      "It arrives ready to go, no design steps needed.",
+      "It's set up on the gift table with your choice of background colour.",
+      "It marks the gift table for the full length of your event.",
+    ],
+    goodToKnow: [
+      "Included at no extra charge.",
+      "Choose a background colour insert (Clear, Lavender, Yellow, Pink, Blue, or Sage Green) at no additional cost.",
+    ],
+  },
+};
+
 // Backdrop/display setups - never included in a package, always an add-on.
 // Both displays cost the same regardless of which one is chosen; price
 // only depends on the setup option below.

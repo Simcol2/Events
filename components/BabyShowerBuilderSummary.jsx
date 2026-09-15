@@ -135,7 +135,7 @@ export default function BabyShowerBuilderSummary({
 
           <SummaryGroup
             label="Display"
-            items={display ? [display] : []}
+            items={Array.isArray(display) ? display : display ? [display] : []}
             emptyText="Not selected yet"
             palette={palette}
             fonts={fonts}

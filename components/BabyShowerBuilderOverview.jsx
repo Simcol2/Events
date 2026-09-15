@@ -216,11 +216,12 @@ export default function BabyShowerBuilderOverview({
           YOUR STARTING PRICE INCLUDES
         </p>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
             "5 selected experiences",
             "1 included guest gift",
             "1 welcome sign",
+            "1 gift table sign",
             "Custom preparation",
             "Activity materials & signage",
           ].map(

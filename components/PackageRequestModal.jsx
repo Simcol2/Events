@@ -163,10 +163,13 @@ export default function PackageRequestModal({ total, summary, onClose }) {
                 {summary.display && (
                   <div>
                     <p className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.15em] text-[#0B4933]">MEMORY DISPLAY</p>
-                    <LineRow
-                      label={summary.display.setup ? `${summary.display.name} - ${summary.display.setup}` : summary.display.name}
-                      price={summary.display.price}
-                    />
+                    {(Array.isArray(summary.display) ? summary.display : [summary.display]).map((d) => (
+                      <LineRow
+                        key={d.name}
+                        label={d.setup ? `${d.name} - ${d.setup}` : d.name}
+                        price={d.price}
+                      />
+                    ))}
                   </div>
                 )}
 
