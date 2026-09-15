@@ -29,6 +29,7 @@ function normalize(value) {
 const DECOR_CATEGORY_IDS = [
   "table",
   "wall/floor",
+  "signage",
   "equipment",
   "marquee letters & numbers",
   "keepsakes & gifts",
