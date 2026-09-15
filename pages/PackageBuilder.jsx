@@ -27,6 +27,7 @@ import {
   DISPLAY_SETUP_OPTIONS,
   INCLUDED_WELCOME_SIGN,
   INCLUDED_GIFT_TABLE_SIGN,
+  INCLUDED_GENDER_SIGN_VARIANTS,
   SERVICE_STYLE_OPTIONS,
   resolvePackageItem,
   resolveKeepsakeName,
@@ -376,6 +377,7 @@ export default function PackageBuilder() {
   const [serviceStyleId, setServiceStyleId] = useState("self");
   const [displayId, setDisplayId] = useState(null);
   const [displaySetupId, setDisplaySetupId] = useState(null);
+  const [genderSignChoice, setGenderSignChoice] = useState("girl");
 
   // Switching event type mid-build changes the entire pricing/pool shape,
   // so the build resets rather than carrying over selections that may not
@@ -596,6 +598,11 @@ export default function PackageBuilder() {
     ? [
         { id: INCLUDED_WELCOME_SIGN.id, name: INCLUDED_WELCOME_SIGN.name, price: 0 },
         { id: INCLUDED_GIFT_TABLE_SIGN.id, name: INCLUDED_GIFT_TABLE_SIGN.name, price: 0 },
+        {
+          id: INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].id,
+          name: INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].name,
+          price: 0,
+        },
       ]
     : displayId
       ? { id: displayId, name: DISPLAYS.find((d) => d.id === displayId)?.name, price: displayPrice }
@@ -897,6 +904,33 @@ export default function PackageBuilder() {
                 details={INCLUDED_GIFT_TABLE_SIGN.details}
                 badge={<PricingBadge included label="INCLUDED" selected palette={palette} fonts={fonts} />}
               />
+              <div>
+                <FeatureCard
+                  icon={INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].icon}
+                  name={INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].name}
+                  tagline={INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].tagline}
+                  description={INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].description}
+                  selected
+                  details={INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].details}
+                  badge={<PricingBadge included label="INCLUDED" selected palette={palette} fonts={fonts} />}
+                />
+                <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                  <select
+                    value={genderSignChoice}
+                    onChange={(e) => setGenderSignChoice(e.target.value)}
+                    className="w-full rounded-md border px-3 py-2 text-sm outline-none"
+                    style={{
+                      ...fonts.bodyFont,
+                      color: palette.ink,
+                      borderColor: palette.line,
+                      background: palette.surface,
+                    }}
+                  >
+                    <option value="girl">Hey Baby Girl Sign</option>
+                    <option value="boy">Boy Oh Boy Sign</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <p className="mt-6 text-sm leading-6" style={{ ...fonts.bodyFont, color: palette.muted }}>
               Want your own colours, wording, or theme instead? Add a Customized Welcome Sign in the Make It Yours
@@ -1023,6 +1057,7 @@ export default function PackageBuilder() {
                 ? [
                     { name: INCLUDED_WELCOME_SIGN.name, price: 0 },
                     { name: INCLUDED_GIFT_TABLE_SIGN.name, price: 0 },
+                    { name: INCLUDED_GENDER_SIGN_VARIANTS[genderSignChoice].name, price: 0 },
                   ]
                 : displayId
                   ? { name: DISPLAYS.find((d) => d.id === displayId)?.name, setup: displaySetup?.label, price: displayPrice }

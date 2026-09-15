@@ -103,7 +103,7 @@ export const EVENT_CONFIGS = {
         id: "display",
         label: "Your Display",
         customerTitle: "Signage, ready to go",
-        supportingCopy: "A welcome sign and a gift table sign are included with every package, ready to greet your guests and mark where the gifts go.",
+        supportingCopy: "A welcome sign, a gift table sign, and a themed girl or boy sign are all included with every package, ready to greet your guests and mark where the gifts go.",
       },
       {
         type: "service",

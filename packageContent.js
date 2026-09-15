@@ -1124,6 +1124,47 @@ export const INCLUDED_GIFT_TABLE_SIGN = {
   },
 };
 
+// The baby shower package's third included sign: a themed sign whose
+// wording depends on the baby's gender, chosen from a dropdown. Product
+// photo is still coming, so it renders through PhotoSlot's "Photo coming
+// soon" placeholder until one is added.
+export const INCLUDED_GENDER_SIGN_VARIANTS = {
+  girl: {
+    id: "includedGenderSignGirl",
+    icon: PartyPopper,
+    name: "Hey Baby Girl Sign",
+    tagline: "A little something extra for a girl-themed celebration.",
+    description:
+      "A ready-made sign reading \"Hey Baby Girl,\" set out for the celebration. Included with every baby shower package at no extra charge.",
+    details: {
+      summary: "A ready-made themed sign, included with every baby shower package.",
+      howItWorks: [
+        "It arrives ready to go, no design steps needed.",
+        "It's set up as part of your display.",
+        "It stays out for the full length of your event.",
+      ],
+      goodToKnow: ["Included at no extra charge.", "Photo coming soon."],
+    },
+  },
+  boy: {
+    id: "includedGenderSignBoy",
+    icon: PartyPopper,
+    name: "Boy Oh Boy Sign",
+    tagline: "A little something extra for a boy-themed celebration.",
+    description:
+      "A ready-made sign reading \"Boy Oh Boy,\" set out for the celebration. Included with every baby shower package at no extra charge.",
+    details: {
+      summary: "A ready-made themed sign, included with every baby shower package.",
+      howItWorks: [
+        "It arrives ready to go, no design steps needed.",
+        "It's set up as part of your display.",
+        "It stays out for the full length of your event.",
+      ],
+      goodToKnow: ["Included at no extra charge.", "Photo coming soon."],
+    },
+  },
+};
+
 // Backdrop/display setups - never included in a package, always an add-on.
 // Both displays cost the same regardless of which one is chosen; price
 // only depends on the setup option below.
