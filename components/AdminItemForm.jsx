@@ -64,7 +64,7 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
     e.preventDefault();
     const payload = {
       ...form,
-      category: TAGS.filter((t) => tagIds.includes(t.id)).map((t) => t.label).join(", "),
+      category: tagIds.join(", "),
       quantity_owned: form.made_to_order ? null : (form.quantity_owned === "" ? null : Number(form.quantity_owned)),
       rental_price: form.rental_price === "" ? null : Number(form.rental_price),
       purchase_price: form.purchase_price === "" ? null : Number(form.purchase_price),
