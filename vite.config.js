@@ -9,13 +9,21 @@ import react from "@vitejs/plugin-react";
 // filenames on a later build (e.g. after any content edit), the snapshots
 // would reference JS/CSS that no longer exists and real visitors landing
 // on a sub-route would get a blank, non-interactive page.
+// Bump this whenever a deploy needs to force past a stale cached copy of
+// app.js/app.css at any layer between origin and browser (see the /events
+// proxy's cache-control history) - it's the whole reason these two
+// filenames carry a version instead of Vite's own content hash. Changing
+// it means re-running `npm run prerender` before deploying, since the
+// static snapshots' <script>/<link> tags hardcode the current name.
+const BUNDLE_VERSION = "v2";
+
 export default {
   base: "/events/",
   plugins: [react()],
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: "assets/app.js",
+        entryFileNames: `assets/app.${BUNDLE_VERSION}.js`,
         chunkFileNames: "assets/[name].js",
         // Only the CSS needs a stable name (it's referenced by a <link> tag
         // baked into the static snapshots too). Images etc. keep normal
@@ -23,7 +31,7 @@ export default {
         // JS bundle, so a changed hash there is always self-consistent.
         assetFileNames: (info) =>
           info.name && info.name.endsWith(".css")
-            ? "assets/app.css"
+            ? `assets/app.${BUNDLE_VERSION}.css`
             : "assets/[name]-[hash][extname]",
       },
     },
