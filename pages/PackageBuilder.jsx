@@ -6,6 +6,7 @@ import { useEventDate } from "../EventDateContext";
 import { supabase } from "../supabaseClient";
 import { paperTexture } from "../theme";
 import FeatureCard from "../components/FeatureCard";
+import { plainDescription } from "../components/DecorCard";
 import PackageRequestModal from "../components/PackageRequestModal";
 import BabyShowerBuilderOverview from "../components/BabyShowerBuilderOverview";
 import BuilderStepHeader from "../components/BuilderStepHeader";
@@ -336,7 +337,7 @@ function resolveSetupItem(id, eventTypeId, decorCatalog) {
       icon: Package,
       name: item.name,
       tagline: item.size || "",
-      description: item.description || CUSTOM_SERVING_DISH.description,
+      description: plainDescription(item.description) || CUSTOM_SERVING_DISH.description,
       photoUrls: normalizePhotos(item.photos).length ? normalizePhotos(item.photos) : fallbackPhotoUrls,
       details: CUSTOM_SERVING_DISH.details,
       addonPrice: item.rental_price ?? item.purchase_price ?? SETUP_ADDON_PRICE,

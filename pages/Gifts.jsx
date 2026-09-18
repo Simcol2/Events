@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Check, Plus, ShoppingBag, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
-import { getItemFlags, parseItemTags } from "../components/DecorCard";
+import { getItemFlags, parseItemTags, plainDescription } from "../components/DecorCard";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import CartModal from "../components/CartModal";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
@@ -93,7 +93,7 @@ function GiftTile({
               overflow: "hidden",
             }}
           >
-            {description}
+            {plainDescription(description)}
           </p>
         )}
 

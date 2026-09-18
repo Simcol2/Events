@@ -6,6 +6,31 @@ import { itemAltText } from "../seo";
 import { useEventType } from "../EventTypeContext";
 import { useCart } from "../CartContext";
 
+// Item descriptions are written with blank lines between sections and
+// **bold** lead-ins, so a long description reads as scannable blocks
+// rather than one unbroken wall of text. Anything without those markers
+// renders exactly as before, as a single paragraph.
+function DescriptionBody({ text }) {
+  const paragraphs = String(text)
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  return paragraphs.map((paragraph, i) => (
+    <p key={i} className="mt-3 font-[Space_Grotesk] text-base leading-6 text-[#5C5645] first:mt-4">
+      {paragraph.split(/(\*\*[^*]+\*\*)/g).map((chunk, j) =>
+        chunk.startsWith("**") && chunk.endsWith("**") ? (
+          <strong key={j} className="block font-semibold text-[#0B4933]">
+            {chunk.slice(2, -2)}
+          </strong>
+        ) : (
+          <React.Fragment key={j}>{chunk}</React.Fragment>
+        )
+      )}
+    </p>
+  ));
+}
+
 // Full detail view opened by clicking a decor card - this is where sizing,
 // color and any other variant choice actually happens (the grid card only
 // ever shows a starting price), plus room for the description and every
@@ -131,9 +156,7 @@ export default function DecorDetailModal({ item, variants, groupName, onClose, o
             <div className="mt-1 font-[Space_Grotesk] text-sm text-[#8C846F]">Color: {colorOptions[0]}</div>
           ) : null}
           {active.size && <div className="mt-2 font-[Space_Grotesk] text-sm text-[#8C846F]">{active.size}</div>}
-          {active.description && (
-            <p className="mt-4 font-[Space_Grotesk] text-base leading-6 text-[#5C5645]">{active.description}</p>
-          )}
+          {active.description && <DescriptionBody text={active.description} />}
 
           {hasVariants && (
             <div className="mt-3 font-[Space_Grotesk] text-sm leading-6 text-[#8C846F]">

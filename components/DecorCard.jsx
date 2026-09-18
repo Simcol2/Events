@@ -36,6 +36,15 @@ export function parseColorOptions(item) {
   return item.color.split(",").map((c) => c.trim()).filter(Boolean);
 }
 
+// Catalog descriptions can carry **bold** lead-ins and blank-line breaks
+// for the detail view, which renders them as real formatting. Everywhere
+// that shows the same text as a plain one or two line preview strips the
+// markers instead of printing literal asterisks.
+export function plainDescription(text) {
+  if (typeof text !== "string") return text;
+  return text.replace(/\*\*/g, "").replace(/\s*\n+\s*/g, " ").trim();
+}
+
 // Shared by DecorCard and DecorDetailModal so the purchase-only rule and
 // the tag list only live in one place.
 export function getItemFlags(item) {
