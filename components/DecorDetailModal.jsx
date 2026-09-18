@@ -6,10 +6,6 @@ import { itemAltText } from "../seo";
 import { useEventType } from "../EventTypeContext";
 import { useCart } from "../CartContext";
 
-function priceOf(v) {
-  return v.rental_price != null ? Number(v.rental_price) : Number(v.purchase_price ?? 0);
-}
-
 // Full detail view opened by clicking a decor card - this is where sizing,
 // color and any other variant choice actually happens (the grid card only
 // ever shows a starting price), plus room for the description and every
@@ -34,7 +30,6 @@ export default function DecorDetailModal({ item, variants, groupName, onClose, o
   const colorOptions = parseColorOptions(active);
   const [selectedColor, setSelectedColor] = useState(colorOptions[0] || "");
   const displayName = hasVariants ? groupName || active.name : active.name;
-  const basePrice = hasVariants ? priceOf(sortedVariants[0]) : null;
 
   return (
     <div
@@ -106,11 +101,11 @@ export default function DecorDetailModal({ item, variants, groupName, onClose, o
                 className="w-full appearance-none rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm text-[#292929] outline-none focus:border-[#0B4933]"
               >
                 {sortedVariants.map((v) => {
-                  const delta = priceOf(v) - basePrice;
                   const label = v.variant_label || v.name;
+                  const priceLabel = v.rental_price != null ? `$${v.rental_price} to rent` : `$${v.purchase_price} to buy`;
                   return (
                     <option key={v.id} value={v.id}>
-                      {delta > 0 ? `${label} +$${delta}` : label}
+                      {`${label} (${priceLabel})`}
                     </option>
                   );
                 })}
