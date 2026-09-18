@@ -40,12 +40,6 @@ const SECTIONS = [
     itemIds: [211, 210, 445, 491],
   },
   {
-    key: "dessert",
-    title: "Choose Your Dessert Stand",
-    subtitle: "Give dessert somewhere worthy of showing off.",
-    itemIds: [7],
-  },
-  {
     key: "candles",
     title: "Choose Your Candles",
     subtitle: "Finish the table with a little glow.",
