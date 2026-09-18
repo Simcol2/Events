@@ -6,29 +6,52 @@ import { itemAltText } from "../seo";
 import { useEventType } from "../EventTypeContext";
 import { useCart } from "../CartContext";
 
-// Item descriptions are written with blank lines between sections and
-// **bold** lead-ins, so a long description reads as scannable blocks
-// rather than one unbroken wall of text. Anything without those markers
-// renders exactly as before, as a single paragraph.
+// Item descriptions are written with blank lines between sections,
+// **bold** lead-ins, and "- " bullet lines, so a long description reads
+// as scannable blocks rather than one unbroken wall of text. Text with
+// none of those markers renders as a single paragraph, exactly as before.
+function inlineChunks(text, { blockBold }) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((chunk, i) =>
+    chunk.startsWith("**") && chunk.endsWith("**") ? (
+      <strong
+        key={i}
+        className={`font-semibold text-[#0B4933] ${blockBold ? "block" : ""}`}
+      >
+        {chunk.slice(2, -2)}
+      </strong>
+    ) : (
+      <React.Fragment key={i}>{chunk}</React.Fragment>
+    )
+  );
+}
+
 function DescriptionBody({ text }) {
-  const paragraphs = String(text)
+  const blocks = String(text)
     .split(/\n\s*\n/)
-    .map((p) => p.trim())
+    .map((b) => b.trim())
     .filter(Boolean);
 
-  return paragraphs.map((paragraph, i) => (
-    <p key={i} className="mt-3 font-[Space_Grotesk] text-base leading-6 text-[#5C5645] first:mt-4">
-      {paragraph.split(/(\*\*[^*]+\*\*)/g).map((chunk, j) =>
-        chunk.startsWith("**") && chunk.endsWith("**") ? (
-          <strong key={j} className="block font-semibold text-[#0B4933]">
-            {chunk.slice(2, -2)}
-          </strong>
-        ) : (
-          <React.Fragment key={j}>{chunk}</React.Fragment>
-        )
-      )}
-    </p>
-  ));
+  return blocks.map((block, i) => {
+    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+
+    if (lines.length && lines.every((l) => l.startsWith("- "))) {
+      return (
+        <ul key={i} className="mt-2 list-disc space-y-1 pl-5">
+          {lines.map((line, j) => (
+            <li key={j} className="font-[Space_Grotesk] text-base leading-6 text-[#5C5645]">
+              {inlineChunks(line.slice(2), { blockBold: false })}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
+    return (
+      <p key={i} className="mt-3 font-[Space_Grotesk] text-base leading-6 text-[#5C5645] first:mt-4">
+        {inlineChunks(block, { blockBold: true })}
+      </p>
+    );
+  });
 }
 
 // Full detail view opened by clicking a decor card - this is where sizing,
@@ -55,6 +78,7 @@ export default function DecorDetailModal({ item, variants, groupName, onClose, o
   const colorOptions = parseColorOptions(active);
   const [selectedColor, setSelectedColor] = useState(colorOptions[0] || "");
   const displayName = hasVariants ? groupName || active.name : active.name;
+  const baseItem = hasVariants ? sortedVariants[0] : item;
 
   return (
     <div
@@ -127,7 +151,8 @@ export default function DecorDetailModal({ item, variants, groupName, onClose, o
               >
                 {sortedVariants.map((v) => {
                   const label = v.variant_label || v.name;
-                  const priceLabel = v.rental_price != null ? `$${v.rental_price} to rent` : `$${v.purchase_price} to buy`;
+                  const priceLabel =
+                    v.rental_price != null ? `$${v.rental_price} / event` : `$${v.purchase_price}`;
                   return (
                     <option key={v.id} value={v.id}>
                       {`${label} (${priceLabel})`}
@@ -156,23 +181,15 @@ export default function DecorDetailModal({ item, variants, groupName, onClose, o
             <div className="mt-1 font-[Space_Grotesk] text-sm text-[#8C846F]">Color: {colorOptions[0]}</div>
           ) : null}
           {active.size && <div className="mt-2 font-[Space_Grotesk] text-sm text-[#8C846F]">{active.size}</div>}
-          {active.description && <DescriptionBody text={active.description} />}
 
-          {hasVariants && (
-            <div className="mt-3 font-[Space_Grotesk] text-sm leading-6 text-[#8C846F]">
-              <span className="font-semibold text-[#5C5645]">Available as: </span>
-              {sortedVariants
-                .map((v) => {
-                  const label = v.variant_label || v.name;
-                  const price = v.rental_price != null ? `$${v.rental_price} to rent` : `$${v.purchase_price} to buy`;
-                  return `${label} (${price})`;
-                })
-                .join(", ")}
-            </div>
-          )}
+          {/* Description and logistics come from the group's base variant,
+              not the selected one, so the copy stays put while someone
+              cycles through sizes instead of reflowing under them. The
+              per-option prices already live in the dropdown. */}
+          {baseItem.description && <DescriptionBody text={baseItem.description} />}
 
-          {active.condition_notes && (
-            <p className="mt-3 font-[Space_Grotesk] text-sm leading-6 text-[#8C846F]">{active.condition_notes}</p>
+          {baseItem.condition_notes && (
+            <p className="mt-3 font-[Space_Grotesk] text-sm leading-6 text-[#8C846F]">{baseItem.condition_notes}</p>
           )}
 
           <div className="mt-6 space-y-3 border-t border-[#E6E6E6] pt-5">
