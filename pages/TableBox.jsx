@@ -28,6 +28,12 @@ const SECTIONS = [
     itemIds: [449, 435, 447],
   },
   {
+    key: "plates",
+    title: "Choose Your Plates",
+    subtitle: "Pick the guest count and we will send enough for everyone.",
+    itemIds: [514, 515, 516, 517, 518, 519],
+  },
+  {
     key: "chargers",
     title: "Choose Your Chargers",
     subtitle: "Give every place setting a little more polish.",
@@ -57,9 +63,15 @@ function money(n) {
   return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(n);
 }
 
+// Most of the box is rentals, but a few pieces (the plate sets) are sold
+// outright. Both belong in the same builder, so price and cart routing key
+// off which one an item actually is rather than assuming rental.
+const isRental = (item) => item.rental_price != null;
+const unitPrice = (item) => Number(isRental(item) ? item.rental_price : item.purchase_price);
+
 export default function TableBox() {
   const { palette, fonts } = usePalette();
-  const { addRental, rentalItems } = useCart();
+  const { addRental, addToCart, rentalItems } = useCart();
 
   const [catalogItems, setCatalogItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +121,10 @@ export default function TableBox() {
         ...section,
         products: section.itemIds
           .map((id) => byId[id])
-          .filter((item) => item && item.active !== false && item.rental_price != null),
+          .filter(
+            (item) =>
+              item && item.active !== false && (item.rental_price != null || item.purchase_price != null)
+          ),
       })).filter((section) => section.products.length > 0),
     [byId]
   );
@@ -123,12 +138,15 @@ export default function TableBox() {
         .map((p) => ({
           ...p,
           quantity: qty[p.id],
-          lineTotal: Number(p.rental_price) * qty[p.id],
+          lineTotal: unitPrice(p) * qty[p.id],
         })),
     [allProducts, qty]
   );
 
   const total = selected.reduce((sum, item) => sum + item.lineTotal, 0);
+  const rentalSubtotal = selected
+    .filter(isRental)
+    .reduce((sum, item) => sum + item.lineTotal, 0);
 
   // The $50 minimum is a whole-order rule, not a per-visit one: pieces
   // already sitting in the cart from an earlier trip through this page (or
@@ -143,9 +161,11 @@ export default function TableBox() {
     [rentalItems, byId]
   );
 
-  const combinedTotal = total + cartRentalTotal;
+  // The $50 floor is a rental minimum, so only rental lines count toward
+  // it. A box of nothing but purchased pieces has no minimum to clear.
+  const combinedTotal = rentalSubtotal + cartRentalTotal;
   const remaining = Math.max(0, MINIMUM - combinedTotal);
-  const canAdd = combinedTotal >= MINIMUM && selected.length > 0;
+  const canAdd = selected.length > 0 && (rentalSubtotal === 0 || combinedTotal >= MINIMUM);
 
   const setQuantity = (id, next) => {
     const safe = Math.max(0, Math.floor(Number(next) || 0));
@@ -154,7 +174,11 @@ export default function TableBox() {
 
   const handleAdd = () => {
     if (!canAdd) return;
-    selected.forEach((item) => addRental(item.id, null, item.quantity));
+    selected.forEach((item) =>
+      isRental(item)
+        ? addRental(item.id, null, item.quantity)
+        : addToCart(item.id, "catalog", null, item.quantity)
+    );
     setQty({});
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 5000);
@@ -329,7 +353,8 @@ export default function TableBox() {
                                       {product.name}
                                     </p>
                                     <p className="mt-1" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}>
-                                      {money(Number(product.rental_price))} <span>/ each</span>
+                                      {money(unitPrice(product))}{" "}
+                                      <span>{isRental(product) ? "/ event" : "to buy"}</span>
                                     </p>
                                     <div className="mt-3 flex items-center gap-2">
                                       <button
