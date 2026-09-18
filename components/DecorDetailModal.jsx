@@ -1,26 +1,40 @@
 import React, { useState } from "react";
-import { Check, Plus, X } from "lucide-react";
-import { getItemFlags, parseColorOptions } from "./DecorCard";
+import { Check, ChevronDown, Plus, X } from "lucide-react";
+import { getItemFlags, parseColorOptions, sortVariantsByPrice } from "./DecorCard";
 import { normalizePhotos as photoList } from "./PhotoCarousel";
 import { itemAltText } from "../seo";
 import { useEventType } from "../EventTypeContext";
 import { useCart } from "../CartContext";
 
-// Full detail view opened by clicking a decor card - same Buy/Rent actions
-// as the card itself, just with room for the description and every photo,
-// plus a route to the package builder for anyone who wants this piece as
-// part of a curated package (Setup items there come from a fixed list, not
-// the live catalog, so this modal doesn't add straight to a package).
-export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
+function priceOf(v) {
+  return v.rental_price != null ? Number(v.rental_price) : Number(v.purchase_price ?? 0);
+}
+
+// Full detail view opened by clicking a decor card - this is where sizing,
+// color and any other variant choice actually happens (the grid card only
+// ever shows a starting price), plus room for the description and every
+// photo, and a route to the package builder for anyone who wants this piece
+// as part of a curated package (Setup items there come from a fixed list,
+// not the live catalog, so this modal doesn't add straight to a package).
+export default function DecorDetailModal({ item, variants, groupName, onClose, onRent, onBuy }) {
   const { openPickerForBuilder } = useEventType();
   const { isInCart, removeFromCart } = useCart();
-  const inPurchaseCart = isInCart(item.id, "catalog");
-  const inRentalCart = isInCart(item.id, "rental");
-  const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(item);
-  const photos = photoList(item.photos);
+  const hasVariants = Array.isArray(variants) && variants.length > 1;
+  const sortedVariants = hasVariants ? sortVariantsByPrice(variants) : null;
+  const [selectedId, setSelectedId] = useState(item.id);
+  const active = hasVariants
+    ? sortedVariants.find((v) => String(v.id) === String(selectedId)) || sortedVariants[0]
+    : item;
+
+  const inPurchaseCart = isInCart(active.id, "catalog");
+  const inRentalCart = isInCart(active.id, "rental");
+  const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(active);
+  const photos = photoList(active.photos);
   const [activePhoto, setActivePhoto] = useState(0);
-  const colorOptions = parseColorOptions(item);
+  const colorOptions = parseColorOptions(active);
   const [selectedColor, setSelectedColor] = useState(colorOptions[0] || "");
+  const displayName = hasVariants ? groupName || active.name : active.name;
+  const basePrice = hasVariants ? priceOf(sortedVariants[0]) : null;
 
   return (
     <div
@@ -28,7 +42,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
       style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
       role="dialog"
       aria-modal="true"
-      aria-label={item.name}
+      aria-label={displayName}
     >
       <div
         className="relative grid max-h-[90vh] w-full max-w-3xl grid-cols-1 overflow-y-auto rounded-2xl bg-[#FFFFFF] sm:grid-cols-2"
@@ -46,7 +60,7 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
           {photos.length ? (
             <img
               src={photos[activePhoto] || photos[0]}
-              alt={itemAltText(item.name, { color: parseColorOptions(item)[0] })}
+              alt={itemAltText(displayName, { color: colorOptions[0] })}
               className="h-full w-full object-cover"
             />
           ) : (
@@ -79,7 +93,32 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
           <div className="font-[Space_Grotesk] text-sm font-medium uppercase tracking-[0.18em] text-[#6B6B6B]">
             {tags.length ? tags.join(" · ") : "Decor"}
           </div>
-          <h2 className="mt-1 font-['Fraunces'] text-3xl font-semibold text-[#0B4933]">{item.name}</h2>
+          <h2 className="mt-1 font-['Fraunces'] text-3xl font-semibold text-[#0B4933]">{displayName}</h2>
+
+          {hasVariants && (
+            <div className="relative mt-3 max-w-xs">
+              <select
+                value={selectedId}
+                onChange={(e) => {
+                  setSelectedId(e.target.value);
+                  setActivePhoto(0);
+                }}
+                className="w-full appearance-none rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm text-[#292929] outline-none focus:border-[#0B4933]"
+              >
+                {sortedVariants.map((v) => {
+                  const delta = priceOf(v) - basePrice;
+                  const label = v.variant_label || v.name;
+                  return (
+                    <option key={v.id} value={v.id}>
+                      {delta > 0 ? `${label} +$${delta}` : label}
+                    </option>
+                  );
+                })}
+              </select>
+              <ChevronDown size={13} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#8C846F]" />
+            </div>
+          )}
+
           {colorOptions.length > 1 ? (
             <div className="mt-1 flex items-center gap-2">
               <span className="font-[Space_Grotesk] text-sm text-[#8C846F]">Color:</span>
@@ -96,20 +135,37 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
           ) : colorOptions.length === 1 ? (
             <div className="mt-1 font-[Space_Grotesk] text-sm text-[#8C846F]">Color: {colorOptions[0]}</div>
           ) : null}
-          {item.size && <div className="mt-2 font-[Space_Grotesk] text-sm text-[#8C846F]">{item.size}</div>}
-          {item.description && (
-            <p className="mt-4 font-[Space_Grotesk] text-base leading-6 text-[#5C5645]">{item.description}</p>
+          {active.size && <div className="mt-2 font-[Space_Grotesk] text-sm text-[#8C846F]">{active.size}</div>}
+          {active.description && (
+            <p className="mt-4 font-[Space_Grotesk] text-base leading-6 text-[#5C5645]">{active.description}</p>
+          )}
+
+          {hasVariants && (
+            <div className="mt-3 font-[Space_Grotesk] text-sm leading-6 text-[#8C846F]">
+              <span className="font-semibold text-[#5C5645]">Available as: </span>
+              {sortedVariants
+                .map((v) => {
+                  const label = v.variant_label || v.name;
+                  const price = v.rental_price != null ? `$${v.rental_price} to rent` : `$${v.purchase_price} to buy`;
+                  return `${label} (${price})`;
+                })
+                .join(", ")}
+            </div>
+          )}
+
+          {active.condition_notes && (
+            <p className="mt-3 font-[Space_Grotesk] text-sm leading-6 text-[#8C846F]">{active.condition_notes}</p>
           )}
 
           <div className="mt-6 space-y-3 border-t border-[#E6E6E6] pt-5">
             {isPurchasable && (
               <div className="flex items-center justify-between">
-                <span className="font-[Space_Grotesk] text-base font-medium text-[#8A6A1E]">BUY ${item.purchase_price}</span>
+                <span className="font-[Space_Grotesk] text-base font-medium text-[#8A6A1E]">BUY ${active.purchase_price}</span>
                 {outOfStock ? (
                   <span className="font-[Space_Grotesk] text-sm tracking-[0.08em] text-[#9C947F]">UNAVAILABLE</span>
                 ) : (
                   <button
-                    onClick={() => (inPurchaseCart ? removeFromCart(item.id, "catalog") : onBuy?.(item))}
+                    onClick={() => (inPurchaseCart ? removeFromCart(active.id, "catalog") : onBuy?.(active))}
                     className="flex items-center gap-2 rounded-full px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em]"
                     style={{
                       background: inPurchaseCart ? "transparent" : "#0B4933",
@@ -126,9 +182,9 @@ export default function DecorDetailModal({ item, onClose, onRent, onBuy }) {
 
             {isRentable && !outOfStock && (
               <div className="flex items-center justify-between">
-                <span className="font-[Space_Grotesk] text-base font-medium text-[#8A6A1E]">RENT ${item.rental_price} / EVENT</span>
+                <span className="font-[Space_Grotesk] text-base font-medium text-[#8A6A1E]">RENT ${active.rental_price} / EVENT</span>
                 <button
-                  onClick={() => (inRentalCart ? removeFromCart(item.id, "rental") : onRent?.(item))}
+                  onClick={() => (inRentalCart ? removeFromCart(active.id, "rental") : onRent?.(active))}
                   className="flex items-center gap-2 rounded-full px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em]"
                   style={{
                     background: inRentalCart ? "#0B4933" : "transparent",

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, ChevronDown, Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import PhotoCarousel, { normalizePhotos } from "./PhotoCarousel";
 import { itemAltText } from "../seo";
 import { useCart } from "../CartContext";
@@ -53,34 +53,52 @@ export function getItemFlags(item) {
 // whichever variant is currently selected in the dropdown, instead of a
 // separate card per row. `groupName` is the shared display name (the
 // variant_group value) used in place of the individual row's own name.
+function variantPrice(v) {
+  const rent = v.rental_price != null ? Number(v.rental_price) : null;
+  const buy = v.purchase_price != null ? Number(v.purchase_price) : null;
+  if (rent != null && buy != null) return Math.min(rent, buy);
+  return rent ?? buy ?? Infinity;
+}
+
+// Sizing/price choices are made in the detail view (DecorDetailModal), not
+// on the grid - a dropdown per card reads as clunky at a glance. The grid
+// just needs to default to the cheapest variant (the smallest size, in
+// practice) so the photo and starting price it shows are representative.
+export function sortVariantsByPrice(list) {
+  return [...list].sort((a, b) => variantPrice(a) - variantPrice(b));
+}
+
 export default function DecorCard({ item, variants, groupName, onRent, onBuy, onOpenDetail }) {
   const { isInCart, removeFromCart } = useCart();
   const hasVariants = Array.isArray(variants) && variants.length > 1;
-  const [selectedId, setSelectedId] = useState(item.id);
-  // Native <select> values are always strings, but item ids are numeric
-  // (bigint from Supabase), so this compares both sides as strings rather
-  // than risking a silent type-mismatch miss on strict equality.
-  const active = hasVariants
-    ? variants.find((v) => String(v.id) === String(selectedId)) || variants[0]
-    : item;
+  const colorOptionsForItem = parseColorOptions(item);
+  const hasChoice = hasVariants || colorOptionsForItem.length > 1;
+  // The grid always shows the cheapest/default variant - selecting a
+  // different size or color happens after clicking through to the detail
+  // view (see onOpenDetail below), so there's no local selection state to
+  // track here anymore.
+  const active = hasVariants ? sortVariantsByPrice(variants)[0] : item;
 
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(active);
   const inPurchaseCart = isInCart(active.id, "catalog");
   const inRentalCart = isInCart(active.id, "rental");
   const displayName = hasVariants ? groupName || active.name : active.name;
   const colorOptions = parseColorOptions(active);
-  const [selectedColor, setSelectedColor] = useState(colorOptions[0] || "");
+  const startingPrice = hasVariants ? Math.min(...variants.map(variantPrice)) : null;
+  const startingIsRental = hasVariants
+    ? sortVariantsByPrice(variants).find((v) => variantPrice(v) === startingPrice)?.rental_price != null
+    : null;
 
   return (
     <article
-      onClick={() => onOpenDetail?.(active)}
+      onClick={() => onOpenDetail?.(active, variants, groupName)}
       className={`group flex h-full cursor-pointer flex-col overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
     >
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
         {normalizePhotos(active.photos).length ? (
           <PhotoCarousel
             photos={active.photos}
-            alt={itemAltText(displayName, { color: selectedColor })}
+            alt={itemAltText(displayName, { color: colorOptions[0] })}
             className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.025]"
           />
         ) : (
@@ -102,88 +120,78 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
         <h3 className="mt-1 font-['Fraunces'] text-lg font-semibold leading-[1.1] text-[#0B4933] sm:text-[25px] sm:leading-[1]">
           {displayName}
         </h3>
-        {colorOptions.length > 1 ? (
-          <div className="mt-1 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
-            <span className="font-[Space_Grotesk] text-xs text-[#8C846F] sm:text-sm">Color:</span>
-            <select
-              value={selectedColor}
-              onChange={(e) => setSelectedColor(e.target.value)}
-              className="rounded-sm border border-[#D9D9D9] bg-white px-2 py-1 font-[Space_Grotesk] text-xs text-[#0B4933] outline-none focus:border-[#0B4933] sm:text-sm"
-            >
-              {colorOptions.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
-        ) : colorOptions.length === 1 ? (
-          <div className="mt-1 font-[Space_Grotesk] text-xs text-[#8C846F] sm:text-sm">Color: {colorOptions[0]}</div>
-        ) : null}
         {active.size && (
           <div className="mt-2 font-[Space_Grotesk] text-xs text-[#8C846F] sm:text-sm">{active.size}</div>
         )}
 
-        {hasVariants && (
-          <div className="relative mt-3" onClick={(e) => e.stopPropagation()}>
-            <select
-              value={selectedId}
-              onChange={(e) => setSelectedId(e.target.value)}
-              className="w-full appearance-none border border-[#D9D9D9] bg-white px-3 py-2 font-[Space_Grotesk] text-sm text-[#292929] outline-none focus:border-[#0B4933]"
-            >
-              {variants.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.variant_label || v.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={13} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#8C846F]" />
-          </div>
-        )}
-
+        {/* Sizing, color and any other variant choice happens in the
+            detail view once someone clicks through - the grid only ever
+            shows a starting price or a single-option Buy/Rent action, no
+            dropdowns here. */}
         <div className="mt-auto space-y-2 border-t border-[#E6E6E6] pt-3">
-          {isPurchasable && (
-            <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
-              <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
-                BUY ${active.purchase_price}
-              </span>
-              {outOfStock ? (
-                <span className="font-[Space_Grotesk] text-xs tracking-[0.06em] text-[#9C947F] sm:text-sm sm:tracking-[0.08em]">UNAVAILABLE</span>
-              ) : (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    inPurchaseCart ? removeFromCart(active.id, "catalog") : onBuy?.(active);
-                  }}
-                  className="flex items-center gap-1.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] underline underline-offset-4 sm:text-sm sm:tracking-[0.14em]"
-                >
-                  {inPurchaseCart ? <Check size={13} /> : <Plus size={13} />}
-                  {inPurchaseCart ? "IN CART" : "ADD TO CART"}
-                </button>
-              )}
-            </div>
-          )}
-
-          {isRentable && !outOfStock && (
-            <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
-              <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
-                RENT ${active.rental_price} / EVENT
-              </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  inRentalCart ? removeFromCart(active.id, "rental") : onRent?.(active);
-                }}
-                className="flex items-center gap-1.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] underline underline-offset-4 sm:text-sm sm:tracking-[0.14em]"
-              >
-                {inRentalCart ? <Check size={13} /> : <Plus size={13} />}
-                {inRentalCart ? "IN CART" : "ADD TO CART"}
-              </button>
-            </div>
-          )}
-
-          {!isPurchasable && !isRentable && (
+          {hasChoice ? (
             <div className="flex items-end justify-between">
-              <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">INQUIRE</span>
+              <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
+                {hasVariants
+                  ? `STARTING AT $${startingPrice}${startingIsRental ? " / EVENT" : ""}`
+                  : isRentable
+                    ? `RENT $${active.rental_price} / EVENT`
+                    : isPurchasable
+                      ? `BUY $${active.purchase_price}`
+                      : "INQUIRE"}
+              </span>
+              <span className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] sm:text-sm sm:tracking-[0.14em]">
+                VIEW OPTIONS
+              </span>
             </div>
+          ) : (
+            <>
+              {isPurchasable && (
+                <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
+                  <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
+                    BUY ${active.purchase_price}
+                  </span>
+                  {outOfStock ? (
+                    <span className="font-[Space_Grotesk] text-xs tracking-[0.06em] text-[#9C947F] sm:text-sm sm:tracking-[0.08em]">UNAVAILABLE</span>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        inPurchaseCart ? removeFromCart(active.id, "catalog") : onBuy?.(active);
+                      }}
+                      className="flex items-center gap-1.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] underline underline-offset-4 sm:text-sm sm:tracking-[0.14em]"
+                    >
+                      {inPurchaseCart ? <Check size={13} /> : <Plus size={13} />}
+                      {inPurchaseCart ? "IN CART" : "ADD TO CART"}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {isRentable && !outOfStock && (
+                <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
+                  <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
+                    RENT ${active.rental_price} / EVENT
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      inRentalCart ? removeFromCart(active.id, "rental") : onRent?.(active);
+                    }}
+                    className="flex items-center gap-1.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] underline underline-offset-4 sm:text-sm sm:tracking-[0.14em]"
+                  >
+                    {inRentalCart ? <Check size={13} /> : <Plus size={13} />}
+                    {inRentalCart ? "IN CART" : "ADD TO CART"}
+                  </button>
+                </div>
+              )}
+
+              {!isPurchasable && !isRentable && (
+                <div className="flex items-end justify-between">
+                  <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">INQUIRE</span>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

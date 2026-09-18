@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { CalendarDays, ChevronLeft, Search, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
-import DecorCard, { parseItemTags } from "../components/DecorCard";
-import { normalizePhotos } from "../components/PhotoCarousel";
+import DecorCard, { parseItemTags, sortVariantsByPrice } from "../components/DecorCard";
 import DecorDetailModal from "../components/DecorDetailModal";
 import RentalDatesModal from "../components/RentalDatesModal";
 import { rentalDatesValid } from "../components/RentalDateFields";
@@ -169,13 +168,7 @@ export default function Decor() {
       if (seen.has(key)) continue;
       seen.add(key);
 
-      const variants = visible
-        .filter((i) => i.variant_group?.trim() === key)
-        .sort(
-          (a, b) =>
-            Number(normalizePhotos(b.photos).length > 0) -
-            Number(normalizePhotos(a.photos).length > 0)
-        );
+      const variants = sortVariantsByPrice(visible.filter((i) => i.variant_group?.trim() === key));
 
       result.push({ key, item: variants[0], variants, groupName: key });
     }
@@ -474,7 +467,9 @@ export default function Decor() {
                       groupName={entry.groupName}
                       onRent={handleRent}
                       onBuy={handleBuy}
-                      onOpenDetail={setDetailItem}
+                      onOpenDetail={(active, variants, groupName) =>
+                        setDetailItem({ item: active, variants, groupName })
+                      }
                     />
                   ))}
                 </div>
@@ -510,7 +505,9 @@ export default function Decor() {
 
       {detailItem && (
         <DecorDetailModal
-          item={detailItem}
+          item={detailItem.item}
+          variants={detailItem.variants}
+          groupName={detailItem.groupName}
           onClose={() => setDetailItem(null)}
           onRent={handleRent}
           onBuy={handleBuy}
