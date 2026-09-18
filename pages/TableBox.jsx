@@ -298,7 +298,7 @@ export default function TableBox() {
                         </button>
 
                         {isOpen && (
-                          <div className="grid gap-4 border-t px-5 py-5 sm:grid-cols-2" style={{ borderColor: palette.line }}>
+                          <div className="grid grid-cols-2 gap-4 border-t px-5 py-5" style={{ borderColor: palette.line }}>
                             {section.products.map((product) => {
                               const count = qty[product.id] || 0;
                               const photos = normalizePhotos(product.photos);
