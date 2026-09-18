@@ -306,9 +306,10 @@ export function SectionIntro({
   );
 }
 
-export function ElevatedCard({ children, palette, className = "", style = {} }) {
+export function ElevatedCard({ children, palette, className = "", style = {}, onClick }) {
   return (
     <div
+      onClick={onClick}
       className={`card-satin ${className}`}
       style={{
         // Cards stay clean white. The gold lives in the border, never as a

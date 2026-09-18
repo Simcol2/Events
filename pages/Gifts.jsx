@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Check, Plus, ShoppingBag, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
-import { getItemFlags, parseItemTags, plainDescription } from "../components/DecorCard";
+import { getItemFlags, parseItemTags, plainDescription, sortVariantsByPrice } from "../components/DecorCard";
+import DecorDetailModal from "../components/DecorDetailModal";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import CartModal from "../components/CartModal";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
@@ -33,11 +34,16 @@ function GiftTile({
   inCart,
   onToggle,
   onCustomize,
+  onView,
   palette,
   fonts,
 }) {
   return (
-    <ElevatedCard palette={palette} className="group h-full overflow-hidden">
+    <ElevatedCard
+      palette={palette}
+      className={`group h-full overflow-hidden ${onView ? "cursor-pointer" : ""}`}
+      onClick={onView}
+    >
       <div className="relative aspect-[4/4.6] overflow-hidden" style={{ background: rgba(palette.primary, 0.06) }}>
         {normalizePhotos(photos).length ? (
           <PhotoCarousel
@@ -110,7 +116,14 @@ function GiftTile({
             {priceLabel || (price != null ? `$${price}` : "Contact for pricing")}
           </span>
 
-          {price == null && !priceLabel && !onCustomize ? null : onCustomize ? (
+          {onView ? (
+            <span
+              className="text-xs font-semibold tracking-[0.1em]"
+              style={{ ...fonts.bodyFont, color: palette.primaryDeep, textTransform: "uppercase" }}
+            >
+              View options
+            </span>
+          ) : price == null && !priceLabel && !onCustomize ? null : onCustomize ? (
             <button
               onClick={onCustomize}
               className="rounded-full px-4 py-2 text-xs font-semibold tracking-[0.1em]"
@@ -157,6 +170,7 @@ export default function Gifts() {
   const [giftsError, setGiftsError] = useState("");
   const [customizing, setCustomizing] = useState(null);
   const [showCart, setShowCart] = useState(false);
+  const [detailItem, setDetailItem] = useState(null);
   const [checkoutStatus, setCheckoutStatus] = useState(null);
 
   useEffect(() => {
@@ -244,6 +258,25 @@ export default function Gifts() {
     const tags = parseItemTags(item).map((t) => t.toLowerCase().trim());
     return tags.includes("gift wrap") || tags.includes("stationery");
   });
+
+  // Pack sizes (a single bag, a 6 pack, a 12 pack) share a variant_group,
+  // so they collapse into one card showing the lowest price. Picking the
+  // pack happens in the detail view, same as the decor catalogue.
+  const wrapGroups = [];
+  const seenWrapGroups = new Set();
+  for (const item of wrapAndStationeryItems) {
+    const key = item.variant_group?.trim();
+    if (!key) {
+      wrapGroups.push({ key: item.id, item, variants: null });
+      continue;
+    }
+    if (seenWrapGroups.has(key)) continue;
+    seenWrapGroups.add(key);
+    const variants = sortVariantsByPrice(
+      wrapAndStationeryItems.filter((i) => i.variant_group?.trim() === key)
+    );
+    wrapGroups.push({ key, item: variants[0], variants, groupName: key });
+  }
 
   const toggleCatalogGift = (item) => {
     if (isInCart(item.id, "catalog")) removeFromCart(item.id, "catalog");
@@ -376,19 +409,34 @@ export default function Gifts() {
               />
 
               <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
-                {wrapAndStationeryItems.map((item) => (
-                  <GiftTile
-                    key={item.id}
-                    name={item.name}
-                    description={item.description}
-                    photos={item.photos}
-                    price={item.purchase_price}
-                    inCart={isInCart(item.id, "catalog")}
-                    onToggle={() => toggleCatalogGift(item)}
-                    palette={palette}
-                    fonts={fonts}
-                  />
-                ))}
+                {wrapGroups.map((entry) =>
+                  entry.variants ? (
+                    <GiftTile
+                      key={entry.key}
+                      name={entry.groupName}
+                      description={entry.item.description}
+                      photos={entry.item.photos}
+                      priceLabel={`From $${Math.min(
+                        ...entry.variants.map((v) => Number(v.purchase_price))
+                      )}`}
+                      onView={() => setDetailItem(entry)}
+                      palette={palette}
+                      fonts={fonts}
+                    />
+                  ) : (
+                    <GiftTile
+                      key={entry.key}
+                      name={entry.item.name}
+                      description={entry.item.description}
+                      photos={entry.item.photos}
+                      price={entry.item.purchase_price}
+                      inCart={isInCart(entry.item.id, "catalog")}
+                      onToggle={() => toggleCatalogGift(entry.item)}
+                      palette={palette}
+                      fonts={fonts}
+                    />
+                  )
+                )}
                 {popUpCards && <GiftTile {...giftTileProps(popUpCards)} palette={palette} fonts={fonts} />}
               </div>
             </>
@@ -478,6 +526,19 @@ export default function Gifts() {
           gift={customizing}
           onClose={() => setCustomizing(null)}
           onAdd={handleAddCustomGift}
+        />
+      )}
+
+      {detailItem && (
+        <DecorDetailModal
+          item={detailItem.item}
+          variants={detailItem.variants}
+          groupName={detailItem.groupName}
+          onClose={() => setDetailItem(null)}
+          onBuy={(picked) => {
+            addToCart(picked.id, "catalog");
+            setDetailItem(null);
+          }}
         />
       )}
 
