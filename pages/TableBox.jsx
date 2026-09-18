@@ -439,24 +439,33 @@ export default function TableBox() {
                 </strong>
               </div>
 
+              {/* The minimum only governs rentals, so a box holding nothing
+                  but purchased pieces should not be told it cleared a bar
+                  that never applied to it. */}
               <p
                 className="mt-3 text-sm font-semibold"
                 style={{ ...fonts.bodyFont, color: canAdd ? palette.accent : palette.muted }}
               >
-                {canAdd ? "$50 minimum reached" : `Add ${money(remaining)} more to reach the $50 rental minimum.`}
+                {rentalSubtotal === 0
+                  ? "No rental minimum on pieces you are buying."
+                  : canAdd
+                    ? "$50 rental minimum reached"
+                    : `Add ${money(remaining)} more to reach the $50 rental minimum.`}
               </p>
-              {cartRentalTotal > 0 && (
+              {rentalSubtotal > 0 && cartRentalTotal > 0 && (
                 <p className="mt-1 text-xs" style={{ ...fonts.bodyFont, color: palette.muted }}>
                   Includes {money(cartRentalTotal)} already in your cart.
                 </p>
               )}
 
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: palette.line }}>
-                <span
-                  className="block h-full"
-                  style={{ width: `${Math.min(100, (combinedTotal / MINIMUM) * 100)}%`, background: palette.accent }}
-                />
-              </div>
+              {rentalSubtotal > 0 && (
+                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full" style={{ background: palette.line }}>
+                  <span
+                    className="block h-full"
+                    style={{ width: `${Math.min(100, (combinedTotal / MINIMUM) * 100)}%`, background: palette.accent }}
+                  />
+                </div>
+              )}
 
               <button
                 onClick={handleAdd}
@@ -471,7 +480,7 @@ export default function TableBox() {
               >
                 ADD BOX TO CART
               </button>
-              {!canAdd && (
+              {!canAdd && selected.length > 0 && (
                 <p className="mt-2 text-center text-xs" style={{ ...fonts.bodyFont, color: palette.muted }}>
                   Reach the $50 rental minimum to add your box.
                 </p>

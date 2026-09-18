@@ -107,10 +107,10 @@ function GiftTile({
               letterSpacing: "0.06em",
             }}
           >
-            {priceLabel || `$${price}`}
+            {priceLabel || (price != null ? `$${price}` : "Contact for pricing")}
           </span>
 
-          {onCustomize ? (
+          {price == null && !priceLabel && !onCustomize ? null : onCustomize ? (
             <button
               onClick={onCustomize}
               className="rounded-full px-4 py-2 text-xs font-semibold tracking-[0.1em]"
