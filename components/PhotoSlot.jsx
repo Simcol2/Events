@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ImagePlus } from "lucide-react";
 import { usePalette } from "../PaletteContext";
+import { withBasePath } from "../apiBase";
 
 const SLIDE_INTERVAL = 3800;
 const CROSSFADE_MS = 700;
@@ -16,7 +17,9 @@ const CROSSFADE_MS = 700;
 export default function PhotoSlot({ photoKey, photoUrl, photoUrls, label, aspect = "aspect-[4/3]", fit = "cover" }) {
   const { palette, fonts } = usePalette();
   const explicit = (photoUrls && photoUrls.filter(Boolean)) || (photoUrl ? [photoUrl] : []);
-  const slides = explicit.length ? explicit : palette.photos?.[photoKey] ? [palette.photos[photoKey]] : [];
+  const slides = (explicit.length ? explicit : palette.photos?.[photoKey] ? [palette.photos[photoKey]] : []).map(
+    withBasePath
+  );
 
   const [index, setIndex] = useState(0);
 

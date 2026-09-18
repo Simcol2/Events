@@ -11,7 +11,7 @@
 //      snapshot in prerendered/ - the markup Google, Bing, and every
 //      link-preview bot actually index, since none of them run our JS.
 
-export const SITE_URL = "https://asliceofg.com";
+export const SITE_URL = "https://asliceofg.com/events";
 export const SITE_NAME = "A Slice of G Events";
 export const CONTACT_EMAIL = "hello@asliceofgevents.com";
 

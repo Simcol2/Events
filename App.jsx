@@ -12,6 +12,7 @@ import { PackageProvider } from "./PackageContext";
 import { CartProvider } from "./CartContext";
 import { usePalette } from "./PaletteContext";
 import { buildPageColorKey } from "./pageColors";
+import { BASE_PATH } from "./apiBase";
 
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
@@ -81,8 +82,18 @@ const NAV = [
   { label: "Build My Experience", path: "/package-builder", cta: true, opensPicker: true },
 ];
 
+// The site is deployed under asliceofg.com/events (a rewrite on the rum
+// cake business's main domain proxies /events/* here, see apiBase.js), so
+// every route the rest of the app works with stays a plain unprefixed path
+// (e.g. "/decor") and only these two functions - the router's boundary
+// with the real browser URL - know about the prefix. Nothing else in the
+// app (NAV, navigate() call sites, routeMap) needs to change.
 function getPath() {
-  return window.location.pathname || "/";
+  const raw = window.location.pathname || "/";
+  if (!BASE_PATH) return raw;
+  if (raw === BASE_PATH) return "/";
+  if (raw.startsWith(`${BASE_PATH}/`)) return raw.slice(BASE_PATH.length);
+  return raw;
 }
 
 function AppRoutes() {
@@ -96,7 +107,8 @@ function AppRoutes() {
 
   const navigate = (to) => {
     if (!to) return;
-    window.history.pushState({}, "", to);
+    const target = to === "/" ? BASE_PATH || "/" : `${BASE_PATH}${to}`;
+    window.history.pushState({}, "", target);
     setPath(to);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

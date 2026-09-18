@@ -2,6 +2,8 @@
 // localStorage (not a real session/cookie - this is a low-stakes internal
 // tool, not customer-facing auth) so it only needs to be entered once per
 // browser, then sent as a header on every request.
+import { API_BASE } from "./apiBase";
+
 const PASSCODE_KEY = "asliceofg-admin-passcode";
 
 export function getStoredPasscode() {
@@ -29,7 +31,10 @@ export function clearStoredPasscode() {
 }
 
 async function request(path, { method = "GET", body } = {}) {
-  const res = await fetch(path, {
+  // Call sites below write plain "/api/..." paths; rewritten here to the
+  // real deployed API_BASE so they still work under the /events prefix.
+  const url = path.startsWith("/api") ? `${API_BASE}${path.slice(4)}` : path;
+  const res = await fetch(url, {
     method,
     headers: { "Content-Type": "application/json", "X-Admin-Passcode": getStoredPasscode() },
     body: body ? JSON.stringify(body) : undefined,

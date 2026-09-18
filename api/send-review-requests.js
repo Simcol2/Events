@@ -8,9 +8,13 @@
 // instead of failing silently, because a review cycle that quietly stops
 // sending is worse than one that says why.
 import { adminSupabase } from "./_adminAuth.js";
+import { BASE_PATH } from "./_basePath.js";
 
 const BATCH_LIMIT = 50;
-const SITE_URL = process.env.SITE_URL || "https://asliceofg.com";
+// If SITE_URL is set as a Vercel env var on this project, it must include
+// the /events path (e.g. https://asliceofg.com/events) - an env var
+// override always wins over the default below, prefix included.
+const SITE_URL = process.env.SITE_URL || `https://asliceofg.com${BASE_PATH}`;
 
 function escapeHtml(value) {
   return String(value || "")

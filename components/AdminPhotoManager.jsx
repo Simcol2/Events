@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { X, ChevronUp, ChevronDown, Upload } from "lucide-react";
 import { getStoredPasscode } from "../adminApi";
+import { API_BASE } from "../apiBase";
 import { resizeImageFile, blobToBase64 } from "../imageResize";
 
 // `photos` is a plain array of URL strings, first = the one shown as the
@@ -20,7 +21,7 @@ export default function AdminPhotoManager({ photos, onChange }) {
       for (const file of Array.from(files)) {
         const resized = await resizeImageFile(file);
         const base64 = await blobToBase64(resized);
-        const res = await fetch("/api/admin?resource=upload", {
+        const res = await fetch(`${API_BASE}/admin?resource=upload`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-Admin-Passcode": getStoredPasscode() },
           body: JSON.stringify({

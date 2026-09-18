@@ -4,6 +4,7 @@ import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import { hexToRgba, paperTexture } from "../theme";
 import { FAMILIES } from "../pageColors";
+import { withBasePath } from "../apiBase";
 
 import heroFullBleed from "../media/timecapsul.png";
 import essentialsImage from "../media/hero.png";
@@ -259,7 +260,7 @@ function Hero({ fonts, palette, navigate }) {
                 ...photo.style,
               }}
             >
-              <img src={photo.src} alt={photo.alt} className="h-full w-full object-cover" />
+              <img src={withBasePath(photo.src)} alt={photo.alt} className="h-full w-full object-cover" />
             </div>
           ))}
 
@@ -407,7 +408,7 @@ export default function Home({ navigate }) {
                     }}
                   >
                     <img
-                      src={card.image}
+                      src={withBasePath(card.image)}
                       alt=""
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                     />
@@ -443,7 +444,7 @@ export default function Home({ navigate }) {
               style={{ aspectRatio: "4/3", boxShadow: elevatedShadow, border: `1px solid ${hexToRgba(palette.gold, 0.35)}` }}
             >
               <img
-                src="/photos/table-box-after.jpg"
+                src={withBasePath("/photos/table-box-after.jpg")}
                 alt="A home dining table styled for the holidays with rented pieces"
                 className="h-full w-full object-cover"
               />
@@ -596,7 +597,7 @@ export default function Home({ navigate }) {
                   >
                     <div className="overflow-hidden" style={{ aspectRatio: "4 / 3" }}>
                       <img
-                        src={card.image}
+                        src={withBasePath(card.image)}
                         alt=""
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                       />

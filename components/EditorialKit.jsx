@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { metallicGoldTextStyle, metallicGoldGradient } from "../theme";
+import { withBasePath } from "../apiBase";
 
 export const editorialShadow =
   "0 3px 6px rgba(41,41,41,0.05), 0 18px 44px rgba(41,41,41,0.10), 0 36px 70px rgba(41,41,41,0.06)";
@@ -194,7 +195,7 @@ export function PageHero({
             }}
           >
             <img
-              src={image}
+              src={withBasePath(image)}
               alt={imageAlt}
               className="glossy-photo h-full min-h-[520px] w-full object-cover"
             />
@@ -370,7 +371,7 @@ export function FullBleedStatement({
         backgroundImage: `linear-gradient(90deg, ${rgba(palette.primaryDeep, 0.93)} 0%, ${rgba(
           palette.primaryDeep,
           0.68
-        )} 52%, ${rgba(palette.primaryDeep, 0.28)} 100%), url(${image})`,
+        )} 52%, ${rgba(palette.primaryDeep, 0.28)} 100%), url(${withBasePath(image)})`,
         backgroundSize: "cover",
         backgroundPosition: position,
         display: "flex",

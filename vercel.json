@@ -8,25 +8,28 @@
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
     },
     {
-      "source": "/assets/(.*)",
+      "source": "/events/assets/(.*)",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     }
   ],
   "rewrites": [
-    { "source": "/how-it-works", "destination": "/how-it-works/index.html" },
-    { "source": "/experiences", "destination": "/experiences/index.html" },
-    { "source": "/about", "destination": "/about/index.html" },
-    { "source": "/faq", "destination": "/faq/index.html" },
-    { "source": "/decor", "destination": "/decor/index.html" },
-    { "source": "/birthdays/tutu-twirls-tea", "destination": "/birthdays/tutu-twirls-tea/index.html" },
-    { "source": "/milestone-events/baby-shower", "destination": "/milestone-events/baby-shower/index.html" },
-    { "source": "/gifts", "destination": "/gifts/index.html" },
-    { "source": "/catering", "destination": "/catering/index.html" },
-    { "source": "/package-builder", "destination": "/package-builder/index.html" },
-    { "source": "/display-options", "destination": "/display-options/index.html" },
-    { "source": "/past-events", "destination": "/past-events/index.html" },
-    { "source": "/rental-guide", "destination": "/rental-guide/index.html" },
-    { "source": "/reviews", "destination": "/reviews/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/events/api/:path*", "destination": "/api/:path*" },
+    { "source": "/events", "destination": "/index.html" },
+    { "source": "/events/how-it-works", "destination": "/how-it-works/index.html" },
+    { "source": "/events/experiences", "destination": "/experiences/index.html" },
+    { "source": "/events/about", "destination": "/about/index.html" },
+    { "source": "/events/faq", "destination": "/faq/index.html" },
+    { "source": "/events/decor", "destination": "/decor/index.html" },
+    { "source": "/events/table-box", "destination": "/table-box/index.html" },
+    { "source": "/events/birthdays/tutu-twirls-tea", "destination": "/birthdays/tutu-twirls-tea/index.html" },
+    { "source": "/events/milestone-events/baby-shower", "destination": "/milestone-events/baby-shower/index.html" },
+    { "source": "/events/gifts", "destination": "/gifts/index.html" },
+    { "source": "/events/catering", "destination": "/catering/index.html" },
+    { "source": "/events/package-builder", "destination": "/package-builder/index.html" },
+    { "source": "/events/display-options", "destination": "/display-options/index.html" },
+    { "source": "/events/past-events", "destination": "/past-events/index.html" },
+    { "source": "/events/rental-guide", "destination": "/rental-guide/index.html" },
+    { "source": "/events/reviews", "destination": "/reviews/index.html" },
+    { "source": "/events/(.*)", "destination": "/index.html" }
   ]
 }

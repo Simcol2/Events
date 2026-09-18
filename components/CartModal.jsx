@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "../CartContext";
+import { API_BASE } from "../apiBase";
 import { GROWN_FOLKS_LOOT_BAGS } from "../cateringContent";
 import { KEEPSAKES } from "../packageContent";
 
@@ -59,7 +60,7 @@ export default function CartModal({ catalog, gifts, onClose }) {
     setCheckingOut(true);
     setCheckoutError("");
     try {
-      const res = await fetch("/api/create-checkout-session", {
+      const res = await fetch(`${API_BASE}/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

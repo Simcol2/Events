@@ -15,6 +15,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
+import { API_BASE, BASE_PATH } from "../apiBase";
 
 // Covers every status the reservations table allows (see
 // reservations_status_check in the SQL) so nothing falls back to a
@@ -138,7 +139,7 @@ function SignIn() {
       const { error: signInError } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
-          emailRedirectTo: `${window.location.origin}/client`,
+          emailRedirectTo: `${window.location.origin}${BASE_PATH}/client`,
           shouldCreateUser: true,
         },
       });
@@ -231,7 +232,7 @@ export default function ClientPortal() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/client-portal", {
+      const response = await fetch(`${API_BASE}/client-portal`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
       const payload = await response.json();
@@ -264,7 +265,7 @@ export default function ClientPortal() {
     setBusyAction(actionKey);
     setError("");
     try {
-      const response = await fetch("/api/client-portal?action=invoice", {
+      const response = await fetch(`${API_BASE}/client-portal?action=invoice`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -285,7 +286,7 @@ export default function ClientPortal() {
     setBusyAction("billing");
     setError("");
     try {
-      const response = await fetch("/api/client-portal?action=billing-portal", {
+      const response = await fetch(`${API_BASE}/client-portal?action=billing-portal`, {
         method: "POST",
         headers: { Authorization: `Bearer ${session.access_token}` },
       });

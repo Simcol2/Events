@@ -3,6 +3,7 @@ import { Minus, Plus } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
+import { withBasePath } from "../apiBase";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import {
   ElevatedCard,
@@ -207,7 +208,7 @@ export default function TableBox() {
             style={{ aspectRatio: "4/3", borderRadius: "5px", boxShadow: editorialShadow, border: `1px solid ${rgba(palette.gold, 0.3)}` }}
           >
             <img
-              src="/photos/table-box-before.jpg"
+              src={withBasePath("/photos/table-box-before.jpg")}
               alt="A simple home dinner table before rental styling"
               className="h-full w-full object-cover"
             />
@@ -223,7 +224,7 @@ export default function TableBox() {
             style={{ aspectRatio: "4/3", borderRadius: "5px", boxShadow: editorialShadow, border: `1px solid ${rgba(palette.gold, 0.3)}` }}
           >
             <img
-              src="/photos/table-box-after.jpg"
+              src={withBasePath("/photos/table-box-after.jpg")}
               alt="The same home dinner table styled with rental pieces"
               className="h-full w-full object-cover"
             />

@@ -10,6 +10,7 @@ import react from "@vitejs/plugin-react";
 // would reference JS/CSS that no longer exists and real visitors landing
 // on a sub-route would get a blank, non-interactive page.
 export default {
+  base: "/events/",
   plugins: [react()],
   build: {
     rollupOptions: {

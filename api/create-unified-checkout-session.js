@@ -5,6 +5,7 @@
 // server's own data decides what gets charged.
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { BASE_PATH } from "./_basePath.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || process.env.stripe_secret);
 const supabase = createClient(
@@ -370,8 +371,8 @@ export default async function handler(req, res) {
       line_items: stripeLineItems,
       invoice_creation: { enabled: true },
       metadata,
-      success_url: `${origin}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/decor?checkout=cancelled`,
+      success_url: `${origin}${BASE_PATH}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}${BASE_PATH}/decor?checkout=cancelled`,
     });
 
     if (reservation) {

@@ -9,6 +9,7 @@
 // charged.
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { BASE_PATH } from "./_basePath.js";
 
 // Accepts either name so this works whether the Vercel env var is named
 // the conventional STRIPE_SECRET_KEY or left as stripe_secret - either
@@ -133,8 +134,8 @@ export default async function handler(req, res) {
       customer_creation: "always",
       invoice_creation: { enabled: true },
       metadata: { source: "purchase" },
-      success_url: `${origin}/gifts?checkout=success`,
-      cancel_url: `${origin}/gifts?checkout=cancelled`,
+      success_url: `${origin}${BASE_PATH}/gifts?checkout=success`,
+      cancel_url: `${origin}${BASE_PATH}/gifts?checkout=cancelled`,
     });
 
     return res.status(200).json({ url: session.url });

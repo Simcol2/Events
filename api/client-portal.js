@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { handleApiError, requireClient } from "./_clientAuth.js";
+import { BASE_PATH } from "./_basePath.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || process.env.stripe_secret);
 
@@ -290,7 +291,7 @@ async function createBillingPortalSession(req, res) {
   const origin = req.headers.origin || `https://${req.headers.host}`;
   const session = await stripe.billingPortal.sessions.create({
     customer: stripeCustomerId,
-    return_url: `${origin}/client`,
+    return_url: `${origin}${BASE_PATH}/client`,
   });
 
   return res.status(200).json({ url: session.url });

@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { Check, Plus, X } from "lucide-react";
 import { getItemFlags, parseColorOptions } from "./DecorCard";
+import { normalizePhotos as photoList } from "./PhotoCarousel";
 import { itemAltText } from "../seo";
 import { useEventType } from "../EventTypeContext";
 import { useCart } from "../CartContext";
-
-function photoList(photos) {
-  if (!Array.isArray(photos)) return [];
-  return photos.map((p) => (typeof p === "string" ? p : p?.url)).filter(Boolean);
-}
 
 // Full detail view opened by clicking a decor card - same Buy/Rent actions
 // as the card itself, just with room for the description and every photo,

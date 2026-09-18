@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Info, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "../CartContext";
 import { supabase } from "../supabaseClient";
+import { API_BASE } from "../apiBase";
 import RentalDateFields from "./RentalDateFields";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 
@@ -170,7 +171,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
     setCheckoutError("");
     setCheckingOut(true);
     try {
-      const res = await fetch("/api/create-unified-checkout-session", {
+      const res = await fetch(`${API_BASE}/create-unified-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

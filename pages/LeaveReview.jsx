@@ -3,6 +3,7 @@ import { Star, X, Loader2, Check } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { resizeImageFile, blobToBase64 } from "../imageResize";
 import { paperTexture } from "../theme";
+import { API_BASE } from "../apiBase";
 
 const MAX_PHOTOS = 5;
 
@@ -77,7 +78,7 @@ export default function LeaveReview({ navigate }) {
     }
     (async () => {
       try {
-        const res = await fetch(`/api/review-lookup?token=${encodeURIComponent(token)}`);
+        const res = await fetch(`${API_BASE}/review-lookup?token=${encodeURIComponent(token)}`);
         const data = await res.json().catch(() => ({}));
         if (cancelled) return;
         if (!res.ok) {
@@ -146,7 +147,7 @@ export default function LeaveReview({ navigate }) {
     setBusy(true);
     setMessage("");
     try {
-      const res = await fetch("/api/review-submit", {
+      const res = await fetch(`${API_BASE}/review-submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -2,9 +2,12 @@ User-agent: *
 Allow: /
 
 # Staff-only inventory tools and the one-time review link sent by email.
-# Nothing here is useful in a search result.
-Disallow: /admin
-Disallow: /scan
-Disallow: /review
+# Nothing here is useful in a search result. This file is only reachable
+# at asliceofg.com/events/robots.txt though - crawlers only ever check the
+# domain root, so the rum cake business's own root robots.txt is what
+# actually governs crawling of /events/*, and needs matching entries.
+Disallow: /events/admin
+Disallow: /events/scan
+Disallow: /events/review
 
-Sitemap: https://asliceofg.com/sitemap.xml
+Sitemap: https://asliceofg.com/events/sitemap.xml

@@ -2,6 +2,7 @@ import React from "react";
 import { Camera, Gift, Heart, Sparkles, WandSparkles } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { withBasePath } from "../apiBase";
 import {
   ElevatedCard,
   FullBleedStatement,
@@ -140,7 +141,7 @@ export default function Experiences({ navigate }) {
                       border: `1px solid ${palette.line}`,
                     }}
                   >
-                    <img src={item.image} alt={item.title} className="aspect-[5/4] h-full w-full object-cover" />
+                    <img src={withBasePath(item.image)} alt={item.title} className="aspect-[5/4] h-full w-full object-cover" />
                   </div>
                   <div className={index % 2 ? "lg:order-1" : ""}>
                     <Kicker palette={palette} fonts={fonts}>{item.eyebrow}</Kicker>

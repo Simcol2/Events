@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, X, ChevronLeft, ChevronRight } from "lucide-r
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import { FAMILIES } from "../pageColors";
+import { withBasePath } from "../apiBase";
 
 const EMERALD = FAMILIES.emerald.base;
 const EMERALD_DEEP = FAMILIES.emerald.deep;
@@ -86,7 +87,7 @@ function Print({ photo, className = "", style = {}, rotate = 0, gold = false, on
     >
       <span className="block w-full overflow-hidden" style={{ aspectRatio: String(photo.ratio) }}>
         <img
-          src={photo.src}
+          src={withBasePath(photo.src)}
           alt={photo.alt}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
@@ -207,7 +208,7 @@ function Lightbox({ event, onClose }) {
       <div className="relative flex w-full max-w-5xl flex-col items-center" onClick={(e) => e.stopPropagation()}>
         {/* object-contain: the whole photo, never a crop */}
         <img
-          src={photo.src}
+          src={withBasePath(photo.src)}
           alt={photo.alt}
           className="max-h-[72vh] w-auto max-w-full object-contain"
           style={{ background: "#FFFFFF" }}

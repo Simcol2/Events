@@ -2,6 +2,7 @@ import React from "react";
 import { Camera, Heart, Sparkles, Star, UtensilsCrossed, Wand2 } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { withBasePath } from "../apiBase";
 import {
   ElevatedCard,
   FullBleedStatement,
@@ -149,7 +150,7 @@ export default function TutuTwirlsTea() {
               border: `1px solid ${palette.line}`,
             }}
           >
-            <img src={BACKYARD_IMAGE} alt="Kids and grown-ups enjoying Tutu Twirls together" className="aspect-[5/4] h-full w-full object-cover" />
+            <img src={withBasePath(BACKYARD_IMAGE)} alt="Kids and grown-ups enjoying Tutu Twirls together" className="aspect-[5/4] h-full w-full object-cover" />
           </div>
         </div>
       </section>
@@ -219,7 +220,7 @@ export default function TutuTwirlsTea() {
                       border: `1px solid ${palette.line}`,
                     }}
                   >
-                    <img src={item.src} alt={item.label} className="h-full w-full object-cover" />
+                    <img src={withBasePath(item.src)} alt={item.label} className="h-full w-full object-cover" />
                   </div>
                   <p
                     className="mt-5 text-center text-sm font-semibold tracking-[0.12em]"

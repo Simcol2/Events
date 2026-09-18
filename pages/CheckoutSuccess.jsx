@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { useCart } from "../CartContext";
+import { API_BASE } from "../apiBase";
 
 export default function CheckoutSuccess({ navigate }) {
   const { clearCart } = useCart();
@@ -15,7 +16,7 @@ export default function CheckoutSuccess({ navigate }) {
       return;
     }
 
-    fetch(`/api/checkout-summary?session_id=${encodeURIComponent(sessionId)}`)
+    fetch(`${API_BASE}/checkout-summary?session_id=${encodeURIComponent(sessionId)}`)
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Could not load order confirmation.");

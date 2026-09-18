@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { withBasePath } from "../apiBase";
 
 export function normalizePhotos(photos) {
   if (!Array.isArray(photos)) return [];
-  return photos.map((p) => (typeof p === "string" ? p : p?.url)).filter(Boolean);
+  return photos.map((p) => (typeof p === "string" ? p : p?.url)).filter(Boolean).map(withBasePath);
 }
 
 // Drop-in replacement for a plain <img> wherever a card shows one of an
