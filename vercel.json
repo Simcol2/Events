@@ -14,6 +14,10 @@
   ],
   "rewrites": [
     { "source": "/events/api/:path*", "destination": "/api/:path*" },
+    { "source": "/events/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/events/photos/:path*", "destination": "/photos/:path*" },
+    { "source": "/events/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/events/robots.txt", "destination": "/robots.txt" },
     { "source": "/events", "destination": "/index.html" },
     { "source": "/events/how-it-works", "destination": "/how-it-works/index.html" },
     { "source": "/events/experiences", "destination": "/experiences/index.html" },
