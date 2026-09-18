@@ -37,7 +37,7 @@ const SECTIONS = [
     key: "centerpieces",
     title: "Choose Your Centrepiece",
     subtitle: "Choose the piece that anchors your table.",
-    itemIds: [506, 507, 508, 509, 445, 491],
+    itemIds: [506, 510, 507, 511, 508, 512, 509, 513, 445, 491],
   },
   {
     key: "candles",
