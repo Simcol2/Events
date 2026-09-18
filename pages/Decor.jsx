@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { CalendarDays, ChevronLeft, Search, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
-import DecorCard, { parseItemTags, sortVariantsByPrice } from "../components/DecorCard";
+import DecorCard, { groupByVariant, parseItemTags } from "../components/DecorCard";
 import DecorDetailModal from "../components/DecorDetailModal";
 import RentalDatesModal from "../components/RentalDatesModal";
 import { rentalDatesValid } from "../components/RentalDateFields";
@@ -153,28 +153,7 @@ export default function Decor() {
     return counts;
   }, [cardUnits]);
 
-  const groupedVisible = useMemo(() => {
-    const seen = new Set();
-    const result = [];
-
-    for (const item of visible) {
-      const key = item.variant_group?.trim();
-
-      if (!key) {
-        result.push({ key: item.id, item, variants: null });
-        continue;
-      }
-
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      const variants = sortVariantsByPrice(visible.filter((i) => i.variant_group?.trim() === key));
-
-      result.push({ key, item: variants[0], variants, groupName: key });
-    }
-
-    return result;
-  }, [visible]);
+  const groupedVisible = useMemo(() => groupByVariant(visible), [visible]);
 
   const selectCategory = (id) => {
     setSelectedCategory(id);

@@ -77,6 +77,31 @@ export function sortVariantsByPrice(list) {
   return [...list].sort((a, b) => variantPrice(a) - variantPrice(b));
 }
 
+// Rows sharing a variant_group (pack sizes, sizes, treat options) collapse
+// into a single card so a catalogue page never shows the same photo eight
+// times in a row. Every page that lists catalog items runs its own filtered
+// set through this, so a group only ever forms from rows that page is
+// already showing.
+export function groupByVariant(items) {
+  const seen = new Set();
+  const groups = [];
+
+  for (const item of items) {
+    const key = item.variant_group?.trim();
+    if (!key) {
+      groups.push({ key: `item-${item.id}`, item, variants: null });
+      continue;
+    }
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    const variants = sortVariantsByPrice(items.filter((i) => i.variant_group?.trim() === key));
+    groups.push({ key, item: variants[0], variants, groupName: key });
+  }
+
+  return groups;
+}
+
 export default function DecorCard({ item, variants, groupName, onRent, onBuy, onOpenDetail }) {
   const { isInCart, removeFromCart } = useCart();
   const hasVariants = Array.isArray(variants) && variants.length > 1;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Check, Plus, ShoppingBag, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
-import { getItemFlags, parseItemTags, plainDescription, sortVariantsByPrice } from "../components/DecorCard";
+import { getItemFlags, groupByVariant, parseItemTags, plainDescription } from "../components/DecorCard";
 import DecorDetailModal from "../components/DecorDetailModal";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import CartModal from "../components/CartModal";
@@ -35,6 +35,7 @@ function GiftTile({
   onToggle,
   onCustomize,
   onView,
+  showViewOptions,
   palette,
   fonts,
 }) {
@@ -116,7 +117,7 @@ function GiftTile({
             {priceLabel || (price != null ? `$${price}` : "Contact for pricing")}
           </span>
 
-          {onView ? (
+          {showViewOptions ? (
             <span
               className="text-xs font-semibold tracking-[0.1em]"
               style={{ ...fonts.bodyFont, color: palette.primaryDeep, textTransform: "uppercase" }}
@@ -138,7 +139,10 @@ function GiftTile({
             </button>
           ) : (
             <button
-              onClick={onToggle}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle?.();
+              }}
               className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold tracking-[0.1em]"
               style={{
                 ...fonts.bodyFont,
@@ -259,24 +263,33 @@ export default function Gifts() {
     return tags.includes("gift wrap") || tags.includes("stationery");
   });
 
-  // Pack sizes (a single bag, a 6 pack, a 12 pack) share a variant_group,
-  // so they collapse into one card showing the lowest price. Picking the
-  // pack happens in the detail view, same as the decor catalogue.
-  const wrapGroups = [];
-  const seenWrapGroups = new Set();
-  for (const item of wrapAndStationeryItems) {
-    const key = item.variant_group?.trim();
-    if (!key) {
-      wrapGroups.push({ key: item.id, item, variants: null });
-      continue;
-    }
-    if (seenWrapGroups.has(key)) continue;
-    seenWrapGroups.add(key);
-    const variants = sortVariantsByPrice(
-      wrapAndStationeryItems.filter((i) => i.variant_group?.trim() === key)
-    );
-    wrapGroups.push({ key, item: variants[0], variants, groupName: key });
-  }
+  // Pack sizes and size/treat options share a variant_group, so they
+  // collapse into one card showing the lowest price. Picking the option
+  // happens in the detail view, same as the decor catalogue.
+  const wrapGroups = groupByVariant(wrapAndStationeryItems);
+  const giftGroups = groupByVariant(giftItems);
+
+  // Every catalog tile opens the detail view on click, grouped or not,
+  // so the two catalogue pages behave identically.
+  const catalogTileProps = (entry) =>
+    entry.variants
+      ? {
+          name: entry.groupName,
+          description: entry.item.description,
+          photos: entry.item.photos,
+          priceLabel: `From $${Math.min(...entry.variants.map((v) => Number(v.purchase_price)))}`,
+          showViewOptions: true,
+          onView: () => setDetailItem(entry),
+        }
+      : {
+          name: entry.item.name,
+          description: entry.item.description,
+          photos: entry.item.photos,
+          price: entry.item.purchase_price,
+          inCart: isInCart(entry.item.id, "catalog"),
+          onToggle: () => toggleCatalogGift(entry.item),
+          onView: () => setDetailItem(entry),
+        };
 
   const toggleCatalogGift = (item) => {
     if (isInCart(item.id, "catalog")) removeFromCart(item.id, "catalog");
@@ -409,34 +422,9 @@ export default function Gifts() {
               />
 
               <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
-                {wrapGroups.map((entry) =>
-                  entry.variants ? (
-                    <GiftTile
-                      key={entry.key}
-                      name={entry.groupName}
-                      description={entry.item.description}
-                      photos={entry.item.photos}
-                      priceLabel={`From $${Math.min(
-                        ...entry.variants.map((v) => Number(v.purchase_price))
-                      )}`}
-                      onView={() => setDetailItem(entry)}
-                      palette={palette}
-                      fonts={fonts}
-                    />
-                  ) : (
-                    <GiftTile
-                      key={entry.key}
-                      name={entry.item.name}
-                      description={entry.item.description}
-                      photos={entry.item.photos}
-                      price={entry.item.purchase_price}
-                      inCart={isInCart(entry.item.id, "catalog")}
-                      onToggle={() => toggleCatalogGift(entry.item)}
-                      palette={palette}
-                      fonts={fonts}
-                    />
-                  )
-                )}
+                {wrapGroups.map((entry) => (
+                  <GiftTile key={entry.key} {...catalogTileProps(entry)} palette={palette} fonts={fonts} />
+                ))}
                 {popUpCards && <GiftTile {...giftTileProps(popUpCards)} palette={palette} fonts={fonts} />}
               </div>
             </>
@@ -476,18 +464,8 @@ export default function Gifts() {
             )}
 
             <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
-              {giftItems.map((item) => (
-                <GiftTile
-                  key={item.id}
-                  name={item.name}
-                  description={item.description}
-                  photos={item.photos}
-                  price={item.purchase_price}
-                  inCart={isInCart(item.id, "catalog")}
-                  onToggle={() => toggleCatalogGift(item)}
-                  palette={palette}
-                  fonts={fonts}
-                />
+              {giftGroups.map((entry) => (
+                <GiftTile key={entry.key} {...catalogTileProps(entry)} palette={palette} fonts={fonts} />
               ))}
             </div>
           </div>
