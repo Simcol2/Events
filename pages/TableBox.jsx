@@ -51,6 +51,12 @@ const SECTIONS = [
     subtitle: "Finish the table with a little glow.",
     itemIds: [310, 481, 456],
   },
+  {
+    key: "garland-lights",
+    title: "Choose Your Garland & Lights",
+    subtitle: "Dress the table or the mantle for the holidays.",
+    itemIds: [497, 498],
+  },
 ];
 
 function money(n) {
@@ -459,6 +465,9 @@ export default function TableBox() {
 
               <p className="mt-4 text-xs leading-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
                 Rental availability is confirmed for your selected date at checkout.
+              </p>
+              <p className="mt-2 text-xs leading-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                Need a longer rental period? Inquire about our week-long pricing.
               </p>
             </ElevatedCard>
           </aside>

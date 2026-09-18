@@ -167,6 +167,10 @@ export default function RentalRequestModal({ item, requestType, onClose }) {
                   </p>
                 )}
 
+                <p className="font-[Space_Grotesk] text-sm leading-5 text-[#8C846F]">
+                  Need a longer rental period? Inquire about our week-long pricing.
+                </p>
+
                 {!datesValid && (
                   <p className="font-[Space_Grotesk] text-sm text-red-700">Drop-off must be on or after pickup.</p>
                 )}
