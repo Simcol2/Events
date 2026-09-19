@@ -1176,7 +1176,7 @@ export const DISPLAYS = [
     tagline: "Glowing, dreamy, unmistakably yours.",
     description:
       "A free-standing arched display that lights up the room, dressed in color draping that matches your theme. Just needs a nearby outlet, we bring the extension cords.",
-    photoUrl: "https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/iradescentlight.png",
+    photoUrl: "/photos/arched-iridescent-display.png",
     details: {
       summary: "A glowing arched display with color draping that matches your theme.",
       howItWorks: [
