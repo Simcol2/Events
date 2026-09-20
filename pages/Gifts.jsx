@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Check, Plus, ShoppingBag, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
@@ -14,7 +14,6 @@ import { giftAltText } from "../seo";
 import {
   ElevatedCard,
   JewelBand,
-  Kicker,
   PageHero,
   PrimaryButton,
   Reveal,
@@ -23,6 +22,28 @@ import {
   paperTexture,
   rgba,
 } from "../components/EditorialKit";
+
+// The wrap/stationery and keepsakes/gifts catalog rows share one filtered
+// grid below, matching the category-picker pattern already used on the
+// Decor page. "gift wrap" and "keepsakes & gifts" are the sheet's own
+// broad tags (relied on elsewhere - the Decor page's category tiles, the
+// purchase-only rule); "gifts" is a second tag added specifically for this
+// menu so items can carry both without disturbing what already reads
+// those broader tags.
+const GIFT_CATEGORIES = [
+  { id: "all", label: "View All" },
+  { id: "gifts", label: "Gifts" },
+  { id: "holiday cards", label: "Holiday Cards" },
+  { id: "nostalgia cards", label: "Nostalgia Cards" },
+  { id: "birthday cards", label: "Birthday Cards" },
+  { id: "card packs", label: "Card Packs" },
+  { id: "gift tags", label: "Gift Tags" },
+  { id: "gift wrap", label: "Gift Wrap" },
+];
+
+function normalize(value) {
+  return String(value || "").toLowerCase().trim();
+}
 
 function GiftTile({
   name,
@@ -176,6 +197,7 @@ export default function Gifts() {
   const [showCart, setShowCart] = useState(false);
   const [detailItem, setDetailItem] = useState(null);
   const [checkoutStatus, setCheckoutStatus] = useState(null);
+  const [selectedGiftCategory, setSelectedGiftCategory] = useState("all");
 
   useEffect(() => {
     const status = new URLSearchParams(window.location.search).get("checkout");
@@ -263,11 +285,42 @@ export default function Gifts() {
     return tags.includes("gift wrap") || tags.includes("stationery");
   });
 
-  // Pack sizes and size/treat options share a variant_group, so they
-  // collapse into one card showing the lowest price. Picking the option
-  // happens in the detail view, same as the decor catalogue.
-  const wrapGroups = groupByVariant(wrapAndStationeryItems);
-  const giftGroups = groupByVariant(giftItems);
+  // Gift wrap and Keepsakes & Gifts share one filtered grid, browsed by
+  // the category menu below rather than as two separate hardcoded
+  // sections. An item can only ever come from one of the two arrays
+  // above (their sheet tags don't overlap today), so a plain concat
+  // never double-lists anything.
+  const wrapAndGiftItems = [...wrapAndStationeryItems, ...giftItems];
+
+  const giftCategoryCounts = useMemo(() => {
+    const counts = {};
+    const units = groupByVariant(wrapAndGiftItems);
+    for (const unit of units) {
+      const tags = parseItemTags(unit.item).map(normalize);
+      for (const cat of GIFT_CATEGORIES) {
+        if (cat.id === "all" || tags.includes(cat.id)) counts[cat.id] = (counts[cat.id] || 0) + 1;
+      }
+    }
+    // Pop Up Nostalgia Cards lives in the separate `gifts` table, not the
+    // catalog `items` grouped above, so it's counted in by hand.
+    if (popUpCards) {
+      counts.all = (counts.all || 0) + 1;
+      counts["nostalgia cards"] = (counts["nostalgia cards"] || 0) + 1;
+    }
+    return counts;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog, popUpCards]);
+
+  const filteredWrapAndGiftItems = useMemo(() => {
+    if (selectedGiftCategory === "all") return wrapAndGiftItems;
+    return wrapAndGiftItems.filter((item) => parseItemTags(item).map(normalize).includes(selectedGiftCategory));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog, selectedGiftCategory]);
+
+  // Pack sizes, color choices and size/treat options share a variant_group,
+  // so they collapse into one card showing the lowest price. Picking the
+  // option happens in the detail view, same as the decor catalogue.
+  const giftGroups = groupByVariant(filteredWrapAndGiftItems);
 
   // Every catalog tile opens the detail view on click, grouped or not,
   // so the two catalogue pages behave identically.
@@ -410,41 +463,37 @@ export default function Gifts() {
 
       <section style={{ ...paperTexture(palette), padding: "94px 24px" }}>
         <div className="mx-auto max-w-7xl">
-          {(wrapAndStationeryItems.length > 0 || popUpCards) && (
-            <>
-              <SectionIntro
-                eyebrow="WRAP IT UP"
-                title="Gift wrap & stationery"
-                body="Everything to wrap it, write it and make the presentation feel intentional."
-                palette={palette}
-                fonts={fonts}
-                align="left"
-              />
+          <SectionIntro
+            eyebrow="GIFTS & GIFT WRAP"
+            title="Everything to wrap it, write it and gift it."
+            body="Cards, gift wrap, stationery and keepsakes, filtered by what you're actually shopping for."
+            palette={palette}
+            fonts={fonts}
+            align="left"
+          />
 
-              <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
-                {wrapGroups.map((entry) => (
-                  <GiftTile key={entry.key} {...catalogTileProps(entry)} palette={palette} fonts={fonts} />
-                ))}
-                {popUpCards && <GiftTile {...giftTileProps(popUpCards)} palette={palette} fonts={fonts} />}
-              </div>
-            </>
-          )}
+          <div className="mt-8 flex flex-wrap gap-2">
+            {GIFT_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedGiftCategory(cat.id)}
+                className="rounded-full px-5 py-2.5 text-xs font-semibold tracking-[0.08em]"
+                style={{
+                  ...fonts.bodyFont,
+                  background: selectedGiftCategory === cat.id ? palette.primaryDeep : palette.surface,
+                  color: selectedGiftCategory === cat.id ? "#FFFFFF" : palette.primaryDeep,
+                  border: `1px solid ${selectedGiftCategory === cat.id ? palette.primaryDeep : palette.line}`,
+                  textTransform: "uppercase",
+                }}
+              >
+                {cat.label}
+                {cat.id !== "all" ? ` (${giftCategoryCounts[cat.id] || 0})` : ""}
+              </button>
+            ))}
+          </div>
 
-          <div className={wrapAndStationeryItems.length > 0 ? "mt-20" : ""}>
-            <Kicker palette={palette} fonts={fonts}>MORE FROM THE COLLECTION</Kicker>
-            <h2
-              className="mt-3"
-              style={{
-                ...fonts.displayFont,
-                color: palette.primaryDeep,
-                fontSize: "clamp(2.5rem, 4.5vw, 4rem)",
-                lineHeight: 1,
-                fontWeight: 630,
-              }}
-            >
-              Keepsakes & gifts
-            </h2>
-
+          <div className="mt-12">
             {loading && (
               <p className="py-12 text-center" style={{ ...fonts.bodyFont, color: palette.muted }}>
                 Curating the collection...
@@ -457,16 +506,22 @@ export default function Gifts() {
               </p>
             )}
 
-            {!loading && !error && giftItems.length === 0 && (
-              <p className="py-12 text-center" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                Nothing tagged yet, check back soon.
-              </p>
-            )}
+            {!loading &&
+              !error &&
+              giftGroups.length === 0 &&
+              !(popUpCards && (selectedGiftCategory === "all" || selectedGiftCategory === "nostalgia cards")) && (
+                <p className="py-12 text-center" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                  Nothing in this category yet, check back soon.
+                </p>
+              )}
 
-            <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
               {giftGroups.map((entry) => (
                 <GiftTile key={entry.key} {...catalogTileProps(entry)} palette={palette} fonts={fonts} />
               ))}
+              {popUpCards && (selectedGiftCategory === "all" || selectedGiftCategory === "nostalgia cards") && (
+                <GiftTile {...giftTileProps(popUpCards)} palette={palette} fonts={fonts} />
+              )}
             </div>
           </div>
 
