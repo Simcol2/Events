@@ -7,7 +7,6 @@ import DecorDetailModal from "../components/DecorDetailModal";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import CartModal from "../components/CartModal";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
-import { KEEPSAKES, resolveKeepsakeName } from "../packageContent";
 import { useEventType } from "../EventTypeContext";
 import { usePalette } from "../PaletteContext";
 import { giftAltText } from "../seo";
@@ -185,7 +184,7 @@ function GiftTile({
 
 export default function Gifts() {
   const { palette, fonts } = usePalette();
-  const { eventTypeId, openPickerForBuilder } = useEventType();
+  const { openPickerForBuilder } = useEventType();
   const { addToCart, removeFromCart, isInCart, cartCount, clearCart } = useCart();
 
   const [catalog, setCatalog] = useState([]);
@@ -252,13 +251,6 @@ export default function Gifts() {
     };
   }, []);
 
-  // Some standalone gifts read as a natural pair with a specific keepsake
-  // or catalog section rather than their own generic grid, so they're
-  // pulled out of `gifts` and rendered inside those sections instead.
-  const gRingGift = gifts.find((g) => g.name === "G Ring Gift");
-  const popUpCards = gifts.find((g) => g.name === "Pop Up Nostalgia Cards");
-  const otherGifts = gifts.filter((g) => g.id !== gRingGift?.id && g.id !== popUpCards?.id);
-
   const giftTileProps = (g) => ({
     name: g.name,
     tagline: g.tagline,
@@ -301,15 +293,9 @@ export default function Gifts() {
         if (cat.id === "all" || tags.includes(cat.id)) counts[cat.id] = (counts[cat.id] || 0) + 1;
       }
     }
-    // Pop Up Nostalgia Cards lives in the separate `gifts` table, not the
-    // catalog `items` grouped above, so it's counted in by hand.
-    if (popUpCards) {
-      counts.all = (counts.all || 0) + 1;
-      counts["nostalgia cards"] = (counts["nostalgia cards"] || 0) + 1;
-    }
     return counts;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catalog, popUpCards]);
+  }, [catalog]);
 
   const filteredWrapAndGiftItems = useMemo(() => {
     if (selectedGiftCategory === "all") return wrapAndGiftItems;
@@ -393,52 +379,7 @@ export default function Gifts() {
         </section>
       )}
 
-      <section style={{ ...paperTexture(palette), padding: "88px 24px 100px" }}>
-        <div className="mx-auto max-w-7xl">
-          <SectionIntro
-            eyebrow="GUEST GIFTS"
-            title="A small thing can still feel thoughtful."
-            body="Buy these individually, whether or not you are building a full event experience. Every experience package also includes a guest gift choice."
-            palette={palette}
-            fonts={fonts}
-          />
-
-          <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
-            {KEEPSAKES.map((k, i) => {
-              const name = resolveKeepsakeName(k, eventTypeId);
-              const photos = k.photoUrls || (k.photoUrl ? [k.photoUrl] : []);
-              const inCart = isInCart(k.id, "keepsake");
-
-              return (
-                <Reveal key={k.id} delay={i * 55}>
-                  <GiftTile
-                    name={name}
-                    tagline={k.tagline}
-                    description={k.description}
-                    photos={photos}
-                    priceLabel={`$${k.standalonePrice} each`}
-                    inCart={inCart}
-                    onToggle={() =>
-                      inCart
-                        ? removeFromCart(k.id, "keepsake")
-                        : addToCart(k.id, "keepsake")
-                    }
-                    palette={palette}
-                    fonts={fonts}
-                  />
-                </Reveal>
-              );
-            })}
-            {gRingGift && (
-              <Reveal delay={KEEPSAKES.length * 55}>
-                <GiftTile {...giftTileProps(gRingGift)} palette={palette} fonts={fonts} />
-              </Reveal>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {otherGifts.length > 0 && (
+      {gifts.length > 0 && (
         <JewelBand palette={palette} glass style={{ padding: "94px 24px" }}>
           <div className="mx-auto max-w-7xl">
             <SectionIntro
@@ -451,7 +392,7 @@ export default function Gifts() {
             />
 
             <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
-              {otherGifts.map((g, i) => (
+              {gifts.map((g, i) => (
                 <Reveal key={g.id} delay={i * 55}>
                   <GiftTile {...giftTileProps(g)} palette={palette} fonts={fonts} />
                 </Reveal>
@@ -506,22 +447,16 @@ export default function Gifts() {
               </p>
             )}
 
-            {!loading &&
-              !error &&
-              giftGroups.length === 0 &&
-              !(popUpCards && (selectedGiftCategory === "all" || selectedGiftCategory === "nostalgia cards")) && (
-                <p className="py-12 text-center" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                  Nothing in this category yet, check back soon.
-                </p>
-              )}
+            {!loading && !error && giftGroups.length === 0 && (
+              <p className="py-12 text-center" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                Nothing in this category yet, check back soon.
+              </p>
+            )}
 
             <div className="grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
               {giftGroups.map((entry) => (
                 <GiftTile key={entry.key} {...catalogTileProps(entry)} palette={palette} fonts={fonts} />
               ))}
-              {popUpCards && (selectedGiftCategory === "all" || selectedGiftCategory === "nostalgia cards") && (
-                <GiftTile {...giftTileProps(popUpCards)} palette={palette} fonts={fonts} />
-              )}
             </div>
           </div>
 

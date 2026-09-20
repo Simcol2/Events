@@ -15,7 +15,7 @@ import react from "@vitejs/plugin-react";
 // filenames carry a version instead of Vite's own content hash. Changing
 // it means re-running `npm run prerender` before deploying, since the
 // static snapshots' <script>/<link> tags hardcode the current name.
-const BUNDLE_VERSION = "v12";
+const BUNDLE_VERSION = "v13";
 
 export default {
   base: "/events/",
