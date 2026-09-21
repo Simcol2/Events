@@ -45,14 +45,12 @@ export const FEATURED_DECOR = [
   { kind: "item", name: "Plastic Vintage Inspired Unbreakable Wine Glasses" },
 ];
 
-// Gifts featured six are all real, purchasable catalog rows - matched
+// Gifts featured set are all real, purchasable catalog rows - matched
 // against `name` directly (grouped items would match on variant_group the
-// same way FEATURED_DECOR does, none of these six happen to be grouped).
+// same way FEATURED_DECOR does, none of these happen to be grouped).
 export const FEATURED_GIFTS = [
   "Lil Roots",
-  "Custom Pop Up Nostalgia Card",
-  "Grown Folks Loot Bags",
-  "Ready to Pop",
-  "G Ring Gift",
-  "Bumble Bee Clear Plastic Gift Bags (10 Pack)",
+  "Pop Up Nostalgia Card - Proud Family",
+  "Holiday Treat Box",
+  "Birthday Card - Blue",
 ];
