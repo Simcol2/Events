@@ -10,7 +10,7 @@ import { TAGS as CATALOG_TAGS } from "../decorTags";
 import { FEATURED_DECOR } from "../featuredProducts";
 import { CUSTOM_SERVING_DISH, DISPLAYS } from "../packageContent";
 import { itemUrlPath } from "../seo";
-import { ElevatedCard, PageHero, SectionIntro, paperTexture, rgba } from "../components/EditorialKit";
+import { ElevatedCard, SectionIntro, paperTexture, rgba } from "../components/EditorialKit";
 
 // A pinned featured entry that isn't a real Supabase catalog row - a
 // Display Wall design or the Custom Serving Dish, both sold through their
@@ -250,23 +250,21 @@ export default function Decor({ navigate }) {
 
   return (
     <main style={{ ...paperTexture(palette), color: palette.ink }}>
-      <PageHero
-        eyebrow="THE RENTAL COLLECTION"
-        title="The pieces that make the room feel intentional."
-        script="Decor, display walls and tabletop pieces to rent or buy for your celebration."
-        palette={palette}
-        fonts={fonts}
-        align="center"
-      />
-
-      <div className="mx-auto max-w-3xl px-5 pb-2 pt-6 text-center sm:px-8">
+      <section className="mx-auto max-w-7xl px-5 pt-14 text-center sm:px-8">
+        <SectionIntro
+          eyebrow="THE RENTAL COLLECTION"
+          title="The pieces that make the room feel intentional."
+          body="Decor, display walls and tabletop pieces to rent or buy for your celebration."
+          palette={palette}
+          fonts={fonts}
+        />
         <p
-          className="font-[Space_Grotesk] text-xs font-semibold uppercase tracking-[0.14em]"
+          className="mt-4 font-[Space_Grotesk] text-xs font-semibold uppercase tracking-[0.14em]"
           style={{ color: palette.muted }}
         >
           Toronto pickup · Delivery by request · Event Stylist setup available
         </p>
-      </div>
+      </section>
 
       <section style={{ ...paperTexture(palette), padding: "72px 24px 100px" }}>
         <div className="mx-auto max-w-7xl">
