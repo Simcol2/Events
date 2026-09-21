@@ -2,7 +2,16 @@ import React, { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
+import { FAMILIES } from "../pageColors";
 import EventTypeBar from "./EventTypeBar";
+
+// A nav CTA's own color, when it names one (e.g. Client Portal's coral),
+// instead of the page's own dominant color - a fixed brand color reads as
+// "this always means the same thing" no matter which page you're on,
+// which is the point for a persistent utility link like the portal.
+function ctaBackground(item, palette) {
+  return item.ctaColor ? FAMILIES[item.ctaColor].base : palette.primaryDeep;
+}
 
 export default function SiteHeader({ current, navigate, nav }) {
   const { palette, fonts } = usePalette();
@@ -60,7 +69,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                   key={path}
                   onClick={() => go(item)}
                   className="rounded-full px-4 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.1em] text-white transition-transform hover:-translate-y-0.5"
-                  style={{ background: palette.primaryDeep }}
+                  style={{ background: ctaBackground(item, palette) }}
                 >
                   {label.toUpperCase()}
                 </button>
@@ -148,7 +157,7 @@ export default function SiteHeader({ current, navigate, nav }) {
                     }
                     style={
                       item.cta
-                        ? { background: palette.primaryDeep }
+                        ? { background: ctaBackground(item, palette) }
                         : { borderBottom: item.children && isExpanded ? "none" : `1px solid ${palette.line}CC`, color: palette.primaryDeep }
                     }
                   >

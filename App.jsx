@@ -44,7 +44,15 @@ import CartLauncher from "./components/CartLauncher";
 // Builder's Memory Display step) without competing for top-level nav space.
 const NAV = [
   { label: "Home", path: "/" },
-  { label: "About", path: "/about" },
+  {
+    label: "The Must Knows",
+    path: "/about",
+    children: [
+      { label: "About Us", path: "/about" },
+      { label: "Rental Guide", path: "/rental-guide" },
+      { label: "FAQ", path: "/faq" },
+    ],
+  },
   {
     label: "Milestone Events",
     path: "/package-builder",
@@ -67,19 +75,9 @@ const NAV = [
     ],
   },
   { label: "Experiences", path: "/experiences" },
-  { label: "Rental Guide", path: "/rental-guide" },
-  { label: "FAQ", path: "/faq" },
   { label: "Catering", path: "/catering" },
   { label: "Past Events", path: "/past-events" },
-  { label: "Client Portal", path: "/client" },
-  {
-    label: "Celebrating You",
-    path: "/package-builder",
-    opensPicker: true,
-    children: [
-      { label: "Just Because", path: "/package-builder", eventTypeId: "specialMoment" },
-    ],
-  },
+  { label: "Client Portal", path: "/client", cta: true, ctaColor: "coral" },
   { label: "Build My Experience", path: "/package-builder", cta: true, opensPicker: true },
 ];
 
