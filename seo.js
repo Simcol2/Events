@@ -200,7 +200,14 @@ export function parseItemIdFromSlug(slug) {
 function absoluteImageUrl(url) {
   if (typeof url !== "string" || !url) return null;
   if (/^https?:\/\//.test(url)) return url;
-  return url.startsWith("/") ? `${SITE_URL}${url}` : null;
+  if (!url.startsWith("/")) return null;
+  // A photo path can arrive either raw from the database ("/photos/x.jpg")
+  // or already prefixed with the app's own base path ("/events/photos/x.jpg",
+  // e.g. from components/PhotoCarousel.jsx's withBasePath()) - SITE_URL
+  // below already ends in "/events", so a pre-prefixed path has to be
+  // stripped back to raw first or it doubles up into "/events/events/...".
+  const path = url.startsWith("/events/") ? url.slice("/events".length) : url;
+  return `${SITE_URL}${path}`;
 }
 
 function plainText(text) {
