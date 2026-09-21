@@ -27,4 +27,5 @@ export const TAGS = [
   { id: "activities", label: "Activities" },
   { id: "dessert items", label: "Dessert Items" },
   { id: "bake & serve", label: "Bake & Serve" },
+  { id: "complete looks", label: "Complete Looks" },
 ];

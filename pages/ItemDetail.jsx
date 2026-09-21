@@ -6,12 +6,14 @@ import {
   isDecorCatalogItem,
   isGiftCatalogItem,
   parseColorOptions,
+  parseItemTags,
   sortVariantsByPrice,
 } from "../components/DecorCard";
 import { normalizePhotos as photoList } from "../components/PhotoCarousel";
 import DescriptionBody from "../components/ItemDescription";
 import RentalDatesModal from "../components/RentalDatesModal";
 import { useRentalFlow, formatRentalDate } from "../useRentalFlow";
+import { COMPLETE_LOOK_CONTENTS } from "../completeLooks";
 import SeoHead from "../components/SeoHead";
 import { useEventType } from "../EventTypeContext";
 import { useCart } from "../CartContext";
@@ -109,6 +111,101 @@ export default function ItemDetail({ kind, slug, navigate }) {
     setSelectedColor(colorOptions[0] || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active?.id]);
+
+  // A "complete look" (see completeLooks.js) is a decor item that stands in
+  // for a styled group of real catalog pieces rather than a single
+  // rentable/purchasable row of its own - its own rental_price/
+  // purchase_price stay blank, and this page shows the real items it's
+  // made of, priced and added to cart together, instead of the usual
+  // single-item buy/rent panel.
+  const isCompleteLook =
+    kind === "decor" &&
+    !!baseItem &&
+    parseItemTags(baseItem).map((t) => t.toLowerCase().trim()).includes("complete looks");
+
+  const [lookItems, setLookItems] = useState([]);
+  const [lookLoading, setLookLoading] = useState(false);
+  const [lookNotice, setLookNotice] = useState("");
+  const [addingLook, setAddingLook] = useState(false);
+  const [pendingCompleteLook, setPendingCompleteLook] = useState(false);
+
+  useEffect(() => {
+    if (!isCompleteLook || !supabase) {
+      setLookItems([]);
+      return;
+    }
+    const names = COMPLETE_LOOK_CONTENTS[baseItem.name] || [];
+    if (!names.length) {
+      setLookItems([]);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      setLookLoading(true);
+      const { data } = await supabase.from("items").select("*").in("name", names).eq("active", true);
+      if (cancelled) return;
+      // Keep the order given in COMPLETE_LOOK_CONTENTS rather than
+      // whatever order the database happens to return.
+      const ordered = names.map((n) => (data || []).find((i) => i.name === n)).filter(Boolean);
+      setLookItems(ordered);
+      setLookLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCompleteLook, baseItem?.name]);
+
+  const lookTotal = lookItems.reduce(
+    (sum, item) => sum + Number(item.rental_price ?? item.purchase_price ?? 0),
+    0
+  );
+
+  async function addWholeLookToCart(dates) {
+    setLookNotice("");
+    setAddingLook(true);
+    const unavailable = [];
+
+    for (const item of lookItems) {
+      if (item.rental_price != null) {
+        if (!supabase) {
+          addToCart(item.id, "rental");
+          continue;
+        }
+        const { data, error } = await supabase.rpc("get_reservation_item_availability", {
+          p_item_id: Number(item.id),
+          p_pickup: dates.pickup,
+          p_dropoff: dates.dropoff,
+        });
+        if (error || Number(data || 0) < 1) {
+          unavailable.push(item.name);
+          continue;
+        }
+        addToCart(item.id, "rental");
+      } else if (item.purchase_price != null) {
+        addToCart(item.id, "catalog");
+      }
+    }
+
+    setAddingLook(false);
+    if (unavailable.length) {
+      setLookNotice(
+        `${unavailable.join(", ")} ${unavailable.length > 1 ? "aren't" : "isn't"} available for ` +
+          `${formatRentalDate(dates.pickup)} – ${formatRentalDate(dates.dropoff)}. The rest of the look was added.`
+      );
+    }
+  }
+
+  function handleAddCompleteLook() {
+    if (!rental.datesReady) {
+      setPendingCompleteLook(true);
+      rental.setShowDatesModal(true);
+      return;
+    }
+    addWholeLookToCart(rental.rentalDates);
+  }
 
   const catalogKind = kind === "decor" ? "catalog" : "catalog";
   const backPath = kind === "decor" ? "/decor" : "/gifts";
@@ -217,6 +314,54 @@ export default function ItemDetail({ kind, slug, navigate }) {
             )}
           </div>
 
+          {isCompleteLook && lookItems.length > 0 && (
+            <div className="border-b p-4 sm:col-span-2 sm:border-b-0 sm:border-t" style={{ borderColor: palette.line }}>
+              <div
+                className="mb-3 font-[Space_Grotesk] text-xs font-semibold uppercase tracking-[0.14em]"
+                style={{ color: palette.muted }}
+              >
+                This look includes
+              </div>
+              <div className="flex gap-4 overflow-x-auto">
+                {lookItems.map((li) => {
+                  const liPhotos = photoList(li.photos);
+                  return (
+                    <button
+                      key={li.id}
+                      type="button"
+                      onClick={() => navigate(itemUrlPath("decor", li, li.variant_group?.trim() || undefined))}
+                      className="flex-shrink-0 text-left"
+                    >
+                      <div
+                        className="h-16 w-16 overflow-hidden rounded-sm"
+                        style={{ border: `1px solid ${palette.line}` }}
+                      >
+                        {liPhotos.length ? (
+                          <img src={liPhotos[0]} alt={li.name} className="h-full w-full object-cover" />
+                        ) : (
+                          <div
+                            className="flex h-full items-center justify-center"
+                            style={{ background: rgba(palette.primary, 0.06) }}
+                          >
+                            <span className="font-[Space_Grotesk] text-[8px]" style={{ color: palette.muted }}>
+                              NO PHOTO
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className="mt-1 w-16 truncate font-[Space_Grotesk] text-[10px]"
+                        style={{ color: palette.ink }}
+                      >
+                        {li.name}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="px-6 py-8 sm:px-8">
             <div
               className="font-[Space_Grotesk] text-sm font-medium uppercase tracking-[0.18em]"
@@ -288,6 +433,84 @@ export default function ItemDetail({ kind, slug, navigate }) {
               </p>
             )}
 
+            {isCompleteLook ? (
+              <div className="mt-6 space-y-3 border-t pt-5" style={{ borderColor: palette.line }}>
+                {lookLoading ? (
+                  <p className="font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
+                    Loading this look's pieces...
+                  </p>
+                ) : lookItems.length ? (
+                  <>
+                    <ul className="space-y-1.5">
+                      {lookItems.map((li) => (
+                        <li
+                          key={li.id}
+                          className="flex items-center justify-between font-[Space_Grotesk] text-sm"
+                          style={{ color: palette.ink }}
+                        >
+                          <span>{li.name}</span>
+                          <span style={{ color: palette.goldDeep }}>
+                            {li.rental_price != null
+                              ? `$${li.rental_price} / event`
+                              : li.purchase_price != null
+                                ? `$${li.purchase_price}`
+                                : "Inquire"}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div
+                      className="flex items-center justify-between border-t pt-3"
+                      style={{ borderColor: palette.line }}
+                    >
+                      <span
+                        className="font-[Space_Grotesk] text-base font-semibold"
+                        style={{ color: palette.primaryDeep }}
+                      >
+                        TOTAL FOR THIS LOOK
+                      </span>
+                      <span
+                        className="font-[Space_Grotesk] text-base font-semibold"
+                        style={{ color: palette.goldDeep }}
+                      >
+                        ${lookTotal} / event
+                      </span>
+                    </div>
+                    <button
+                      onClick={handleAddCompleteLook}
+                      disabled={addingLook}
+                      className="w-full rounded-full py-3 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em]"
+                      style={{ background: palette.primaryDeep, color: "#FFFFFF" }}
+                    >
+                      {addingLook ? "ADDING..." : "ADD THE COMPLETE LOOK TO YOUR CART"}
+                    </button>
+                  </>
+                ) : (
+                  <p className="font-[Space_Grotesk] text-base" style={{ color: palette.goldDeep }}>
+                    Contact us to inquire about this look.
+                  </p>
+                )}
+
+                {rental.checkingAvailability && (
+                  <p className="font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
+                    Checking availability...
+                  </p>
+                )}
+                {lookNotice && (
+                  <p
+                    className="rounded-sm px-4 py-3 font-[Space_Grotesk] text-sm"
+                    style={{ background: rgba("#B8305F", 0.08), color: "#8A3142" }}
+                  >
+                    {lookNotice}
+                  </p>
+                )}
+                {rental.datesReady && lookItems.length > 0 && (
+                  <p className="font-[Space_Grotesk] text-xs" style={{ color: palette.muted }}>
+                    Renting {formatRentalDate(rental.rentalDates.pickup)} – {formatRentalDate(rental.rentalDates.dropoff)}
+                  </p>
+                )}
+              </div>
+            ) : (
             <div className="mt-6 space-y-3 border-t pt-5" style={{ borderColor: palette.line }}>
               {isPurchasable && (
                 <div className="flex items-center justify-between">
@@ -362,6 +585,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
                 </p>
               )}
             </div>
+            )}
 
             <button
               onClick={() => openPickerForBuilder()}
@@ -379,8 +603,17 @@ export default function ItemDetail({ kind, slug, navigate }) {
           onClose={() => {
             rental.setShowDatesModal(false);
             rental.setPendingRentItem(null);
+            setPendingCompleteLook(false);
           }}
-          onSaved={rental.handleDatesSaved}
+          onSaved={(dates) => {
+            rental.setShowDatesModal(false);
+            if (pendingCompleteLook) {
+              setPendingCompleteLook(false);
+              addWholeLookToCart(dates);
+            } else {
+              rental.handleDatesSaved(dates);
+            }
+          }}
         />
       )}
     </main>
