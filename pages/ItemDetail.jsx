@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Check, ChevronDown, ChevronLeft, Plus } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, Plus, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import {
   getItemFlags,
@@ -128,6 +128,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
   const [lookNotice, setLookNotice] = useState("");
   const [addingLook, setAddingLook] = useState(false);
   const [pendingCompleteLook, setPendingCompleteLook] = useState(false);
+  const [openLookItem, setOpenLookItem] = useState(null);
 
   useEffect(() => {
     if (!isCompleteLook || !supabase) {
@@ -329,7 +330,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
                     <button
                       key={li.id}
                       type="button"
-                      onClick={() => navigate(itemUrlPath("decor", li, li.variant_group?.trim() || undefined))}
+                      onClick={() => setOpenLookItem(li)}
                       className="flex-shrink-0 text-left"
                     >
                       <div
@@ -615,6 +616,75 @@ export default function ItemDetail({ kind, slug, navigate }) {
             }
           }}
         />
+      )}
+
+      {openLookItem && (
+        <div
+          className="fixed inset-0 z-[190] flex items-center justify-center p-4 sm:p-8"
+          style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={openLookItem.name}
+          onClick={() => setOpenLookItem(null)}
+        >
+          <div
+            className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white"
+            style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setOpenLookItem(null)}
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#6B6B6B]"
+              aria-label="Close"
+            >
+              <X size={19} />
+            </button>
+            {(() => {
+              const liPhotos = photoList(openLookItem.photos);
+              const liFlags = getItemFlags(openLookItem);
+              return (
+                <>
+                  <div className="relative aspect-square" style={{ background: rgba(palette.primary, 0.06) }}>
+                    {liPhotos.length ? (
+                      <img
+                        src={liPhotos[0]}
+                        alt={itemAltText(openLookItem.name)}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <span className="font-[Space_Grotesk] text-sm tracking-[0.2em]" style={{ color: palette.muted }}>
+                          PHOTO COMING SOON
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="px-6 py-6">
+                    <div
+                      className="font-[Space_Grotesk] text-xs font-medium uppercase tracking-[0.18em]"
+                      style={{ color: palette.muted }}
+                    >
+                      {liFlags.tags.length ? liFlags.tags.join(" · ") : "Decor"}
+                    </div>
+                    <h2 className="mt-1 font-['Fraunces'] text-2xl font-semibold" style={{ color: palette.primaryDeep }}>
+                      {openLookItem.name}
+                    </h2>
+                    {openLookItem.description && <DescriptionBody text={openLookItem.description} />}
+                    <div className="mt-4 border-t pt-4" style={{ borderColor: palette.line }}>
+                      <span className="font-[Space_Grotesk] text-base font-medium" style={{ color: palette.goldDeep }}>
+                        {openLookItem.rental_price != null
+                          ? `$${openLookItem.rental_price} / event`
+                          : openLookItem.purchase_price != null
+                            ? `$${openLookItem.purchase_price}`
+                            : "Inquire"}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
       )}
     </main>
   );
