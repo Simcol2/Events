@@ -63,10 +63,10 @@ function GiftTile({
   return (
     <ElevatedCard
       palette={palette}
-      className={`group h-full overflow-hidden ${onView ? "cursor-pointer" : ""}`}
+      className={`group flex h-full flex-col overflow-hidden ${onView ? "cursor-pointer" : ""}`}
       onClick={onView}
     >
-      <div className="relative aspect-[4/4.6] overflow-hidden" style={{ background: rgba(palette.primary, 0.06) }}>
+      <div className="relative aspect-[4/4.6] shrink-0 overflow-hidden" style={{ background: rgba(palette.primary, 0.06) }}>
         {normalizePhotos(photos).length ? (
           <PhotoCarousel
             photos={photos}
@@ -90,7 +90,7 @@ function GiftTile({
         )}
       </div>
 
-      <div className="flex min-h-[150px] flex-col p-6">
+      <div className="flex min-h-[150px] flex-1 flex-col p-6">
         <h3
           style={{
             ...fonts.displayFont,
