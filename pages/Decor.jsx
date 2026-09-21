@@ -1,25 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { CalendarDays, ChevronLeft, Search, Sparkles } from "lucide-react";
+import { CalendarDays, Search } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import DecorCard, { groupByVariant, parseItemTags } from "../components/DecorCard";
 import RentalDatesModal from "../components/RentalDatesModal";
 import { useRentalFlow, formatRentalDate } from "../useRentalFlow";
 import { useCart } from "../CartContext";
-import { useEventType } from "../EventTypeContext";
 import { usePalette } from "../PaletteContext";
 import { TAGS as CATALOG_TAGS } from "../decorTags";
 import { itemUrlPath } from "../seo";
-import {
-  ElevatedCard,
-  JewelBand,
-  Kicker,
-  PageHero,
-  PrimaryButton,
-  Reveal,
-  SectionIntro,
-  paperTexture,
-  rgba,
-} from "../components/EditorialKit";
+import { ElevatedCard, PageHero, SectionIntro, paperTexture, rgba } from "../components/EditorialKit";
 
 function normalize(value) {
   return String(value || "").toLowerCase().trim();
@@ -36,7 +25,13 @@ const DECOR_CATEGORY_IDS = [
   "dessert items",
 ];
 
-const CATEGORIES = CATALOG_TAGS.filter((t) => DECOR_CATEGORY_IDS.includes(t.id));
+// "View All" first, then every real category, matching the Gifts page's
+// own category-pill pattern (one persistent filtered grid, not a
+// pick-a-category-first gate).
+const CATEGORIES = [
+  { id: "all", label: "View All" },
+  ...CATALOG_TAGS.filter((t) => DECOR_CATEGORY_IDS.includes(t.id)),
+];
 
 const AVAILABILITY = [
   { id: "all", label: "All" },
@@ -54,12 +49,11 @@ function itemTags(item) {
 
 export default function Decor({ navigate }) {
   const { palette, fonts } = usePalette();
-  const { openPickerForBuilder } = useEventType();
   const { addToCart } = useCart();
   const rental = useRentalFlow();
 
   const [items, setItems] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [availability, setAvailability] = useState("all");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -95,12 +89,12 @@ export default function Decor({ navigate }) {
   }, []);
 
   const visible = useMemo(() => {
-    if (!selectedCategory) return [];
     const q = normalize(query);
 
     return items.filter((item) => {
       const tags = itemTags(item);
-      if (!tags.includes(selectedCategory)) return false;
+      if (selectedCategory !== "all" && !tags.includes(selectedCategory)) return false;
+      if (selectedCategory === "all" && !tags.some((t) => DECOR_CATEGORY_IDS.includes(t))) return false;
       if (availability !== "all" && !tags.includes(availability)) return false;
 
       return (
@@ -156,266 +150,145 @@ export default function Decor({ navigate }) {
         eyebrow="THE RENTAL COLLECTION"
         title="The pieces that make the room feel intentional."
         script="Pretty, useful and very much invited."
-        body="Browse decor, tabletop pieces, statement items and event details available to rent or purchase. The collection is designed to support the experience without becoming a room full of stuff nobody touches."
         palette={palette}
         fonts={fonts}
         align="center"
       />
 
-      <JewelBand palette={palette} glass style={{ padding: "72px 24px" }}>
+      <section style={{ ...paperTexture(palette), padding: "72px 24px 100px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
             eyebrow="START HERE"
             title="What are you looking for?"
-            body="Choose a category first, then narrow it down by rent or purchase. Because scrolling through every object humanity has ever put on a party table is not a user experience."
             palette={palette}
             fonts={fonts}
-            light
+            align="left"
           />
 
-          <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-12 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-            {CATEGORIES.map((cat, i) => {
-              const active = selectedCategory === cat.id;
-
-              return (
-                <Reveal key={cat.id} delay={i * 45}>
-                  <button
-                    type="button"
-                    onClick={() => selectCategory(cat.id)}
-                    className="group h-full w-full text-left"
-                  >
-                    <ElevatedCard
-                      palette={palette}
-                      className="h-full p-2.5 transition-transform group-hover:-translate-y-1 sm:p-6"
-                      style={{
-                        background: active ? palette.gold : palette.surface,
-                        borderColor: active ? palette.gold : rgba(palette.gold, 0.26),
-                      }}
-                    >
-                      <span
-                        className="text-[10px] sm:text-[11px]"
-                        style={{
-                          ...fonts.bodyFont,
-                          color: active ? palette.primaryDeep : palette.goldDeep,
-                          fontWeight: 800,
-                          letterSpacing: "0.16em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-
-                      <h3
-                        className="mt-0.5 text-[0.95rem] sm:mt-5 sm:text-[1.55rem]"
-                        style={{
-                          ...fonts.displayFont,
-                          color: palette.primaryDeep,
-                          fontWeight: 700,
-                          lineHeight: 1.05,
-                        }}
-                      >
-                        {cat.label}
-                      </h3>
-
-                      <p
-                        className="mt-0.5 text-[11px] sm:mt-2 sm:text-[13px]"
-                        style={{
-                          ...fonts.bodyFont,
-                          color: active ? palette.primaryDeep : palette.muted,
-                        }}
-                      >
-                        {categoryCounts[cat.id] || 0}{" "}
-                        {categoryCounts[cat.id] === 1 ? "item" : "items"}
-                      </p>
-                    </ElevatedCard>
-                  </button>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </JewelBand>
-
-      <section style={{ ...paperTexture(palette), padding: "82px 24px 100px" }}>
-        <div className="mx-auto max-w-7xl">
-          {!selectedCategory ? (
-            <div className="mx-auto max-w-3xl text-center">
-              <Sparkles className="mx-auto" size={20} color={palette.goldDeep} />
-              <h2
-                className="mt-5"
+          <div className="mt-8 flex flex-wrap gap-2">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => selectCategory(cat.id)}
+                className="rounded-full px-5 py-2.5 text-xs font-semibold tracking-[0.08em]"
                 style={{
-                  ...fonts.displayFont,
-                  color: palette.primaryDeep,
-                  fontSize: "clamp(2.4rem, 4.5vw, 4rem)",
-                  lineHeight: 1,
-                  fontWeight: 630,
+                  ...fonts.bodyFont,
+                  background: selectedCategory === cat.id ? palette.primaryDeep : palette.surface,
+                  color: selectedCategory === cat.id ? "#FFFFFF" : palette.primaryDeep,
+                  border: `1px solid ${selectedCategory === cat.id ? palette.primaryDeep : palette.line}`,
+                  textTransform: "uppercase",
                 }}
               >
-                Pick a category above to open the collection.
-              </h2>
-              <p
-                className="mx-auto mt-5 max-w-xl text-base leading-7"
-                style={{ ...fonts.bodyFont, color: palette.muted }}
-              >
-                You will see live availability options, rental and purchase choices, photos and item details inside each category.
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                  <button
-                    onClick={() => setSelectedCategory(null)}
-                    className="mb-5 inline-flex items-center gap-2 text-xs font-semibold tracking-[0.12em]"
-                    style={{ ...fonts.bodyFont, color: palette.goldDeep, textTransform: "uppercase" }}
-                  >
-                    <ChevronLeft size={14} />
-                    All categories
-                  </button>
+                {cat.label}
+                {cat.id !== "all" ? ` (${categoryCounts[cat.id] || 0})` : ""}
+              </button>
+            ))}
+          </div>
 
-                  <Kicker palette={palette} fonts={fonts}>BROWSE THE COLLECTION</Kicker>
-                  <h2
-                    className="mt-3"
-                    style={{
-                      ...fonts.displayFont,
-                      color: palette.primaryDeep,
-                      fontSize: "clamp(2.5rem, 4.6vw, 4.2rem)",
-                      lineHeight: 1,
-                      fontWeight: 630,
-                    }}
-                  >
-                    {CATEGORIES.find((c) => c.id === selectedCategory)?.label}
-                  </h2>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {AVAILABILITY.map((a) => (
-                    <button
-                      key={a.id}
-                      onClick={() => setAvailability(a.id)}
-                      className="rounded-full px-5 py-2.5 text-xs font-semibold tracking-[0.08em]"
-                      style={{
-                        ...fonts.bodyFont,
-                        background: availability === a.id ? palette.primaryDeep : palette.surface,
-                        color: availability === a.id ? "#FFFFFF" : palette.primaryDeep,
-                        border: `1px solid ${availability === a.id ? palette.primaryDeep : palette.line}`,
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {a.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <ElevatedCard palette={palette} className="max-w-lg flex-1 px-5">
-                  <div className="relative">
-                    <Search
-                      size={16}
-                      className="absolute left-0 top-1/2 -translate-y-1/2"
-                      color={palette.muted}
-                    />
-                    <input
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search this category"
-                      className="w-full bg-transparent py-4 pl-7 pr-3 text-base outline-none"
-                      style={{ ...fonts.bodyFont, color: palette.ink }}
-                    />
-                  </div>
-                </ElevatedCard>
-
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {AVAILABILITY.map((a) => (
                 <button
-                  type="button"
-                  onClick={() => rental.setShowDatesModal(true)}
-                  className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold"
+                  key={a.id}
+                  onClick={() => setAvailability(a.id)}
+                  className="rounded-full px-5 py-2.5 text-xs font-semibold tracking-[0.08em]"
                   style={{
                     ...fonts.bodyFont,
-                    background: palette.surface,
-                    border: `1px solid ${rental.datesReady ? palette.primaryDeep : palette.line}`,
-                    color: palette.primaryDeep,
+                    background: availability === a.id ? palette.primaryDeep : palette.surface,
+                    color: availability === a.id ? "#FFFFFF" : palette.primaryDeep,
+                    border: `1px solid ${availability === a.id ? palette.primaryDeep : palette.line}`,
+                    textTransform: "uppercase",
                   }}
                 >
-                  <CalendarDays size={15} color={palette.goldDeep} />
-                  {rental.datesReady
-                    ? `Renting ${formatRentalDate(rental.rentalDates.pickup)} – ${formatRentalDate(rental.rentalDates.dropoff)} · Change`
-                    : "Set your rental dates"}
+                  {a.label}
                 </button>
-              </div>
+              ))}
+            </div>
 
-              {rental.checkingAvailability && (
-                <p className="mt-4 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                  Checking availability for your dates...
-                </p>
-              )}
-
-              {rental.rentalNotice && (
-                <p
-                  className="mt-4 rounded-sm px-4 py-3 text-sm"
-                  style={{ ...fonts.bodyFont, background: rgba("#B8305F", 0.08), color: "#8A3142" }}
-                >
-                  {rental.rentalNotice}
-                </p>
-              )}
-
-              <div className="mt-12">
-                {loading && (
-                  <p className="py-20 text-center text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                    Curating the collection...
-                  </p>
-                )}
-
-                {error && (
-                  <p className="py-20 text-center text-base text-red-700" style={fonts.bodyFont}>
-                    Couldn't load the collection: {error}
-                  </p>
-                )}
-
-                {!loading && !error && visible.length === 0 && (
-                  <p className="py-20 text-center text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                    Nothing matches yet.
-                  </p>
-                )}
-
-                <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-7 sm:gap-y-14 lg:grid-cols-3">
-                  {groupedVisible.map((entry) => (
-                    <DecorCard
-                      key={entry.key}
-                      item={entry.item}
-                      variants={entry.variants}
-                      groupName={entry.groupName}
-                      onRent={rental.handleRent}
-                      onBuy={handleBuy}
-                      onOpenDetail={(active, variants, groupName) => navigate(itemUrlPath("decor", active, groupName))}
-                    />
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          <div
-            className="mt-20 border-t pt-12 text-center"
-            style={{ borderColor: rgba(palette.gold, 0.35) }}
-          >
-            <Kicker palette={palette} fonts={fonts}>WANT MORE THAN THE PIECES?</Kicker>
-            <h2
-              className="mx-auto mt-4 max-w-3xl"
+            <button
+              type="button"
+              onClick={() => rental.setShowDatesModal(true)}
+              className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold"
               style={{
-                ...fonts.displayFont,
+                ...fonts.bodyFont,
+                background: palette.surface,
+                border: `1px solid ${rental.datesReady ? palette.primaryDeep : palette.line}`,
                 color: palette.primaryDeep,
-                fontSize: "clamp(2.4rem, 4.6vw, 4rem)",
-                lineHeight: 1,
-                fontWeight: 630,
               }}
             >
-              Build an experience your guests actually become part of.
-            </h2>
-            <div className="mt-7">
-              <PrimaryButton onClick={() => openPickerForBuilder()} palette={palette} fonts={fonts}>
-                Build my experience
-              </PrimaryButton>
+              <CalendarDays size={15} color={palette.goldDeep} />
+              {rental.datesReady
+                ? `Renting ${formatRentalDate(rental.rentalDates.pickup)} – ${formatRentalDate(rental.rentalDates.dropoff)} · Change`
+                : "Set your rental dates"}
+            </button>
+          </div>
+
+          <div className="mt-6 sm:max-w-md">
+            <ElevatedCard palette={palette} className="px-5">
+              <div className="relative">
+                <Search
+                  size={16}
+                  className="absolute left-0 top-1/2 -translate-y-1/2"
+                  color={palette.muted}
+                />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search this category"
+                  className="w-full bg-transparent py-4 pl-7 pr-3 text-base outline-none"
+                  style={{ ...fonts.bodyFont, color: palette.ink }}
+                />
+              </div>
+            </ElevatedCard>
+          </div>
+
+          {rental.checkingAvailability && (
+            <p className="mt-4 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
+              Checking availability for your dates...
+            </p>
+          )}
+
+          {rental.rentalNotice && (
+            <p
+              className="mt-4 rounded-sm px-4 py-3 text-sm"
+              style={{ ...fonts.bodyFont, background: rgba("#B8305F", 0.08), color: "#8A3142" }}
+            >
+              {rental.rentalNotice}
+            </p>
+          )}
+
+          <div className="mt-12">
+            {loading && (
+              <p className="py-20 text-center text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                Curating the collection...
+              </p>
+            )}
+
+            {error && (
+              <p className="py-20 text-center text-base text-red-700" style={fonts.bodyFont}>
+                Couldn't load the collection: {error}
+              </p>
+            )}
+
+            {!loading && !error && visible.length === 0 && (
+              <p className="py-20 text-center text-base" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                Nothing matches yet.
+              </p>
+            )}
+
+            <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-7 sm:gap-y-14 lg:grid-cols-3">
+              {groupedVisible.map((entry) => (
+                <DecorCard
+                  key={entry.key}
+                  item={entry.item}
+                  variants={entry.variants}
+                  groupName={entry.groupName}
+                  onRent={rental.handleRent}
+                  onBuy={handleBuy}
+                  onOpenDetail={(active, variants, groupName) => navigate(itemUrlPath("decor", active, groupName))}
+                />
+              ))}
             </div>
           </div>
         </div>

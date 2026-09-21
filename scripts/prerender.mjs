@@ -177,18 +177,11 @@ async function run() {
     //
     // /decor's own category tiles show a real "N items" count once data
     // has loaded, even though the grid itself only appears after a tile
-    // is clicked (nothing is crawled here, so that never happens - the
-    // tile counts are the only signal this snapshot can carry either
-    // way). /gifts shows its grid with no click needed, so its tiles
-    // (rendered via GiftTile, not DecorCard, and with counts written as
-    // "Label (N)" rather than "N items") are checked for their own
-    // "Add to cart" / "View options" action text instead.
-    if (route === "/decor") {
-      const counts = [...html.matchAll(/(\d+)\s+items?</g)].map((m) => Number(m[1]));
-      const total = counts.reduce((sum, n) => sum + n, 0);
-      if (counts.length === 0 || total === 0) emptyCatalogueRoutes.push(route);
-    }
-    if (route === "/gifts" && !/Add to cart|View options/i.test(html)) {
+    // is clicked - its grid defaults to "View All" and shows real cards
+    // right away, same as /gifts, so both are checked the same way: real
+    // product cards render an "Add to cart" or "View options" action,
+    // which an empty grid never does.
+    if ((route === "/decor" || route === "/gifts") && !/Add to cart|View options/i.test(html)) {
       emptyCatalogueRoutes.push(route);
     }
 
