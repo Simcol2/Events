@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Check, Plus, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
-import { getItemFlags, groupByVariant, parseItemTags, plainDescription } from "../components/DecorCard";
+import { getItemFlags, groupByVariant, parseItemTags } from "../components/DecorCard";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import { useEventType } from "../EventTypeContext";
@@ -42,10 +42,13 @@ function normalize(value) {
   return String(value || "").toLowerCase().trim();
 }
 
+// Cards intentionally never show the full description - a short tagline is
+// the only supporting copy, so every card's text block stays a predictable
+// height instead of stretching to fit whatever the longest description
+// happens to be.
 function GiftTile({
   name,
   tagline,
-  description,
   photos,
   price,
   priceLabel,
@@ -87,38 +90,36 @@ function GiftTile({
         )}
       </div>
 
-      <div className="flex min-h-[235px] flex-col p-6">
+      <div className="flex min-h-[150px] flex-col p-6">
         <h3
           style={{
             ...fonts.displayFont,
             color: palette.primaryDeep,
             fontSize: "1.65rem",
             fontWeight: 700,
-            lineHeight: 1,
+            lineHeight: 1.15,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
           }}
         >
           {name}
         </h3>
 
         {tagline && (
-          <p className="mt-2 text-sm italic" style={{ ...fonts.displayFont, color: palette.goldDeep }}>
-            {tagline}
-          </p>
-        )}
-
-        {description && (
           <p
-            className="mt-3 text-sm leading-6"
+            className="mt-2 text-sm italic"
             style={{
-              ...fonts.bodyFont,
-              color: palette.muted,
+              ...fonts.displayFont,
+              color: palette.goldDeep,
               display: "-webkit-box",
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 1,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
             }}
           >
-            {plainDescription(description)}
+            {tagline}
           </p>
         )}
 
@@ -250,7 +251,6 @@ export default function Gifts({ navigate }) {
   const giftTileProps = (g) => ({
     name: g.name,
     tagline: g.tagline,
-    description: g.description,
     photos: g.photos,
     priceLabel: g.customizable ? `From $${g.price}` : `$${g.price}`,
     onCustomize: g.customizable ? () => setCustomizing(g) : undefined,
@@ -310,27 +310,31 @@ export default function Gifts({ navigate }) {
   // every time.
   const featuredGiftEntries = useMemo(() => {
     const grouped = groupByVariant(wrapAndGiftItems);
-    return FEATURED_GIFTS.map((name) =>
-      grouped.find((g) => normalize(g.groupName || g.item.name) === normalize(name))
-    ).filter(Boolean);
+    return FEATURED_GIFTS.map((f) => {
+      const name = typeof f === "string" ? f : f.name;
+      const entry = grouped.find((g) => normalize(g.groupName || g.item.name) === normalize(name));
+      if (!entry) return null;
+      return typeof f === "string" ? entry : { ...entry, displayName: f.displayName };
+    }).filter(Boolean);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catalog]);
 
   // Every catalog tile opens the detail view on click, grouped or not,
-  // so the two catalogue pages behave identically.
+  // so the two catalogue pages behave identically. `entry.displayName`
+  // (set only for a Featured Gifts card, see featuredGiftEntries above)
+  // swaps the card's title without touching the real item name used for
+  // the URL, alt text or anywhere else the item appears.
   const catalogTileProps = (entry) =>
     entry.variants
       ? {
-          name: entry.groupName,
-          description: entry.item.description,
+          name: entry.displayName || entry.groupName,
           photos: entry.item.photos,
           priceLabel: `From $${Math.min(...entry.variants.map((v) => Number(v.purchase_price)))}`,
           showViewOptions: true,
           onView: () => navigate(itemUrlPath("gifts", entry.item, entry.groupName)),
         }
       : {
-          name: entry.item.name,
-          description: entry.item.description,
+          name: entry.displayName || entry.item.name,
           photos: entry.item.photos,
           price: entry.item.purchase_price,
           inCart: isInCart(entry.item.id, "catalog"),

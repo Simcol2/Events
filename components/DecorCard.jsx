@@ -198,15 +198,23 @@ export default function DecorCard({ item, variants, groupName, onOpenDetail }) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 px-4 pb-4 pt-4">
+      <div className="flex min-h-[130px] flex-1 flex-col gap-1 px-4 pb-4 pt-4 sm:min-h-[150px]">
         <div className="font-[Space_Grotesk] text-[10px] font-medium uppercase tracking-[0.14em] text-[#6B6B6B] sm:text-xs sm:tracking-[0.16em]">
           {tags[0] || "Decor"}
         </div>
-        <h3 className="font-['Fraunces'] text-lg font-semibold leading-[1.1] text-[#0B4933] sm:text-[22px] sm:leading-[1.05]">
+        <h3
+          className="font-['Fraunces'] text-lg font-semibold leading-[1.1] text-[#0B4933] sm:text-[22px] sm:leading-[1.05]"
+          style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+        >
           {displayName}
         </h3>
         {diagLine && (
-          <div className="font-[Space_Grotesk] text-xs text-[#8C846F]">{diagLine}</div>
+          <div
+            className="font-[Space_Grotesk] text-xs text-[#8C846F]"
+            style={{ display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+          >
+            {diagLine}
+          </div>
         )}
 
         <div className="mt-auto flex items-center justify-between gap-2 border-t border-[#E6E6E6] pt-3">

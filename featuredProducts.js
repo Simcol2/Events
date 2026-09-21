@@ -48,9 +48,15 @@ export const FEATURED_DECOR = [
 // Gifts featured set are all real, purchasable catalog rows - matched
 // against `name` directly (grouped items would match on variant_group the
 // same way FEATURED_DECOR does, none of these happen to be grouped).
+// An entry can be a plain string (card shows the item's real name) or
+// { name, displayName } when the card should read shorter than the
+// catalog's own name - the item itself, its URL and every other page it
+// appears on (its own detail page, the main Nostalgia Cards grid where it
+// sits next to its siblings) keep the real name; only this one card's
+// title is swapped.
 export const FEATURED_GIFTS = [
   "Lil Roots",
-  "Pop Up Nostalgia Card - Proud Family",
+  { name: "Pop Up Nostalgia Card - Proud Family", displayName: "Pop Up Card" },
   "Holiday Treat Box",
   "Birthday Card - Blue",
 ];
