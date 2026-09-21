@@ -17,7 +17,7 @@ export const TAGS = [
   { id: "signage", label: "Signage" },
   { id: "equipment", label: "Equipment" },
   { id: "marquee letters & numbers", label: "Marquee Letters & Numbers" },
-  { id: "keepsakes & gifts", label: "Keepsakes & Gifts" },
+  { id: "guest keepsakes", label: "Guest Keepsakes" },
   { id: "disposables", label: "Disposables" },
   { id: "stationery", label: "Stationery" },
   { id: "gift wrap", label: "Gift Wrap" },
@@ -25,7 +25,6 @@ export const TAGS = [
   { id: "baby", label: "Baby" },
   { id: "birthdays/holidays", label: "Birthdays/Holidays" },
   { id: "activities", label: "Activities" },
-  { id: "dessert items", label: "Dessert Items" },
-  { id: "bake & serve", label: "Bake & Serve" },
+  { id: "dessert & serve", label: "Dessert & Serve" },
   { id: "complete looks", label: "Complete Looks" },
 ];

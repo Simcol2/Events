@@ -8,6 +8,7 @@ import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import { useEventType } from "../EventTypeContext";
 import { usePalette } from "../PaletteContext";
 import { giftAltText, itemUrlPath } from "../seo";
+import { FEATURED_GIFTS } from "../featuredProducts";
 import {
   ElevatedCard,
   JewelBand,
@@ -19,9 +20,9 @@ import {
   rgba,
 } from "../components/EditorialKit";
 
-// The wrap/stationery and keepsakes/gifts catalog rows share one filtered
+// The wrap/stationery and guest-keepsakes catalog rows share one filtered
 // grid below, matching the category-picker pattern already used on the
-// Decor page. "gift wrap" and "keepsakes & gifts" are the sheet's own
+// Decor page. "gift wrap" and "guest keepsakes" are the sheet's own
 // broad tags (relied on elsewhere - the Decor page's category tiles, the
 // purchase-only rule); "gifts" is a second tag added specifically for this
 // menu so items can carry both without disturbing what already reads
@@ -264,7 +265,7 @@ export default function Gifts({ navigate }) {
     if (!isPurchasable) return false;
 
     const tags = parseItemTags(item).map((t) => t.toLowerCase().trim());
-    return tags.includes("keepsakes & gifts");
+    return tags.includes("guest keepsakes");
   });
 
   const wrapAndStationeryItems = catalog.filter((item) => {
@@ -272,7 +273,7 @@ export default function Gifts({ navigate }) {
     return tags.includes("gift wrap") || tags.includes("stationery");
   });
 
-  // Gift wrap and Keepsakes & Gifts share one filtered grid, browsed by
+  // Gift wrap and Guest Keepsakes share one filtered grid, browsed by
   // the category menu below rather than as two separate hardcoded
   // sections. An item can only ever come from one of the two arrays
   // above (their sheet tags don't overlap today), so a plain concat
@@ -302,6 +303,18 @@ export default function Gifts({ navigate }) {
   // so they collapse into one card showing the lowest price. Picking the
   // option happens in the detail view, same as the decor catalogue.
   const giftGroups = groupByVariant(filteredWrapAndGiftItems);
+
+  // The manually curated Featured Gifts lead (see featuredProducts.js) -
+  // matched against the full, unfiltered catalog pool regardless of which
+  // category pill is selected below, same six products in the same order
+  // every time.
+  const featuredGiftEntries = useMemo(() => {
+    const grouped = groupByVariant(wrapAndGiftItems);
+    return FEATURED_GIFTS.map((name) =>
+      grouped.find((g) => normalize(g.groupName || g.item.name) === normalize(name))
+    ).filter(Boolean);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog]);
 
   // Every catalog tile opens the detail view on click, grouped or not,
   // so the two catalogue pages behave identically.
@@ -350,11 +363,49 @@ export default function Gifts({ navigate }) {
         </section>
       )}
 
+      <section className="mx-auto max-w-7xl px-5 pt-14 text-center sm:px-8">
+        <SectionIntro
+          eyebrow="GIFTS, CARDS & WRAP"
+          title="Standalone gifts, keepsakes, cards and finishing touches."
+          body="For hosts, guests and people worth bringing something for."
+          palette={palette}
+          fonts={fonts}
+        />
+        <p
+          className="mt-4 font-[Space_Grotesk] text-xs font-semibold uppercase tracking-[0.14em]"
+          style={{ color: palette.muted }}
+        >
+          Toronto pickup · Shipping available
+        </p>
+      </section>
+
+      {featuredGiftEntries.length > 0 && (
+        <section style={{ ...paperTexture(palette), padding: "72px 24px 94px" }}>
+          <div className="mx-auto max-w-7xl">
+            <SectionIntro
+              eyebrow="FEATURED GIFTS"
+              title="The gifts we'd lead with, every time."
+              palette={palette}
+              fonts={fonts}
+              align="left"
+            />
+
+            <div className="mt-14 grid grid-cols-2 gap-4 sm:gap-7 lg:grid-cols-3">
+              {featuredGiftEntries.map((entry, i) => (
+                <Reveal key={entry.key} delay={i * 55}>
+                  <GiftTile {...catalogTileProps(entry)} palette={palette} fonts={fonts} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {gifts.length > 0 && (
         <JewelBand palette={palette} glass style={{ padding: "94px 24px" }}>
           <div className="mx-auto max-w-7xl">
             <SectionIntro
-              eyebrow="JUST FOR YOU"
+              eyebrow="MADE FOR YOU"
               title="Gifts that do not need an occasion to earn their keep."
               body="One-off keepsakes and customizable gifts ready to buy on their own."
               palette={palette}
@@ -376,7 +427,7 @@ export default function Gifts({ navigate }) {
       <section style={{ ...paperTexture(palette), padding: "94px 24px" }}>
         <div className="mx-auto max-w-7xl">
           <SectionIntro
-            eyebrow="GIFTS & GIFT WRAP"
+            eyebrow="SHOP BY CATEGORY"
             title="Everything to wrap it, write it and gift it."
             body="Cards, gift wrap, stationery and keepsakes, filtered by what you're actually shopping for."
             palette={palette}

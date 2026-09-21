@@ -14,7 +14,7 @@ import path from "node:path";
 
 export const DECOR_CATEGORY_TAGS = [
   "table", "wall/floor", "signage", "equipment",
-  "marquee letters & numbers", "keepsakes & gifts", "disposables", "dessert items", "bake & serve",
+  "marquee letters & numbers", "guest keepsakes", "disposables", "dessert & serve",
   "complete looks",
 ];
 
@@ -32,7 +32,7 @@ export function isDecorCatalogItem(item) {
 export function isGiftCatalogItem(item) {
   const tags = parseTags(item);
   if (tags.includes("gift wrap") || tags.includes("stationery")) return true;
-  return tags.includes("keepsakes & gifts") && item.purchase_price != null;
+  return tags.includes("guest keepsakes") && item.purchase_price != null;
 }
 
 function variantPrice(v) {

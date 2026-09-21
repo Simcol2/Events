@@ -175,13 +175,15 @@ async function run() {
     // indexes the page without a single product name on it. Warn rather
     // than throw, so a copy-only prerender still works.
     //
-    // /decor's own category tiles show a real "N items" count once data
-    // has loaded, even though the grid itself only appears after a tile
-    // is clicked - its grid defaults to "View All" and shows real cards
-    // right away, same as /gifts, so both are checked the same way: real
-    // product cards render an "Add to cart" or "View options" action,
-    // which an empty grid never does.
-    if ((route === "/decor" || route === "/gifts") && !/Add to cart|View options/i.test(html)) {
+    // /decor's grid defaults to View All and shows real cards right away,
+    // same as /gifts - each page just renders a different single action
+    // on a real product card (Decor: one "VIEW DETAILS" per card, since
+    // the Decor + Gifts Conversion Implementation Plan moved Buy/Rent off
+    // the grid entirely; Gifts: "Add to cart" or "View options"), which an
+    // empty grid never shows either of.
+    const emptyDecor = route === "/decor" && !/VIEW DETAILS/i.test(html);
+    const emptyGifts = route === "/gifts" && !/Add to cart|View options/i.test(html);
+    if (emptyDecor || emptyGifts) {
       emptyCatalogueRoutes.push(route);
     }
 

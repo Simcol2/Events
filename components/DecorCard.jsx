@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import { Check, Plus } from "lucide-react";
+import React from "react";
 import PhotoCarousel, { normalizePhotos } from "./PhotoCarousel";
 import { itemAltText } from "../seo";
-import { useCart } from "../CartContext";
 
 // Gift wrap and disposables are purchase-only by business rule, enforced
 // here rather than relying only on the sheet leaving rental_price blank.
@@ -33,7 +31,7 @@ export function parseItemTags(item) {
 // tag the admin form can apply), not a second source of truth for it.
 export const DECOR_CATEGORY_TAGS = [
   "table", "wall/floor", "signage", "equipment",
-  "marquee letters & numbers", "keepsakes & gifts", "disposables", "dessert items", "bake & serve",
+  "marquee letters & numbers", "guest keepsakes", "disposables", "dessert & serve",
   "complete looks",
 ];
 
@@ -44,12 +42,12 @@ export function isDecorCatalogItem(item) {
 }
 
 // Mirrors pages/Gifts.jsx's own giftItems/wrapAndStationeryItems split:
-// gift wrap and stationery rows unconditionally, keepsakes & gifts rows
+// gift wrap and stationery rows unconditionally, guest keepsakes rows
 // only once they're actually purchasable.
 export function isGiftCatalogItem(item) {
   const tags = parseItemTags(item).map((t) => t.toLowerCase().trim());
   if (tags.includes("gift wrap") || tags.includes("stationery")) return true;
-  return tags.includes("keepsakes & gifts") && item.purchase_price != null;
+  return tags.includes("guest keepsakes") && item.purchase_price != null;
 }
 
 // An item's `color` column can hold a single value ("Gold") or, for a
@@ -109,6 +107,22 @@ export function sortVariantsByPrice(list) {
 // times in a row. Every page that lists catalog items runs its own filtered
 // set through this, so a group only ever forms from rows that page is
 // already showing.
+// One short, factual line per card (plan: "dimensions, quantity,
+// freestanding or tabletop status, set size, rotating, illuminated, or
+// what is included"). Only ever built from columns that are already
+// trustworthy structured data - never invented or inferred from free
+// text - so a blank result (nothing applies) is preferred over a guess.
+export function diagnosticLine({ item, hasVariants, colorOptions }) {
+  if (hasVariants) return "Multiple sizes available";
+  if (item.size) return item.size;
+  if (colorOptions.length > 1) return `${colorOptions.length} finishes available`;
+  if (item.made_to_order) return "Made to order";
+  if (item.quantity_owned != null && item.quantity_owned > 0 && item.quantity_owned <= 5) {
+    return `${item.quantity_owned} available`;
+  }
+  return "";
+}
+
 export function groupByVariant(items) {
   const seen = new Set();
   const groups = [];
@@ -129,11 +143,11 @@ export function groupByVariant(items) {
   return groups;
 }
 
-export default function DecorCard({ item, variants, groupName, onRent, onBuy, onOpenDetail }) {
-  const { isInCart, removeFromCart } = useCart();
+// One primary action per card (VIEW DETAILS) - sizing, color, and the
+// actual Buy/Rent choice all happen on the item's own detail page once
+// someone clicks through, never here. See onOpenDetail.
+export default function DecorCard({ item, variants, groupName, onOpenDetail }) {
   const hasVariants = Array.isArray(variants) && variants.length > 1;
-  const colorOptionsForItem = parseColorOptions(item);
-  const hasChoice = hasVariants || colorOptionsForItem.length > 1;
   // The grid always shows the cheapest/default variant - selecting a
   // different size or color happens after clicking through to the detail
   // view (see onOpenDetail below), so there's no local selection state to
@@ -141,19 +155,29 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
   const active = hasVariants ? sortVariantsByPrice(variants)[0] : item;
 
   const { tags, outOfStock, isPurchasable, isRentable } = getItemFlags(active);
-  const inPurchaseCart = isInCart(active.id, "catalog");
-  const inRentalCart = isInCart(active.id, "rental");
   const displayName = hasVariants ? groupName || active.name : active.name;
   const colorOptions = parseColorOptions(active);
   const startingPrice = hasVariants ? Math.min(...variants.map(variantPrice)) : null;
   const startingIsRental = hasVariants
     ? sortVariantsByPrice(variants).find((v) => variantPrice(v) === startingPrice)?.rental_price != null
     : null;
+  const diagLine = diagnosticLine({ item: active, hasVariants, colorOptions });
+
+  const priceLabel = hasVariants
+    ? `FROM $${startingPrice}${startingIsRental ? " / EVENT" : ""}`
+    : isRentable && isPurchasable
+      ? `RENT $${active.rental_price} · BUY $${active.purchase_price}`
+      : isRentable
+        ? `RENT $${active.rental_price} / EVENT`
+        : isPurchasable
+          ? `BUY $${active.purchase_price}`
+          : "INQUIRE";
 
   return (
     <article
       onClick={() => onOpenDetail?.(active, variants, groupName)}
-      className={`group flex h-full cursor-pointer flex-col overflow-hidden bg-white ${outOfStock ? "opacity-60" : ""}`}
+      className={`group flex h-full cursor-pointer flex-col overflow-hidden rounded-sm border border-[#E6E6E6] bg-white transition-shadow hover:shadow-md ${outOfStock ? "opacity-60" : ""}`}
+      style={{ boxShadow: "0 1px 2px rgba(41,41,41,0.04), 0 10px 22px rgba(41,41,41,0.06)" }}
     >
       <div className="relative aspect-[4/4.6] overflow-hidden bg-[#EEE9DC]">
         {normalizePhotos(active.photos).length ? (
@@ -174,86 +198,24 @@ export default function DecorCard({ item, variants, groupName, onRent, onBuy, on
         )}
       </div>
 
-      <div className="flex flex-1 flex-col px-1 pb-3 pt-4">
-        <div className="font-[Space_Grotesk] text-[11px] font-medium uppercase tracking-[0.14em] text-[#6B6B6B] sm:text-sm sm:tracking-[0.18em]">
-          {tags.length ? tags.join(" · ") : "Decor"}
+      <div className="flex flex-1 flex-col gap-1 px-4 pb-4 pt-4">
+        <div className="font-[Space_Grotesk] text-[10px] font-medium uppercase tracking-[0.14em] text-[#6B6B6B] sm:text-xs sm:tracking-[0.16em]">
+          {tags[0] || "Decor"}
         </div>
-        <h3 className="mt-1 font-['Fraunces'] text-lg font-semibold leading-[1.1] text-[#0B4933] sm:text-[25px] sm:leading-[1]">
+        <h3 className="font-['Fraunces'] text-lg font-semibold leading-[1.1] text-[#0B4933] sm:text-[22px] sm:leading-[1.05]">
           {displayName}
         </h3>
-        {active.size && (
-          <div className="mt-2 font-[Space_Grotesk] text-xs text-[#8C846F] sm:text-sm">{active.size}</div>
+        {diagLine && (
+          <div className="font-[Space_Grotesk] text-xs text-[#8C846F]">{diagLine}</div>
         )}
 
-        {/* Sizing, color and any other variant choice happens in the
-            detail view once someone clicks through - the grid only ever
-            shows a starting price or a single-option Buy/Rent action, no
-            dropdowns here. */}
-        <div className="mt-auto space-y-2 border-t border-[#E6E6E6] pt-3">
-          {hasChoice ? (
-            <div className="flex items-end justify-between">
-              <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
-                {hasVariants
-                  ? `STARTING AT $${startingPrice}${startingIsRental ? " / EVENT" : ""}`
-                  : isRentable
-                    ? `RENT $${active.rental_price} / EVENT`
-                    : isPurchasable
-                      ? `BUY $${active.purchase_price}`
-                      : "INQUIRE"}
-              </span>
-              <span className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] sm:text-sm sm:tracking-[0.14em]">
-                VIEW OPTIONS
-              </span>
-            </div>
-          ) : (
-            <>
-              {isPurchasable && (
-                <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
-                  <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
-                    BUY ${active.purchase_price}
-                  </span>
-                  {outOfStock ? (
-                    <span className="font-[Space_Grotesk] text-xs tracking-[0.06em] text-[#9C947F] sm:text-sm sm:tracking-[0.08em]">UNAVAILABLE</span>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        inPurchaseCart ? removeFromCart(active.id, "catalog") : onBuy?.(active);
-                      }}
-                      className="flex items-center gap-1.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] underline underline-offset-4 sm:text-sm sm:tracking-[0.14em]"
-                    >
-                      {inPurchaseCart ? <Check size={13} /> : <Plus size={13} />}
-                      {inPurchaseCart ? "IN CART" : "ADD TO CART"}
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {isRentable && !outOfStock && (
-                <div className="flex flex-wrap items-end justify-between gap-x-2 gap-y-1">
-                  <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
-                    RENT ${active.rental_price} / EVENT
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      inRentalCart ? removeFromCart(active.id, "rental") : onRent?.(active);
-                    }}
-                    className="flex items-center gap-1.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] underline underline-offset-4 sm:text-sm sm:tracking-[0.14em]"
-                  >
-                    {inRentalCart ? <Check size={13} /> : <Plus size={13} />}
-                    {inRentalCart ? "IN CART" : "ADD TO CART"}
-                  </button>
-                </div>
-              )}
-
-              {!isPurchasable && !isRentable && (
-                <div className="flex items-end justify-between">
-                  <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">INQUIRE</span>
-                </div>
-              )}
-            </>
-          )}
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-[#E6E6E6] pt-3">
+          <span className="font-[Space_Grotesk] text-xs font-medium tracking-[0.06em] text-[#8A6A1E] sm:text-sm sm:tracking-[0.08em]">
+            {outOfStock ? "UNAVAILABLE" : priceLabel}
+          </span>
+          <span className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] text-[#0B4933] sm:text-sm sm:tracking-[0.14em]">
+            VIEW DETAILS
+          </span>
         </div>
       </div>
     </article>
