@@ -26,4 +26,5 @@ export const TAGS = [
   { id: "birthdays/holidays", label: "Birthdays/Holidays" },
   { id: "activities", label: "Activities" },
   { id: "dessert items", label: "Dessert Items" },
+  { id: "bake & serve", label: "Bake & Serve" },
 ];

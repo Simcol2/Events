@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Search } from "lucide-react";
 import { supabase } from "../supabaseClient";
-import DecorCard, { groupByVariant, parseItemTags } from "../components/DecorCard";
+import DecorCard, { DECOR_CATEGORY_TAGS, groupByVariant, parseItemTags } from "../components/DecorCard";
 import RentalDatesModal from "../components/RentalDatesModal";
 import { useRentalFlow, formatRentalDate } from "../useRentalFlow";
 import { useCart } from "../CartContext";
@@ -14,23 +14,13 @@ function normalize(value) {
   return String(value || "").toLowerCase().trim();
 }
 
-const DECOR_CATEGORY_IDS = [
-  "table",
-  "wall/floor",
-  "signage",
-  "equipment",
-  "marquee letters & numbers",
-  "keepsakes & gifts",
-  "disposables",
-  "dessert items",
-];
-
 // "View All" first, then every real category, matching the Gifts page's
 // own category-pill pattern (one persistent filtered grid, not a
-// pick-a-category-first gate).
+// pick-a-category-first gate). DECOR_CATEGORY_TAGS (imported above) is
+// the one shared list of which tags belong here at all.
 const CATEGORIES = [
   { id: "all", label: "View All" },
-  ...CATALOG_TAGS.filter((t) => DECOR_CATEGORY_IDS.includes(t.id)),
+  ...CATALOG_TAGS.filter((t) => DECOR_CATEGORY_TAGS.includes(t.id)),
 ];
 
 const AVAILABILITY = [
@@ -94,7 +84,7 @@ export default function Decor({ navigate }) {
     return items.filter((item) => {
       const tags = itemTags(item);
       if (selectedCategory !== "all" && !tags.includes(selectedCategory)) return false;
-      if (selectedCategory === "all" && !tags.some((t) => DECOR_CATEGORY_IDS.includes(t))) return false;
+      if (selectedCategory === "all" && !tags.some((t) => DECOR_CATEGORY_TAGS.includes(t))) return false;
       if (availability !== "all" && !tags.includes(availability)) return false;
 
       return (

@@ -28,12 +28,12 @@ export function parseItemTags(item) {
 // The tags Decor.jsx's category picker actually offers - kept here as the
 // one shared definition so a row's "would this ever appear somewhere on
 // the decor page" question always gets the same answer everywhere it's
-// asked. pages/Decor.jsx filters its own category tile list from
-// decorTags.js against this same list; that's a separate, larger set of
-// display labels, not a second source of truth for it.
+// asked. pages/Decor.jsx imports this directly for its own category
+// pills; decorTags.js is a separate, larger set of display labels (every
+// tag the admin form can apply), not a second source of truth for it.
 export const DECOR_CATEGORY_TAGS = [
   "table", "wall/floor", "signage", "equipment",
-  "marquee letters & numbers", "keepsakes & gifts", "disposables", "dessert items",
+  "marquee letters & numbers", "keepsakes & gifts", "disposables", "dessert items", "bake & serve",
 ];
 
 export function isDecorCatalogItem(item) {

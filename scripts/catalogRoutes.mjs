@@ -14,7 +14,7 @@ import path from "node:path";
 
 export const DECOR_CATEGORY_TAGS = [
   "table", "wall/floor", "signage", "equipment",
-  "marquee letters & numbers", "keepsakes & gifts", "disposables", "dessert items",
+  "marquee letters & numbers", "keepsakes & gifts", "disposables", "dessert items", "bake & serve",
 ];
 
 export function parseTags(item) {
