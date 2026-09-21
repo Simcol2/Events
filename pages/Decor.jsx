@@ -43,7 +43,7 @@ export default function Decor({ navigate }) {
   const rental = useRentalFlow();
 
   const [items, setItems] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("table");
   const [availability, setAvailability] = useState("all");
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
