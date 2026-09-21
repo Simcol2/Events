@@ -16,8 +16,9 @@ import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { buildItemPages, loadCatalogSnapshot } from "./catalogRoutes.mjs";
 
-const { seoForPath } = await import(pathToFileURL(path.resolve("seo.js")).href);
+const { seoForPath, itemSeo, itemUrlPath } = await import(pathToFileURL(path.resolve("seo.js")).href);
 
 const ROUTES = [
   "/",
@@ -42,7 +43,8 @@ const ROUTES = [
 // `npm run prerender -- /past-events`. Rebuilding all fifteen takes about
 // ten minutes, and a typical change touches one page. An unknown route is
 // a hard error rather than a no-op, so a typo can't quietly leave a page's
-// snapshot stale while the run still reports success.
+// snapshot stale while the run still reports success. Catalog item pages
+// (see below) are a separate pass and aren't affected by this filter.
 function routesToBuild() {
   const requested = process.argv.slice(2).filter((arg) => !arg.startsWith("-"));
   if (requested.length === 0) return ROUTES;
@@ -56,6 +58,14 @@ function routesToBuild() {
   }
   return normalized;
 }
+
+// --- Catalog item pages -----------------------------------------------
+//
+// Every active catalog row gets its own indexable page at /decor/<slug>
+// or /gifts/<slug> (see pages/ItemDetail.jsx). This crawl generates a
+// static snapshot for each one, the same way it does for the sixteen
+// fixed routes above. The route list itself (which items, grouped how)
+// comes from scripts/catalogRoutes.mjs, shared with generate-sitemap.mjs.
 
 async function run() {
   const routes = routesToBuild();
@@ -79,6 +89,49 @@ async function run() {
     localStorage.setItem("asliceofg-event-type-id", "babyShower");
     localStorage.setItem("asliceofg-event-date", "2026-06-15");
   });
+
+  // A dev/CI machine that can't reach Supabase (no credentials, or no
+  // network route to it at all) still needs a way to get real product
+  // data into these snapshots. Drop a scripts/_catalog-snapshot.json
+  // (gitignored, JSON array of active `items` rows, id/name/category/
+  // description/photos/purchase_price/rental_price/quantity_owned/
+  // made_to_order/variant_group/variant_label/size/color/condition_notes)
+  // before running this script and, when present, it intercepts the
+  // app's own Supabase REST calls and serves them from that file instead
+  // of the network. Regenerate it fresh each time (it's a point-in-time
+  // copy, not a live source) - query Supabase directly for it, since a
+  // plain Node script has no route to Supabase either when this machine
+  // doesn't. A machine that reaches Supabase fine can skip this file
+  // entirely; it's only a stand-in for the request, not a change to what
+  // the app does.
+  const catalog = await loadCatalogSnapshot();
+  if (catalog) {
+    console.log(`Using scripts/_catalog-snapshot.json (${catalog.length} items) to fill Supabase data during this crawl.\n`);
+    // A real PostgREST response already reflects the query's own filters
+    // (?id=eq.8, ?variant_group=eq.Foo, ...) - supabase-js's .maybeSingle()
+    // errors out if it gets back anything other than zero or one rows, so
+    // returning the whole snapshot unfiltered for every request (id lookups
+    // included) reads as "not found" for every single item. Every filter
+    // this app's queries actually use gets applied here the same way.
+    await page.route("**/rest/v1/items*", (route) => {
+      const url = new URL(route.request().url());
+      let rows = catalog;
+      const idFilter = url.searchParams.get("id");
+      if (idFilter?.startsWith("eq.")) {
+        const id = Number(idFilter.slice(3));
+        rows = rows.filter((r) => r.id === id);
+      }
+      const groupFilter = url.searchParams.get("variant_group");
+      if (groupFilter?.startsWith("eq.")) {
+        const group = decodeURIComponent(groupFilter.slice(3));
+        rows = rows.filter((r) => r.variant_group === group);
+      }
+      route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(rows) });
+    });
+    await page.route("**/rest/v1/gifts*", (route) =>
+      route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify([]) })
+    );
+  }
 
   for (const route of routes) {
     await page.goto(`${base}${route}`, { waitUntil: "networkidle" });
@@ -113,24 +166,30 @@ async function run() {
       throw new Error(`${route}: LocalBusiness structured data missing from snapshot`);
     }
 
-    // The decor grid is loaded live from Supabase, so a crawl that can't
-    // reach it (missing VITE_SUPABASE_* credentials, or no network route
-    // to Supabase from this machine) ships a catalogue page with no
-    // products in it. That's invisible to anyone browsing the live site
-    // (the real app fetches fine in a real browser) and completely
-    // silent otherwise, but it means Google indexes the page without a
-    // single product name on it. Warn rather than throw, so a copy-only
-    // prerender still works.
+    // The decor and gift grids load live from Supabase, so a crawl that
+    // can't reach it (missing VITE_SUPABASE_* credentials, no network
+    // route to Supabase, or no catalog snapshot loaded above) ships a
+    // catalogue page with no products in it. That's invisible to anyone
+    // browsing the live site (the real app fetches fine in a real
+    // browser) and completely silent otherwise, but it means Google
+    // indexes the page without a single product name on it. Warn rather
+    // than throw, so a copy-only prerender still works.
     //
-    // /decor now shows items only after a category tile is clicked
-    // (nothing is crawled here, so that never happens), so the catalogue
-    // being empty no longer shows as a "Curating..." loading message -
-    // it shows as every category tile reading "0 items" instead. Sum the
-    // tile counts rather than matching removed loading text.
+    // /decor's own category tiles show a real "N items" count once data
+    // has loaded, even though the grid itself only appears after a tile
+    // is clicked (nothing is crawled here, so that never happens - the
+    // tile counts are the only signal this snapshot can carry either
+    // way). /gifts shows its grid with no click needed, so its tiles
+    // (rendered via GiftTile, not DecorCard, and with counts written as
+    // "Label (N)" rather than "N items") are checked for their own
+    // "Add to cart" / "View options" action text instead.
     if (route === "/decor") {
       const counts = [...html.matchAll(/(\d+)\s+items?</g)].map((m) => Number(m[1]));
       const total = counts.reduce((sum, n) => sum + n, 0);
       if (counts.length === 0 || total === 0) emptyCatalogueRoutes.push(route);
+    }
+    if (route === "/gifts" && !/Add to cart|View options/i.test(html)) {
+      emptyCatalogueRoutes.push(route);
     }
 
     const outDir = route === "/" ? "prerendered" : path.join("prerendered", route.slice(1));
@@ -144,9 +203,77 @@ async function run() {
       `\nWARNING: ${emptyCatalogueRoutes.join(", ")} was captured with an empty catalogue.\n` +
         "The live site is fine, but the static snapshot search engines read has no\n" +
         "product names in it. Re-run this with the real VITE_SUPABASE_URL and\n" +
-        "VITE_SUPABASE_ANON_KEY set (npm run build, then npm run prerender) so the\n" +
-        "catalogue is baked into the snapshot.\n"
+        "VITE_SUPABASE_ANON_KEY set (npm run build, then npm run prerender), or with\n" +
+        "scripts/_catalog-snapshot.json present, so the catalogue is baked into the\n" +
+        "snapshot.\n"
     );
+  }
+
+  if (!catalog) {
+    console.warn(
+      "\nNo scripts/_catalog-snapshot.json found and no other route to Supabase from " +
+        "this machine - skipping per-item catalog page prerendering (/decor/<item> and " +
+        "/gifts/<item>). Existing item snapshots in prerendered/ are left as they are.\n"
+    );
+  } else {
+    const itemPages = buildItemPages(catalog);
+    console.log(`\nPrerendering ${itemPages.length} catalog item pages...`);
+
+    for (const { kind, base: baseItem, groupName } of itemPages) {
+      const routePath = itemUrlPath(kind, baseItem, groupName);
+      const previousTitle = await page.title();
+      // No physical dist/decor/<slug>/index.html file exists yet for a
+      // route this loop is only now generating, so a direct page.goto()
+      // here falls through to vite preview's SPA fallback, which serves
+      // the *prerendered* root snapshot's already-baked-in markup - not
+      // an empty shell - and this loop would go on to read that stale
+      // content back out as if it were the item page. Navigating instead
+      // via the same history.pushState + synthetic popstate event
+      // App.jsx's own router listens for gets the real client-side route
+      // change without ever asking the server for a path it can't serve.
+      await page.evaluate((p) => {
+        window.history.pushState({}, "", p);
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }, routePath);
+      // ItemDetail fetches the item after mounting and renders nothing
+      // but a loading line until that resolves, so neither networkidle
+      // nor a fixed delay reliably lands after it's done, and waiting
+      // for an <h1> is no better - every other page already has one
+      // (PageHero's own), so that wait resolves instantly against the
+      // page being left behind rather than the one arriving. SeoHead
+      // only sets document.title once the real item (or the "couldn't
+      // find that item" fallback) has actually rendered, and never
+      // repeats the previous page's title, so that's the one signal
+      // guaranteed to change exactly when this needs it to.
+      await page.waitForFunction((prev) => document.title !== prev, previousTitle, { timeout: 10000 });
+      await page.waitForTimeout(200);
+      const html = await page.content();
+
+      const expected = itemSeo({
+        kind,
+        name: groupName || baseItem.name,
+        description: baseItem.description,
+        photo: (baseItem.photos || [])[0],
+        path: routePath,
+      });
+      const actualTitle = await page.title();
+      const actualCanonical = await page.locator('head link[rel="canonical"]').getAttribute("href");
+
+      if (actualTitle !== expected.title) {
+        throw new Error(`${routePath}: title is "${actualTitle}", expected "${expected.title}"`);
+      }
+      if (actualCanonical !== expected.canonical) {
+        throw new Error(`${routePath}: canonical is "${actualCanonical}", expected "${expected.canonical}"`);
+      }
+      if (!html.includes('"@type":"Product"')) {
+        throw new Error(`${routePath}: Product structured data missing from snapshot`);
+      }
+
+      const outDir = path.join("prerendered", routePath.slice(1));
+      await mkdir(outDir, { recursive: true });
+      await writeFile(path.join(outDir, "index.html"), html, "utf-8");
+      console.log(`Prerendered ${routePath}`);
+    }
   }
 
   await browser.close();

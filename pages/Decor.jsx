@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { CalendarDays, ChevronLeft, Search, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import DecorCard, { groupByVariant, parseItemTags } from "../components/DecorCard";
-import DecorDetailModal from "../components/DecorDetailModal";
 import RentalDatesModal from "../components/RentalDatesModal";
-import { rentalDatesValid } from "../components/RentalDateFields";
+import { useRentalFlow, formatRentalDate } from "../useRentalFlow";
 import { useCart } from "../CartContext";
 import { useEventType } from "../EventTypeContext";
 import { usePalette } from "../PaletteContext";
 import { TAGS as CATALOG_TAGS } from "../decorTags";
+import { itemUrlPath } from "../seo";
 import {
   ElevatedCard,
   JewelBand,
@@ -52,17 +52,11 @@ function itemTags(item) {
   return [...sheetTags, ...derived];
 }
 
-function formatDate(value) {
-  if (!value) return "";
-  const date = new Date(`${value}T12:00:00`);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
-}
-
-export default function Decor() {
+export default function Decor({ navigate }) {
   const { palette, fonts } = usePalette();
   const { openPickerForBuilder } = useEventType();
-  const { addToCart, addRental, rentalDates } = useCart();
+  const { addToCart } = useCart();
+  const rental = useRentalFlow();
 
   const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -70,13 +64,6 @@ export default function Decor() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [detailItem, setDetailItem] = useState(null);
-  const [showDatesModal, setShowDatesModal] = useState(false);
-  const [pendingRentItem, setPendingRentItem] = useState(null);
-  const [rentalNotice, setRentalNotice] = useState("");
-  const [checkingAvailability, setCheckingAvailability] = useState(false);
-
-  const datesReady = rentalDatesValid(rentalDates);
 
   useEffect(() => {
     if (!supabase) {
@@ -161,53 +148,7 @@ export default function Decor() {
     setQuery("");
   };
 
-  const attemptAddRental = async (item, dates) => {
-    setRentalNotice("");
-
-    if (!supabase) {
-      addRental(item.id);
-      return;
-    }
-
-    setCheckingAvailability(true);
-    const { data, error: availabilityError } = await supabase.rpc("get_reservation_item_availability", {
-      p_item_id: Number(item.id),
-      p_pickup: dates.pickup,
-      p_dropoff: dates.dropoff,
-    });
-    setCheckingAvailability(false);
-
-    if (availabilityError || Number(data || 0) < 1) {
-      setRentalNotice(`${item.name} isn't available for ${formatDate(dates.pickup)} to ${formatDate(dates.dropoff)}.`);
-      return;
-    }
-
-    addRental(item.id);
-  };
-
-  const handleRent = async (item) => {
-    setDetailItem(null);
-    if (!datesReady) {
-      setPendingRentItem(item);
-      setShowDatesModal(true);
-      return;
-    }
-    await attemptAddRental(item, rentalDates);
-  };
-
-  const handleBuy = (item) => {
-    setDetailItem(null);
-    addToCart(item.id, "catalog");
-  };
-
-  const handleDatesSaved = async (savedDates) => {
-    setShowDatesModal(false);
-    if (pendingRentItem) {
-      const item = pendingRentItem;
-      setPendingRentItem(null);
-      await attemptAddRental(item, savedDates);
-    }
-  };
+  const handleBuy = (item) => addToCart(item.id, "catalog");
 
   return (
     <main style={{ ...paperTexture(palette), color: palette.ink }}>
@@ -387,34 +328,34 @@ export default function Decor() {
 
                 <button
                   type="button"
-                  onClick={() => setShowDatesModal(true)}
+                  onClick={() => rental.setShowDatesModal(true)}
                   className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold"
                   style={{
                     ...fonts.bodyFont,
                     background: palette.surface,
-                    border: `1px solid ${datesReady ? palette.primaryDeep : palette.line}`,
+                    border: `1px solid ${rental.datesReady ? palette.primaryDeep : palette.line}`,
                     color: palette.primaryDeep,
                   }}
                 >
                   <CalendarDays size={15} color={palette.goldDeep} />
-                  {datesReady
-                    ? `Renting ${formatDate(rentalDates.pickup)} – ${formatDate(rentalDates.dropoff)} · Change`
+                  {rental.datesReady
+                    ? `Renting ${formatRentalDate(rental.rentalDates.pickup)} – ${formatRentalDate(rental.rentalDates.dropoff)} · Change`
                     : "Set your rental dates"}
                 </button>
               </div>
 
-              {checkingAvailability && (
+              {rental.checkingAvailability && (
                 <p className="mt-4 text-sm" style={{ ...fonts.bodyFont, color: palette.muted }}>
                   Checking availability for your dates...
                 </p>
               )}
 
-              {rentalNotice && (
+              {rental.rentalNotice && (
                 <p
                   className="mt-4 rounded-sm px-4 py-3 text-sm"
                   style={{ ...fonts.bodyFont, background: rgba("#B8305F", 0.08), color: "#8A3142" }}
                 >
-                  {rentalNotice}
+                  {rental.rentalNotice}
                 </p>
               )}
 
@@ -444,11 +385,9 @@ export default function Decor() {
                       item={entry.item}
                       variants={entry.variants}
                       groupName={entry.groupName}
-                      onRent={handleRent}
+                      onRent={rental.handleRent}
                       onBuy={handleBuy}
-                      onOpenDetail={(active, variants, groupName) =>
-                        setDetailItem({ item: active, variants, groupName })
-                      }
+                      onOpenDetail={(active, variants, groupName) => navigate(itemUrlPath("decor", active, groupName))}
                     />
                   ))}
                 </div>
@@ -482,24 +421,13 @@ export default function Decor() {
         </div>
       </section>
 
-      {detailItem && (
-        <DecorDetailModal
-          item={detailItem.item}
-          variants={detailItem.variants}
-          groupName={detailItem.groupName}
-          onClose={() => setDetailItem(null)}
-          onRent={handleRent}
-          onBuy={handleBuy}
-        />
-      )}
-
-      {showDatesModal && (
+      {rental.showDatesModal && (
         <RentalDatesModal
           onClose={() => {
-            setShowDatesModal(false);
-            setPendingRentItem(null);
+            rental.setShowDatesModal(false);
+            rental.setPendingRentItem(null);
           }}
-          onSaved={handleDatesSaved}
+          onSaved={rental.handleDatesSaved}
         />
       )}
     </main>

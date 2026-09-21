@@ -54,11 +54,17 @@ function fillSiteJsonLd() {
   });
 }
 
-export default function SeoHead({ path }) {
+// `override` lets a page supply its own title/description/canonical
+// instead of the static ROUTE_SEO lookup - every catalog item's detail
+// page needs this, since their metadata comes from the item Supabase
+// returns, not something that can be hardcoded per route ahead of time.
+// `productJsonLd` is an additional structured-data block those same pages
+// pass in; it's replaced on every navigation same as the breadcrumb block.
+export default function SeoHead({ path, override, productJsonLd }) {
   useEffect(fillSiteJsonLd, []);
 
   useEffect(() => {
-    const { title, description, canonical, noindex } = seoForPath(path);
+    const { title, description, canonical, noindex } = override || seoForPath(path);
 
     document.title = title;
 
@@ -78,10 +84,10 @@ export default function SeoHead({ path }) {
     setMeta('meta[property="og:title"]', { tag: "meta", property: "og:title", content: title });
     setMeta('meta[property="og:description"]', { tag: "meta", property: "og:description", content: description });
     setMeta('meta[property="og:url"]', { tag: "meta", property: "og:url", content: canonical });
-    setMeta('meta[property="og:type"]', { tag: "meta", property: "og:type", content: "website" });
+    setMeta('meta[property="og:type"]', { tag: "meta", property: "og:type", content: override ? "product" : "website" });
     setMeta('meta[property="og:site_name"]', { tag: "meta", property: "og:site_name", content: SITE_NAME });
     setMeta('meta[property="og:locale"]', { tag: "meta", property: "og:locale", content: "en_CA" });
-    setMeta('meta[property="og:image"]', { tag: "meta", property: "og:image", content: `${SITE_URL}/og-cover.jpg` });
+    setMeta('meta[property="og:image"]', { tag: "meta", property: "og:image", content: override?.image || `${SITE_URL}/og-cover.jpg` });
 
     setMeta('meta[name="twitter:card"]', { tag: "meta", name: "twitter:card", content: "summary_large_image" });
     setMeta('meta[name="twitter:title"]', { tag: "meta", name: "twitter:title", content: title });
@@ -92,7 +98,7 @@ export default function SeoHead({ path }) {
     // index.html and never change, so they are left alone here.
     const existing = document.head.querySelector('script[data-seo="breadcrumb"]');
     if (existing) existing.remove();
-    const crumb = breadcrumbJsonLd(path);
+    const crumb = breadcrumbJsonLd(path, override?.title);
     if (crumb) {
       const script = document.createElement("script");
       script.type = "application/ld+json";
@@ -100,7 +106,19 @@ export default function SeoHead({ path }) {
       script.textContent = JSON.stringify(crumb);
       document.head.appendChild(script);
     }
-  }, [path]);
+
+    // Product structured data only exists for catalog item pages, passed
+    // in by ItemDetail once the item has loaded from Supabase.
+    const existingProduct = document.head.querySelector('script[data-seo="product"]');
+    if (existingProduct) existingProduct.remove();
+    if (productJsonLd) {
+      const script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.dataset.seo = "product";
+      script.textContent = JSON.stringify(productJsonLd);
+      document.head.appendChild(script);
+    }
+  }, [path, override, productJsonLd]);
 
   return null;
 }

@@ -166,6 +166,90 @@ export const ROUTE_SEO = {
 // in one place cannot leave it out of the sitemap.
 export const INDEXABLE_ROUTES = Object.keys(ROUTE_SEO).filter((r) => !ROUTE_SEO[r].noindex);
 
+// Every catalog item (decor, gift wrap, cards, keepsakes) gets its own
+// indexable URL - /decor/<slug> or /gifts/<slug> - instead of living only
+// behind a client-side modal with no URL of its own. The slug always ends
+// in the anchoring row's numeric id, so the URL stays stable even if the
+// name changes later; a renamed item just gets an extra, harmless slug
+// variant rather than a broken link. Grouped items (e.g. a candle holder
+// sold in two sizes) share one URL keyed off their variant_group label and
+// the cheapest variant's id, matching how groupByVariant() already
+// collapses them into a single card everywhere else in the app.
+export function slugify(text) {
+  return (
+    String(text || "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "item"
+  );
+}
+
+export function itemUrlPath(kind, item, groupName) {
+  return `/${kind}/${slugify(groupName || item?.name)}-${item?.id}`;
+}
+
+// The id is always the last hyphen-separated number in the slug, so this
+// works regardless of what the descriptive part of the URL says - a stale
+// bookmark or an old search result still resolves to the right item.
+export function parseItemIdFromSlug(slug) {
+  const match = String(slug || "").match(/-(\d+)$/);
+  return match ? Number(match[1]) : null;
+}
+
+function absoluteImageUrl(url) {
+  if (typeof url !== "string" || !url) return null;
+  if (/^https?:\/\//.test(url)) return url;
+  return url.startsWith("/") ? `${SITE_URL}${url}` : null;
+}
+
+function plainText(text) {
+  return String(text || "").replace(/\*\*/g, "").replace(/\s*\n+\s*/g, " ").trim();
+}
+
+// `kind` is "decor" (rentable pieces) or "gifts" (purchase-only catalog),
+// matching the two catalogue pages and their two URL prefixes.
+export function itemSeo({ kind, name, description, photo, path }) {
+  const isDecor = kind === "decor";
+  const title = `${name} ${isDecor ? "Rental" : "for Sale"} | ${SERVICE_AREA_SHORT} | ${SITE_NAME}`;
+  const cleanDescription = plainText(description);
+  const description155 =
+    (cleanDescription
+      ? `${cleanDescription} `
+      : `${name}, ${isDecor ? "available to rent" : "available to buy"} `) +
+    `${isDecor ? "for events" : "for celebrations"} in ${SERVICE_AREA_LONG}.`;
+
+  return {
+    path,
+    title,
+    description: description155.length > 160 ? `${description155.slice(0, 157)}...` : description155,
+    canonical: `${SITE_URL}${path}`,
+    image: absoluteImageUrl(photo) || `${SITE_URL}/og-cover.jpg`,
+    noindex: false,
+  };
+}
+
+// schema.org/Product, read by Google Search's rich-result pipeline and by
+// Google Merchant Center's own crawl of the landing page a submitted
+// product feed points at - both want to see price, currency and stock
+// state on the page itself, not just in the feed.
+export function productJsonLd({ path, name, description, image, price, inStock }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name,
+    description: plainText(description) || name,
+    image: image ? [image] : undefined,
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}${path}`,
+      priceCurrency: "CAD",
+      price: price != null ? String(price) : undefined,
+      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+    },
+  };
+}
+
 export function seoForPath(pathname) {
   const clean = (pathname || "/").split("?")[0].replace(/\/+$/, "") || "/";
   const entry = ROUTE_SEO[clean];
@@ -234,10 +318,10 @@ export function websiteJsonLd() {
 // Breadcrumbs give Google the site's shape and replace the raw URL in the
 // search result with a readable path. Every route is one level deep, so
 // this is always Home plus the page itself.
-export function breadcrumbJsonLd(pathname) {
+export function breadcrumbJsonLd(pathname, titleOverride) {
   const { path, title } = seoForPath(pathname);
   if (path === "/") return null;
-  const label = title.split("|")[0].trim();
+  const label = (titleOverride || title).split("|")[0].trim();
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

@@ -25,6 +25,32 @@ export function parseItemTags(item) {
   return [];
 }
 
+// The tags Decor.jsx's category picker actually offers - kept here as the
+// one shared definition so a row's "would this ever appear somewhere on
+// the decor page" question always gets the same answer everywhere it's
+// asked. pages/Decor.jsx filters its own category tile list from
+// decorTags.js against this same list; that's a separate, larger set of
+// display labels, not a second source of truth for it.
+export const DECOR_CATEGORY_TAGS = [
+  "table", "wall/floor", "signage", "equipment",
+  "marquee letters & numbers", "keepsakes & gifts", "disposables", "dessert items",
+];
+
+export function isDecorCatalogItem(item) {
+  return parseItemTags(item)
+    .map((t) => t.toLowerCase().trim())
+    .some((t) => DECOR_CATEGORY_TAGS.includes(t));
+}
+
+// Mirrors pages/Gifts.jsx's own giftItems/wrapAndStationeryItems split:
+// gift wrap and stationery rows unconditionally, keepsakes & gifts rows
+// only once they're actually purchasable.
+export function isGiftCatalogItem(item) {
+  const tags = parseItemTags(item).map((t) => t.toLowerCase().trim());
+  if (tags.includes("gift wrap") || tags.includes("stationery")) return true;
+  return tags.includes("keepsakes & gifts") && item.purchase_price != null;
+}
+
 // An item's `color` column can hold a single value ("Gold") or, for a
 // single catalog row that comes in more than one finish (e.g. the wine
 // glasses, sold as one line item in Gold or Crystal Clear), a
@@ -45,7 +71,7 @@ export function plainDescription(text) {
   return text.replace(/\*\*/g, "").replace(/\s*\n+\s*/g, " ").trim();
 }
 
-// Shared by DecorCard and DecorDetailModal so the purchase-only rule and
+// Shared by DecorCard and ItemDetail so the purchase-only rule and
 // the tag list only live in one place.
 export function getItemFlags(item) {
   const tags = parseItemTags(item);
@@ -69,7 +95,7 @@ function variantPrice(v) {
   return rent ?? buy ?? Infinity;
 }
 
-// Sizing/price choices are made in the detail view (DecorDetailModal), not
+// Sizing/price choices are made on the item's own detail page, not
 // on the grid - a dropdown per card reads as clunky at a glance. The grid
 // just needs to default to the cheapest variant (the smallest size, in
 // practice) so the photo and starting price it shows are representative.

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { withBasePath } from "../apiBase";
 
 export function normalizePhotos(photos) {
@@ -7,50 +7,16 @@ export function normalizePhotos(photos) {
 }
 
 // Drop-in replacement for a plain <img> wherever a card shows one of an
-// item's `photos` - a single photo renders exactly as a plain <img> always
-// has, and two or more crossfade through every one of them automatically,
-// matching the hero crossfade pattern used elsewhere on the site (see
-// Activities.jsx's HERO_PHOTOS). The parent element must be `position:
-// relative` (every card/tile already wraps its photo in one) since the
-// multi-photo case stacks images with `absolute inset-0`.
-export default function PhotoCarousel({ photos, alt, className, intervalMs = 4000 }) {
+// item's `photos`. Always shows the first photo, static - no auto-cycling.
+// Anyone who wants to see the rest clicks through to the item's own detail
+// page, where every photo is browsable on demand.
+export default function PhotoCarousel({ photos, alt, className }) {
   const list = normalizePhotos(photos);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (list.length < 2) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % list.length), intervalMs);
-    return () => clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list.length, intervalMs]);
-
   if (!list.length) return null;
-
-  if (list.length === 1) {
-    return (
-      <>
-        <img src={list[0]} alt={alt} className={`glossy-photo ${className}`} />
-        <div aria-hidden="true" className="glossy-sheen" />
-        <div aria-hidden="true" className="glossy-glaze" />
-      </>
-    );
-  }
 
   return (
     <>
-      {list.map((src, i) => (
-        <img
-          key={src}
-          src={src}
-          // Numbered so several photos of the same item don't all carry
-          // one identical alt string, which reads to a crawler (and to a
-          // screen reader) as duplicate content rather than as different
-          // views of the same piece.
-          alt={i === 0 ? alt : `${alt}, photo ${i + 1}`}
-          className={`glossy-photo ${className} absolute inset-0 transition-opacity duration-1000 ease-in-out`}
-          style={{ opacity: i === index ? 1 : 0 }}
-        />
-      ))}
+      <img src={list[0]} alt={alt} className={`glossy-photo ${className}`} />
       <div aria-hidden="true" className="glossy-sheen" />
       <div aria-hidden="true" className="glossy-glaze" />
     </>

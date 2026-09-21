@@ -1,19 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Check, Plus, ShoppingBag, Sparkles } from "lucide-react";
+import { Check, Plus, Sparkles } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { getItemFlags, groupByVariant, parseItemTags, plainDescription } from "../components/DecorCard";
-import DecorDetailModal from "../components/DecorDetailModal";
 import CustomizableGiftModal from "../components/CustomizableGiftModal";
-import CartModal from "../components/CartModal";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import { useEventType } from "../EventTypeContext";
 import { usePalette } from "../PaletteContext";
-import { giftAltText } from "../seo";
+import { giftAltText, itemUrlPath } from "../seo";
 import {
   ElevatedCard,
   JewelBand,
-  PageHero,
   PrimaryButton,
   Reveal,
   SectionIntro,
@@ -182,10 +179,10 @@ function GiftTile({
   );
 }
 
-export default function Gifts() {
+export default function Gifts({ navigate }) {
   const { palette, fonts } = usePalette();
   const { openPickerForBuilder } = useEventType();
-  const { addToCart, removeFromCart, isInCart, cartCount, clearCart } = useCart();
+  const { addToCart, removeFromCart, isInCart, clearCart } = useCart();
 
   const [catalog, setCatalog] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -193,8 +190,6 @@ export default function Gifts() {
   const [gifts, setGifts] = useState([]);
   const [giftsError, setGiftsError] = useState("");
   const [customizing, setCustomizing] = useState(null);
-  const [showCart, setShowCart] = useState(false);
-  const [detailItem, setDetailItem] = useState(null);
   const [checkoutStatus, setCheckoutStatus] = useState(null);
   const [selectedGiftCategory, setSelectedGiftCategory] = useState("all");
 
@@ -318,7 +313,7 @@ export default function Gifts() {
           photos: entry.item.photos,
           priceLabel: `From $${Math.min(...entry.variants.map((v) => Number(v.purchase_price)))}`,
           showViewOptions: true,
-          onView: () => setDetailItem(entry),
+          onView: () => navigate(itemUrlPath("gifts", entry.item, entry.groupName)),
         }
       : {
           name: entry.item.name,
@@ -327,7 +322,7 @@ export default function Gifts() {
           price: entry.item.purchase_price,
           inCart: isInCart(entry.item.id, "catalog"),
           onToggle: () => toggleCatalogGift(entry.item),
-          onView: () => setDetailItem(entry),
+          onView: () => navigate(itemUrlPath("gifts", entry.item)),
         };
 
   const toggleCatalogGift = (item) => {
@@ -343,30 +338,6 @@ export default function Gifts() {
 
   return (
     <main style={{ ...paperTexture(palette), color: palette.ink }}>
-      <PageHero
-        eyebrow="GIFTS & KEEPSAKES"
-        title="The games are played. The memories are made."
-        script="Take a lil something for the road."
-        body="Guest gifts, favours, stationery and one-off keepsakes that can be added to an experience or purchased on their own."
-        palette={palette}
-        fonts={fonts}
-        align="center"
-      >
-        <button
-          onClick={() => setShowCart(true)}
-          className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-xs font-semibold tracking-[0.1em]"
-          style={{
-            ...fonts.bodyFont,
-            background: palette.primaryDeep,
-            color: "#FFFFFF",
-            textTransform: "uppercase",
-          }}
-        >
-          <ShoppingBag size={15} />
-          Cart ({cartCount})
-        </button>
-      </PageHero>
-
       {checkoutStatus && (
         <section className="mx-auto max-w-7xl px-5 pt-7 sm:px-8">
           <ElevatedCard palette={palette} className="px-5 py-4">
@@ -497,26 +468,6 @@ export default function Gifts() {
         />
       )}
 
-      {detailItem && (
-        <DecorDetailModal
-          item={detailItem.item}
-          variants={detailItem.variants}
-          groupName={detailItem.groupName}
-          onClose={() => setDetailItem(null)}
-          onBuy={(picked) => {
-            addToCart(picked.id, "catalog");
-            setDetailItem(null);
-          }}
-        />
-      )}
-
-      {showCart && (
-        <CartModal
-          catalog={catalog}
-          gifts={gifts}
-          onClose={() => setShowCart(false)}
-        />
-      )}
     </main>
   );
 }

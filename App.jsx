@@ -35,6 +35,7 @@ import TutuTwirlsTea from "./pages/TutuTwirlsTea";
 import BabyShower from "./pages/BabyShower";
 import ClientPortal from "./pages/ClientPortal";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import ItemDetail from "./pages/ItemDetail";
 import CartLauncher from "./components/CartLauncher";
 
 // Nav order and the "primary CTA should be visually dominant" rule both
@@ -122,6 +123,32 @@ function AppRoutes() {
       <>
         <SeoHead path={page} />
         <Admin />
+      </>
+    );
+  }
+
+  // Every decor piece and every gift/wrap/card item gets its own real page
+  // at /decor/<slug> or /gifts/<slug> instead of only existing inside a
+  // click-to-open modal with no URL of its own - the catalogue's two
+  // fixed routes stay in routeMap below, but anything after one more
+  // slash is a specific item, resolved dynamically rather than added to
+  // that fixed map one row at a time. ItemDetail renders its own SeoHead
+  // once the item loads (its title/description can't be known ahead of
+  // time the way a fixed route's can), so this returns before the
+  // generic `<SeoHead path={page} />` below ever runs for these routes.
+  const itemMatch = page.match(/^\/(decor|gifts)\/([^/]+)$/);
+  if (itemMatch) {
+    const [, kind, slug] = itemMatch;
+    return (
+      <>
+        <PaletteRouteSync current={kind} />
+        <SiteHeader current={kind} navigate={navigate} nav={NAV} />
+        <ValuePropBar />
+        <ItemDetail kind={kind} slug={slug} navigate={navigate} />
+        <SiteFooter navigate={navigate} />
+        <EventTypePicker navigate={navigate} />
+        <EventDatePicker />
+        <CartLauncher />
       </>
     );
   }
