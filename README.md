@@ -176,11 +176,27 @@ would bundle it into the public site's client-side code:
   `api/admin-upload.js`) use this to write past RLS - the public site
   never sees this key, only the server-side functions do.
 
-Photo uploads go into the same `Photos from` Supabase Storage bucket every
-existing photo URL in this app already points to. The browser downsizes a
-photo to at most 1600px wide before uploading, both to stay comfortably
-under Vercel's request size limit and because nothing on the site
-displays anything larger.
+When a human uploads a photo through this page, it goes into the `Photos
+from` Supabase Storage bucket. The browser downsizes it to at most 1600px
+wide before uploading, both to stay comfortably under Vercel's request
+size limit and because nothing on the site displays anything larger.
+
+**This is not the only place catalog photos live, and it is not how
+Claude should add one.** A `photos` array entry can be either an absolute
+Supabase Storage URL (the admin-page path above) or a path like
+`/photos/some-file.jpg`, which is just a file committed straight into
+`public/photos/` in this repo and served statically - most of the catalog
+(78 of 122 items, last checked) already works this way. **Claude adding or
+reordering a product photo should always use the `/photos/` route**: drop
+the image file into `public/photos/`, then update that row's `photos`
+column with `mcp__Supabase__execute_sql` so the new entry is wherever in
+the array it needs to be (index 0 = the cover photo shown everywhere).
+That needs no Supabase Storage upload, no `ADMIN_PASSCODE`, and no
+`SUPABASE_SERVICE_ROLE_KEY` - so there is never a reason to ask for any of
+those just to add a photo. Remember to also update the gitignored
+`scripts/_catalog-snapshot.json` mirror to match, and to regenerate
+`prerendered/` for any page the item appears on before committing, same
+as any other catalog data change.
 
 Since the admin page writes to Supabase directly, editing an item there
 and editing the same item's row in the Google Sheet afterward will
