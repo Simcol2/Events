@@ -852,7 +852,7 @@ async function handlePortal(req, res) {
     const { data: reservations, error: reservationsError } = await clientSupabase
       .from("reservations")
       .select(
-        "id,booking_number,status,contract_status,currency,booking_deposit_cents,security_deposit_cents,balance_due_cents,square_invoice_id,square_invoice_status,square_invoice_url,square_balance_autopay,square_payment_failed,square_security_status,square_security_refund_status,square_security_refund_cents,square_security_refunded_at"
+        "id,booking_number,status,contract_status,currency,booking_deposit_cents,security_deposit_cents,balance_due_cents,square_invoice_id,square_invoice_status,square_invoice_url,square_balance_autopay,square_payment_failed,square_security_status,square_security_refund_status,square_security_refund_cents,square_security_refunded_at,square_booking_deposit_status,square_booking_deposit_paid_at,future_payment_method,manual_payment_acknowledged,manual_balance_payment_due,manual_security_payment_due,balance_due_at,security_deposit_due_at"
       )
       .eq("customer_id", customer.id);
 
@@ -1169,7 +1169,7 @@ async function handleAdminReservations(req, res) {
 // hours by Supabase Cron (pg_cron + pg_net job "events-square-rental-timing"
 // in the project database, not Vercel's own cron - Hobby plan only allows
 // a daily schedule there), gated on CRON_SECRET rather than the admin
-// passcode or a client session. Exact 24-hour/12-hour rules require
+// passcode or a client session. Exact 7-day/48-hour rules require
 // reservations.pickup_at - a booking with only pickup_date is skipped
 // rather than guessing a time.
 // ---------------------------------------------------------------------
@@ -1179,11 +1179,11 @@ function cronAuthorized(req) {
 }
 
 async function chargeAutoSecurityDeposit(reservation, customer) {
-  if (reservation.square_security_payment_id) return;
+  if (reservation.square_security_payment_id) return { skipped: true };
 
   const amount = Number(reservation.security_deposit_cents || 0);
-  if (amount <= 0) return;
-  if (!customer?.square_card_on_file || !customer?.square_primary_card_id) return;
+  if (amount <= 0) return { skipped: true };
+  if (!customer?.square_card_on_file || !customer?.square_primary_card_id) return { skipped: true };
 
   const data = await squareRequest("/v2/payments", {
     method: "POST",
@@ -1200,7 +1200,7 @@ async function chargeAutoSecurityDeposit(reservation, customer) {
   });
 
   const payment = data.payment;
-  if (!payment?.id) return;
+  if (!payment?.id) throw new Error("Square did not return a payment for the security deposit.");
 
   await supabase
     .from("reservations")
@@ -1210,6 +1210,67 @@ async function chargeAutoSecurityDeposit(reservation, customer) {
       square_security_collected_at: payment.created_at || new Date().toISOString(),
     })
     .eq("id", reservation.id);
+
+  // Mirrored into the ledger (matching chargeSecurityDeposit's admin-triggered
+  // counterpart above) so the portal's paid-status checks, which read
+  // square_transactions rather than the reservation row directly, actually
+  // see an auto-charged security deposit.
+  await supabase.from("square_transactions").upsert(
+    {
+      customer_id: reservation.customer_id,
+      reservation_id: reservation.id,
+      kind: "security_deposit",
+      square_payment_id: payment.id,
+      amount_cents: amount,
+      currency: String(reservation.currency || "cad").toLowerCase(),
+      status: payment.status === "COMPLETED" ? "paid" : String(payment.status || "").toLowerCase(),
+      paid_at: payment.status === "COMPLETED" ? payment.created_at || new Date().toISOString() : null,
+      metadata: { source: "timing_security_autopay" },
+    },
+    { onConflict: "square_payment_id" }
+  );
+
+  return { paid: payment.status === "COMPLETED" };
+}
+
+async function chargeAutoRemainingBalance(reservation, customer) {
+  const due = Number(reservation.balance_due_cents || 0);
+  if (due <= 0) return { skipped: true };
+  if (!customer?.square_card_on_file || !customer?.square_primary_card_id) return { skipped: true };
+
+  const data = await squareRequest("/v2/payments", {
+    method: "POST",
+    body: {
+      source_id: customer.square_primary_card_id,
+      idempotency_key: `asg-auto-balance-${reservation.id}`,
+      amount_money: { amount: due, currency: String(reservation.currency || "cad").toUpperCase() },
+      customer_id: customer.square_customer_id,
+      location_id: squareLocationId(),
+      reference_id: reservation.booking_number,
+      note: `${reservation.booking_number} remaining rental balance`,
+      autocomplete: true,
+    },
+  });
+
+  const payment = data.payment;
+  if (!payment?.id) throw new Error("Square did not return a payment for the remaining balance.");
+
+  await supabase.from("square_transactions").upsert(
+    {
+      customer_id: reservation.customer_id,
+      reservation_id: reservation.id,
+      kind: "balance",
+      square_payment_id: payment.id,
+      amount_cents: due,
+      currency: String(reservation.currency || "cad").toLowerCase(),
+      status: payment.status === "COMPLETED" ? "paid" : String(payment.status || "").toLowerCase(),
+      paid_at: payment.status === "COMPLETED" ? payment.created_at || new Date().toISOString() : null,
+      metadata: { source: "timing_balance_autopay" },
+    },
+    { onConflict: "square_payment_id" }
+  );
+
+  return { paid: payment.status === "COMPLETED" };
 }
 
 async function handleTiming(req, res) {
@@ -1219,10 +1280,13 @@ async function handleTiming(req, res) {
 
   const now = new Date();
 
+  // Matches both the new immediate-deposit reservations (future_payment_method
+  // set, no invoice) and any older invoice-based reservation still in flight -
+  // filtering on payment_provider instead of square_invoice_id covers both.
   const { data: reservations, error } = await supabase
     .from("reservations")
     .select("*")
-    .not("square_invoice_id", "is", null)
+    .eq("payment_provider", "square")
     .in("status", ["checkout_pending", "pending", "confirmed"]);
 
   if (error) {
@@ -1242,12 +1306,20 @@ async function handleTiming(req, res) {
     }
 
     const pickupAt = new Date(reservation.pickup_at);
-    const balanceDueAt = new Date(pickupAt.getTime() - 24 * 60 * 60 * 1000);
-    const cancelAt = new Date(pickupAt.getTime() - 12 * 60 * 60 * 1000);
+    const balanceDueAt = new Date(pickupAt.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const securityDepositDueAt = new Date(pickupAt.getTime() - 48 * 60 * 60 * 1000);
+    // The final cancellation check now lines up with the security-deposit
+    // deadline (48 hours before pickup) instead of the old fixed 12-hour
+    // mark, matching the new payment timeline.
+    const finalCancellationCheckAt = securityDepositDueAt;
 
     await supabase
       .from("reservations")
-      .update({ balance_due_at: balanceDueAt.toISOString(), auto_cancel_at: cancelAt.toISOString() })
+      .update({
+        balance_due_at: balanceDueAt.toISOString(),
+        security_deposit_due_at: securityDepositDueAt.toISOString(),
+        auto_cancel_at: finalCancellationCheckAt.toISOString(),
+      })
       .eq("id", reservation.id);
 
     const { data: customer } = await supabase
@@ -1265,24 +1337,68 @@ async function handleTiming(req, res) {
       (tx || []).filter((row) => row.kind === kind && row.status === "paid").reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
 
     const balancePaid = paid("balance") >= Number(reservation.balance_due_cents || 0);
+    const securityPaid = paid("security_deposit") >= Number(reservation.security_deposit_cents || 0);
 
-    // At the 24-hour mark, collect the separate refundable security deposit
-    // if the customer explicitly saved a card.
-    if (now >= balanceDueAt && !reservation.square_security_payment_id) {
-      await chargeAutoSecurityDeposit(reservation, customer);
+    let balanceChargeFailed = false;
+    let securityChargeFailed = false;
+
+    if (reservation.future_payment_method === "card_on_file") {
+      // Saved-card customer: attempt the automatic charge at each deadline.
+      if (now >= balanceDueAt && !balancePaid) {
+        try {
+          await chargeAutoRemainingBalance(reservation, customer);
+        } catch (chargeError) {
+          console.error(`Square auto balance charge failed for reservation ${reservation.id}:`, chargeError);
+          balanceChargeFailed = true;
+        }
+      }
+
+      if (now >= securityDepositDueAt && !reservation.square_security_payment_id) {
+        try {
+          await chargeAutoSecurityDeposit(reservation, customer);
+        } catch (chargeError) {
+          console.error(`Square auto security deposit charge failed for reservation ${reservation.id}:`, chargeError);
+          securityChargeFailed = true;
+        }
+      }
+    } else if (reservation.future_payment_method === "manual") {
+      // Manual-payment customer: flag the deadline as due rather than charge
+      // anything. The customer (or staff) must collect payment explicitly.
+      if (now >= balanceDueAt && !balancePaid && !reservation.manual_balance_payment_due) {
+        await supabase
+          .from("reservations")
+          .update({ manual_balance_payment_due: true, status: "payment_overdue" })
+          .eq("id", reservation.id);
+      }
+
+      if (now >= securityDepositDueAt && !reservation.square_security_payment_id && !reservation.manual_security_payment_due) {
+        await supabase
+          .from("reservations")
+          .update({ manual_security_payment_due: true, status: "payment_overdue" })
+          .eq("id", reservation.id);
+      }
     }
 
-    // At the 12-hour mark, do not hard-delete anything. Mark the reservation
-    // payment_overdue so an exception/cash payment can still be handled.
-    if (now >= cancelAt && !balancePaid && !["cancelled", "completed", "returned"].includes(reservation.status)) {
-      await supabase.from("reservations").update({ status: "payment_overdue" }).eq("id", reservation.id);
+    // Do not hard-cancel anything here. A failed automatic charge just marks
+    // the reservation payment_overdue so an exception/cash payment can still
+    // be handled; cancellation under the rental policy is a staff decision.
+    if (
+      (balanceChargeFailed || securityChargeFailed) &&
+      !["cancelled", "completed", "returned"].includes(reservation.status)
+    ) {
+      await supabase
+        .from("reservations")
+        .update({ status: "payment_overdue", square_payment_failed: true })
+        .eq("id", reservation.id);
     }
 
     results.push({
       reservationId: reservation.id,
       balanceDueAt: balanceDueAt.toISOString(),
-      autoCancelAt: cancelAt.toISOString(),
+      securityDepositDueAt: securityDepositDueAt.toISOString(),
+      autoCancelAt: finalCancellationCheckAt.toISOString(),
       balancePaid,
+      securityPaid,
     });
   }
 
@@ -1290,12 +1406,14 @@ async function handleTiming(req, res) {
 }
 
 // ---------------------------------------------------------------------
-// resource=production-booking (POST) - Phase 16-20 Step 19. The live
-// rental-checkout orchestrator UnifiedCartModal would call once patched
-// per components/UnifiedCartSquarePatch.md. Not yet wired into the live
-// Cart - see that same-named .md file (kept as reference, not copied into
-// the app) for why that patch is being held for a deliberate go-ahead
-// rather than applied automatically.
+// resource=production-booking (POST) - Phase 16-20 Step 19, now on the
+// immediate-deposit model. UnifiedCartModal collects a tokenized card via
+// SquareCardPayment and posts it here. The 50% booking deposit is charged
+// synchronously in this same request (see chargeBookingDeposit below) - no
+// draft invoice is created for it, and no seller step gates the customer's
+// ability to pay. The remaining balance and refundable security deposit are
+// collected later by resource=timing, either automatically (card kept on
+// file) or manually (customer pays before the same deadlines).
 // ---------------------------------------------------------------------
 function productionCents(value) {
   return Math.round(Number(value || 0) * 100);
@@ -1391,6 +1509,64 @@ function defaultPickupAt(pickupDate) {
     : date.toISOString();
 }
 
+// Charges the 50% booking deposit immediately against the tokenized card the
+// customer entered in UnifiedCartModal via SquareCardPayment - no draft
+// invoice, no seller step in between. README's "if the initial 50% deposit
+// fails, the reservation must not remain live" is enforced by the caller's
+// catch block, which cancels the reservation on any error thrown here.
+async function chargeBookingDeposit({ reservation, customer, squareCustomerId, paymentToken }) {
+  const amount = Number(reservation.booking_deposit_cents || 0);
+
+  const result = await squareRequest("/v2/payments", {
+    method: "POST",
+    body: {
+      source_id: paymentToken,
+      idempotency_key: `asg-booking-deposit-${reservation.id}`.slice(0, 45),
+      amount_money: {
+        amount,
+        currency: "CAD",
+      },
+      customer_id: squareCustomerId,
+      location_id: squareLocationId(),
+      reference_id: reservation.booking_number,
+      buyer_email_address: customer.email || undefined,
+      note: `${reservation.booking_number} 50% rental booking deposit`,
+      autocomplete: true,
+    },
+  });
+
+  const payment = result.payment;
+
+  if (!payment?.id || payment.status !== "COMPLETED") {
+    throw new Error("The booking deposit payment was not completed.");
+  }
+
+  return payment;
+}
+
+// Square Web Payments SDK's CHARGE_AND_STORE intent authorizes storing the
+// card, but the card still has to be explicitly saved to the Square
+// customer profile from the completed payment before it can be reused for
+// the later automatic balance/security-deposit charges.
+async function saveDepositCard({ reservation, squareCustomerId, payment }) {
+  const result = await squareRequest("/v2/cards", {
+    method: "POST",
+    body: {
+      idempotency_key: `asg-save-card-${reservation.id}`,
+      source_id: payment.id,
+      card: {
+        customer_id: squareCustomerId,
+      },
+    },
+  });
+
+  if (!result.card?.id) {
+    throw new Error("The deposit was paid, but Square could not save the card.");
+  }
+
+  return result.card;
+}
+
 async function handleProductionBooking(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -1400,7 +1576,14 @@ async function handleProductionBooking(req, res) {
   let reservation = null;
 
   try {
-    const { customer: input, rentalDates = {}, items = [] } = req.body || {};
+    const {
+      customer: input,
+      rentalDates = {},
+      items = [],
+      paymentToken,
+      saveCardOnFile = true,
+      manualPaymentAcknowledged = false,
+    } = req.body || {};
 
     const purchaseItems = items.filter((row) => row?.kind !== "rental");
     if (purchaseItems.length) {
@@ -1412,6 +1595,19 @@ async function handleProductionBooking(req, res) {
 
     if (!rentalDates.pickup || !rentalDates.dropoff || rentalDates.dropoff < rentalDates.pickup) {
       return res.status(400).json({ error: "Choose valid rental dates." });
+    }
+
+    if (!paymentToken) {
+      return res.status(400).json({
+        error: "Card payment details are required for the booking deposit.",
+      });
+    }
+
+    if (!saveCardOnFile && manualPaymentAcknowledged !== true) {
+      return res.status(400).json({
+        error:
+          "Acknowledge the manual-payment requirement or choose to keep your card securely on file.",
+      });
     }
 
     const customer = await findOrCreateProductionCustomer(input);
@@ -1482,27 +1678,57 @@ async function handleProductionBooking(req, res) {
       })
       .eq("id", reservation.id);
 
-    const invoice = await createSquareInvoiceDraft({
-      reservation: { ...reservation, square_order_id: squareOrder.id, square_customer_id: squareCustomerId },
+    // IMPORTANT: no draft invoice is created for the booking deposit anymore -
+    // the card is charged directly, right here, in the same request.
+    const payment = await chargeBookingDeposit({
+      reservation,
+      customer,
       squareCustomerId,
+      paymentToken,
     });
+
+    if (saveCardOnFile) {
+      const card = await saveDepositCard({ reservation, squareCustomerId, payment });
+
+      await supabase
+        .from("customers")
+        .update({ square_primary_card_id: card.id, square_card_on_file: true })
+        .eq("id", customer.id);
+    }
 
     await supabase
       .from("reservations")
       .update({
-        square_invoice_id: invoice.id,
-        square_invoice_version: invoice.version ?? null,
-        square_invoice_status: invoice.status || "DRAFT",
-        square_invoice_url: invoice.public_url || null,
+        status: "pending",
+        square_booking_deposit_payment_id: payment.id,
+        square_booking_deposit_status: payment.status,
+        square_booking_deposit_paid_at: payment.created_at || new Date().toISOString(),
+        future_payment_method: saveCardOnFile ? "card_on_file" : "manual",
+        manual_payment_acknowledged: saveCardOnFile ? false : true,
       })
       .eq("id", reservation.id);
+
+    await supabase.from("square_transactions").upsert(
+      {
+        customer_id: reservation.customer_id,
+        reservation_id: reservation.id,
+        kind: "booking_deposit",
+        square_payment_id: payment.id,
+        amount_cents: Number(reservation.booking_deposit_cents || 0),
+        currency: "cad",
+        status: "paid",
+        paid_at: payment.created_at || new Date().toISOString(),
+        metadata: { source: "production_booking_checkout" },
+      },
+      { onConflict: "square_payment_id" }
+    );
 
     return res.status(200).json({
       ok: true,
       bookingNumber: reservation.booking_number,
       reservationId: reservation.id,
-      contractPending: true,
-      redirectUrl: `/checkout-success?square_pending=1&booking=${encodeURIComponent(reservation.booking_number)}`,
+      depositPaid: true,
+      redirectUrl: `/checkout-success?square_deposit_paid=1&booking=${encodeURIComponent(reservation.booking_number)}`,
     });
   } catch (error) {
     console.error("Square production booking error:", error);

@@ -7,20 +7,19 @@ export default function CheckoutSuccess({ navigate }) {
   const { clearCart } = useCart();
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState("");
-  const [squarePending, setSquarePending] = useState(null);
+  const [squareDepositPaid, setSquareDepositPaid] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get("session_id");
-    const isSquarePending = params.get("square_pending") === "1";
+    const isSquareDepositPaid = params.get("square_deposit_paid") === "1";
     const squareBooking = params.get("booking");
 
-    if (isSquarePending) {
-      // The Square rental order and invoice draft exist, but no payment has
-      // happened yet - the seller still needs to attach the rental
-      // agreement and publish the invoice before Square emails the
-      // customer their booking-deposit request. Nothing to fetch here.
-      setSquarePending({ bookingNumber: squareBooking || null });
+    if (isSquareDepositPaid) {
+      // The 50% booking deposit was already charged in the checkout modal
+      // (see api/square.js's chargeBookingDeposit) - there is no separate
+      // invoice to wait on. Nothing to fetch here.
+      setSquareDepositPaid({ bookingNumber: squareBooking || null });
       clearCart();
       return;
     }
@@ -49,30 +48,31 @@ export default function CheckoutSuccess({ navigate }) {
       <div className="mx-auto max-w-2xl rounded-2xl border border-[#E8E0CF] bg-white p-8 text-center sm:p-12">
         <CheckCircle2 size={42} className="mx-auto text-[#17724F]" />
 
-        {squarePending ? (
+        {squareDepositPaid ? (
           <>
             <p className="mt-5 font-[Space_Grotesk] text-xs font-bold tracking-[0.2em] text-[#8A6A1E]">
-              BOOKING RECEIVED
+              DEPOSIT RECEIVED
             </p>
             <h1 className="mt-2 font-['Fraunces'] text-4xl font-semibold text-[#0B4933]">
               Your rental reservation is in.
             </h1>
 
             <div className="mt-7 rounded-xl bg-[#F7F2E8] p-6 text-left">
-              {squarePending.bookingNumber && (
+              {squareDepositPaid.bookingNumber && (
                 <div>
                   <p className="font-[Space_Grotesk] text-xs font-bold tracking-[0.12em] text-[#8A6A1E]">
                     RENTAL RESERVATION
                   </p>
                   <p className="mt-1 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
-                    {squarePending.bookingNumber}
+                    {squareDepositPaid.bookingNumber}
                   </p>
                 </div>
               )}
-              <div className={squarePending.bookingNumber ? "mt-5 border-t border-[#DDD3BE] pt-5" : ""}>
+              <div className={squareDepositPaid.bookingNumber ? "mt-5 border-t border-[#DDD3BE] pt-5" : ""}>
                 <p className="font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
-                  Your dates are on hold. We're preparing your rental agreement, and Square will email you a
-                  secure invoice for your 50% booking deposit once it's ready to sign and pay.
+                  Your dates are on hold and your 50% booking deposit is paid. We'll be in touch with your
+                  rental agreement to sign next. Check your portal any time for your remaining balance and
+                  security deposit due dates.
                 </p>
               </div>
             </div>

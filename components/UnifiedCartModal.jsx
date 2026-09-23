@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CalendarDays, Info, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "../CartContext";
 import { supabase } from "../supabaseClient";
 import { API_BASE, withBasePath } from "../apiBase";
 import RentalDateFields from "./RentalDateFields";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
+import HowRentalWorks from "./HowRentalWorks";
+import SquareCardPayment from "./SquareCardPayment";
 
 const MIN_RENTAL_CENTS = 5000;
 
@@ -37,6 +39,12 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const [checking, setChecking] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [checkingOut, setCheckingOut] = useState(false);
+  const [futurePaymentMethod, setFuturePaymentMethod] = useState("card_on_file");
+  const [manualPaymentAcknowledged, setManualPaymentAcknowledged] = useState(false);
+  const tokenizeCardRef = useRef(null);
+  const [squareReady, setSquareReady] = useState(false);
+
+  const saveCardOnFile = futurePaymentMethod === "card_on_file";
 
   const catalogMap = useMemo(() => new Map(catalog.map((item) => [String(item.id), item])), [catalog]);
   const giftMap = useMemo(() => new Map(gifts.map((item) => [String(item.id), item])), [gifts]);
@@ -160,11 +168,19 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
     (availability.length === rentalItems.length &&
       availability.every((row) => row.available != null && row.available >= row.requested));
 
+  // The card form only needs to be ready (and, for manual payment, the
+  // deadline acknowledgment checked) when there are rentals to pay a
+  // deposit on - a purchase-only cart never touches Square at all.
+  const rentalPaymentReady =
+    rentalItems.length === 0 ||
+    (squareReady && (futurePaymentMethod === "card_on_file" || manualPaymentAcknowledged));
+
   const canCheckout =
     items.length > 0 &&
     rentalMinimumMet &&
     rentalDatesReady &&
     allAvailable &&
+    rentalPaymentReady &&
     name.trim() &&
     email.trim() &&
     !checking &&
@@ -178,12 +194,22 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
       const hasRentals = rentalItems.length > 0;
       const hasPurchases = purchaseItems.length > 0;
 
-      // Square's 50% invoice deposit applies to the whole order, so a
-      // rental + purchase cart on the same invoice would charge the wrong
+      // Square's 50% booking deposit applies to the whole rental order, so a
+      // rental + purchase cart charged together would charge the wrong
       // amount. Rental bookings and purchases check out separately during
       // this migration.
       if (hasRentals && hasPurchases) {
         throw new Error("Please check out your rental booking separately from purchase items.");
+      }
+
+      let paymentToken = null;
+
+      if (hasRentals) {
+        if (!tokenizeCardRef.current) {
+          throw new Error("Secure card entry is not ready yet.");
+        }
+
+        paymentToken = await tokenizeCardRef.current();
       }
 
       const endpoint = hasRentals
@@ -201,6 +227,9 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
           },
           rentalDates,
           items: items.map(({ id, kind, meta, quantity }) => ({ id, kind, meta, quantity })),
+          paymentToken,
+          saveCardOnFile,
+          manualPaymentAcknowledged,
         }),
       });
 
@@ -261,6 +290,8 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
           </div>
         ) : (
           <>
+            {rentalItems.length > 0 && <HowRentalWorks />}
+
             {rentalItems.length > 0 && (
               <section className="mt-7 rounded-xl border border-[#E6DDC7] bg-white p-5">
                 <div className="flex items-center gap-2">
@@ -412,11 +443,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 {rentalItems.length > 0 && (
                   <>
                     <div className="flex items-center justify-between text-[#6B6B6B]">
-                      <span>Remaining rental balance (invoiced later)</span>
+                      <span>Remaining rental balance (due 7 days before pickup)</span>
                       <span>{money(remainingBalanceCents)}</span>
                     </div>
                     <div className="flex items-center justify-between text-[#6B6B6B]">
-                      <span>Refundable security deposit (collected closer to pickup)</span>
+                      <span>Refundable security deposit (due 48 hours before pickup)</span>
                       <span>{money(securityDepositEstimateCents)}</span>
                     </div>
                   </>
@@ -440,15 +471,16 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 </div>
                 <ul className="mt-3 space-y-2 font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
                   <li>
-                    <strong className="text-[#292929]">Booking deposit</strong> - 50% of the rental total. Your Square
-                    invoice is sent after the rental agreement is attached.
+                    <strong className="text-[#292929]">Booking deposit</strong> - 50% of the rental total, charged
+                    now to reserve your items.
                   </li>
                   <li>
-                    <strong className="text-[#292929]">Remaining balance</strong> - the other 50%, due before pickup.
+                    <strong className="text-[#292929]">Remaining balance</strong> - the other 50%, due 7 days
+                    before pickup.
                   </li>
                   <li>
-                    <strong className="text-[#292929]">Refundable security deposit</strong> - collected separately
-                    closer to pickup and released after return inspection, subject to the rental agreement.
+                    <strong className="text-[#292929]">Refundable security deposit</strong> - due 48 hours before
+                    pickup and released after return inspection, subject to the rental agreement.
                   </li>
                 </ul>
               </section>
@@ -480,6 +512,92 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
               </div>
             </section>
 
+            {rentalItems.length > 0 && (
+              <section className="mt-6 rounded-xl border border-[#E6DDC7] bg-white p-5">
+                <h3 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Pay your deposit</h3>
+                <p className="mt-2 font-[Space_Grotesk] text-sm leading-6 text-[#6B6B6B]">
+                  Enter your card to pay the {money(bookingDepositEstimateCents)} booking deposit now and reserve
+                  your dates.
+                </p>
+                <div className="mt-4">
+                  <SquareCardPayment
+                    amountCents={bookingDepositEstimateCents}
+                    name={name}
+                    email={email}
+                    phone={phone}
+                    saveCard={saveCardOnFile}
+                    onReady={(tokenize) => {
+                      tokenizeCardRef.current = tokenize;
+                      setSquareReady(Boolean(tokenize));
+                    }}
+                  />
+                </div>
+
+                <div className="mt-6 rounded-xl bg-[#F8F3E8] p-4">
+                  <p className="font-[Space_Grotesk] text-sm font-bold text-[#0B4933]">
+                    After your deposit, how should future charges be handled?
+                  </p>
+
+                  <label className="mt-4 flex cursor-pointer gap-3">
+                    <input
+                      type="radio"
+                      name="future-payment"
+                      checked={futurePaymentMethod === "card_on_file"}
+                      onChange={() => setFuturePaymentMethod("card_on_file")}
+                    />
+
+                    <span>
+                      <span className="block font-[Space_Grotesk] text-sm font-semibold text-[#292929]">
+                        Keep this card securely on file with Square
+                      </span>
+
+                      <span className="mt-1 block font-[Space_Grotesk] text-xs leading-5 text-[#6F6859]">
+                        Your remaining rental balance will be charged automatically 7 days before pickup. Your
+                        refundable security deposit will be charged automatically 48 hours before pickup.
+                      </span>
+                    </span>
+                  </label>
+
+                  <label className="mt-4 flex cursor-pointer gap-3">
+                    <input
+                      type="radio"
+                      name="future-payment"
+                      checked={futurePaymentMethod === "manual"}
+                      onChange={() => setFuturePaymentMethod("manual")}
+                    />
+
+                    <span>
+                      <span className="block font-[Space_Grotesk] text-sm font-semibold text-[#292929]">
+                        I will pay future charges manually
+                      </span>
+
+                      <span className="mt-1 block font-[Space_Grotesk] text-xs leading-5 text-[#6F6859]">
+                        Your card will be used only for today's booking deposit and will not be kept on file.
+                      </span>
+                    </span>
+                  </label>
+
+                  {futurePaymentMethod === "manual" && (
+                    <label className="mt-4 flex gap-3 rounded-lg border border-[#E7D7AD] bg-[#FFFDF6] p-3">
+                      <input
+                        type="checkbox"
+                        checked={manualPaymentAcknowledged}
+                        onChange={(e) => setManualPaymentAcknowledged(e.target.checked)}
+                        className="mt-0.5"
+                      />
+
+                      <span className="font-[Space_Grotesk] text-xs leading-5 text-[#5C5645]">
+                        I understand that because I am not leaving a card on file, I am responsible for paying the
+                        remaining rental balance at least 7 days before pickup and the refundable security deposit
+                        at least 48 hours before pickup. If required payments are not received by their deadlines,
+                        my reservation may be cancelled and the items released.
+                      </span>
+                    </label>
+                  )}
+                </div>
+              </section>
+            )}
+
             {!rentalDatesReady && rentalItems.length > 0 && (
               <p className="mt-4 font-[Space_Grotesk] text-sm text-red-700">
                 Choose a valid pickup and return date before checkout.
@@ -497,12 +615,17 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
               onClick={startCheckout}
               className="mt-5 w-full rounded-full bg-[#0B4933] py-3.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
-              {checkingOut ? "STARTING CHECKOUT..." : "CONTINUE TO SECURE CHECKOUT"}
+              {checkingOut
+                ? "PROCESSING..."
+                : rentalItems.length > 0
+                  ? `PAY ${money(bookingDepositEstimateCents)} DEPOSIT`
+                  : "CONTINUE TO SECURE CHECKOUT"}
             </button>
 
             {rentalItems.length > 0 && (
               <p className="mt-3 text-center font-[Space_Grotesk] text-xs leading-5 text-[#8C846F]">
-                Your rental reservation number is created when checkout starts. Rental booking and security deposits are collected according to the reservation amounts configured by the server.
+                Your rental reservation number and booking deposit charge happen together when you submit. Your
+                remaining balance and security deposit are collected according to the schedule above.
               </p>
             )}
           </>

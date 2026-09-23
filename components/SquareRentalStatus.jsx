@@ -8,6 +8,13 @@ const money = (cents, currency = "CAD") =>
     currency: String(currency || "CAD").toUpperCase(),
   }).format(Number(cents || 0) / 100);
 
+function dateLabel(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+}
+
 function Flag({ done, children }) {
   return (
     <div className="flex items-center gap-2 font-[Space_Grotesk] text-sm">
@@ -19,6 +26,22 @@ function Flag({ done, children }) {
       <span className={done ? "text-[#292929]" : "text-[#8C846F]"}>
         {children}
       </span>
+    </div>
+  );
+}
+
+function StatusCard({ label, done, children }) {
+  return (
+    <div className="rounded-lg border border-[#E7DFCE] bg-white p-3.5">
+      <div className="flex items-center gap-2">
+        {done ? (
+          <CheckCircle2 size={15} className="text-[#17724F]" />
+        ) : (
+          <Circle size={15} className="text-[#C9C0AA]" />
+        )}
+        <p className="font-[Space_Grotesk] text-xs font-bold tracking-[0.1em] text-[#8A6A1E]">{label}</p>
+      </div>
+      <div className="mt-1.5 pl-6 font-[Space_Grotesk] text-sm leading-5 text-[#3E3A31]">{children}</div>
     </div>
   );
 }
@@ -88,15 +111,16 @@ export default function SquareRentalStatus({ accessToken }) {
               .reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
 
           const depositPaid =
-            paid("booking_deposit") >=
-            Number(reservation.booking_deposit_cents || 0);
-          const balancePaid =
-            paid("balance") >= Number(reservation.balance_due_cents || 0);
-          const securityPaid =
-            paid("security_deposit") >=
-            Number(reservation.security_deposit_cents || 0);
-          const securityReleased =
-            reservation.square_security_refund_status === "COMPLETED";
+            reservation.square_booking_deposit_status === "COMPLETED" ||
+            paid("booking_deposit") >= Number(reservation.booking_deposit_cents || 0);
+          const balanceDue = Number(reservation.balance_due_cents || 0);
+          const balancePaid = balanceDue <= 0 || paid("balance") >= balanceDue;
+          const securityDue = Number(reservation.security_deposit_cents || 0);
+          const securityPaid = securityDue <= 0 || paid("security_deposit") >= securityDue;
+          const securityReleased = reservation.square_security_refund_status === "COMPLETED";
+          const cardOnFile = reservation.future_payment_method === "card_on_file";
+          const manualPayment = reservation.future_payment_method === "manual";
+          const contractSigned = reservation.contract_status === "signed";
 
           return (
             <div
@@ -107,9 +131,6 @@ export default function SquareRentalStatus({ accessToken }) {
                 <div>
                   <p className="font-[Space_Grotesk] text-sm font-bold text-[#0B4933]">
                     {reservation.booking_number || `Booking ${reservation.id}`}
-                  </p>
-                  <p className="mt-1 font-[Space_Grotesk] text-xs text-[#7E7767]">
-                    Square invoice: {reservation.square_invoice_status || "Not created"}
                   </p>
                 </div>
 
@@ -125,21 +146,83 @@ export default function SquareRentalStatus({ accessToken }) {
                 )}
               </div>
 
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <StatusCard label="BOOKING DEPOSIT" done={depositPaid}>
+                  {depositPaid ? "Paid at checkout." : "Not yet paid."}
+                </StatusCard>
+
+                <StatusCard label="REMAINING RENTAL BALANCE" done={balancePaid}>
+                  {balancePaid ? (
+                    "Paid."
+                  ) : cardOnFile ? (
+                    <>
+                      {money(balanceDue, reservation.currency)} will be charged automatically 7 days before pickup.
+                      {reservation.balance_due_at && (
+                        <span className="mt-1 block text-xs text-[#8C846F]">
+                          Due {dateLabel(reservation.balance_due_at)}.
+                        </span>
+                      )}
+                    </>
+                  ) : manualPayment ? (
+                    <>
+                      Manual payment selected.
+                      <span className="mt-1 block">
+                        {money(balanceDue, reservation.currency)} must be paid at least 7 days before pickup.
+                      </span>
+                    </>
+                  ) : (
+                    "Collected closer to pickup."
+                  )}
+                </StatusCard>
+
+                <StatusCard label="REFUNDABLE SECURITY DEPOSIT" done={securityPaid}>
+                  {securityPaid ? (
+                    "Collected."
+                  ) : cardOnFile ? (
+                    <>
+                      {money(securityDue, reservation.currency)} will be charged automatically 48 hours before
+                      pickup.
+                      {reservation.security_deposit_due_at && (
+                        <span className="mt-1 block text-xs text-[#8C846F]">
+                          Due {dateLabel(reservation.security_deposit_due_at)}.
+                        </span>
+                      )}
+                    </>
+                  ) : manualPayment ? (
+                    <>
+                      Manual payment selected.
+                      <span className="mt-1 block">
+                        {money(securityDue, reservation.currency)} must be paid at least 48 hours before pickup.
+                      </span>
+                    </>
+                  ) : (
+                    "Collected closer to pickup."
+                  )}
+                </StatusCard>
+              </div>
+
+              {manualPayment && (
+                <div className="mt-4 rounded-xl border border-[#E7D7AD] bg-[#FFFDF6] p-4">
+                  <p className="font-[Space_Grotesk] text-sm font-semibold text-[#6B5517]">
+                    Manual payment selected
+                  </p>
+
+                  <p className="mt-1 font-[Space_Grotesk] text-xs leading-5 text-[#6F6859]">
+                    Your card is not being kept on file. Your remaining rental balance must be paid at least 7 days
+                    before pickup, and your refundable security deposit must be paid at least 48 hours before
+                    pickup. Required payments that are not received by their deadlines may result in cancellation
+                    of the reservation.
+                  </p>
+                </div>
+              )}
+
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <Flag done={depositPaid}>Booking deposit paid</Flag>
-                <Flag done={reservation.contract_status === "signed"}>
-                  Rental agreement signed
-                </Flag>
+                <Flag done={contractSigned}>Rental agreement signed</Flag>
+                {cardOnFile && <Flag done>Card saved for automatic payments</Flag>}
+                {manualPayment && <Flag done>Manual payment selected</Flag>}
                 <Flag done={balancePaid}>Remaining balance paid</Flag>
-                <Flag done={reservation.square_balance_autopay}>
-                  Balance auto-payment configured
-                </Flag>
-                <Flag done={securityPaid}>
-                  Security deposit collected
-                </Flag>
-                <Flag done={securityReleased}>
-                  Security deposit released
-                </Flag>
+                <Flag done={securityPaid}>Security deposit collected</Flag>
               </div>
 
               {reservation.square_payment_failed && (
