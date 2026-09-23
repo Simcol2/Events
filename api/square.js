@@ -1165,9 +1165,11 @@ async function handleAdminReservations(req, res) {
 }
 
 // ---------------------------------------------------------------------
-// resource=timing (any method) - Phase 16-20 Step 18. Intended for hourly
-// Vercel Cron (see vercel.json), gated on CRON_SECRET rather than the
-// admin passcode or a client session. Exact 24-hour/12-hour rules require
+// resource=timing (any method) - Phase 16-20 Step 18. Called every two
+// hours by Supabase Cron (pg_cron + pg_net job "events-square-rental-timing"
+// in the project database, not Vercel's own cron - Hobby plan only allows
+// a daily schedule there), gated on CRON_SECRET rather than the admin
+// passcode or a client session. Exact 24-hour/12-hour rules require
 // reservations.pickup_at - a booking with only pickup_date is skipped
 // rather than guessing a time.
 // ---------------------------------------------------------------------

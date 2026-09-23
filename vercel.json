@@ -1,7 +1,6 @@
 {
   "crons": [
-    { "path": "/api/send-review-requests", "schedule": "0 15 * * *" },
-    { "path": "/api/square?resource=timing", "schedule": "0 16 * * *" }
+    { "path": "/api/send-review-requests", "schedule": "0 15 * * *" }
   ],
   "headers": [
     {
