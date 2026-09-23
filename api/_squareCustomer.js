@@ -35,7 +35,10 @@ export async function ensureSquareCustomer({ supabase, customer }) {
         },
       },
     },
-    limit: 10,
+    // Square's Node SDK types this field as a bigint, not a plain number -
+    // passing a regular number fails the SDK's own runtime validation
+    // ("Expected bigint. Received 10.") before the request is even sent.
+    limit: BigInt(10),
   });
 
   const exactMatch = (searchResult.customers || []).find(
