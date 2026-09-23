@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Info, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "../CartContext";
 import { supabase } from "../supabaseClient";
-import { API_BASE } from "../apiBase";
+import { API_BASE, withBasePath } from "../apiBase";
 import RentalDateFields from "./RentalDateFields";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 
@@ -100,7 +100,10 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
 
   const bookingDepositEstimateCents = rentalItems.length > 0 ? estimateBookingDepositCents(rentalSubtotalCents) : 0;
   const securityDepositEstimateCents = rentalItems.length > 0 ? estimateSecurityDepositCents(rentalSubtotalCents) : 0;
-  const dueTodayCents = purchaseSubtotalCents + bookingDepositEstimateCents + securityDepositEstimateCents;
+  // The refundable security deposit is no longer part of what's due at
+  // checkout for rentals (see startCheckout below) - Square collects it
+  // separately, closer to pickup, once the customer has a card on file.
+  const dueTodayCents = purchaseSubtotalCents + bookingDepositEstimateCents;
   const remainingBalanceCents = Math.max(0, rentalSubtotalCents - bookingDepositEstimateCents);
 
   const rentalMinimumMet = rentalItems.length === 0 || rentalSubtotalCents >= MIN_RENTAL_CENTS;
@@ -170,8 +173,24 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   async function startCheckout() {
     setCheckoutError("");
     setCheckingOut(true);
+
     try {
-      const res = await fetch(`${API_BASE}/create-unified-checkout-session`, {
+      const hasRentals = rentalItems.length > 0;
+      const hasPurchases = purchaseItems.length > 0;
+
+      // Square's 50% invoice deposit applies to the whole order, so a
+      // rental + purchase cart on the same invoice would charge the wrong
+      // amount. Rental bookings and purchases check out separately during
+      // this migration.
+      if (hasRentals && hasPurchases) {
+        throw new Error("Please check out your rental booking separately from purchase items.");
+      }
+
+      const endpoint = hasRentals
+        ? `${API_BASE}/square?resource=production-booking`
+        : `${API_BASE}/create-unified-checkout-session`;
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -186,14 +205,25 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
       });
 
       const data = await res.json();
-      if (!res.ok || !data.url) {
+      if (!res.ok) {
         throw new Error(data.error || "Could not start checkout.");
       }
 
       if (data.bookingNumber) {
         window.sessionStorage.setItem("asliceofg-pending-booking-number", data.bookingNumber);
       }
-      window.location.href = data.url;
+
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      if (data.redirectUrl) {
+        window.location.href = withBasePath(data.redirectUrl);
+        return;
+      }
+
+      throw new Error("Checkout did not return a destination.");
     } catch (error) {
       setCheckoutError(error.message || "Could not start checkout.");
       setCheckingOut(false);
@@ -370,26 +400,26 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                   </div>
                 )}
                 {rentalItems.length > 0 && (
-                  <>
-                    <div className="flex items-center justify-between text-[#3E3A31]">
-                      <span>Booking deposit (50% of rentals)</span>
-                      <span>{money(bookingDepositEstimateCents)}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[#3E3A31]">
-                      <span>Refundable security deposit</span>
-                      <span>{money(securityDepositEstimateCents)}</span>
-                    </div>
-                  </>
+                  <div className="flex items-center justify-between text-[#3E3A31]">
+                    <span>Booking deposit (50% of rentals)</span>
+                    <span>{money(bookingDepositEstimateCents)}</span>
+                  </div>
                 )}
                 <div className="flex items-center justify-between border-t border-[#EEE7D8] pt-2 font-semibold text-[#0B4933]">
                   <span>Due today</span>
                   <span>{money(dueTodayCents)}</span>
                 </div>
                 {rentalItems.length > 0 && (
-                  <div className="flex items-center justify-between text-[#6B6B6B]">
-                    <span>Remaining rental balance (invoiced later)</span>
-                    <span>{money(remainingBalanceCents)}</span>
-                  </div>
+                  <>
+                    <div className="flex items-center justify-between text-[#6B6B6B]">
+                      <span>Remaining rental balance (invoiced later)</span>
+                      <span>{money(remainingBalanceCents)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[#6B6B6B]">
+                      <span>Refundable security deposit (collected closer to pickup)</span>
+                      <span>{money(securityDepositEstimateCents)}</span>
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -410,17 +440,15 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 </div>
                 <ul className="mt-3 space-y-2 font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
                   <li>
-                    <strong className="text-[#292929]">Booking deposit</strong> - 50% of your rental total, paid now to
-                    reserve your date.
+                    <strong className="text-[#292929]">Booking deposit</strong> - 50% of the rental total. Your Square
+                    invoice is sent after the rental agreement is attached.
                   </li>
                   <li>
-                    <strong className="text-[#292929]">Refundable security deposit</strong> - a separate flat amount
-                    based on your rental total, also paid now. It is not applied toward your remaining balance. It is
-                    released after your items are returned.
+                    <strong className="text-[#292929]">Remaining balance</strong> - the other 50%, due before pickup.
                   </li>
                   <li>
-                    <strong className="text-[#292929]">Remaining balance</strong> - the rest of your rental total,
-                    invoiced separately and payable through your client portal.
+                    <strong className="text-[#292929]">Refundable security deposit</strong> - collected separately
+                    closer to pickup and released after return inspection, subject to the rental agreement.
                   </li>
                 </ul>
               </section>
