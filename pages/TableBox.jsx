@@ -18,52 +18,74 @@ import {
 
 const MINIMUM = 50;
 
-// Hand-picked from the real decor catalogue (not a separate product list) -
-// each section only shows items that actually resolve with an active,
-// rented price, so a section quietly disappears rather than showing empty
-// tiles if an item's price or active flag ever changes.
+// Pulled live from the decor catalogue by items.table_box_category (not a
+// separate product list, and not a hand-picked id list either) - any active
+// item tagged with one of the `category` values below shows up here
+// automatically, so adding a new place card style or a fourth candle option
+// in Supabase is enough on its own; nothing here needs to change. A section
+// with no tagged items yet quietly disappears rather than showing empty
+// tiles, same as always. This list is the single source of truth for which
+// table_box_category values are meaningful and what order/copy they get.
 const SECTIONS = [
   {
     key: "glassware",
     title: "Choose Your Glassware",
     subtitle: "Pick your favourite glass and tell us how many places you're setting.",
-    itemIds: [449, 435, 447],
+    category: "Glassware",
   },
   {
     key: "plates",
     title: "Choose Your Plates",
     subtitle: "Pick the guest count and we will send enough for everyone.",
-    itemIds: [514, 515, 516, 517, 518, 519],
+    category: "Plates",
   },
   {
     key: "chargers",
     title: "Choose Your Chargers",
     subtitle: "Give every place setting a little more polish.",
-    itemIds: [8],
+    category: "Chargers",
   },
   {
     key: "placeCards",
     title: "Choose Your Place Cards",
-    subtitle: "Add blank ivory place cards for your table, ten to a bundle.",
-    itemIds: [547],
+    subtitle: "Add blank ivory place cards for your table.",
+    category: "Place Cards",
+  },
+  {
+    key: "napkins",
+    title: "Choose Your Napkins",
+    subtitle: "Finish every place setting with a folded napkin.",
+    category: "Napkins",
+  },
+  {
+    key: "cutlery",
+    title: "Choose Your Cutlery",
+    subtitle: "Set the table with a full place setting.",
+    category: "Cutlery",
   },
   {
     key: "centerpieces",
     title: "Choose Your Centrepiece",
     subtitle: "Choose the piece that anchors your table.",
-    itemIds: [506, 510, 507, 511, 508, 512, 509, 513, 445, 491],
+    category: "Centerpiece",
   },
   {
     key: "candles",
     title: "Choose Your Candles",
     subtitle: "Finish the table with a little glow.",
-    itemIds: [310, 481, 456],
+    category: "Candles",
+  },
+  {
+    key: "linens",
+    title: "Choose Your Linens",
+    subtitle: "Dress the table with a runner or cloth.",
+    category: "Linens",
   },
   {
     key: "garland-lights",
     title: "Choose Your Garland & Lights",
     subtitle: "Dress the table or the mantle for the holidays.",
-    itemIds: [497, 498],
+    category: "Garland & Lights",
   },
 ];
 
@@ -90,9 +112,9 @@ export default function TableBox() {
   const [openProduct, setOpenProduct] = useState(null);
 
   // Pulls in pricing for whatever is already sitting in the cart's rental
-  // lines too, not just this page's curated section ids - the $50 minimum
-  // check below needs the combined total, and a rental added from the
-  // Decor page (outside this curated list) still counts toward it.
+  // lines too, not just items tagged for this page - the $50 minimum check
+  // below needs the combined total, and a rental added from the Decor page
+  // (which may not carry a table_box_category at all) still counts toward it.
   const cartRentalIds = useMemo(() => rentalItems.map((item) => item.id), [rentalItems]);
 
   useEffect(() => {
@@ -103,13 +125,22 @@ export default function TableBox() {
         setLoading(false);
         return;
       }
-      const ids = Array.from(new Set([...SECTIONS.flatMap((s) => s.itemIds), ...cartRentalIds]));
-      const { data, error } = await supabase.from("items").select("*").in("id", ids);
+      const categories = SECTIONS.map((s) => s.category);
+      const [byCategory, byCartId] = await Promise.all([
+        supabase.from("items").select("*").in("table_box_category", categories),
+        cartRentalIds.length
+          ? supabase.from("items").select("*").in("id", cartRentalIds)
+          : Promise.resolve({ data: [], error: null }),
+      ]);
       if (ignore) return;
-      if (error) {
+      if (byCategory.error || byCartId.error) {
         setLoadError("Rental catalogue is unavailable right now. Please try again shortly.");
       } else {
-        setCatalogItems(data || []);
+        const merged = new Map();
+        for (const item of [...(byCategory.data || []), ...(byCartId.data || [])]) {
+          merged.set(item.id, item);
+        }
+        setCatalogItems(Array.from(merged.values()));
       }
       setLoading(false);
     }
@@ -128,14 +159,14 @@ export default function TableBox() {
     () =>
       SECTIONS.map((section) => ({
         ...section,
-        products: section.itemIds
-          .map((id) => byId[id])
-          .filter(
-            (item) =>
-              item && item.active !== false && (item.rental_price != null || item.purchase_price != null)
-          ),
+        products: catalogItems.filter(
+          (item) =>
+            item.table_box_category === section.category &&
+            item.active !== false &&
+            (item.rental_price != null || item.purchase_price != null)
+        ),
       })).filter((section) => section.products.length > 0),
-    [byId]
+    [catalogItems]
   );
 
   const allProducts = useMemo(() => sections.flatMap((s) => s.products), [sections]);
