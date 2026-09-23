@@ -1375,12 +1375,18 @@ const PRODUCTION_HOLD_HOURS = 6;
 // hour instead so the automation always has something to work with, and
 // let staff correct it to the exact scheduled time via
 // resource=admin-reservations once that's actually known.
-const DEFAULT_PICKUP_HOUR = 17;
+const DEFAULT_PICKUP_HOUR = 9;
 
 function defaultPickupAt(pickupDate) {
   if (!pickupDate) return null;
-  const date = new Date(`${pickupDate}T${String(DEFAULT_PICKUP_HOUR).padStart(2, "0")}:00:00`);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+
+  const date = new Date(
+    `${pickupDate}T${String(DEFAULT_PICKUP_HOUR).padStart(2, "0")}:00:00`
+  );
+
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.toISOString();
 }
 
 async function handleProductionBooking(req, res) {
