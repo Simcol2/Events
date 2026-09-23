@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { handleApiError, requireClient } from "./_clientAuth.js";
 import { BASE_PATH } from "./_basePath.js";
+import { squareRequest } from "./_squareRest.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || process.env.stripe_secret);
 
@@ -34,12 +35,12 @@ async function getPortalData(req, res) {
   if (purchasesResult.error) throw purchasesResult.error;
   if (requestsResult.error) throw requestsResult.error;
 
-  const reservations = reservationsResult.data || [];
-  const reservationIds = reservations.map((row) => row.id);
+  const allReservations = reservationsResult.data || [];
+  const reservationIds = allReservations.map((row) => row.id);
   const purchases = purchasesResult.data || [];
   const purchaseIds = purchases.map((row) => row.id);
 
-  const [itemsResult, contractsResult, transactionsResult, purchaseItemsResult] = await Promise.all([
+  const [itemsResult, contractsResult, transactionsResult, squareTransactionsResult, purchaseItemsResult] = await Promise.all([
     reservationIds.length
       ? supabase.from("reservation_items").select("*").in("reservation_id", reservationIds)
       : Promise.resolve({ data: [], error: null }),
@@ -51,6 +52,15 @@ async function getPortalData(req, res) {
       .select("*")
       .eq("customer_id", customer.id)
       .order("created_at", { ascending: false }),
+    // Square-provider payments never land in stripe_transactions, so "was
+    // anything ever paid on this reservation" has to check both ledgers -
+    // otherwise a paid Square booking that got cancelled would look
+    // indistinguishable from an abandoned, never-paid one below.
+    supabase
+      .from("square_transactions")
+      .select("id,reservation_id,status")
+      .eq("customer_id", customer.id)
+      .eq("status", "paid"),
     purchaseIds.length
       ? supabase.from("purchase_order_items").select("*").in("purchase_order_id", purchaseIds)
       : Promise.resolve({ data: [], error: null }),
@@ -59,7 +69,39 @@ async function getPortalData(req, res) {
   if (itemsResult.error) throw itemsResult.error;
   if (contractsResult.error) throw contractsResult.error;
   if (transactionsResult.error) throw transactionsResult.error;
+  if (squareTransactionsResult.error) throw squareTransactionsResult.error;
   if (purchaseItemsResult.error) throw purchaseItemsResult.error;
+
+  const paidReservationIds = new Set(
+    [
+      ...(transactionsResult.data || []).filter((row) => row.status === "paid"),
+      ...(squareTransactionsResult.data || []),
+    ]
+      .map((row) => row.reservation_id)
+      .filter(Boolean)
+  );
+
+  // A failed/abandoned checkout is not a booking - it should quietly
+  // disappear rather than sit in the portal forever as a "permanent
+  // monument to somebody clicking Back". Two cases get hidden entirely:
+  // a cancelled reservation nobody ever paid a cent on, and a
+  // checkout_pending hold whose window has expired without becoming a
+  // real booking. A cancelled reservation that DID collect a payment is
+  // kept (flagged via has_payment) so its receipt/refund record stays
+  // reachable - the client renders those separately under Past/Cancelled.
+  const now = Date.now();
+  const visibleReservations = allReservations.filter((reservation) => {
+    const hasPayment = paidReservationIds.has(reservation.id);
+    if (reservation.status === "cancelled" && !hasPayment) return false;
+    if (
+      reservation.status === "checkout_pending" &&
+      reservation.checkout_expires_at &&
+      new Date(reservation.checkout_expires_at).getTime() < now
+    ) {
+      return false;
+    }
+    return true;
+  });
 
   const reservationItems = itemsResult.data || [];
   const itemIds = [...new Set(reservationItems.map((row) => row.item_id).filter(Boolean))];
@@ -77,13 +119,18 @@ async function getPortalData(req, res) {
     item: itemMap.get(row.item_id) || null,
   }));
 
+  const decoratedReservations = sortNewest(visibleReservations, "event_date").map((reservation) => ({
+    ...reservation,
+    has_payment: paidReservationIds.has(reservation.id),
+  }));
+
   return res.status(200).json({
     customer: {
       id: customer.id,
       name: customer.name,
       email: customer.email || user.email,
     },
-    reservations: sortNewest(reservations, "event_date"),
+    reservations: decoratedReservations,
     reservationItems: decoratedReservationItems,
     contracts: contractsResult.data || [],
     transactions: transactionsResult.data || [],
@@ -259,6 +306,111 @@ async function createInvoice(req, res) {
   return res.status(200).json({ url: finalized.hosted_invoice_url });
 }
 
+const SELF_CANCEL_STATUSES = new Set(["checkout_pending", "pending"]);
+
+// Lets a customer release their own reservation before any money has
+// changed hands - no cancellation fee applies, so there is nothing for a
+// human to adjudicate. Once a deposit is paid this path is gated off
+// entirely and the normal cancellation policy takes over.
+async function cancelReservation(req, res) {
+  const { supabase, customer } = await requireClient(req);
+  const reservationId = Number(req.body?.reservationId);
+
+  if (!Number.isFinite(reservationId)) {
+    const error = new Error("reservationId is required.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const { data: reservation, error: reservationError } = await supabase
+    .from("reservations")
+    .select("*")
+    .eq("id", reservationId)
+    .eq("customer_id", customer.id)
+    .single();
+
+  if (reservationError || !reservation) {
+    const error = new Error("Booking not found.");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (!SELF_CANCEL_STATUSES.has(reservation.status)) {
+    const error = new Error("This booking can no longer be cancelled here. Contact us to cancel it.");
+    error.statusCode = 409;
+    throw error;
+  }
+
+  const [stripePaid, squarePaid] = await Promise.all([
+    supabase.from("stripe_transactions").select("id").eq("reservation_id", reservation.id).eq("status", "paid").limit(1),
+    supabase.from("square_transactions").select("id").eq("reservation_id", reservation.id).eq("status", "paid").limit(1),
+  ]);
+
+  if (stripePaid.error) throw stripePaid.error;
+  if (squarePaid.error) throw squarePaid.error;
+
+  if ((stripePaid.data || []).length || (squarePaid.data || []).length) {
+    const error = new Error("A payment has already been made on this booking. Contact us to cancel it.");
+    error.statusCode = 409;
+    throw error;
+  }
+
+  // Cancel the Square draft/published invoice, if one was ever created, so
+  // it can't be paid after the reservation is gone. Not fatal to the
+  // customer's own cancellation if Square has already moved on (e.g. the
+  // invoice was already canceled or deleted on the seller's side).
+  if (reservation.square_invoice_id) {
+    try {
+      const current = await squareRequest(`/v2/invoices/${encodeURIComponent(reservation.square_invoice_id)}`);
+      const version = current.invoice?.version;
+      if (version != null) {
+        await squareRequest(`/v2/invoices/${encodeURIComponent(reservation.square_invoice_id)}/cancel`, {
+          method: "POST",
+          body: { version },
+        });
+      }
+    } catch (squareError) {
+      console.error("Square invoice cancel failed during self-service cancellation:", squareError);
+    }
+  }
+
+  // Same for any draft/open Stripe invoice on this reservation.
+  const { data: openStripeInvoices, error: openStripeError } = await supabase
+    .from("stripe_transactions")
+    .select("*")
+    .eq("reservation_id", reservation.id)
+    .in("status", ["draft", "open"]);
+
+  if (openStripeError) throw openStripeError;
+
+  for (const row of openStripeInvoices || []) {
+    if (!row.stripe_invoice_id) continue;
+    try {
+      if (row.status === "draft") await stripe.invoices.del(row.stripe_invoice_id);
+      else await stripe.invoices.voidInvoice(row.stripe_invoice_id);
+    } catch (stripeError) {
+      console.error("Stripe invoice void failed during self-service cancellation:", stripeError);
+    }
+  }
+
+  // Nothing separately tracks held inventory - availability is computed
+  // live from reservation status (see get_reservation_item_availability),
+  // so flipping status to cancelled releases the hold immediately on its
+  // own; there is no additional release step to perform.
+  const { error: updateError } = await supabase
+    .from("reservations")
+    .update({
+      status: "cancelled",
+      cancelled_at: new Date().toISOString(),
+      cancellation_reason: "customer_before_payment",
+    })
+    .eq("id", reservation.id);
+
+  if (updateError) throw updateError;
+
+  return res.status(200).json({ ok: true });
+}
+
 async function createBillingPortalSession(req, res) {
   if (!process.env.STRIPE_SECRET_KEY && !process.env.stripe_secret) {
     throw new Error("Stripe is not configured on the server.");
@@ -312,6 +464,7 @@ export default async function handler(req, res) {
     if (req.method === "GET" && !action) return await getPortalData(req, res);
     if (req.method === "POST" && action === "invoice") return await createInvoice(req, res);
     if (req.method === "POST" && action === "billing-portal") return await createBillingPortalSession(req, res);
+    if (req.method === "POST" && action === "cancel-reservation") return await cancelReservation(req, res);
 
     res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Method not allowed" });

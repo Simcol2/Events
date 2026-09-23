@@ -81,6 +81,47 @@ function StatusPill({ children, tone = "green" }) {
   return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${tones[tone]}`}>{children}</span>;
 }
 
+function CancelConfirmDialog({ onConfirm, onClose, busy }) {
+  return (
+    <div
+      className="fixed inset-0 z-[170] flex items-center justify-center p-4"
+      style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Cancel this reservation?"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm rounded-2xl bg-white p-6"
+        style={{ boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
+      >
+        <h2 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Cancel this reservation?</h2>
+        <p className="mt-3 font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
+          No payment has been made, so there is no cancellation fee. The reserved items will be released
+          immediately.
+        </p>
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <button
+            onClick={onClose}
+            disabled={busy}
+            className="rounded-full border border-[#CFC5AE] px-5 py-2.5 font-[Space_Grotesk] text-xs font-semibold text-[#0B4933] disabled:opacity-50"
+          >
+            KEEP RESERVATION
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={busy}
+            className="rounded-full bg-[#8A3142] px-5 py-2.5 font-[Space_Grotesk] text-xs font-semibold text-white disabled:opacity-50"
+          >
+            {busy ? "CANCELLING..." : "CANCEL RESERVATION"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Panel({ children, className = "" }) {
   return (
     <section
@@ -121,6 +162,227 @@ function PaymentRow({ label, due, paid, refundable, onPay, busy, note }) {
       </div>
       {note && <p className="mt-2 font-[Space_Grotesk] text-xs text-[#6B6B6B]">{note}</p>}
     </div>
+  );
+}
+
+function ReservationCard({ reservation, reservationItems, contracts, transactionMap, busyAction, openInvoice, onCancel }) {
+  const rows = reservationItems.filter((item) => item.reservation_id === reservation.id);
+  const tx = transactionMap.get(reservation.id) || [];
+  const paid = (kind) => tx.filter((row) => row.kind === kind && row.status === "paid").reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
+  const contract = contracts.find((row) => row.reservation_id === reservation.id);
+  const dropoff = reservation.drop_off_date || reservation.dropoff_date || reservation.return_date;
+  const balanceDue = Number(reservation.balance_due_cents || 0) || Math.max(0, Number(reservation.rental_total_cents || 0) - Number(reservation.booking_deposit_cents || 0));
+  const meta = statusMeta(reservation.status);
+
+  const bookingDepositDue = Number(reservation.booking_deposit_cents || 0);
+  const securityDepositDue = Number(reservation.security_deposit_cents || 0);
+  const bookingDepositPaidFlag = bookingDepositDue <= 0 || paid("booking_deposit") >= bookingDepositDue;
+  const securityDepositPaidFlag = securityDepositDue <= 0 || paid("security_deposit") >= securityDepositDue;
+  const contractSignedFlag = Boolean(
+    contract?.status === "signed" || contract?.signed_at || reservation.contract_status === "signed"
+  );
+  const balancePaidFlag = balanceDue <= 0 || paid("balance") >= balanceDue;
+  const bookingConfirmedFlag = !["checkout_pending", "pending", "cancelled"].includes(reservation.status);
+  // Square-provider bookings never write to stripe_transactions, so the
+  // paid()-derived flags and PAY buttons below would always read as unpaid
+  // and let a customer trigger a real Stripe invoice for a booking Square
+  // is already billing. The Square booking status panel further down this
+  // page has the correct, live figures for these reservations instead.
+  const isSquareProvider = reservation.payment_provider === "square";
+
+  const paidSecurityTx = tx.find((row) => row.kind === "security_deposit" && row.status === "paid");
+  const securityDepositNote =
+    securityDepositDue > 0 && paidSecurityTx
+      ? paidSecurityTx.refunded_at
+        ? `Released on ${dateLabel(paidSecurityTx.refunded_at)}.`
+        : "Held until your items are returned in good condition, then released. It is not applied to your remaining balance."
+      : undefined;
+
+  const paymentHistory = [...tx].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+  // Self-cancel is only offered before any money has changed hands - once a
+  // deposit is paid the normal cancellation policy applies instead, so the
+  // button disappears (has_payment comes decorated from the backend, which
+  // checks both the Stripe and Square transaction ledgers).
+  const canSelfCancel = ["checkout_pending", "pending"].includes(reservation.status) && !reservation.has_payment;
+
+  return (
+    <Panel>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <StatusPill tone={meta.tone}>{meta.label}</StatusPill>
+          <p className="mt-3 font-[Space_Grotesk] text-2xl font-bold tracking-[0.02em] text-[#0B4933]">
+            {reservation.booking_number || `BOOKING ${reservation.id}`}
+          </p>
+          <h2 className="mt-1 font-['Fraunces'] text-lg font-semibold text-[#5C5645]">
+            {reservation.event_name || reservation.package_name || "Event rental"}
+          </h2>
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-[Space_Grotesk] text-sm text-[#6F6859]">
+            <span>Event {dateLabel(reservation.event_date)}</span>
+            {reservation.pickup_date && <span>Pickup {dateLabel(reservation.pickup_date)}</span>}
+            {dropoff && <span>Return {dateLabel(dropoff)}</span>}
+          </div>
+        </div>
+        <div className="sm:text-right">
+          <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.15em] text-[#9A9A9A]">RENTAL TOTAL</p>
+          <p className="mt-1 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
+            {money(reservation.rental_total_cents, reservation.currency)}
+          </p>
+        </div>
+      </div>
+
+      {canSelfCancel && (
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={onCancel}
+            className="rounded-full border border-[#8A3142] px-4 py-2 font-[Space_Grotesk] text-xs font-semibold text-[#8A3142]"
+          >
+            CANCEL RESERVATION
+          </button>
+        </div>
+      )}
+
+      {isSquareProvider ? (
+        <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
+          <ChecklistItem done={contractSignedFlag} label="Contract signed" />
+          <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
+        </div>
+      ) : (
+        <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
+          <ChecklistItem done={bookingDepositPaidFlag} label="Deposit paid" />
+          <ChecklistItem done={securityDepositPaidFlag} label="Security deposit paid" />
+          <ChecklistItem done={contractSignedFlag} label="Contract signed" />
+          <ChecklistItem done={balancePaidFlag} label="Balance paid" />
+          <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
+        </div>
+      )}
+
+      {!!rows.length && (
+        <div className="mt-6 rounded-xl bg-[#F8F3E8] p-4">
+          <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.15em] text-[#8A6A1E]">YOUR RENTALS</p>
+          <div className="mt-3 space-y-2">
+            {rows.map((item) => {
+              const lineTotal = item.line_total_cents || (item.unit_price_cents || 0) * (item.quantity || 1);
+              return (
+                <div key={item.id} className="flex justify-between gap-4 font-[Space_Grotesk] text-sm text-[#3E3A31]">
+                  <span>
+                    {item.item?.name || item.description || "Rental item"}{" "}
+                    <span className="text-[#9A9A9A]">x{item.quantity || 1}</span>
+                  </span>
+                  <span className="font-semibold">{lineTotal ? money(lineTotal, reservation.currency) : ""}</span>
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-3 font-[Space_Grotesk] text-xs text-[#9A9A9A]">
+            Pickup {dateLabel(reservation.pickup_date)} · Return {dateLabel(dropoff)}
+          </p>
+        </div>
+      )}
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <WalletCards size={18} className="text-[#D9AE45]" />
+            <h3 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Payments</h3>
+          </div>
+          {isSquareProvider ? (
+            <p className="font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
+              This booking is billed through Square. See the Square booking status section below for
+              your deposit, balance and security-deposit status, and to open your Square invoice.
+            </p>
+          ) : (
+            <>
+              <PaymentRow
+                label="Booking deposit"
+                due={Number(reservation.booking_deposit_cents || 0)}
+                paid={paid("booking_deposit")}
+                onPay={() => openInvoice(reservation.id, "booking_deposit")}
+                busy={busyAction === `${reservation.id}:booking_deposit`}
+              />
+              <PaymentRow
+                label="Refundable security deposit"
+                due={Number(reservation.security_deposit_cents || 0)}
+                paid={paid("security_deposit")}
+                refundable
+                onPay={() => openInvoice(reservation.id, "security_deposit")}
+                busy={busyAction === `${reservation.id}:security_deposit`}
+                note={securityDepositNote}
+              />
+              <PaymentRow
+                label="Remaining balance"
+                due={balanceDue}
+                paid={paid("balance")}
+                onPay={() => openInvoice(reservation.id, "balance")}
+                busy={busyAction === `${reservation.id}:balance`}
+              />
+            </>
+          )}
+
+          {!isSquareProvider && paymentHistory.length > 0 && (
+            <div className="mt-5 border-t border-[#EEE7D8] pt-4">
+              <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-[#8A6A1E]">
+                PAYMENT HISTORY
+              </p>
+              <div className="mt-3 space-y-2">
+                {paymentHistory.map((row) => (
+                  <div
+                    key={row.id}
+                    className="flex items-center justify-between gap-3 font-[Space_Grotesk] text-sm text-[#4C473C]"
+                  >
+                    <span className="capitalize">
+                      {row.kind.replaceAll("_", " ")}
+                      {row.created_at ? ` · ${dateTimeLabel(row.created_at)}` : ""}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      {money(row.amount_cents, row.currency)}
+                      <StatusPill tone={row.status === "paid" ? "green" : row.status === "failed" ? "coral" : "gold"}>
+                        {row.status}
+                      </StatusPill>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-[#E7DFCE] bg-white p-4">
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={18} className="text-[#17724F]" />
+            <h3 className="font-['Fraunces'] text-lg font-semibold text-[#0B4933]">Documents</h3>
+          </div>
+          <div className="mt-4 space-y-3 font-[Space_Grotesk] text-sm">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[#5C5645]">Rental agreement</span>
+              {contract ? (
+                <StatusPill tone={contractSignedFlag ? "green" : "gold"}>
+                  {contract?.status || reservation.contract_status || "Pending"}
+                </StatusPill>
+              ) : (
+                <StatusPill tone="neutral">Not yet ready</StatusPill>
+              )}
+            </div>
+            {!contract && (
+              <p className="text-xs text-[#9A9A9A]">
+                Your rental agreement will appear here once it is ready to review and sign.
+              </p>
+            )}
+            {contract?.document_url && (
+              <a href={contract.document_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-semibold text-[#0B4933] underline underline-offset-4">
+                <FileText size={15} /> View agreement
+              </a>
+            )}
+            {tx.filter((row) => row.invoice_pdf).map((row) => (
+              <a key={row.id} href={row.invoice_pdf} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2 rounded-lg bg-[#F8F3E8] px-3 py-2.5 font-semibold text-[#0B4933]">
+                <span>{row.kind.replaceAll("_", " ")}</span>
+                <ChevronRight size={15} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Panel>
   );
 }
 
@@ -208,6 +470,8 @@ export default function ClientPortal() {
   const [error, setError] = useState("");
   const [tab, setTab] = useState("bookings");
   const [busyAction, setBusyAction] = useState("");
+  const [cancelTarget, setCancelTarget] = useState(null);
+  const [cancelBusy, setCancelBusy] = useState(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -283,6 +547,30 @@ export default function ClientPortal() {
     }
   };
 
+  const submitCancel = async () => {
+    if (!cancelTarget) return;
+    setCancelBusy(true);
+    setError("");
+    try {
+      const response = await fetch(`${API_BASE}/client-portal?action=cancel-reservation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ reservationId: cancelTarget.id }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Could not cancel this reservation.");
+      setCancelTarget(null);
+      await loadPortal();
+    } catch (err) {
+      setError(err.message || "Could not cancel this reservation.");
+    } finally {
+      setCancelBusy(false);
+    }
+  };
+
   const openBillingPortal = async () => {
     setBusyAction("billing");
     setError("");
@@ -307,6 +595,11 @@ export default function ClientPortal() {
   if (!session) return <SignIn />;
 
   const reservations = data?.reservations || [];
+  const activeReservations = reservations.filter((row) => row.status !== "cancelled");
+  // The backend already excludes cancelled reservations that never collected
+  // a payment, so everything landing here was cancelled after money changed
+  // hands - kept visible for its receipt/refund record, not as an active booking.
+  const cancelledReservations = reservations.filter((row) => row.status === "cancelled");
   const reservationItems = data?.reservationItems || [];
   const purchases = data?.purchases || [];
   const purchaseItems = data?.purchaseItems || [];
@@ -378,209 +671,41 @@ export default function ClientPortal() {
               </Panel>
             )}
 
-            {reservations.map((reservation) => {
-              const rows = reservationItems.filter((item) => item.reservation_id === reservation.id);
-              const tx = transactionMap.get(reservation.id) || [];
-              const paid = (kind) => tx.filter((row) => row.kind === kind && row.status === "paid").reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
-              const contract = contracts.find((row) => row.reservation_id === reservation.id);
-              const dropoff = reservation.drop_off_date || reservation.dropoff_date || reservation.return_date;
-              const balanceDue = Number(reservation.balance_due_cents || 0) || Math.max(0, Number(reservation.rental_total_cents || 0) - Number(reservation.booking_deposit_cents || 0));
-              const meta = statusMeta(reservation.status);
+            {activeReservations.map((reservation) => (
+              <ReservationCard
+                key={reservation.id}
+                reservation={reservation}
+                reservationItems={reservationItems}
+                contracts={contracts}
+                transactionMap={transactionMap}
+                busyAction={busyAction}
+                openInvoice={openInvoice}
+                onCancel={() => setCancelTarget(reservation)}
+              />
+            ))}
 
-              const bookingDepositDue = Number(reservation.booking_deposit_cents || 0);
-              const securityDepositDue = Number(reservation.security_deposit_cents || 0);
-              const bookingDepositPaidFlag = bookingDepositDue <= 0 || paid("booking_deposit") >= bookingDepositDue;
-              const securityDepositPaidFlag = securityDepositDue <= 0 || paid("security_deposit") >= securityDepositDue;
-              const contractSignedFlag = Boolean(
-                contract?.status === "signed" || contract?.signed_at || reservation.contract_status === "signed"
-              );
-              const balancePaidFlag = balanceDue <= 0 || paid("balance") >= balanceDue;
-              const bookingConfirmedFlag = !["checkout_pending", "pending", "cancelled"].includes(reservation.status);
-              // Square-provider bookings never write to stripe_transactions, so the
-              // paid()-derived flags and PAY buttons below would always read as unpaid
-              // and let a customer trigger a real Stripe invoice for a booking Square
-              // is already billing. The Square booking status panel further down this
-              // page has the correct, live figures for these reservations instead.
-              const isSquareProvider = reservation.payment_provider === "square";
-
-              const paidSecurityTx = tx.find((row) => row.kind === "security_deposit" && row.status === "paid");
-              const securityDepositNote =
-                securityDepositDue > 0 && paidSecurityTx
-                  ? paidSecurityTx.refunded_at
-                    ? `Released on ${dateLabel(paidSecurityTx.refunded_at)}.`
-                    : "Held until your items are returned in good condition, then released. It is not applied to your remaining balance."
-                  : undefined;
-
-              const paymentHistory = [...tx].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-
-              return (
-                <Panel key={reservation.id}>
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <StatusPill tone={meta.tone}>{meta.label}</StatusPill>
-                      <p className="mt-3 font-[Space_Grotesk] text-2xl font-bold tracking-[0.02em] text-[#0B4933]">
-                        {reservation.booking_number || `BOOKING ${reservation.id}`}
-                      </p>
-                      <h2 className="mt-1 font-['Fraunces'] text-lg font-semibold text-[#5C5645]">
-                        {reservation.event_name || reservation.package_name || "Event rental"}
-                      </h2>
-                      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-[Space_Grotesk] text-sm text-[#6F6859]">
-                        <span>Event {dateLabel(reservation.event_date)}</span>
-                        {reservation.pickup_date && <span>Pickup {dateLabel(reservation.pickup_date)}</span>}
-                        {dropoff && <span>Return {dateLabel(dropoff)}</span>}
-                      </div>
-                    </div>
-                    <div className="sm:text-right">
-                      <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.15em] text-[#9A9A9A]">RENTAL TOTAL</p>
-                      <p className="mt-1 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
-                        {money(reservation.rental_total_cents, reservation.currency)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {isSquareProvider ? (
-                    <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
-                      <ChecklistItem done={contractSignedFlag} label="Contract signed" />
-                      <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
-                    </div>
-                  ) : (
-                    <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
-                      <ChecklistItem done={bookingDepositPaidFlag} label="Deposit paid" />
-                      <ChecklistItem done={securityDepositPaidFlag} label="Security deposit paid" />
-                      <ChecklistItem done={contractSignedFlag} label="Contract signed" />
-                      <ChecklistItem done={balancePaidFlag} label="Balance paid" />
-                      <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
-                    </div>
-                  )}
-
-                  {!!rows.length && (
-                    <div className="mt-6 rounded-xl bg-[#F8F3E8] p-4">
-                      <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.15em] text-[#8A6A1E]">YOUR RENTALS</p>
-                      <div className="mt-3 space-y-2">
-                        {rows.map((item) => {
-                          const lineTotal = item.line_total_cents || (item.unit_price_cents || 0) * (item.quantity || 1);
-                          return (
-                            <div key={item.id} className="flex justify-between gap-4 font-[Space_Grotesk] text-sm text-[#3E3A31]">
-                              <span>
-                                {item.item?.name || item.description || "Rental item"}{" "}
-                                <span className="text-[#9A9A9A]">x{item.quantity || 1}</span>
-                              </span>
-                              <span className="font-semibold">{lineTotal ? money(lineTotal, reservation.currency) : ""}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <p className="mt-3 font-[Space_Grotesk] text-xs text-[#9A9A9A]">
-                        Pickup {dateLabel(reservation.pickup_date)} · Return {dateLabel(dropoff)}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="mt-6 grid gap-6 lg:grid-cols-[1.25fr_.75fr]">
-                    <div>
-                      <div className="mb-3 flex items-center gap-2">
-                        <WalletCards size={18} className="text-[#D9AE45]" />
-                        <h3 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Payments</h3>
-                      </div>
-                      {isSquareProvider ? (
-                        <p className="font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
-                          This booking is billed through Square. See the Square booking status section below for
-                          your deposit, balance and security-deposit status, and to open your Square invoice.
-                        </p>
-                      ) : (
-                        <>
-                          <PaymentRow
-                            label="Booking deposit"
-                            due={Number(reservation.booking_deposit_cents || 0)}
-                            paid={paid("booking_deposit")}
-                            onPay={() => openInvoice(reservation.id, "booking_deposit")}
-                            busy={busyAction === `${reservation.id}:booking_deposit`}
-                          />
-                          <PaymentRow
-                            label="Refundable security deposit"
-                            due={Number(reservation.security_deposit_cents || 0)}
-                            paid={paid("security_deposit")}
-                            refundable
-                            onPay={() => openInvoice(reservation.id, "security_deposit")}
-                            busy={busyAction === `${reservation.id}:security_deposit`}
-                            note={securityDepositNote}
-                          />
-                          <PaymentRow
-                            label="Remaining balance"
-                            due={balanceDue}
-                            paid={paid("balance")}
-                            onPay={() => openInvoice(reservation.id, "balance")}
-                            busy={busyAction === `${reservation.id}:balance`}
-                          />
-                        </>
-                      )}
-
-                      {!isSquareProvider && paymentHistory.length > 0 && (
-                        <div className="mt-5 border-t border-[#EEE7D8] pt-4">
-                          <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-[#8A6A1E]">
-                            PAYMENT HISTORY
-                          </p>
-                          <div className="mt-3 space-y-2">
-                            {paymentHistory.map((row) => (
-                              <div
-                                key={row.id}
-                                className="flex items-center justify-between gap-3 font-[Space_Grotesk] text-sm text-[#4C473C]"
-                              >
-                                <span className="capitalize">
-                                  {row.kind.replaceAll("_", " ")}
-                                  {row.created_at ? ` · ${dateTimeLabel(row.created_at)}` : ""}
-                                </span>
-                                <span className="flex items-center gap-2">
-                                  {money(row.amount_cents, row.currency)}
-                                  <StatusPill tone={row.status === "paid" ? "green" : row.status === "failed" ? "coral" : "gold"}>
-                                    {row.status}
-                                  </StatusPill>
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="rounded-xl border border-[#E7DFCE] bg-white p-4">
-                      <div className="flex items-center gap-2">
-                        <ShieldCheck size={18} className="text-[#17724F]" />
-                        <h3 className="font-['Fraunces'] text-lg font-semibold text-[#0B4933]">Documents</h3>
-                      </div>
-                      <div className="mt-4 space-y-3 font-[Space_Grotesk] text-sm">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="text-[#5C5645]">Rental agreement</span>
-                          {contract ? (
-                            <StatusPill tone={contractSignedFlag ? "green" : "gold"}>
-                              {contract?.status || reservation.contract_status || "Pending"}
-                            </StatusPill>
-                          ) : (
-                            <StatusPill tone="neutral">Not yet ready</StatusPill>
-                          )}
-                        </div>
-                        {!contract && (
-                          <p className="text-xs text-[#9A9A9A]">
-                            Your rental agreement will appear here once it is ready to review and sign.
-                          </p>
-                        )}
-                        {contract?.document_url && (
-                          <a href={contract.document_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-semibold text-[#0B4933] underline underline-offset-4">
-                            <FileText size={15} /> View agreement
-                          </a>
-                        )}
-                        {tx.filter((row) => row.invoice_pdf).map((row) => (
-                          <a key={row.id} href={row.invoice_pdf} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2 rounded-lg bg-[#F8F3E8] px-3 py-2.5 font-semibold text-[#0B4933]">
-                            <span>{row.kind.replaceAll("_", " ")}</span>
-                            <ChevronRight size={15} />
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Panel>
-              );
-            })}
+            {!!cancelledReservations.length && (
+              <div className="mt-10">
+                <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Past / Cancelled bookings</h2>
+                <p className="mt-1 font-[Space_Grotesk] text-sm text-[#7E7767]">
+                  These bookings were cancelled after a payment was made, so their receipt and any refund record stay available here.
+                </p>
+                <div className="mt-4 space-y-6">
+                  {cancelledReservations.map((reservation) => (
+                    <ReservationCard
+                      key={reservation.id}
+                      reservation={reservation}
+                      reservationItems={reservationItems}
+                      contracts={contracts}
+                      transactionMap={transactionMap}
+                      busyAction={busyAction}
+                      openInvoice={openInvoice}
+                      onCancel={() => setCancelTarget(reservation)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -669,6 +794,14 @@ export default function ClientPortal() {
           </div>
         )}
       </div>
+
+      {cancelTarget && (
+        <CancelConfirmDialog
+          onConfirm={submitCancel}
+          onClose={() => (cancelBusy ? null : setCancelTarget(null))}
+          busy={cancelBusy}
+        />
+      )}
     </main>
   );
 }
