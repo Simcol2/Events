@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { API_BASE, BASE_PATH } from "../apiBase";
+import SquareRentalStatus from "../components/SquareRentalStatus";
 
 // Covers every status the reservations table allows (see
 // reservations_status_check in the SQL) so nothing falls back to a
@@ -358,6 +359,8 @@ export default function ClientPortal() {
             </button>
           ))}
         </div>
+
+        <SquareRentalStatus accessToken={session?.access_token} />
 
         {loading && !data ? (
           <Panel className="mt-6"><p className="font-[Space_Grotesk] text-sm text-[#7E7767]">Loading your account...</p></Panel>
