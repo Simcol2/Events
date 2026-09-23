@@ -170,6 +170,14 @@ async function createInvoice(req, res) {
     throw error;
   }
 
+  if (reservation.payment_provider === "square") {
+    const error = new Error(
+      "This booking is billed through Square, not Stripe. Use the Square invoice sent to your email, or the Square booking status section of your portal."
+    );
+    error.statusCode = 409;
+    throw error;
+  }
+
   const { data: transactions, error: transactionError } = await supabase
     .from("stripe_transactions")
     .select("*")

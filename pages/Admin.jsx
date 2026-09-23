@@ -4,6 +4,7 @@ import { adminApi, getStoredPasscode, storePasscode, clearStoredPasscode } from 
 import AdminItemForm from "../components/AdminItemForm";
 import AdminGiftForm from "../components/AdminGiftForm";
 import AdminBookingsTab from "../components/AdminBookingsTab";
+import AdminSquareRentalsTab from "../components/AdminSquareRentalsTab";
 import AdminReviewsTab from "../components/AdminReviewsTab";
 import AdminAssetsTab from "../components/AdminAssetsTab";
 
@@ -269,18 +270,19 @@ export default function Admin() {
         </button>
       </div>
 
-      <div className="mb-8 flex gap-2 border-b border-[#E6E6E6]">
+      <div className="mb-8 flex gap-2 overflow-x-auto border-b border-[#E6E6E6]">
         {[
           { id: "gifts", label: "Gifts" },
           { id: "items", label: "Decor Items" },
           { id: "assets", label: "Assets" },
           { id: "bookings", label: "Bookings" },
+          { id: "square-rentals", label: "Square Rentals" },
           { id: "reviews", label: "Reviews" },
         ].map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-4 py-2.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] ${
+            className={`shrink-0 px-4 py-2.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.1em] ${
               tab === t.id ? "border-b-2 border-[#0B4933] text-[#0B4933]" : "text-[#6B6B6B]"
             }`}
           >
@@ -293,6 +295,7 @@ export default function Admin() {
       {tab === "items" && <ItemsTab />}
       {tab === "assets" && <AdminAssetsTab />}
       {tab === "bookings" && <AdminBookingsTab />}
+      {tab === "square-rentals" && <AdminSquareRentalsTab />}
       {tab === "reviews" && <AdminReviewsTab />}
     </div>
   );

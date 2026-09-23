@@ -396,6 +396,12 @@ export default function ClientPortal() {
               );
               const balancePaidFlag = balanceDue <= 0 || paid("balance") >= balanceDue;
               const bookingConfirmedFlag = !["checkout_pending", "pending", "cancelled"].includes(reservation.status);
+              // Square-provider bookings never write to stripe_transactions, so the
+              // paid()-derived flags and PAY buttons below would always read as unpaid
+              // and let a customer trigger a real Stripe invoice for a booking Square
+              // is already billing. The Square booking status panel further down this
+              // page has the correct, live figures for these reservations instead.
+              const isSquareProvider = reservation.payment_provider === "square";
 
               const paidSecurityTx = tx.find((row) => row.kind === "security_deposit" && row.status === "paid");
               const securityDepositNote =
@@ -432,13 +438,20 @@ export default function ClientPortal() {
                     </div>
                   </div>
 
-                  <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
-                    <ChecklistItem done={bookingDepositPaidFlag} label="Deposit paid" />
-                    <ChecklistItem done={securityDepositPaidFlag} label="Security deposit paid" />
-                    <ChecklistItem done={contractSignedFlag} label="Contract signed" />
-                    <ChecklistItem done={balancePaidFlag} label="Balance paid" />
-                    <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
-                  </div>
+                  {isSquareProvider ? (
+                    <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
+                      <ChecklistItem done={contractSignedFlag} label="Contract signed" />
+                      <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
+                    </div>
+                  ) : (
+                    <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-3 rounded-xl bg-[#F8F3E8] p-4 sm:grid-cols-5">
+                      <ChecklistItem done={bookingDepositPaidFlag} label="Deposit paid" />
+                      <ChecklistItem done={securityDepositPaidFlag} label="Security deposit paid" />
+                      <ChecklistItem done={contractSignedFlag} label="Contract signed" />
+                      <ChecklistItem done={balancePaidFlag} label="Balance paid" />
+                      <ChecklistItem done={bookingConfirmedFlag} label="Booking confirmed" />
+                    </div>
+                  )}
 
                   {!!rows.length && (
                     <div className="mt-6 rounded-xl bg-[#F8F3E8] p-4">
@@ -469,31 +482,40 @@ export default function ClientPortal() {
                         <WalletCards size={18} className="text-[#D9AE45]" />
                         <h3 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Payments</h3>
                       </div>
-                      <PaymentRow
-                        label="Booking deposit"
-                        due={Number(reservation.booking_deposit_cents || 0)}
-                        paid={paid("booking_deposit")}
-                        onPay={() => openInvoice(reservation.id, "booking_deposit")}
-                        busy={busyAction === `${reservation.id}:booking_deposit`}
-                      />
-                      <PaymentRow
-                        label="Refundable security deposit"
-                        due={Number(reservation.security_deposit_cents || 0)}
-                        paid={paid("security_deposit")}
-                        refundable
-                        onPay={() => openInvoice(reservation.id, "security_deposit")}
-                        busy={busyAction === `${reservation.id}:security_deposit`}
-                        note={securityDepositNote}
-                      />
-                      <PaymentRow
-                        label="Remaining balance"
-                        due={balanceDue}
-                        paid={paid("balance")}
-                        onPay={() => openInvoice(reservation.id, "balance")}
-                        busy={busyAction === `${reservation.id}:balance`}
-                      />
+                      {isSquareProvider ? (
+                        <p className="font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
+                          This booking is billed through Square. See the Square booking status section below for
+                          your deposit, balance and security-deposit status, and to open your Square invoice.
+                        </p>
+                      ) : (
+                        <>
+                          <PaymentRow
+                            label="Booking deposit"
+                            due={Number(reservation.booking_deposit_cents || 0)}
+                            paid={paid("booking_deposit")}
+                            onPay={() => openInvoice(reservation.id, "booking_deposit")}
+                            busy={busyAction === `${reservation.id}:booking_deposit`}
+                          />
+                          <PaymentRow
+                            label="Refundable security deposit"
+                            due={Number(reservation.security_deposit_cents || 0)}
+                            paid={paid("security_deposit")}
+                            refundable
+                            onPay={() => openInvoice(reservation.id, "security_deposit")}
+                            busy={busyAction === `${reservation.id}:security_deposit`}
+                            note={securityDepositNote}
+                          />
+                          <PaymentRow
+                            label="Remaining balance"
+                            due={balanceDue}
+                            paid={paid("balance")}
+                            onPay={() => openInvoice(reservation.id, "balance")}
+                            busy={busyAction === `${reservation.id}:balance`}
+                          />
+                        </>
+                      )}
 
-                      {paymentHistory.length > 0 && (
+                      {!isSquareProvider && paymentHistory.length > 0 && (
                         <div className="mt-5 border-t border-[#EEE7D8] pt-4">
                           <p className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em] text-[#8A6A1E]">
                             PAYMENT HISTORY

@@ -69,4 +69,9 @@ export const adminApi = {
   createGift: (fields) => request("/api/admin?resource=gifts", { method: "POST", body: fields }).then((d) => d.gift),
   updateGift: (id, fields) => request("/api/admin?resource=gifts", { method: "PUT", body: { id, ...fields } }).then((d) => d.gift),
   deleteGift: (id) => request("/api/admin?resource=gifts", { method: "DELETE", body: { id } }),
+
+  listSquareReservations: () =>
+    request("/api/square?resource=admin-reservations").then((d) => (Array.isArray(d.reservations) ? d.reservations : [])),
+  updateSquareReservationPickup: (reservationId, pickupAt) =>
+    request("/api/square?resource=admin-reservations", { method: "PUT", body: { reservationId, pickupAt } }),
 };

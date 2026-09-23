@@ -1092,6 +1092,79 @@ async function handleAdminReturn(req, res) {
 }
 
 // ---------------------------------------------------------------------
+// resource=admin-reservations (GET/PUT) - Admin dashboard listing of every
+// Square-provider reservation, and the one place staff can assign an exact
+// pickup_at once a pickup time is actually scheduled with the customer.
+// pickup_at drives the 24-hour balance/12-hour auto-cancel timing rules
+// (see resource=timing below) - without it those rules silently skip the
+// reservation.
+// ---------------------------------------------------------------------
+async function handleAdminReservations(req, res) {
+  if (!requireAdmin(req, res)) return;
+
+  const adminDb = adminSupabase();
+
+  if (req.method === "GET") {
+    try {
+      const { data, error } = await adminDb
+        .from("reservations")
+        .select(
+          "id,booking_number,status,contract_status,currency,pickup_date,drop_off_date,event_date,pickup_at,rental_total_cents,booking_deposit_cents,security_deposit_cents,balance_due_cents,square_invoice_status,square_invoice_url,square_balance_autopay,square_payment_failed,square_security_status,square_security_refund_status,square_security_refund_cents,square_security_payment_id,customers(name,email)"
+        )
+        .eq("payment_provider", "square")
+        .order("pickup_date", { ascending: true, nullsFirst: false });
+
+      if (error) throw error;
+
+      return res.status(200).json({ reservations: data || [] });
+    } catch (error) {
+      console.error("Admin Square reservations list error:", error);
+      return res.status(500).json({ error: error.message || "Could not load reservations." });
+    }
+  }
+
+  if (req.method === "PUT") {
+    try {
+      const reservationId = Number(req.body?.reservationId);
+      const pickupAtInput = req.body?.pickupAt;
+
+      if (!Number.isFinite(reservationId)) {
+        return res.status(400).json({ error: "reservationId is required." });
+      }
+
+      let pickupAt = null;
+      if (pickupAtInput) {
+        const parsed = new Date(pickupAtInput);
+        if (Number.isNaN(parsed.getTime())) {
+          return res.status(400).json({ error: "pickupAt is not a valid date/time." });
+        }
+        pickupAt = parsed.toISOString();
+      }
+
+      const { data, error } = await adminDb
+        .from("reservations")
+        .update({ pickup_at: pickupAt })
+        .eq("id", reservationId)
+        .eq("payment_provider", "square")
+        .select("id,pickup_at")
+        .single();
+
+      if (error || !data) {
+        return res.status(404).json({ error: "Reservation not found." });
+      }
+
+      return res.status(200).json({ ok: true, id: data.id, pickupAt: data.pickup_at });
+    } catch (error) {
+      console.error("Admin Square reservation pickup_at update error:", error);
+      return res.status(500).json({ error: error.message || "Could not update pickup time." });
+    }
+  }
+
+  res.setHeader("Allow", "GET, PUT");
+  return res.status(405).json({ error: "Method not allowed" });
+}
+
+// ---------------------------------------------------------------------
 // resource=timing (any method) - Phase 16-20 Step 18. Intended for hourly
 // Vercel Cron (see vercel.json), gated on CRON_SECRET rather than the
 // admin passcode or a client session. Exact 24-hour/12-hour rules require
@@ -1294,6 +1367,22 @@ const PRODUCTION_MIN_RENTAL_CENTS = 5000;
 // completes the contract and booking-deposit workflow.
 const PRODUCTION_HOLD_HOURS = 6;
 
+// The checkout UI only ever collects a pickup date, never a time of day, so
+// rentalDates.pickupAt is never actually sent by a real customer. Falling
+// back to null left every real booking silently skipped by the 24-hour
+// balance/12-hour auto-cancel timing rules (see resource=timing), rather
+// than running against a guessed time. Default to a placeholder pickup
+// hour instead so the automation always has something to work with, and
+// let staff correct it to the exact scheduled time via
+// resource=admin-reservations once that's actually known.
+const DEFAULT_PICKUP_HOUR = 17;
+
+function defaultPickupAt(pickupDate) {
+  if (!pickupDate) return null;
+  const date = new Date(`${pickupDate}T${String(DEFAULT_PICKUP_HOUR).padStart(2, "0")}:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
 async function handleProductionBooking(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -1342,7 +1431,7 @@ async function handleProductionBooking(req, res) {
         pickup_date: rentalDates.pickup,
         drop_off_date: rentalDates.dropoff,
         event_date: rentalDates.event || rentalDates.pickup,
-        pickup_at: rentalDates.pickupAt || null,
+        pickup_at: rentalDates.pickupAt || defaultPickupAt(rentalDates.pickup),
         rental_subtotal_cents: rentalSubtotalCents,
         rental_total_cents: rentalSubtotalCents,
         total_price: rentalSubtotalCents / 100,
@@ -1430,6 +1519,7 @@ const RESOURCE_HANDLERS = {
   portal: handlePortal,
   "portal-actions": handlePortalActions,
   "admin-return": handleAdminReturn,
+  "admin-reservations": handleAdminReservations,
   timing: handleTiming,
   "production-booking": handleProductionBooking,
 };
