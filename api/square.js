@@ -1288,7 +1288,11 @@ async function productionAvailability(lines, pickup, dropoff) {
 }
 
 const PRODUCTION_MIN_RENTAL_CENTS = 5000;
-const PRODUCTION_HOLD_MINUTES = 30;
+
+// Square rental bookings require a manual contract-attachment/publish step.
+// Hold the requested rental inventory for six hours while the customer
+// completes the contract and booking-deposit workflow.
+const PRODUCTION_HOLD_HOURS = 6;
 
 async function handleProductionBooking(req, res) {
   if (req.method !== "POST") {
@@ -1346,7 +1350,7 @@ async function handleProductionBooking(req, res) {
         security_deposit_cents: productionSecurityDepositFor(rentalSubtotalCents),
         balance_due_cents: Math.max(0, rentalSubtotalCents - bookingDepositCents),
         currency: "cad",
-        checkout_expires_at: new Date(Date.now() + PRODUCTION_HOLD_MINUTES * 60 * 1000).toISOString(),
+        checkout_expires_at: new Date(Date.now() + PRODUCTION_HOLD_HOURS * 60 * 60 * 1000).toISOString(),
         payment_provider: "square",
       })
       .select("*")
