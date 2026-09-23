@@ -204,6 +204,8 @@ async function createReservation({ customer, rentalLines, rentalDates, rentalSub
 }
 
 async function handleBooking(req, res) {
+  if (!requireAdmin(req, res)) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -279,6 +281,8 @@ async function handleBooking(req, res) {
 // resource=invoice-draft (POST) - Phase 5-10 Step 6.
 // ---------------------------------------------------------------------
 async function handleInvoiceDraft(req, res) {
+  if (!requireAdmin(req, res)) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -354,6 +358,8 @@ async function handleInvoiceDraft(req, res) {
 // resource=publish-invoice (POST) - Phase 5-10 Steps 7-9.
 // ---------------------------------------------------------------------
 async function handlePublishInvoice(req, res) {
+  if (!requireAdmin(req, res)) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -449,6 +455,8 @@ async function handlePublishInvoice(req, res) {
 // resource=card-status (POST) - Phase 5-10 Step 10.
 // ---------------------------------------------------------------------
 async function handleCardStatus(req, res) {
+  if (!requireAdmin(req, res)) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -512,6 +520,8 @@ async function handleCardStatus(req, res) {
 // resource=balance-autopay (POST) - Phase 11-15 Step 11.
 // ---------------------------------------------------------------------
 async function handleBalanceAutopay(req, res) {
+  if (!requireAdmin(req, res)) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -727,6 +737,8 @@ async function refundSecurityDeposit(reservation, refundAmountCents, reason) {
 }
 
 async function handleSecurityDeposit(req, res) {
+  if (!requireAdmin(req, res)) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -768,6 +780,8 @@ async function handleSecurityDeposit(req, res) {
 // status update, not something Events can verify independently.
 // ---------------------------------------------------------------------
 async function handleContract(req, res) {
+  if (!requireAdmin(req, res)) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
