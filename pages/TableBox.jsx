@@ -42,6 +42,12 @@ const SECTIONS = [
     itemIds: [8],
   },
   {
+    key: "placeCards",
+    title: "Choose Your Place Cards",
+    subtitle: "Add blank ivory place cards for your table, ten to a bundle.",
+    itemIds: [547],
+  },
+  {
     key: "centerpieces",
     title: "Choose Your Centrepiece",
     subtitle: "Choose the piece that anchors your table.",
