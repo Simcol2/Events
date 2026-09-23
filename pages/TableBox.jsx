@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
 import { withBasePath } from "../apiBase";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
+import DescriptionBody from "../components/ItemDescription";
+import { parseItemTags } from "../components/DecorCard";
 import {
   ElevatedCard,
   Kicker,
@@ -79,6 +81,7 @@ export default function TableBox() {
   const [qty, setQty] = useState({});
   const [openSection, setOpenSection] = useState(SECTIONS[0].key);
   const [justAdded, setJustAdded] = useState(false);
+  const [openProduct, setOpenProduct] = useState(null);
 
   // Pulls in pricing for whatever is already sitting in the cart's rental
   // lines too, not just this page's curated section ids - the $50 minimum
@@ -335,28 +338,37 @@ export default function TableBox() {
                                     overflow: "hidden",
                                   }}
                                 >
-                                  <div className="relative aspect-[4/3]" style={{ background: rgba(palette.primary, 0.06) }}>
-                                    {photos.length ? (
-                                      <PhotoCarousel photos={product.photos} alt={product.name} className="h-full w-full object-cover" />
-                                    ) : (
-                                      <div className="flex h-full items-center justify-center">
-                                        <span
-                                          style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase" }}
-                                        >
-                                          Photo coming soon
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="p-3.5">
-                                    <p style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "15px", fontWeight: 640, lineHeight: 1.2 }}>
-                                      {product.name}
-                                    </p>
-                                    <p className="mt-1" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}>
-                                      {money(unitPrice(product))}{" "}
-                                      <span>{isRental(product) ? "/ event" : "to buy"}</span>
-                                    </p>
-                                    <div className="mt-3 flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setOpenProduct(product)}
+                                    className="block w-full text-left"
+                                    aria-label={`View details for ${product.name}`}
+                                  >
+                                    <div className="relative aspect-[4/3]" style={{ background: rgba(palette.primary, 0.06) }}>
+                                      {photos.length ? (
+                                        <PhotoCarousel photos={product.photos} alt={product.name} className="h-full w-full object-cover" />
+                                      ) : (
+                                        <div className="flex h-full items-center justify-center">
+                                          <span
+                                            style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase" }}
+                                          >
+                                            Photo coming soon
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="px-3.5 pt-3.5">
+                                      <p style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "15px", fontWeight: 640, lineHeight: 1.2 }}>
+                                        {product.name}
+                                      </p>
+                                      <p className="mt-1" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}>
+                                        {money(unitPrice(product))}{" "}
+                                        <span>{isRental(product) ? "/ event" : "to buy"}</span>
+                                      </p>
+                                    </div>
+                                  </button>
+                                  <div className="p-3.5 pt-3">
+                                    <div className="flex items-center gap-2">
                                       <button
                                         onClick={() => setQuantity(product.id, count - 1)}
                                         disabled={count === 0}
@@ -501,6 +513,66 @@ export default function TableBox() {
           </aside>
         </div>
       </section>
+
+      {openProduct && (
+        <div
+          className="fixed inset-0 z-[170] flex items-center justify-center p-4 sm:p-8"
+          style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={openProduct.name}
+          onClick={() => setOpenProduct(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl"
+            style={{ background: palette.surface, boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
+          >
+            <button
+              onClick={() => setOpenProduct(null)}
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full"
+              style={{ background: "rgba(255,255,255,0.9)", color: palette.primaryDeep }}
+              aria-label="Close"
+            >
+              <X size={19} />
+            </button>
+
+            <div className="relative aspect-[4/3]" style={{ background: rgba(palette.primary, 0.06) }}>
+              {normalizePhotos(openProduct.photos).length ? (
+                <PhotoCarousel photos={openProduct.photos} alt={openProduct.name} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <span style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                    Photo coming soon
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-6">
+              {parseItemTags(openProduct).length > 0 && (
+                <p style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "12px", letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                  {parseItemTags(openProduct).join(" · ")}
+                </p>
+              )}
+              <h2 className="mt-1" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "26px", fontWeight: 640 }}>
+                {openProduct.name}
+              </h2>
+
+              {openProduct.description && <DescriptionBody text={openProduct.description} />}
+
+              <div className="mt-5 border-t pt-4" style={{ borderColor: palette.line }}>
+                <span style={{ ...fonts.bodyFont, color: palette.primaryDeep, fontSize: "16px", fontWeight: 650 }}>
+                  {money(unitPrice(openProduct))}{" "}
+                  <span style={{ color: palette.muted, fontWeight: 400 }}>
+                    {isRental(openProduct) ? "/ event" : "to buy"}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
