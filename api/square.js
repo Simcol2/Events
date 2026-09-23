@@ -23,6 +23,7 @@ import {
 } from "./_squareInvoice.js";
 import { squareLocationId, squareRequest } from "./_squareRest.js";
 import { handleApiError, requireClient } from "./_clientAuth.js";
+import { adminSupabase, requireAdmin } from "./_adminAuth.js";
 
 const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
@@ -857,6 +858,548 @@ async function handlePortal(req, res) {
   }
 }
 
+// ---------------------------------------------------------------------
+// resource=portal-actions (POST) - Phase 16-20 Step 16. Square-native
+// replacement for the Stripe portal's "open invoice" / "refresh status"
+// actions, for reservations that have moved to Square.
+// ---------------------------------------------------------------------
+async function handlePortalActions(req, res) {
+  try {
+    if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const { supabase: clientSupabase, customer } = await requireClient(req);
+    const reservationId = Number(req.body?.reservationId);
+    const action = String(req.body?.action || "");
+
+    if (!Number.isFinite(reservationId)) {
+      return res.status(400).json({ error: "reservationId is required." });
+    }
+
+    const { data: reservation, error } = await clientSupabase
+      .from("reservations")
+      .select("*")
+      .eq("id", reservationId)
+      .eq("customer_id", customer.id)
+      .single();
+
+    if (error || !reservation) {
+      return res.status(404).json({ error: "Booking not found." });
+    }
+
+    if (!reservation.square_invoice_id) {
+      return res.status(409).json({ error: "This booking does not have a Square invoice yet." });
+    }
+
+    if (action === "open-invoice") {
+      if (reservation.square_invoice_url) {
+        return res.status(200).json({ url: reservation.square_invoice_url });
+      }
+
+      const data = await squareRequest(`/v2/invoices/${encodeURIComponent(reservation.square_invoice_id)}`);
+      const invoice = data.invoice;
+
+      if (!invoice?.public_url) {
+        return res.status(409).json({ error: "The Square invoice is not published yet." });
+      }
+
+      await clientSupabase
+        .from("reservations")
+        .update({
+          square_invoice_status: invoice.status || null,
+          square_invoice_version: invoice.version ?? null,
+          square_invoice_url: invoice.public_url,
+        })
+        .eq("id", reservation.id);
+
+      return res.status(200).json({ url: invoice.public_url });
+    }
+
+    if (action === "refresh") {
+      const data = await squareRequest(`/v2/invoices/${encodeURIComponent(reservation.square_invoice_id)}`);
+      const invoice = data.invoice;
+
+      await clientSupabase
+        .from("reservations")
+        .update({
+          square_invoice_status: invoice?.status || null,
+          square_invoice_version: invoice?.version ?? null,
+          square_invoice_url: invoice?.public_url || null,
+        })
+        .eq("id", reservation.id);
+
+      return res.status(200).json({
+        ok: true,
+        invoiceStatus: invoice?.status || null,
+        invoiceUrl: invoice?.public_url || null,
+      });
+    }
+
+    return res.status(400).json({ error: 'action must be "open-invoice" or "refresh".' });
+  } catch (error) {
+    return handleApiError(res, error);
+  }
+}
+
+// ---------------------------------------------------------------------
+// resource=admin-return (POST) - Phase 16-20 Step 17. Admin-only return
+// inspection + security-deposit release. Supersedes using the public
+// security-deposit resource for refunds - never expose refund actions
+// without admin authentication.
+// ---------------------------------------------------------------------
+const ALLOWED_RETURN_CONDITIONS = new Set([
+  "excellent",
+  "normal_wear",
+  "needs_cleaning",
+  "minor_damage",
+  "major_damage",
+  "missing",
+]);
+
+async function handleAdminReturn(req, res) {
+  if (!requireAdmin(req, res)) return;
+
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const adminDb = adminSupabase();
+
+  try {
+    const reservationId = Number(req.body?.reservationId);
+    const condition = String(req.body?.condition || "");
+    const refundAmountCents = Number(req.body?.refundAmountCents);
+    const notes = String(req.body?.notes || "").trim();
+    const photos = Array.isArray(req.body?.photos) ? req.body.photos : [];
+
+    if (!Number.isFinite(reservationId)) {
+      return res.status(400).json({ error: "reservationId is required." });
+    }
+
+    if (!ALLOWED_RETURN_CONDITIONS.has(condition)) {
+      return res.status(400).json({ error: "Unknown return condition." });
+    }
+
+    const { data: reservation, error } = await adminDb
+      .from("reservations")
+      .select("*")
+      .eq("id", reservationId)
+      .single();
+
+    if (error || !reservation) {
+      return res.status(404).json({ error: "Reservation not found." });
+    }
+
+    const deposit = Number(reservation.security_deposit_cents || 0);
+
+    if (!Number.isFinite(refundAmountCents) || refundAmountCents < 0 || refundAmountCents > deposit) {
+      return res.status(400).json({ error: "Refund amount must be between $0 and the collected security deposit." });
+    }
+
+    const { data: inspection, error: inspectionError } = await adminDb
+      .from("rental_return_inspections")
+      .insert({
+        reservation_id: reservation.id,
+        condition,
+        notes: notes || null,
+        photos,
+        security_deposit_cents: deposit,
+        refund_amount_cents: refundAmountCents,
+        retained_amount_cents: Math.max(0, deposit - refundAmountCents),
+      })
+      .select("*")
+      .single();
+
+    if (inspectionError) throw inspectionError;
+
+    let refund = null;
+
+    if (refundAmountCents > 0) {
+      if (!reservation.square_security_payment_id) {
+        throw new Error("No Square security-deposit payment is linked.");
+      }
+
+      const data = await squareRequest("/v2/refunds", {
+        method: "POST",
+        body: {
+          idempotency_key: `asg-return-${reservation.id}-${inspection.id}`.slice(0, 45),
+          payment_id: reservation.square_security_payment_id,
+          amount_money: { amount: refundAmountCents, currency: String(reservation.currency || "cad").toUpperCase() },
+          reason: (
+            condition === "excellent" || condition === "normal_wear"
+              ? "Rental security deposit release"
+              : `Rental deposit release after inspection: ${condition}`
+          ).slice(0, 192),
+        },
+      });
+
+      refund = data.refund;
+    }
+
+    await adminDb
+      .from("rental_return_inspections")
+      .update({
+        square_refund_id: refund?.id || null,
+        square_refund_status: refund?.status || (refundAmountCents === 0 ? "NO_REFUND" : null),
+        completed_at: new Date().toISOString(),
+      })
+      .eq("id", inspection.id);
+
+    await adminDb
+      .from("reservations")
+      .update({
+        status: "returned",
+        square_security_refund_id: refund?.id || reservation.square_security_refund_id || null,
+        square_security_refund_status:
+          refund?.status || (refundAmountCents === 0 ? "NO_REFUND" : reservation.square_security_refund_status),
+        square_security_refund_cents: refundAmountCents,
+        square_security_refund_requested_at: refundAmountCents > 0 ? new Date().toISOString() : null,
+      })
+      .eq("id", reservation.id);
+
+    return res.status(200).json({
+      ok: true,
+      inspectionId: inspection.id,
+      refundId: refund?.id || null,
+      refundStatus: refund?.status || (refundAmountCents === 0 ? "NO_REFUND" : null),
+      refundAmountCents,
+      retainedAmountCents: Math.max(0, deposit - refundAmountCents),
+    });
+  } catch (error) {
+    console.error("Admin Square return inspection error:", error);
+    return res.status(error.statusCode || 500).json({
+      error: error.message || "Could not complete return inspection.",
+      square: error.square || undefined,
+    });
+  }
+}
+
+// ---------------------------------------------------------------------
+// resource=timing (any method) - Phase 16-20 Step 18. Intended for hourly
+// Vercel Cron (see vercel.json), gated on CRON_SECRET rather than the
+// admin passcode or a client session. Exact 24-hour/12-hour rules require
+// reservations.pickup_at - a booking with only pickup_date is skipped
+// rather than guessing a time.
+// ---------------------------------------------------------------------
+function cronAuthorized(req) {
+  const auth = req.headers.authorization || "";
+  return Boolean(process.env.CRON_SECRET && auth === `Bearer ${process.env.CRON_SECRET}`);
+}
+
+async function chargeAutoSecurityDeposit(reservation, customer) {
+  if (reservation.square_security_payment_id) return;
+
+  const amount = Number(reservation.security_deposit_cents || 0);
+  if (amount <= 0) return;
+  if (!customer?.square_card_on_file || !customer?.square_primary_card_id) return;
+
+  const data = await squareRequest("/v2/payments", {
+    method: "POST",
+    body: {
+      source_id: customer.square_primary_card_id,
+      idempotency_key: `asg-auto-security-${reservation.id}`,
+      amount_money: { amount, currency: String(reservation.currency || "cad").toUpperCase() },
+      customer_id: customer.square_customer_id,
+      location_id: squareLocationId(),
+      reference_id: reservation.booking_number,
+      note: `${reservation.booking_number} refundable security deposit`,
+      autocomplete: true,
+    },
+  });
+
+  const payment = data.payment;
+  if (!payment?.id) return;
+
+  await supabase
+    .from("reservations")
+    .update({
+      square_security_payment_id: payment.id,
+      square_security_status: payment.status || null,
+      square_security_collected_at: payment.created_at || new Date().toISOString(),
+    })
+    .eq("id", reservation.id);
+}
+
+async function handleTiming(req, res) {
+  if (!cronAuthorized(req)) {
+    return res.status(401).json({ error: "Unauthorized." });
+  }
+
+  const now = new Date();
+
+  const { data: reservations, error } = await supabase
+    .from("reservations")
+    .select("*")
+    .not("square_invoice_id", "is", null)
+    .in("status", ["checkout_pending", "pending", "confirmed"]);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  const results = [];
+
+  for (const reservation of reservations || []) {
+    if (!reservation.pickup_at) {
+      results.push({
+        reservationId: reservation.id,
+        skipped: true,
+        reason: "pickup_at is not set; exact timing rules cannot be calculated.",
+      });
+      continue;
+    }
+
+    const pickupAt = new Date(reservation.pickup_at);
+    const balanceDueAt = new Date(pickupAt.getTime() - 24 * 60 * 60 * 1000);
+    const cancelAt = new Date(pickupAt.getTime() - 12 * 60 * 60 * 1000);
+
+    await supabase
+      .from("reservations")
+      .update({ balance_due_at: balanceDueAt.toISOString(), auto_cancel_at: cancelAt.toISOString() })
+      .eq("id", reservation.id);
+
+    const { data: customer } = await supabase
+      .from("customers")
+      .select("*")
+      .eq("id", reservation.customer_id)
+      .maybeSingle();
+
+    const { data: tx } = await supabase
+      .from("square_transactions")
+      .select("kind,status,amount_cents")
+      .eq("reservation_id", reservation.id);
+
+    const paid = (kind) =>
+      (tx || []).filter((row) => row.kind === kind && row.status === "paid").reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
+
+    const balancePaid = paid("balance") >= Number(reservation.balance_due_cents || 0);
+
+    // At the 24-hour mark, collect the separate refundable security deposit
+    // if the customer explicitly saved a card.
+    if (now >= balanceDueAt && !reservation.square_security_payment_id) {
+      await chargeAutoSecurityDeposit(reservation, customer);
+    }
+
+    // At the 12-hour mark, do not hard-delete anything. Mark the reservation
+    // payment_overdue so an exception/cash payment can still be handled.
+    if (now >= cancelAt && !balancePaid && !["cancelled", "completed", "returned"].includes(reservation.status)) {
+      await supabase.from("reservations").update({ status: "payment_overdue" }).eq("id", reservation.id);
+    }
+
+    results.push({
+      reservationId: reservation.id,
+      balanceDueAt: balanceDueAt.toISOString(),
+      autoCancelAt: cancelAt.toISOString(),
+      balancePaid,
+    });
+  }
+
+  return res.status(200).json({ ok: true, checked: results.length, results });
+}
+
+// ---------------------------------------------------------------------
+// resource=production-booking (POST) - Phase 16-20 Step 19. The live
+// rental-checkout orchestrator UnifiedCartModal would call once patched
+// per components/UnifiedCartSquarePatch.md. Not yet wired into the live
+// Cart - see that same-named .md file (kept as reference, not copied into
+// the app) for why that patch is being held for a deliberate go-ahead
+// rather than applied automatically.
+// ---------------------------------------------------------------------
+function productionCents(value) {
+  return Math.round(Number(value || 0) * 100);
+}
+
+function productionSecurityDepositFor(total) {
+  if (total >= 100000) return 30000;
+  if (total >= 75000) return 25000;
+  if (total >= 50000) return 20000;
+  if (total >= 30000) return 15000;
+  if (total >= 15000) return 10000;
+  if (total >= 5000) return 5000;
+  return 0;
+}
+
+async function findOrCreateProductionCustomer(input) {
+  const email = String(input?.email || "").trim().toLowerCase();
+  const name = String(input?.name || "").trim();
+  if (!email || !name) throw new Error("Name and email are required.");
+
+  const { data: existing, error } = await supabase.from("customers").select("*").ilike("email", email).maybeSingle();
+
+  if (error) throw error;
+  if (existing) return existing;
+
+  const { data, error: insertError } = await supabase.from("customers").insert({ name, email }).select("*").single();
+
+  if (insertError) throw insertError;
+  return data;
+}
+
+async function resolveProductionRentals(items) {
+  const rentals = items.filter((row) => row?.kind === "rental");
+  if (!rentals.length) throw new Error("No rental items were supplied.");
+
+  const resolved = [];
+  for (const line of rentals) {
+    const quantity = Math.max(1, Math.floor(Number(line.quantity) || 1));
+    const { data: item, error } = await supabase
+      .from("items")
+      .select("id,name,rental_price,active")
+      .eq("id", line.id)
+      .eq("active", true)
+      .single();
+
+    if (error || !item) throw new Error("A rental item is no longer available.");
+
+    resolved.push({ id: item.id, name: item.name, quantity, unitCents: productionCents(item.rental_price) });
+  }
+  return resolved;
+}
+
+async function productionAvailability(lines, pickup, dropoff) {
+  for (const line of lines) {
+    const { data, error } = await supabase.rpc("get_reservation_item_availability", {
+      p_item_id: Number(line.id),
+      p_pickup: pickup,
+      p_dropoff: dropoff,
+    });
+    if (error) throw error;
+    if (Number(data || 0) < line.quantity) {
+      throw new Error(`${line.name} is no longer available for those dates.`);
+    }
+  }
+}
+
+const PRODUCTION_MIN_RENTAL_CENTS = 5000;
+const PRODUCTION_HOLD_MINUTES = 30;
+
+async function handleProductionBooking(req, res) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  let reservation = null;
+
+  try {
+    const { customer: input, rentalDates = {}, items = [] } = req.body || {};
+
+    const purchaseItems = items.filter((row) => row?.kind !== "rental");
+    if (purchaseItems.length) {
+      return res.status(409).json({
+        error: "During the Square rental cutover, rental bookings must be checked out separately from purchase items.",
+        code: "SPLIT_CART_REQUIRED",
+      });
+    }
+
+    if (!rentalDates.pickup || !rentalDates.dropoff || rentalDates.dropoff < rentalDates.pickup) {
+      return res.status(400).json({ error: "Choose valid rental dates." });
+    }
+
+    const customer = await findOrCreateProductionCustomer(input);
+    const lines = await resolveProductionRentals(items);
+    const rentalSubtotalCents = lines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
+
+    if (rentalSubtotalCents < PRODUCTION_MIN_RENTAL_CENTS) {
+      return res.status(400).json({ error: "Rental orders require a $50 minimum." });
+    }
+
+    await productionAvailability(lines, rentalDates.pickup, rentalDates.dropoff);
+
+    const { data: bookingNumber, error: numberError } = await supabase.rpc("next_rental_reservation_number");
+    if (numberError) throw numberError;
+
+    const bookingDepositCents = Math.ceil(rentalSubtotalCents * 0.5);
+
+    const { data: created, error: reservationError } = await supabase
+      .from("reservations")
+      .insert({
+        customer_id: customer.id,
+        source: "a_la_carte",
+        booking_number: bookingNumber,
+        status: "checkout_pending",
+        pickup_date: rentalDates.pickup,
+        drop_off_date: rentalDates.dropoff,
+        event_date: rentalDates.event || rentalDates.pickup,
+        pickup_at: rentalDates.pickupAt || null,
+        rental_subtotal_cents: rentalSubtotalCents,
+        rental_total_cents: rentalSubtotalCents,
+        total_price: rentalSubtotalCents / 100,
+        booking_deposit_cents: bookingDepositCents,
+        security_deposit_cents: productionSecurityDepositFor(rentalSubtotalCents),
+        balance_due_cents: Math.max(0, rentalSubtotalCents - bookingDepositCents),
+        currency: "cad",
+        checkout_expires_at: new Date(Date.now() + PRODUCTION_HOLD_MINUTES * 60 * 1000).toISOString(),
+        payment_provider: "square",
+      })
+      .select("*")
+      .single();
+
+    if (reservationError) throw reservationError;
+    reservation = created;
+
+    const { error: itemsError } = await supabase.from("reservation_items").insert(
+      lines.map((line) => ({
+        reservation_id: reservation.id,
+        item_id: Number(line.id),
+        quantity: line.quantity,
+        description: line.name,
+        unit_price_cents: line.unitCents,
+        line_total_cents: line.unitCents * line.quantity,
+      }))
+    );
+
+    if (itemsError) throw itemsError;
+
+    const squareCustomerId = await ensureSquareCustomer({ supabase, customer });
+    const squareOrder = await createSquareRentalOrder({ reservation, rentalLines: lines, squareCustomerId });
+
+    await supabase
+      .from("reservations")
+      .update({
+        square_customer_id: squareCustomerId,
+        square_order_id: squareOrder.id,
+        square_order_version: squareOrder.version,
+        square_order_state: squareOrder.state,
+      })
+      .eq("id", reservation.id);
+
+    const invoice = await createSquareInvoiceDraft({
+      reservation: { ...reservation, square_order_id: squareOrder.id, square_customer_id: squareCustomerId },
+      squareCustomerId,
+    });
+
+    await supabase
+      .from("reservations")
+      .update({
+        square_invoice_id: invoice.id,
+        square_invoice_version: invoice.version ?? null,
+        square_invoice_status: invoice.status || "DRAFT",
+        square_invoice_url: invoice.public_url || null,
+      })
+      .eq("id", reservation.id);
+
+    return res.status(200).json({
+      ok: true,
+      bookingNumber: reservation.booking_number,
+      reservationId: reservation.id,
+      contractPending: true,
+      redirectUrl: `/checkout-success?square_pending=1&booking=${encodeURIComponent(reservation.booking_number)}`,
+    });
+  } catch (error) {
+    console.error("Square production booking error:", error);
+
+    if (reservation?.id) {
+      await supabase.from("reservations").update({ status: "cancelled" }).eq("id", reservation.id);
+    }
+
+    return res.status(500).json({ error: error.message || "Could not create the Square booking." });
+  }
+}
+
 const RESOURCE_HANDLERS = {
   health: handleHealth,
   booking: handleBooking,
@@ -867,6 +1410,10 @@ const RESOURCE_HANDLERS = {
   "security-deposit": handleSecurityDeposit,
   contract: handleContract,
   portal: handlePortal,
+  "portal-actions": handlePortalActions,
+  "admin-return": handleAdminReturn,
+  timing: handleTiming,
+  "production-booking": handleProductionBooking,
 };
 
 export default async function handler(req, res) {
