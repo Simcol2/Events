@@ -11,6 +11,16 @@ function torontoDateToday() {
   }).format(new Date());
 }
 
+// Square rejects an invoice_number containing the literal substring "-R-"
+// ("Invoice number cannot contain -R-") - every booking_number this app
+// generates is "ASG-R-<year>-<seq>", so every rental checkout was hitting
+// this and failing before the customer could reach secure checkout.
+// Strip just that substring for the Square-facing field; booking_number
+// itself (shown everywhere else - portal, admin, emails) is unchanged.
+function squareSafeInvoiceNumber(bookingNumber) {
+  return String(bookingNumber || "").replace(/-R-/g, "-");
+}
+
 function previousCalendarDate(yyyyMmDd) {
   const [year, month, day] = String(yyyyMmDd).split("-").map(Number);
   if (!year || !month || !day) throw new Error("Invalid pickup date.");
@@ -56,7 +66,7 @@ export async function createSquareInvoiceDraft({
         customer_id: squareCustomerId,
       },
       delivery_method: "EMAIL",
-      invoice_number: reservation.booking_number,
+      invoice_number: squareSafeInvoiceNumber(reservation.booking_number),
       title: "A Slice of G Rental Booking",
       description:
         "Rental booking. Your booking deposit secures the reservation. " +
