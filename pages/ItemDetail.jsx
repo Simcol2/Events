@@ -541,6 +541,12 @@ export default function ItemDetail({ kind, slug, navigate }) {
                 </div>
               )}
 
+              {isPurchasable && !outOfStock && !active.made_to_order && active.quantity_owned != null && (
+                <p className="font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
+                  {Math.max(0, active.quantity_owned - (active.quantity_out_of_service || 0))} available
+                </p>
+              )}
+
               {isRentable && !outOfStock && (
                 <div className="flex items-center justify-between">
                   <span className="font-[Space_Grotesk] text-base font-medium" style={{ color: palette.goldDeep }}>
