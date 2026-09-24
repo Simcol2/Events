@@ -37,7 +37,7 @@ const SECTIONS = [
   {
     key: "glassware",
     title: "Choose Your Glassware",
-    subtitle: "Pick your favourite glass and tell us how many places you're setting.",
+    subtitle: "Because your everyday water glass does not need to attend every function.",
     category: "Glassware",
   },
   {
