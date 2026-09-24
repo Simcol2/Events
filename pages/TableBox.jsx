@@ -36,67 +36,67 @@ const SECTIONS = [
   {
     key: "plates",
     title: "Choose Your Plates",
-    subtitle: "Pick the guest count and we will send enough for everyone.",
+    subtitle: "Need them? Add them. Already have perfectly good plates? Keep yours.",
     category: "Plates",
   },
   {
     key: "chargers",
     title: "Choose Your Chargers",
-    subtitle: "Give every place setting a little more polish.",
+    subtitle: "The easiest way to make the plates you already own look intentional.",
     category: "Chargers",
   },
   {
     key: "placeCards",
     title: "Choose Your Place Cards",
-    subtitle: "Add blank ivory place cards for your table.",
+    subtitle: "Tiny detail. Suspiciously effective.",
     category: "Place Cards",
   },
   {
     key: "napkins",
     title: "Choose Your Napkins",
-    subtitle: "Finish every place setting with a folded napkin.",
+    subtitle: "Colour, texture, and suddenly your table looks like you planned ahead.",
     category: "Napkins",
   },
   {
     key: "cutlery",
     title: "Choose Your Cutlery",
-    subtitle: "Set the table with a full place setting.",
+    subtitle: "For when your everyday forks are not invited.",
     category: "Cutlery",
   },
   {
     key: "centerpieces",
     title: "Choose Your Centrepiece",
-    subtitle: "Choose the piece that anchors your table.",
+    subtitle: "Give the middle of the table something to do.",
     category: "Centerpiece",
   },
   {
     key: "cakeStands",
     title: "Choose Your Cake Stand",
-    subtitle: "Add a stand for cakes, cupcakes, or treats.",
+    subtitle: "Cakes, cupcakes, treats, or whatever deserves a little height.",
     category: "Cake Stands",
   },
   {
     key: "candles",
     title: "Choose Your Candles",
-    subtitle: "Finish the table with a little glow.",
+    subtitle: "Warm lighting fixes an unreasonable number of problems.",
     category: "Candles",
   },
   {
     key: "linens",
     title: "Choose Your Linens",
-    subtitle: "Dress the table with a runner or cloth.",
+    subtitle: "Runners, cloths, and the fastest way to change the whole table.",
     category: "Linens",
   },
   {
     key: "garland-lights",
     title: "Choose Your Garland & Lights",
-    subtitle: "Dress the table or the mantle for the holidays.",
+    subtitle: "Holiday atmosphere without storing a forest in your condo afterward.",
     category: "Garland & Lights",
   },
   {
     key: "helpfulAddOns",
     title: "Helpful Add-Ons",
-    subtitle: "A few extra pieces that make hosting easier.",
+    subtitle: "The stuff you're very glad someone owns, but absolutely do not need living in your cupboards year-round.",
     category: "Helpful Add-Ons",
   },
 ];
@@ -261,22 +261,38 @@ export default function TableBox() {
               letterSpacing: "-0.04em",
             }}
           >
-            Build Your Table Box
+            Make It Cute. Give It Back.
           </h1>
           <p
             className="mx-auto mt-7 max-w-2xl"
             style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "17px", lineHeight: 1.75 }}
           >
-            Rent only what you need for your next event at home. Choose the pieces you love, set the
-            table your way, then return everything when the celebrating is done.
+            Hosting is expensive enough. You do not need to buy a whole new personality for your
+            dining table.
+          </p>
+          <p
+            className="mx-auto mt-4 max-w-2xl"
+            style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "17px", lineHeight: 1.75 }}
+          >
+            Rent the glasses, linens, candles, serving pieces and little extras that make your place
+            feel like an occasion.
+          </p>
+          <p
+            className="mx-auto mt-4 max-w-2xl"
+            style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "17px", lineHeight: 1.75 }}
+          >
+            Use what you already own, borrow what makes it better, then give it all back when
+            everyone goes home.
           </p>
           <div
             className="mx-auto mt-7 flex max-w-xl flex-wrap items-center justify-center gap-x-6 gap-y-2"
             style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "14px" }}
           >
-            <span>$50 minimum rental order</span>
+            <span>$50 minimum rental</span>
             <span aria-hidden="true">&middot;</span>
-            <span>Toronto pickup and return</span>
+            <span>Toronto pickup &amp; return</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>Delivery + basic setup available</span>
           </div>
         </div>
       </section>
@@ -326,10 +342,13 @@ export default function TableBox() {
               className="mt-3"
               style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.9rem, 3.4vw, 2.6rem)", fontWeight: 630 }}
             >
-              A few pieces can change the whole table.
+              Same table. Better decisions.
             </h2>
             <p className="mt-3" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.7 }}>
-              Choose from each collection below. Skip anything you already have at home.
+              You don't need a new dining room. You don't even need new plates.
+            </p>
+            <p className="mt-2" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.7 }}>
+              Start with what you have. Add the pieces that make it feel intentional.
             </p>
 
             {loading && (
