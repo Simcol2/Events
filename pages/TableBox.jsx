@@ -7,6 +7,7 @@ import { withBasePath } from "../apiBase";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import DescriptionBody from "../components/ItemDescription";
 import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
+import SourcingRequestModal from "../components/SourcingRequestModal";
 import {
   ElevatedCard,
   Kicker,
@@ -17,6 +18,12 @@ import {
 } from "../components/EditorialKit";
 
 const MINIMUM = 50;
+
+// A real catalog row (rental_price 50, no browsable category tags, not
+// tied to any table_box_category section) so it flows through the same
+// authoritative-pricing checkout path as every physical rental, rather
+// than being an arbitrary client-side number the backend has to trust.
+const DELIVERY_SETUP_ITEM_ID = 572;
 
 // Pulled live from the decor catalogue by items.table_box_category (not a
 // separate product list, and not a hand-picked id list either) - any active
@@ -122,6 +129,8 @@ export default function TableBox() {
   const [openSection, setOpenSection] = useState(SECTIONS[0].key);
   const [justAdded, setJustAdded] = useState(false);
   const [openProduct, setOpenProduct] = useState(null);
+  const [deliverySetup, setDeliverySetup] = useState(false);
+  const [showSourcingModal, setShowSourcingModal] = useState(false);
   // Which variant is showing for each variant_group tile - e.g. which guest
   // count of the Blush and Gold Plate Set. Keyed by the group's key (the
   // variant_group string), valued with the selected row's item id.
@@ -142,11 +151,12 @@ export default function TableBox() {
         return;
       }
       const categories = SECTIONS.map((s) => s.category);
-      const [byCategory, byCartId] = await Promise.all([
+      const [byCategory, byCartId, deliveryItemRow] = await Promise.all([
         supabase.from("items").select("*").in("table_box_category", categories),
         cartRentalIds.length
           ? supabase.from("items").select("*").in("id", cartRentalIds)
           : Promise.resolve({ data: [], error: null }),
+        supabase.from("items").select("*").eq("id", DELIVERY_SETUP_ITEM_ID).maybeSingle(),
       ]);
       if (ignore) return;
       if (byCategory.error || byCartId.error) {
@@ -156,6 +166,7 @@ export default function TableBox() {
         for (const item of [...(byCategory.data || []), ...(byCartId.data || [])]) {
           merged.set(item.id, item);
         }
+        if (deliveryItemRow.data) merged.set(deliveryItemRow.data.id, deliveryItemRow.data);
         setCatalogItems(Array.from(merged.values()));
       }
       setLoading(false);
@@ -199,7 +210,13 @@ export default function TableBox() {
     [allProducts, qty]
   );
 
-  const total = selected.reduce((sum, item) => sum + item.lineTotal, 0);
+  const deliveryItem = byId[DELIVERY_SETUP_ITEM_ID];
+  // Delivery only makes sense alongside actual rental pieces, so it never
+  // counts toward the $50 rental minimum on its own - it rides along with
+  // whatever's already clearing that bar.
+  const deliveryFee = deliverySetup && deliveryItem ? Number(deliveryItem.rental_price || 0) : 0;
+
+  const total = selected.reduce((sum, item) => sum + item.lineTotal, 0) + deliveryFee;
   const rentalSubtotal = selected
     .filter(isRental)
     .reduce((sum, item) => sum + item.lineTotal, 0);
@@ -235,7 +252,9 @@ export default function TableBox() {
         ? addRental(item.id, null, item.quantity)
         : addToCart(item.id, "catalog", null, item.quantity)
     );
+    if (deliveryFee > 0) addRental(DELIVERY_SETUP_ITEM_ID, null, 1);
     setQty({});
+    setDeliverySetup(false);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 5000);
   };
@@ -530,11 +549,10 @@ export default function TableBox() {
               {selected.length === 0 ? (
                 <div className="mt-4">
                   <p style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "18px", fontWeight: 650 }}>
-                    Your box is waiting.
+                    Nothing yet. Your cupboards win for now.
                   </p>
                   <p className="mt-2" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "14px", lineHeight: 1.6 }}>
-                    Choose only the pieces your table needs. We won't make you rent twelve napkins because
-                    you wanted one cake stand.
+                    Use what you already own. Add only the pieces that make the setup better.
                   </p>
                 </div>
               ) : (
@@ -549,6 +567,16 @@ export default function TableBox() {
                       </strong>
                     </div>
                   ))}
+                  {deliveryFee > 0 && (
+                    <div className="flex items-start justify-between gap-3">
+                      <span style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "14px" }}>
+                        Delivery + Basic Setup
+                      </span>
+                      <strong style={{ ...fonts.bodyFont, color: palette.primaryDeep, fontSize: "14px", flexShrink: 0 }}>
+                        {money(deliveryFee)}
+                      </strong>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -620,12 +648,77 @@ export default function TableBox() {
                 Rental availability is confirmed for your selected date at checkout.
               </p>
               <p className="mt-2 text-xs leading-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
-                Need a longer rental period? Inquire about our week-long pricing.
+                Your standard rental includes pickup the day before your event and return the day
+                after.
+              </p>
+              <p className="mt-2 text-xs leading-5" style={{ ...fonts.bodyFont, color: palette.muted }}>
+                Need it longer? Earlier pickup and extended return options are available when you
+                choose your rental dates.
               </p>
             </ElevatedCard>
           </aside>
         </div>
       </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <ElevatedCard palette={palette} className="p-6 sm:p-7">
+            <Kicker palette={palette} fonts={fonts}>CAN'T FIND THE THING?</Kicker>
+            <h3
+              className="mt-3"
+              style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "22px", fontWeight: 640, lineHeight: 1.15 }}
+            >
+              Let my shopping problem be of benefit to you.
+            </h3>
+            <p className="mt-3" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "15px", lineHeight: 1.65 }}>
+              Send me a photo, a link, or a weirdly specific description. If I can reasonably source
+              it and it's something I can use again in the rental collection, I'll try to find it.
+            </p>
+            <p className="mt-3 font-semibold" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "13px" }}>
+              No sourcing fee. No custom-request charge.
+            </p>
+            <button
+              onClick={() => setShowSourcingModal(true)}
+              className="mt-5 rounded-full px-6 py-3 text-xs font-bold tracking-[0.12em]"
+              style={{ ...fonts.bodyFont, background: palette.primaryDeep, color: "#FFFFFF", textTransform: "uppercase" }}
+            >
+              REQUEST THE THING
+            </button>
+          </ElevatedCard>
+
+          <ElevatedCard palette={palette} className="p-6 sm:p-7">
+            <Kicker palette={palette} fonts={fonts}>DELIVERY + SETUP</Kicker>
+            <h3
+              className="mt-3"
+              style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "22px", fontWeight: 640, lineHeight: 1.15 }}
+            >
+              Don't want to deal with it?
+            </h3>
+            <p className="mt-3" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "15px", lineHeight: 1.65 }}>
+              Add delivery, basic setup and pickup. We'll bring your rental pieces, get the basics
+              in place, and come back for them afterward. You host. We handle the boxes.
+            </p>
+            <p className="mt-3 font-semibold" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "13px" }}>
+              {money(deliveryItem ? Number(deliveryItem.rental_price || 0) : 50)} flat, added to your box.
+            </p>
+            <button
+              onClick={() => setDeliverySetup((current) => !current)}
+              className="mt-5 rounded-full px-6 py-3 text-xs font-bold tracking-[0.12em]"
+              style={{
+                ...fonts.bodyFont,
+                background: deliverySetup ? "transparent" : palette.primaryDeep,
+                color: deliverySetup ? palette.primaryDeep : "#FFFFFF",
+                border: deliverySetup ? `1px solid ${palette.primaryDeep}` : "none",
+                textTransform: "uppercase",
+              }}
+            >
+              {deliverySetup ? "DELIVERY + SETUP ADDED" : "ADD DELIVERY + SETUP"}
+            </button>
+          </ElevatedCard>
+        </div>
+      </section>
+
+      {showSourcingModal && <SourcingRequestModal onClose={() => setShowSourcingModal(false)} />}
 
       {openProduct && (
         <div
