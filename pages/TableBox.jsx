@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Minus, Plus, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
@@ -12,7 +12,6 @@ import { rentalUnitPrice } from "../api/_pricing.js";
 import {
   ElevatedCard,
   Kicker,
-  Reveal,
   editorialShadow,
   paperTexture,
   rgba,
@@ -146,6 +145,17 @@ export default function TableBox() {
   const [loadError, setLoadError] = useState("");
   const [qty, setQty] = useState({});
   const [openSection, setOpenSection] = useState(SECTIONS[0].key);
+  // Opening a category collapses whichever one was open above it, which
+  // pulls the clicked header up and off screen. Once the new layout is in
+  // place, bring that header back to the top of the viewport.
+  const sectionRefs = useRef({});
+  const scrollToSectionRef = useRef(null);
+  useLayoutEffect(() => {
+    const key = scrollToSectionRef.current;
+    if (!key) return;
+    scrollToSectionRef.current = null;
+    sectionRefs.current[key]?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }, [openSection]);
   const [justAdded, setJustAdded] = useState(false);
   const [openProduct, setOpenProduct] = useState(null);
   const [deliverySetup, setDeliverySetup] = useState(false);
@@ -403,10 +413,23 @@ export default function TableBox() {
                   const isOpen = openSection === section.key;
 
                   return (
-                    <Reveal key={section.key} delay={index * 40}>
-                      <div style={{ border: `1px solid ${palette.line}`, borderRadius: "5px", background: palette.surface }}>
+                      <div
+                        key={section.key}
+                        ref={(el) => {
+                          sectionRefs.current[section.key] = el;
+                        }}
+                        style={{
+                          border: `1px solid ${palette.line}`,
+                          borderRadius: "5px",
+                          background: palette.surface,
+                          scrollMarginTop: "96px",
+                        }}
+                      >
                         <button
-                          onClick={() => setOpenSection(isOpen ? "" : section.key)}
+                          onClick={() => {
+                            if (!isOpen) scrollToSectionRef.current = section.key;
+                            setOpenSection(isOpen ? "" : section.key);
+                          }}
                           aria-expanded={isOpen}
                           className="flex w-full items-center gap-4 px-5 py-4 text-left"
                         >
@@ -555,7 +578,6 @@ export default function TableBox() {
                           </div>
                         )}
                       </div>
-                    </Reveal>
                   );
                 })}
               </div>
