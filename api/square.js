@@ -852,11 +852,17 @@ async function handlePortal(req, res) {
     const { data: reservations, error: reservationsError } = await clientSupabase
       .from("reservations")
       .select(
-        "id,booking_number,status,contract_status,currency,booking_deposit_cents,security_deposit_cents,balance_due_cents,square_invoice_id,square_invoice_status,square_invoice_url,square_balance_autopay,square_payment_failed,square_security_status,square_security_refund_status,square_security_refund_cents,square_security_refunded_at,square_booking_deposit_status,square_booking_deposit_paid_at,future_payment_method,manual_payment_acknowledged,manual_balance_payment_due,manual_security_payment_due,balance_due_at,security_deposit_due_at"
+        "id,booking_number,status,contract_status,currency,booking_deposit_cents,security_deposit_cents,balance_due_cents,square_invoice_id,square_invoice_status,square_invoice_url,square_balance_autopay,square_payment_failed,square_security_status,square_security_refund_status,square_security_refund_cents,square_security_refunded_at,square_booking_deposit_status,square_booking_deposit_paid_at,future_payment_method,manual_payment_acknowledged,manual_balance_payment_due,manual_security_payment_due,balance_due_at,security_deposit_due_at,pickup_at,pickup_date"
       )
       .eq("customer_id", customer.id);
 
     if (reservationsError) throw reservationsError;
+
+    // The portal only offers the manual security-deposit form once this time
+    // has passed; resource=portal-manual-payment enforces the same rule.
+    for (const reservation of reservations || []) {
+      reservation.security_deposit_opens_at = securityDepositOpensAt(reservation)?.toISOString() || null;
+    }
 
     const ids = (reservations || []).map((r) => r.id);
 
@@ -962,7 +968,133 @@ async function handlePortalActions(req, res) {
 // their remaining balance or refundable security deposit from the portal with
 // a one-time Square card token. The server computes the amount from the
 // reservation and the ledger; the browser never chooses how much to charge.
+//
+// Money safety, in order:
+//   1. The customer's session only proves who they are and that the booking
+//      is theirs. Every ledger/reservation write uses the service-role client.
+//   2. A pending attempt row is written BEFORE Square is called. Its id is the
+//      Square idempotency key, so a retried request can never charge twice.
+//   3. A declined card marks the attempt failed, so the next try (maybe with a
+//      different card) gets a fresh key instead of IDEMPOTENCY_KEY_REUSED.
+//   4. An unknown outcome (timeout, Square 5xx) leaves the attempt pending.
+//      The next request asks Square what actually happened before charging.
+//   5. Once Square reports COMPLETED, the customer is always told it worked,
+//      even if a database write after that fails.
 // ---------------------------------------------------------------------
+
+// The security deposit is due 48 hours before pickup. Opening payment only at
+// that moment would leave no window before the deadline, and opening it at
+// booking would mean holding refundable money for months. Five days out gives
+// customers a few days' notice without holding the deposit longer than needed.
+const SECURITY_DEPOSIT_PAYMENT_OPENS_HOURS_BEFORE_PICKUP = 120;
+
+// A pending attempt younger than this may still be mid-request, so a second
+// request must wait rather than reconcile it.
+const MANUAL_ATTEMPT_SETTLE_MS = 2 * 60 * 1000;
+
+const MANUAL_PAYMENT_SOURCE = "portal_manual_payment";
+
+function securityDepositOpensAt(reservation) {
+  const pickupAt = reservation.pickup_at || defaultPickupAt(reservation.pickup_date);
+  if (!pickupAt) return null;
+  return new Date(
+    new Date(pickupAt).getTime() - SECURITY_DEPOSIT_PAYMENT_OPENS_HOURS_BEFORE_PICKUP * 60 * 60 * 1000
+  );
+}
+
+function torontoDateTime(date) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Toronto",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function manualPaymentNote(reservation, kind, attemptId) {
+  const label = kind === "balance" ? "manual remaining balance" : "manual refundable security deposit";
+  return `${reservation.booking_number} ${label} [attempt ${attemptId}]`;
+}
+
+function manualPaymentHttpError(message, statusCode) {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  return error;
+}
+
+// Marks the attempt row paid and applies the payment to the reservation.
+// Called only after Square has confirmed COMPLETED.
+async function recordManualPayment({ db, reservation, kind, attempt, payment }) {
+  const paidAt = payment.created_at || new Date().toISOString();
+
+  const { error: ledgerError } = await db
+    .from("square_transactions")
+    .update({
+      status: "paid",
+      square_payment_id: payment.id,
+      paid_at: paidAt,
+      metadata: { ...(attempt.metadata || {}), source: MANUAL_PAYMENT_SOURCE, square_status: payment.status },
+    })
+    .eq("id", attempt.id);
+
+  if (ledgerError) throw ledgerError;
+
+  // Re-read the reservation so the overdue check sees the latest flags.
+  const { data: current } = await db
+    .from("reservations")
+    .select("status,manual_balance_payment_due,manual_security_payment_due")
+    .eq("id", reservation.id)
+    .maybeSingle();
+  const latest = current || reservation;
+
+  const update =
+    kind === "balance"
+      ? { manual_balance_payment_due: false, square_payment_failed: false }
+      : {
+          manual_security_payment_due: false,
+          square_security_payment_id: payment.id,
+          square_security_status: payment.status,
+          square_security_collected_at: paidAt,
+          square_payment_failed: false,
+        };
+
+  // resource=timing flags a missed manual deadline as payment_overdue. Once
+  // nothing flagged is still outstanding, put the booking back in good
+  // standing rather than leaving it marked overdue after the customer paid.
+  const balanceStillFlagged = kind === "balance" ? false : latest.manual_balance_payment_due;
+  const securityStillFlagged = kind === "security_deposit" ? false : latest.manual_security_payment_due;
+  if (latest.status === "payment_overdue" && !balanceStillFlagged && !securityStillFlagged) {
+    update.status = "pending";
+  }
+
+  const { error: reservationUpdateError } = await db.from("reservations").update(update).eq("id", reservation.id);
+  if (reservationUpdateError) throw reservationUpdateError;
+}
+
+// Asks Square whether an unresolved attempt actually went through, by looking
+// for a payment carrying that attempt's id in its note.
+async function findSquarePaymentForAttempt(attempt) {
+  const beginTime = new Date(new Date(attempt.created_at).getTime() - 5 * 60 * 1000).toISOString();
+  const params = new URLSearchParams({
+    location_id: squareLocationId(),
+    begin_time: beginTime,
+    sort_order: "ASC",
+    limit: "100",
+  });
+
+  let cursor = null;
+  do {
+    if (cursor) params.set("cursor", cursor);
+    const data = await squareRequest(`/v2/payments?${params.toString()}`);
+    const match = (data.payments || []).find((payment) => String(payment.note || "").includes(`[attempt ${attempt.id}]`));
+    if (match) return match;
+    cursor = data.cursor || null;
+  } while (cursor);
+
+  return null;
+}
+
 async function handlePortalManualPayment(req, res) {
   try {
     if (req.method !== "POST") {
@@ -970,7 +1102,9 @@ async function handlePortalManualPayment(req, res) {
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const { supabase: clientSupabase, customer } = await requireClient(req);
+    // Authorization only: who is this, and do they own the booking.
+    const { customer } = await requireClient(req);
+    const db = adminSupabase();
 
     const reservationId = Number(req.body?.reservationId);
     const kind = String(req.body?.kind || "");
@@ -988,15 +1122,16 @@ async function handlePortalManualPayment(req, res) {
       return res.status(400).json({ error: "Secure card payment details are required." });
     }
 
-    const { data: reservation, error: reservationError } = await clientSupabase
+    const { data: reservation, error: reservationError } = await db
       .from("reservations")
       .select("*")
       .eq("id", reservationId)
       .eq("customer_id", customer.id)
       .eq("payment_provider", "square")
-      .single();
+      .maybeSingle();
 
-    if (reservationError || !reservation) {
+    if (reservationError) throw reservationError;
+    if (!reservation) {
       return res.status(404).json({ error: "Booking not found." });
     }
 
@@ -1010,95 +1145,180 @@ async function handlePortalManualPayment(req, res) {
       return res.status(409).json({ error: "This booking cannot accept another payment." });
     }
 
-    const { data: paidRows, error: paidRowsError } = await clientSupabase
+    if (kind === "security_deposit") {
+      const opensAt = securityDepositOpensAt(reservation);
+      if (opensAt && Date.now() < opensAt.getTime()) {
+        return res.status(409).json({
+          error: `Your refundable security deposit can be paid from ${torontoDateTime(opensAt)}.`,
+          opensAt: opensAt.toISOString(),
+        });
+      }
+    }
+
+    // Settle any earlier attempt for this payment that never got an answer.
+    const { data: pendingAttempts, error: pendingError } = await db
       .from("square_transactions")
-      .select("kind,status,amount_cents")
+      .select("*")
       .eq("reservation_id", reservation.id)
+      .eq("kind", kind)
+      .eq("status", "pending")
+      .eq("metadata->>source", MANUAL_PAYMENT_SOURCE)
+      .order("created_at", { ascending: true });
+
+    if (pendingError) throw pendingError;
+
+    for (const attempt of pendingAttempts || []) {
+      if (Date.now() - new Date(attempt.created_at).getTime() < MANUAL_ATTEMPT_SETTLE_MS) {
+        return res.status(409).json({
+          error: "A payment for this is already being processed. Please refresh in a couple of minutes.",
+        });
+      }
+
+      const found = await findSquarePaymentForAttempt(attempt);
+
+      if (found?.status === "COMPLETED") {
+        try {
+          await recordManualPayment({ db, reservation, kind, attempt, payment: found });
+        } catch (recordError) {
+          console.error(`Manual payment ${found.id} recovered from Square but could not be recorded:`, recordError);
+        }
+        return res.status(200).json({ ok: true, recovered: true, kind, paymentId: found.id });
+      }
+
+      // Square never completed it (declined, or the request never arrived).
+      await db
+        .from("square_transactions")
+        .update({
+          status: "failed",
+          metadata: { ...(attempt.metadata || {}), resolution: found ? `square_${String(found.status).toLowerCase()}` : "not_found_in_square" },
+        })
+        .eq("id", attempt.id);
+    }
+
+    const { data: paidRows, error: paidRowsError } = await db
+      .from("square_transactions")
+      .select("amount_cents")
+      .eq("reservation_id", reservation.id)
+      .eq("kind", kind)
       .eq("status", "paid");
 
     if (paidRowsError) throw paidRowsError;
 
-    const paidFor = (targetKind) =>
-      (paidRows || [])
-        .filter((row) => row.kind === targetKind)
-        .reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
-
+    const alreadyPaidCents = (paidRows || []).reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
     const configuredDue =
       kind === "balance"
         ? Number(reservation.balance_due_cents || 0)
         : Number(reservation.security_deposit_cents || 0);
-
-    const amount = Math.max(0, configuredDue - paidFor(kind));
+    const amount = Math.max(0, configuredDue - alreadyPaidCents);
 
     if (amount <= 0) {
       return res.status(200).json({ ok: true, alreadyPaid: true, kind });
     }
 
-    const result = await squareRequest("/v2/payments", {
-      method: "POST",
-      body: {
-        source_id: paymentToken,
-        idempotency_key: `asg-manual-${kind}-${reservation.id}-${Date.now()}`.slice(0, 45),
-        amount_money: {
-          amount,
-          currency: String(reservation.currency || "cad").toUpperCase(),
-        },
-        customer_id: reservation.square_customer_id,
-        location_id: squareLocationId(),
-        reference_id: reservation.booking_number,
-        note:
-          kind === "balance"
-            ? `${reservation.booking_number} manual remaining balance`
-            : `${reservation.booking_number} manual refundable security deposit`,
-        autocomplete: true,
-      },
-    });
-
-    const payment = result.payment;
-    if (!payment?.id || payment.status !== "COMPLETED") {
-      throw new Error("The Square payment was not completed.");
-    }
-
-    const { error: ledgerError } = await clientSupabase
+    // Record the attempt before any money moves. Its id is the idempotency key.
+    const { data: attempt, error: attemptError } = await db
       .from("square_transactions")
       .insert({
         customer_id: customer.id,
         reservation_id: reservation.id,
         kind,
-        square_payment_id: payment.id,
         amount_cents: amount,
         currency: String(reservation.currency || "cad").toLowerCase(),
-        status: "paid",
-        paid_at: payment.created_at || new Date().toISOString(),
-        metadata: { source: "portal_manual_payment" },
+        status: "pending",
+        metadata: { source: MANUAL_PAYMENT_SOURCE },
+      })
+      .select("*")
+      .single();
+
+    if (attemptError) throw attemptError;
+
+    // Two requests arriving together could both get this far. Only the oldest
+    // pending attempt may charge; the other backs off.
+    const { data: racing, error: racingError } = await db
+      .from("square_transactions")
+      .select("id")
+      .eq("reservation_id", reservation.id)
+      .eq("kind", kind)
+      .eq("status", "pending")
+      .eq("metadata->>source", MANUAL_PAYMENT_SOURCE)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true })
+      .limit(1);
+
+    if (racingError) throw racingError;
+
+    if (racing?.[0]?.id !== attempt.id) {
+      await db
+        .from("square_transactions")
+        .update({ status: "failed", metadata: { ...attempt.metadata, resolution: "superseded" } })
+        .eq("id", attempt.id);
+      return res.status(409).json({
+        error: "A payment for this is already being processed. Please refresh in a couple of minutes.",
       });
-
-    if (ledgerError) throw ledgerError;
-
-    const update =
-      kind === "balance"
-        ? { manual_balance_payment_due: false, square_payment_failed: false }
-        : {
-            manual_security_payment_due: false,
-            square_security_payment_id: payment.id,
-            square_security_status: payment.status,
-            square_security_collected_at: payment.created_at || new Date().toISOString(),
-            square_payment_failed: false,
-          };
-
-    // resource=timing flags a missed manual deadline as payment_overdue. Once
-    // nothing flagged is still outstanding, put the booking back in good
-    // standing rather than leaving it marked overdue after the customer paid.
-    const balanceStillFlagged = kind === "balance" ? false : reservation.manual_balance_payment_due;
-    const securityStillFlagged = kind === "security_deposit" ? false : reservation.manual_security_payment_due;
-    if (reservation.status === "payment_overdue" && !balanceStillFlagged && !securityStillFlagged) {
-      update.status = "pending";
     }
 
-    await clientSupabase
-      .from("reservations")
-      .update(update)
-      .eq("id", reservation.id);
+    let payment;
+    try {
+      const result = await squareRequest("/v2/payments", {
+        method: "POST",
+        body: {
+          source_id: paymentToken,
+          idempotency_key: `asg-man-${attempt.id}`,
+          amount_money: {
+            amount,
+            currency: String(reservation.currency || "cad").toUpperCase(),
+          },
+          customer_id: reservation.square_customer_id || undefined,
+          location_id: squareLocationId(),
+          reference_id: reservation.booking_number,
+          note: manualPaymentNote(reservation, kind, attempt.id),
+          autocomplete: true,
+        },
+      });
+      payment = result.payment;
+    } catch (squareError) {
+      const definitive = squareError.statusCode && squareError.statusCode < 500;
+
+      if (definitive) {
+        // Square answered and refused (declined card, invalid token, etc.):
+        // nothing was charged, so free this attempt for a fresh key.
+        await db
+          .from("square_transactions")
+          .update({ status: "failed", metadata: { ...attempt.metadata, resolution: "square_rejected", square_error: squareError.message } })
+          .eq("id", attempt.id);
+        throw squareError;
+      }
+
+      // Timeout or Square-side error: we genuinely do not know whether the
+      // card was charged. Leave the attempt pending so the next request asks
+      // Square before charging anything.
+      console.error(`Manual payment attempt ${attempt.id} has an unknown outcome:`, squareError);
+      throw manualPaymentHttpError(
+        "We could not confirm this payment with Square. Please wait a couple of minutes and refresh before trying again. You will not be charged twice.",
+        502
+      );
+    }
+
+    if (!payment?.id || payment.status !== "COMPLETED") {
+      await db
+        .from("square_transactions")
+        .update({
+          status: "failed",
+          square_payment_id: payment?.id || null,
+          metadata: { ...attempt.metadata, resolution: `square_${String(payment?.status || "unknown").toLowerCase()}` },
+        })
+        .eq("id", attempt.id);
+      throw manualPaymentHttpError("The card payment was not completed. You have not been charged.", 402);
+    }
+
+    // Money has moved. From here the customer is always told it worked.
+    try {
+      await recordManualPayment({ db, reservation, kind, attempt, payment });
+    } catch (recordError) {
+      // The attempt row is still pending, so the next portal request will find
+      // this payment in Square and record it.
+      console.error(`Manual payment ${payment.id} succeeded but recording failed:`, recordError);
+    }
 
     return res.status(200).json({
       ok: true,
@@ -1428,10 +1648,67 @@ async function chargeAutoRemainingBalance(reservation, customer) {
   return { paid: payment.status === "COMPLETED" };
 }
 
+// A manual portal payment that Square completed but that could not be
+// recorded (or whose request died mid-flight) is left as a pending attempt.
+// Settle those here so the ledger heals even if the customer never retries.
+async function reconcileStaleManualAttempts() {
+  const cutoff = new Date(Date.now() - MANUAL_ATTEMPT_SETTLE_MS).toISOString();
+  const { data: attempts, error } = await supabase
+    .from("square_transactions")
+    .select("*")
+    .eq("status", "pending")
+    .eq("metadata->>source", MANUAL_PAYMENT_SOURCE)
+    .lt("created_at", cutoff);
+
+  if (error) {
+    console.error("Could not load pending manual payment attempts:", error);
+    return [];
+  }
+
+  const results = [];
+  for (const attempt of attempts || []) {
+    try {
+      const found = await findSquarePaymentForAttempt(attempt);
+
+      if (found?.status === "COMPLETED") {
+        const { data: reservation } = await supabase
+          .from("reservations")
+          .select("*")
+          .eq("id", attempt.reservation_id)
+          .maybeSingle();
+
+        if (reservation) {
+          await recordManualPayment({ db: supabase, reservation, kind: attempt.kind, attempt, payment: found });
+          results.push({ attemptId: attempt.id, recordedPaymentId: found.id });
+        }
+        continue;
+      }
+
+      await supabase
+        .from("square_transactions")
+        .update({
+          status: "failed",
+          metadata: {
+            ...(attempt.metadata || {}),
+            resolution: found ? `square_${String(found.status).toLowerCase()}` : "not_found_in_square",
+          },
+        })
+        .eq("id", attempt.id);
+      results.push({ attemptId: attempt.id, closedAs: found ? found.status : "not_found" });
+    } catch (reconcileError) {
+      console.error(`Could not reconcile manual payment attempt ${attempt.id}:`, reconcileError);
+    }
+  }
+
+  return results;
+}
+
 async function handleTiming(req, res) {
   if (!cronAuthorized(req)) {
     return res.status(401).json({ error: "Unauthorized." });
   }
+
+  const reconciledManualAttempts = await reconcileStaleManualAttempts();
 
   const now = new Date();
 
@@ -1557,7 +1834,7 @@ async function handleTiming(req, res) {
     });
   }
 
-  return res.status(200).json({ ok: true, checked: results.length, results });
+  return res.status(200).json({ ok: true, checked: results.length, results, reconciledManualAttempts });
 }
 
 // ---------------------------------------------------------------------

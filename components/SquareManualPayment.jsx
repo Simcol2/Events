@@ -17,6 +17,7 @@ export default function SquareManualPayment({
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [paid, setPaid] = useState(false);
 
   const handleReady = useCallback((tokenize) => {
     tokenizeRef.current = tokenize;
@@ -39,6 +40,7 @@ export default function SquareManualPayment({
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Payment could not be completed.");
+      setPaid(true);
       onPaid?.(data);
     } catch (err) {
       setError(err.message || "Payment could not be completed.");
@@ -48,6 +50,17 @@ export default function SquareManualPayment({
   }
 
   const label = kind === "balance" ? "remaining rental balance" : "refundable security deposit";
+
+  if (paid) {
+    return (
+      <div className="mt-4 rounded-xl border border-[#CFE3D7] bg-[#F1F8F4] p-4">
+        <p className="font-[Space_Grotesk] text-sm font-semibold text-[#0B4933]">Payment received</p>
+        <p className="mt-1 font-[Space_Grotesk] text-xs text-[#4E6B5C]">
+          Your {label} is paid. Thank you.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-4 rounded-xl border border-[#E7DFCE] bg-white p-4">

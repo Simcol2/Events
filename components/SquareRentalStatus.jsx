@@ -16,6 +16,13 @@ function dateLabel(value) {
   return date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function dateTimeLabel(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString("en-CA", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
 function Flag({ done, children }) {
   return (
     <div className="flex items-center gap-2 font-[Space_Grotesk] text-sm">
@@ -124,6 +131,11 @@ export default function SquareRentalStatus({ accessToken, customer }) {
           const cardOnFile = reservation.future_payment_method === "card_on_file";
           const manualPayment = reservation.future_payment_method === "manual";
           const contractSigned = reservation.contract_status === "signed";
+          // Refundable money should not be held for months, so the manual
+          // security-deposit form only opens shortly before pickup (the server
+          // decides when and refuses earlier payments).
+          const securityOpensAt = reservation.security_deposit_opens_at;
+          const securityPayable = !securityOpensAt || Date.now() >= new Date(securityOpensAt).getTime();
 
           return (
             <div
@@ -197,6 +209,11 @@ export default function SquareRentalStatus({ accessToken, customer }) {
                       <span className="mt-1 block">
                         {money(securityDue, reservation.currency)} must be paid at least 48 hours before pickup.
                       </span>
+                      {!securityPayable && (
+                        <span className="mt-1 block text-xs text-[#8C846F]">
+                          You can pay this from {dateTimeLabel(securityOpensAt)}.
+                        </span>
+                      )}
                     </>
                   ) : (
                     "Collected closer to pickup."
@@ -233,7 +250,7 @@ export default function SquareRentalStatus({ accessToken, customer }) {
                 />
               )}
 
-              {manualPayment && !securityPaid && (
+              {manualPayment && !securityPaid && securityPayable && (
                 <SquareManualPayment
                   accessToken={accessToken}
                   reservationId={reservation.id}
