@@ -3,7 +3,6 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { usePalette } from "../PaletteContext";
 import { useEventType } from "../EventTypeContext";
 import { FAMILIES } from "../pageColors";
-import EventTypeBar from "./EventTypeBar";
 
 // A nav CTA's own color, when it names one (e.g. Client Portal's coral),
 // instead of the page's own dominant color - a fixed brand color reads as
@@ -43,9 +42,6 @@ export default function SiteHeader({ current, navigate, nav }) {
       className="sticky top-0 z-50 backdrop-blur-md"
       style={{ borderBottom: `1px solid ${palette.line}CC`, background: `${palette.bg}F2` }}
     >
-      {/* Event-type bar sits above everything else, on every page */}
-      <EventTypeBar />
-
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <button onClick={() => go({ path: "/" })} className="group text-left">
           <div className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.42em]" style={{ color: palette.goldDeep }}>

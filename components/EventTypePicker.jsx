@@ -5,10 +5,10 @@ import { useEventType } from "../EventTypeContext";
 
 const EXIT_DURATION = 280;
 
-// Full-screen overlay asking "what are you planning?" It auto-opens once
-// (see App.jsx) and is reopened anytime via the persistent EventTypeBar in
-// the header. Picking a card, or dismissing, both resolve the choice so it
-// never nags a visitor twice; see EventTypeContext.closePicker.
+// Full-screen overlay asking "what are you planning?" Opened by every
+// "Build My Experience" entry point. Picking a card, or dismissing, both
+// resolve the choice so it never nags a visitor twice; see
+// EventTypeContext.closePicker.
 //
 // Stays mounted a beat after `isPickerOpen` goes false so the fade/scale-out
 // can actually play instead of the whole thing snapping away instantly.

@@ -41,11 +41,6 @@ export function EventTypeProvider({ children }) {
     setIsPickerOpen(false);
   };
 
-  // Used by the header's event-type chip: just swap the type, no navigation.
-  const openPicker = () => {
-    setBuilderIntent(false);
-    setIsPickerOpen(true);
-  };
   // Used by every "Build My Experience" entry point: after picking, the
   // visitor should land in the Package Builder for that type.
   const openPickerForBuilder = () => {
@@ -68,7 +63,6 @@ export function EventTypeProvider({ children }) {
         hasChosen,
         isPickerOpen,
         builderIntent,
-        openPicker,
         openPickerForBuilder,
         closePicker,
         chooseEventType,
