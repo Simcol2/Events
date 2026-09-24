@@ -107,6 +107,12 @@ const SECTIONS = [
     category: "Garland & Lights",
   },
   {
+    key: "disposables",
+    title: "Choose Your Disposables",
+    subtitle: "Pretty enough for the photos. Nobody has to wash them.",
+    category: "Disposables",
+  },
+  {
     key: "helpfulAddOns",
     title: "Helpful Add-Ons",
     subtitle: "The stuff you're very glad someone owns, but absolutely do not need living in your cupboards year-round.",
