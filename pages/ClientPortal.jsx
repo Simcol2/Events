@@ -289,8 +289,7 @@ function ReservationCard({ reservation, reservationItems, contracts, transaction
           </div>
           {isSquareProvider ? (
             <p className="font-[Space_Grotesk] text-sm leading-6 text-[#5C5645]">
-              This booking is billed through Square. See the Square booking status section below for
-              your deposit, balance and security-deposit status, and to open your Square invoice.
+              See the booking status section below for your deposit, balance and security-deposit status.
             </p>
           ) : (
             <>

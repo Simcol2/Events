@@ -1294,7 +1294,7 @@ async function handlePortalManualPayment(req, res) {
       // Square before charging anything.
       console.error(`Manual payment attempt ${attempt.id} has an unknown outcome:`, squareError);
       throw manualPaymentHttpError(
-        "We could not confirm this payment with Square. Please wait a couple of minutes and refresh before trying again. You will not be charged twice.",
+        "We could not confirm this payment. Please wait a couple of minutes and refresh before trying again. You will not be charged twice.",
         502
       );
     }

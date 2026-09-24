@@ -78,10 +78,10 @@ export default function SquareRentalStatus({ accessToken, customer }) {
     })
       .then(async (response) => {
         const payload = await response.json();
-        if (!response.ok) throw new Error(payload.error || "Could not load Square status.");
+        if (!response.ok) throw new Error(payload.error || "Could not load your booking status.");
         setData(payload);
       })
-      .catch((err) => setError(err.message || "Could not load Square status."));
+      .catch((err) => setError(err.message || "Could not load your booking status."));
   }, [accessToken, refreshKey]);
 
   const txByReservation = useMemo(() => {
@@ -108,7 +108,7 @@ export default function SquareRentalStatus({ accessToken, customer }) {
       <div className="flex items-center gap-2">
         <CreditCard size={20} className="text-[#D9AE45]" />
         <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">
-          Square booking status
+          Booking status
         </h2>
       </div>
 
@@ -184,6 +184,11 @@ export default function SquareRentalStatus({ accessToken, customer }) {
                       <span className="mt-1 block">
                         {money(balanceDue, reservation.currency)} must be paid at least 7 days before pickup.
                       </span>
+                      {reservation.balance_due_at && (
+                        <span className="mt-1 block text-xs text-[#8C846F]">
+                          Due {dateLabel(reservation.balance_due_at)}.
+                        </span>
+                      )}
                     </>
                   ) : (
                     "Collected closer to pickup."
@@ -209,6 +214,11 @@ export default function SquareRentalStatus({ accessToken, customer }) {
                       <span className="mt-1 block">
                         {money(securityDue, reservation.currency)} must be paid at least 48 hours before pickup.
                       </span>
+                      {reservation.security_deposit_due_at && (
+                        <span className="mt-1 block text-xs text-[#8C846F]">
+                          Due {dateLabel(reservation.security_deposit_due_at)}.
+                        </span>
+                      )}
                       {!securityPayable && (
                         <span className="mt-1 block text-xs text-[#8C846F]">
                           You can pay this from {dateTimeLabel(securityOpensAt)}.
@@ -275,7 +285,7 @@ export default function SquareRentalStatus({ accessToken, customer }) {
 
               {reservation.square_payment_failed && (
                 <p className="mt-3 font-[Space_Grotesk] text-xs font-semibold text-red-700">
-                  A scheduled Square payment needs attention.
+                  A scheduled payment needs attention.
                 </p>
               )}
 

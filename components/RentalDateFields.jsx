@@ -11,6 +11,13 @@ export function rentalDatesValid(dates) {
 export default function RentalDateFields({ dates, onChange }) {
   const today = new Date().toISOString().slice(0, 10);
 
+  // Setting a pickup time auto-fills the return time to match (a 2pm
+  // pickup defaults to a 2pm return) - it stays a normal, editable field
+  // afterward for anyone whose actual return time is different.
+  const setPickupTime = (time) => {
+    onChange({ ...dates, pickupTime: time, dropoffTime: time });
+  };
+
   return (
     <div className="grid gap-3 sm:grid-cols-3">
       <label className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] text-[#5C5645]">
@@ -21,6 +28,13 @@ export default function RentalDateFields({ dates, onChange }) {
           value={dates.pickup}
           onChange={(e) => onChange({ ...dates, pickup: e.target.value })}
           className="mt-1 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 text-sm text-[#292929]"
+        />
+        <input
+          type="time"
+          value={dates.pickupTime || ""}
+          onChange={(e) => setPickupTime(e.target.value)}
+          aria-label="Pickup time"
+          className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 text-sm text-[#292929]"
         />
       </label>
       <label className="font-[Space_Grotesk] text-xs font-semibold tracking-[0.08em] text-[#5C5645]">
@@ -41,6 +55,13 @@ export default function RentalDateFields({ dates, onChange }) {
           value={dates.dropoff}
           onChange={(e) => onChange({ ...dates, dropoff: e.target.value })}
           className="mt-1 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 text-sm text-[#292929]"
+        />
+        <input
+          type="time"
+          value={dates.dropoffTime || ""}
+          onChange={(e) => onChange({ ...dates, dropoffTime: e.target.value })}
+          aria-label="Return time"
+          className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 text-sm text-[#292929]"
         />
       </label>
     </div>

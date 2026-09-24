@@ -119,6 +119,29 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const dueTodayCents = purchaseSubtotalCents + bookingDepositEstimateCents;
   const remainingBalanceCents = Math.max(0, rentalSubtotalCents - bookingDepositEstimateCents);
 
+  // Exact due dates for the summary below, computed from the pickup date
+  // (and time, once chosen) the customer already set above - mirrors the
+  // same 7-day/48-hour schedule the timing job (api/square.js resource=timing)
+  // actually charges on, so this is never just a vague relative label.
+  const pickupAtDate = useMemo(() => {
+    if (!dateOkay(rentalDates.pickup)) return null;
+    const time = /^\d{2}:\d{2}$/.test(rentalDates.pickupTime || "") ? rentalDates.pickupTime : "17:00";
+    const parsed = new Date(`${rentalDates.pickup}T${time}:00`);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }, [rentalDates.pickup, rentalDates.pickupTime]);
+
+  const formatDueDate = (millisBeforePickup, { includeTime } = {}) => {
+    if (!pickupAtDate) return null;
+    const due = new Date(pickupAtDate.getTime() - millisBeforePickup);
+    const datePart = due.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
+    if (!includeTime || !rentalDates.pickupTime) return datePart;
+    const timePart = due.toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" });
+    return `${datePart} at ${timePart}`;
+  };
+
+  const balanceDueLabel = formatDueDate(7 * 24 * 60 * 60 * 1000);
+  const securityDepositDueLabel = formatDueDate(48 * 60 * 60 * 1000, { includeTime: true });
+
   const rentalMinimumMet = rentalItems.length === 0 || rentalSubtotalCents >= MIN_RENTAL_CENTS;
   const rentalDatesReady =
     rentalItems.length === 0 ||
@@ -230,7 +253,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
             email: email.trim(),
             phone: phone.trim() || null,
           },
-          rentalDates,
+          // pickupAt carries the exact pickup date+time the customer chose
+          // (falling back to the server's own default when no time was set)
+          // so the 7-day-balance/48-hour-security-deposit schedule actually
+          // runs against the time shown in the summary above, not a guess.
+          rentalDates: { ...rentalDates, pickupAt: pickupAtDate ? pickupAtDate.toISOString() : null },
           items: items.map(({ id, kind, meta, quantity }) => ({ id, kind, meta, quantity })),
           paymentToken,
           saveCardOnFile,
@@ -448,11 +475,17 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                 {rentalItems.length > 0 && (
                   <>
                     <div className="flex items-center justify-between text-[#6B6B6B]">
-                      <span>Remaining rental balance (due 7 days before pickup)</span>
+                      <span>
+                        Remaining rental balance
+                        {balanceDueLabel ? ` (due ${balanceDueLabel})` : " (due 7 days before pickup)"}
+                      </span>
                       <span>{money(remainingBalanceCents)}</span>
                     </div>
                     <div className="flex items-center justify-between text-[#6B6B6B]">
-                      <span>Refundable security deposit (due 48 hours before pickup)</span>
+                      <span>
+                        Refundable security deposit
+                        {securityDepositDueLabel ? ` (due ${securityDepositDueLabel})` : " (due 48 hours before pickup)"}
+                      </span>
                       <span>{money(securityDepositEstimateCents)}</span>
                     </div>
                   </>
@@ -461,7 +494,9 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
 
               {rentalItems.length > 0 && (
                 <p className="mt-3 font-[Space_Grotesk] text-xs leading-5 text-[#9A9A9A]">
-                  Deposit amounts shown are an estimate. The exact amount is confirmed on the secure checkout page.
+                  {pickupAtDate
+                    ? "Deposit amounts shown are an estimate. The exact amount is confirmed on the secure checkout page."
+                    : "Choose your pickup date above to see exact due dates. Deposit amounts shown are an estimate."}
                 </p>
               )}
             </section>
@@ -550,7 +585,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
 
                     <span>
                       <span className="block font-[Space_Grotesk] text-sm font-semibold text-[#292929]">
-                        Keep this card securely on file with Square
+                        Keep this card securely on file
                       </span>
 
                       <span className="mt-1 block font-[Space_Grotesk] text-xs leading-5 text-[#6F6859]">

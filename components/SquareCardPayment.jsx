@@ -9,7 +9,7 @@ function loadSquare() {
     const existing = document.getElementById(SCRIPT_ID);
     if (existing) {
       existing.addEventListener("load", () => resolve(window.Square), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Could not load Square.")), { once: true });
+      existing.addEventListener("error", () => reject(new Error("Could not load secure card entry.")), { once: true });
       return;
     }
     const script = document.createElement("script");
@@ -17,7 +17,7 @@ function loadSquare() {
     script.src = SQUARE_SCRIPT;
     script.async = true;
     script.onload = () => resolve(window.Square);
-    script.onerror = () => reject(new Error("Could not load Square."));
+    script.onerror = () => reject(new Error("Could not load secure card entry."));
     document.head.appendChild(script);
   });
 }
@@ -56,7 +56,7 @@ export default function SquareCardPayment({
         setError("");
         const appId = import.meta.env.VITE_SQUARE_APPLICATION_ID;
         const locationId = import.meta.env.VITE_SQUARE_LOCATION_ID;
-        if (!appId || !locationId) throw new Error("Square checkout is not configured.");
+        if (!appId || !locationId) throw new Error("Secure checkout is not configured yet. Please contact us.");
 
         const Square = await loadSquare();
         if (cancelled) return;
@@ -118,7 +118,7 @@ export default function SquareCardPayment({
       <div id={containerId} className="min-h-[90px]" />
       {error && <p className="mt-2 font-[Space_Grotesk] text-xs text-red-700">{error}</p>}
       <p className="mt-2 font-[Space_Grotesk] text-xs leading-5 text-[#7E7767]">
-        Card details are entered securely through Square and are never stored on A Slice of G servers.
+        Card details are entered securely and are never stored on A Slice of G servers.
       </p>
     </div>
   );

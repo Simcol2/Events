@@ -5,6 +5,8 @@ const DATES_KEY = "asliceofg-rental-dates-v1";
 
 const CartContext = createContext(null);
 
+const EMPTY_RENTAL_DATES = { pickup: "", event: "", dropoff: "", pickupTime: "", dropoffTime: "" };
+
 function stableMetaKey(meta) {
   if (!meta) return "";
   return JSON.stringify(meta, Object.keys(meta).sort());
@@ -26,12 +28,12 @@ export function CartProvider({ children }) {
   });
 
   const [rentalDates, setRentalDatesState] = useState(() => {
-    if (typeof window === "undefined") return { pickup: "", event: "", dropoff: "" };
+    if (typeof window === "undefined") return EMPTY_RENTAL_DATES;
     try {
       const raw = window.localStorage.getItem(DATES_KEY);
-      return raw ? JSON.parse(raw) : { pickup: "", event: "", dropoff: "" };
+      return raw ? { ...EMPTY_RENTAL_DATES, ...JSON.parse(raw) } : EMPTY_RENTAL_DATES;
     } catch {
-      return { pickup: "", event: "", dropoff: "" };
+      return EMPTY_RENTAL_DATES;
     }
   });
 
@@ -86,6 +88,8 @@ export function CartProvider({ children }) {
       pickup: dates?.pickup || "",
       event: dates?.event || "",
       dropoff: dates?.dropoff || "",
+      pickupTime: dates?.pickupTime || "",
+      dropoffTime: dates?.dropoffTime || "",
     });
   };
 
@@ -95,7 +99,7 @@ export function CartProvider({ children }) {
 
   const clearCart = () => {
     setItems([]);
-    setRentalDatesState({ pickup: "", event: "", dropoff: "" });
+    setRentalDatesState(EMPTY_RENTAL_DATES);
   };
 
   return (
