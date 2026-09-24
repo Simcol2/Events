@@ -3,7 +3,7 @@ import { CalendarDays, Info, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-
 import { useCart } from "../CartContext";
 import { supabase } from "../supabaseClient";
 import { API_BASE, withBasePath } from "../apiBase";
-import RentalDateFields from "./RentalDateFields";
+import RentalDateFields, { rentalDatesValid } from "./RentalDateFields";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 import HowRentalWorks from "./HowRentalWorks";
 import SquareCardPayment from "./SquareCardPayment";
@@ -15,10 +15,6 @@ function money(cents) {
     style: "currency",
     currency: "CAD",
   }).format((Number(cents) || 0) / 100);
-}
-
-function dateOkay(value) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value || "");
 }
 
 export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) {
@@ -103,9 +99,14 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
     }).filter(Boolean);
   }, [items, catalogMap, giftMap]);
 
-  const rentalSubtotalCents = resolved
+  const rentalItemsSubtotalCents = resolved
     .filter((line) => line.mode === "rental")
     .reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
+
+  const rentalWindowFeeCents =
+    rentalItems.length > 0 ? Math.max(0, Number(rentalDates.extraDayFeeCents || 0)) : 0;
+
+  const rentalSubtotalCents = rentalItemsSubtotalCents + rentalWindowFeeCents;
 
   const purchaseSubtotalCents = resolved
     .filter((line) => line.mode === "purchase")
@@ -124,7 +125,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   // same 7-day/48-hour schedule the timing job (api/square.js resource=timing)
   // actually charges on, so this is never just a vague relative label.
   const pickupAtDate = useMemo(() => {
-    if (!dateOkay(rentalDates.pickup)) return null;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(rentalDates.pickup || "")) return null;
     const time = /^\d{2}:\d{2}$/.test(rentalDates.pickupTime || "") ? rentalDates.pickupTime : "17:00";
     const parsed = new Date(`${rentalDates.pickup}T${time}:00`);
     return Number.isNaN(parsed.getTime()) ? null : parsed;
@@ -143,11 +144,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const securityDepositDueLabel = formatDueDate(48 * 60 * 60 * 1000, { includeTime: true });
 
   const rentalMinimumMet = rentalItems.length === 0 || rentalSubtotalCents >= MIN_RENTAL_CENTS;
-  const rentalDatesReady =
-    rentalItems.length === 0 ||
-    (dateOkay(rentalDates.pickup) &&
-      dateOkay(rentalDates.dropoff) &&
-      rentalDates.dropoff >= rentalDates.pickup);
+  const rentalDatesReady = rentalItems.length === 0 || rentalDatesValid(rentalDates);
 
   useEffect(() => {
     let cancelled = false;
@@ -253,11 +250,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
             email: email.trim(),
             phone: phone.trim() || null,
           },
-          // pickupAt carries the exact pickup date+time the customer chose
-          // (falling back to the server's own default when no time was set)
-          // so the 7-day-balance/48-hour-security-deposit schedule actually
-          // runs against the time shown in the summary above, not a guess.
-          rentalDates: { ...rentalDates, pickupAt: pickupAtDate ? pickupAtDate.toISOString() : null },
+          // The server recomputes the pickup date/time and any early-pickup
+          // or extended-return fee itself from rentalDates (see
+          // calculateRentalWindow in api/square.js) rather than trusting a
+          // client-supplied pickupAt.
+          rentalDates,
           items: items.map(({ id, kind, meta, quantity }) => ({ id, kind, meta, quantity })),
           paymentToken,
           saveCardOnFile,
@@ -460,6 +457,18 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                   <div className="flex items-center justify-between text-[#3E3A31]">
                     <span>Purchases</span>
                     <span>{money(purchaseSubtotalCents)}</span>
+                  </div>
+                )}
+                {rentalWindowFeeCents > 0 && (
+                  <div className="flex items-center justify-between gap-3 text-[#3E3A31]">
+                    <span>
+                      Extended rental window
+                      <span className="ml-2 text-xs text-[#8C846F]">
+                        {Number(rentalDates.earlyPickupDays || 0)} early pickup day(s),{" "}
+                        {Number(rentalDates.extendedReturnDays || 0)} extended return day(s)
+                      </span>
+                    </span>
+                    <strong>{money(rentalWindowFeeCents)}</strong>
                   </div>
                 )}
                 {rentalItems.length > 0 && (

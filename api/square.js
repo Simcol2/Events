@@ -1941,6 +1941,131 @@ function defaultPickupAt(pickupDate) {
     : date.toISOString();
 }
 
+// Early-pickup/extended-return fee ($5 per calendar day beyond the standard
+// event-1/event+1 window) and the fixed pickup-time slots offered in
+// RentalDateFields.jsx. Recomputed here rather than trusted from the client
+// so a tampered request can never change the charged amount.
+const EXTRA_RENTAL_DAY_CENTS = 500;
+const ALLOWED_PICKUP_TIMES = new Set(["09:00", "10:00", "11:00", "12:00"]);
+
+function parseDateOnly(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) return null;
+  const [y, m, d] = value.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 12));
+}
+
+function formatDateOnly(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function addDateDays(value, days) {
+  const date = parseDateOnly(value);
+  if (!date) return null;
+  date.setUTCDate(date.getUTCDate() + days);
+  return formatDateOnly(date);
+}
+
+function dateDayDiff(later, earlier) {
+  const a = parseDateOnly(later);
+  const b = parseDateOnly(earlier);
+  if (!a || !b) return 0;
+  return Math.round((a - b) / 86400000);
+}
+
+// Return time is always pickup time + 12 hours (a 9am pickup returns by
+// 9pm), per the approved rental-window model.
+function returnTimeForPickup(time) {
+  const [h, m] = time.split(":").map(Number);
+  const total = h * 60 + m + 720;
+  return `${String(Math.floor((total % 1440) / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
+// Converts a UTC instant to the minutes it is currently offset from
+// America/Toronto (handles EST/EDT automatically), so a local pickup
+// date+time can be turned into the correct UTC instant below.
+function torontoOffsetMinutesFor(utcDate) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Toronto",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(utcDate);
+
+  const v = Object.fromEntries(parts.filter((p) => p.type !== "literal").map((p) => [p.type, p.value]));
+
+  const asUtc = Date.UTC(
+    Number(v.year),
+    Number(v.month) - 1,
+    Number(v.day),
+    Number(v.hour),
+    Number(v.minute),
+    Number(v.second)
+  );
+
+  return Math.round((asUtc - utcDate.getTime()) / 60000);
+}
+
+function torontoLocalToIso(dateOnly, time24) {
+  const [y, m, d] = dateOnly.split("-").map(Number);
+  const [h, min] = time24.split(":").map(Number);
+  let utcMs = Date.UTC(y, m - 1, d, h, min, 0);
+
+  // Two passes: the offset itself depends on the date (DST), so the first
+  // pass's result is used to re-derive the offset for the actual target day.
+  for (let i = 0; i < 2; i += 1) {
+    const offset = torontoOffsetMinutesFor(new Date(utcMs));
+    utcMs = Date.UTC(y, m - 1, d, h, min, 0) - offset * 60000;
+  }
+
+  return new Date(utcMs).toISOString();
+}
+
+// Recomputes the whole rental window (pickup/return dates, pickup/return
+// times, early-pickup/extended-return fee, and the exact pickup instant)
+// authoritatively from the customer's chosen event date and pickup time -
+// never from a client-supplied pickup/dropoff/fee value directly.
+function calculateRentalWindow(rentalDates = {}) {
+  const event = String(rentalDates.event || "");
+  if (!parseDateOnly(event)) throw new Error("Choose a valid event date.");
+
+  const pickupTime = String(rentalDates.pickupTime || "");
+  if (!ALLOWED_PICKUP_TIMES.has(pickupTime)) {
+    throw new Error("Choose a valid pickup time.");
+  }
+
+  const standardPickup = addDateDays(event, -1);
+  const standardDropoff = addDateDays(event, 1);
+  const pickup = String(rentalDates.pickup || standardPickup);
+  const dropoff = String(rentalDates.dropoff || standardDropoff);
+
+  if (!parseDateOnly(pickup) || !parseDateOnly(dropoff)) {
+    throw new Error("Choose valid rental dates.");
+  }
+  if (pickup > standardPickup) throw new Error("Pickup cannot be later than the included pickup date.");
+  if (dropoff < standardDropoff) throw new Error("Return cannot be earlier than the included return date.");
+
+  const earlyPickupDays = Math.max(0, dateDayDiff(standardPickup, pickup));
+  const extendedReturnDays = Math.max(0, dateDayDiff(dropoff, standardDropoff));
+  const extraDayFeeCents = (earlyPickupDays + extendedReturnDays) * EXTRA_RENTAL_DAY_CENTS;
+  const dropoffTime = returnTimeForPickup(pickupTime);
+
+  return {
+    event,
+    pickup,
+    dropoff,
+    pickupTime,
+    dropoffTime,
+    earlyPickupDays,
+    extendedReturnDays,
+    extraDayFeeCents,
+    pickupAt: torontoLocalToIso(pickup, pickupTime),
+  };
+}
+
 // Charges the 50% booking deposit immediately against the tokenized card the
 // customer entered in UnifiedCartModal via SquareCardPayment - no draft
 // invoice, no seller step in between. README's "if the initial 50% deposit
@@ -2026,8 +2151,11 @@ async function handleProductionBooking(req, res) {
       });
     }
 
-    if (!rentalDates.pickup || !rentalDates.dropoff || rentalDates.dropoff < rentalDates.pickup) {
-      return res.status(400).json({ error: "Choose valid rental dates." });
+    let rentalWindow;
+    try {
+      rentalWindow = calculateRentalWindow(rentalDates);
+    } catch (windowError) {
+      return res.status(400).json({ error: windowError.message || "Choose valid rental dates." });
     }
 
     if (!paymentToken) {
@@ -2045,13 +2173,14 @@ async function handleProductionBooking(req, res) {
 
     const customer = await findOrCreateProductionCustomer(input);
     const lines = await resolveProductionRentals(items);
-    const rentalSubtotalCents = lines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
+    const rentalItemsSubtotalCents = lines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
+    const rentalSubtotalCents = rentalItemsSubtotalCents + rentalWindow.extraDayFeeCents;
 
     if (rentalSubtotalCents < PRODUCTION_MIN_RENTAL_CENTS) {
       return res.status(400).json({ error: "Rental orders require a $50 minimum." });
     }
 
-    await productionAvailability(lines, rentalDates.pickup, rentalDates.dropoff);
+    await productionAvailability(lines, rentalWindow.pickup, rentalWindow.dropoff);
 
     const { data: bookingNumber, error: numberError } = await supabase.rpc("next_rental_reservation_number");
     if (numberError) throw numberError;
@@ -2065,11 +2194,16 @@ async function handleProductionBooking(req, res) {
         source: "a_la_carte",
         booking_number: bookingNumber,
         status: "checkout_pending",
-        pickup_date: rentalDates.pickup,
-        drop_off_date: rentalDates.dropoff,
-        event_date: rentalDates.event || rentalDates.pickup,
-        pickup_at: rentalDates.pickupAt || defaultPickupAt(rentalDates.pickup),
-        rental_subtotal_cents: rentalSubtotalCents,
+        pickup_date: rentalWindow.pickup,
+        drop_off_date: rentalWindow.dropoff,
+        event_date: rentalWindow.event,
+        pickup_at: rentalWindow.pickupAt,
+        pickup_time: rentalWindow.pickupTime,
+        dropoff_time: rentalWindow.dropoffTime,
+        early_pickup_days: rentalWindow.earlyPickupDays,
+        extended_return_days: rentalWindow.extendedReturnDays,
+        rental_window_fee_cents: rentalWindow.extraDayFeeCents,
+        rental_subtotal_cents: rentalItemsSubtotalCents,
         rental_total_cents: rentalSubtotalCents,
         total_price: rentalSubtotalCents / 100,
         booking_deposit_cents: bookingDepositCents,

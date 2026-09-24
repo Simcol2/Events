@@ -15,8 +15,10 @@ import {
   WalletCards,
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
-import { API_BASE, BASE_PATH } from "../apiBase";
+import { API_BASE } from "../apiBase";
 import SquareRentalStatus from "../components/SquareRentalStatus";
+import ClientAuthCard from "../components/ClientAuthCard";
+import AccountSecurity from "../components/AccountSecurity";
 
 // Covers every status the reservations table allows (see
 // reservations_status_check in the SQL) so nothing falls back to a
@@ -387,34 +389,6 @@ function ReservationCard({ reservation, reservationItems, contracts, transaction
 }
 
 function SignIn() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-
-  const submit = async (event) => {
-    event.preventDefault();
-    setBusy(true);
-    setError("");
-
-    try {
-      if (!supabase) throw new Error("Client login is not connected yet.");
-      const { error: signInError } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: {
-          emailRedirectTo: `${window.location.origin}${BASE_PATH}/client`,
-          shouldCreateUser: true,
-        },
-      });
-      if (signInError) throw signInError;
-      setSent(true);
-    } catch (err) {
-      setError(err.message || "Could not send the sign-in link.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
   return (
     <main className="min-h-[72vh] bg-[#F8F3E8] px-5 py-16 sm:px-8">
       <div className="mx-auto max-w-xl">
@@ -423,39 +397,10 @@ function SignIn() {
           Your celebrations, receipts and rentals in one place.
         </h1>
         <p className="mt-4 max-w-lg font-[Space_Grotesk] text-base leading-7 text-[#665F50]">
-          Sign in with the same email you used to book or purchase. We will email you a secure sign-in link, no password required.
+          Sign in with Google, your password, or a secure email link.
         </p>
-
         <Panel className="mt-8">
-          {sent ? (
-            <div className="text-center">
-              <CheckCircle2 className="mx-auto text-[#17724F]" size={38} />
-              <h2 className="mt-4 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Check your email</h2>
-              <p className="mt-2 font-[Space_Grotesk] text-sm leading-6 text-[#7E7767]">
-                Your secure link is on its way to {email}. Open it on this device and you will come straight back here.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={submit}>
-              <label className="font-[Space_Grotesk] text-sm font-semibold text-[#292929]">Email address</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@example.com"
-                className="mt-2 w-full rounded-xl border border-[#D9D9D9] bg-white px-4 py-3 font-[Space_Grotesk] text-base text-[#292929] outline-none focus:border-[#0B4933]"
-              />
-              {error && <p className="mt-3 font-[Space_Grotesk] text-sm text-red-700">{error}</p>}
-              <button
-                type="submit"
-                disabled={busy}
-                className="mt-5 w-full rounded-full bg-[#0B4933] py-3.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em] text-white disabled:opacity-50"
-              >
-                {busy ? "SENDING..." : "EMAIL MY SIGN-IN LINK"}
-              </button>
-            </form>
-          )}
+          <ClientAuthCard />
         </Panel>
       </div>
     </main>
@@ -640,6 +585,7 @@ export default function ClientPortal() {
             ["bookings", "Bookings", CalendarDays],
             ["purchases", "Purchases", ShoppingBag],
             ["billing", "Billing", ReceiptText],
+            ["account", "Account", ShieldCheck],
           ].map(([id, label, Icon]) => (
             <button
               key={id}
@@ -791,6 +737,11 @@ export default function ClientPortal() {
                 )}
               </div>
             </Panel>
+          </div>
+        )}
+        {tab === "account" && data && (
+          <div className="mt-6">
+            <AccountSecurity />
           </div>
         )}
       </div>

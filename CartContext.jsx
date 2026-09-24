@@ -1,11 +1,20 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "asliceofg-cart-items-v2";
-const DATES_KEY = "asliceofg-rental-dates-v1";
+const DATES_KEY = "asliceofg-rental-dates-v2";
 
 const CartContext = createContext(null);
 
-const EMPTY_RENTAL_DATES = { pickup: "", event: "", dropoff: "", pickupTime: "", dropoffTime: "" };
+const EMPTY_RENTAL_DATES = {
+  pickup: "",
+  event: "",
+  dropoff: "",
+  pickupTime: "",
+  dropoffTime: "",
+  earlyPickupDays: 0,
+  extendedReturnDays: 0,
+  extraDayFeeCents: 0,
+};
 
 function stableMetaKey(meta) {
   if (!meta) return "";
@@ -90,6 +99,9 @@ export function CartProvider({ children }) {
       dropoff: dates?.dropoff || "",
       pickupTime: dates?.pickupTime || "",
       dropoffTime: dates?.dropoffTime || "",
+      earlyPickupDays: Math.max(0, Number(dates?.earlyPickupDays || 0)),
+      extendedReturnDays: Math.max(0, Number(dates?.extendedReturnDays || 0)),
+      extraDayFeeCents: Math.max(0, Number(dates?.extraDayFeeCents || 0)),
     });
   };
 
