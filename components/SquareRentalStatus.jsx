@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Circle, CreditCard, ReceiptText } from "lucide-react";
 import { API_BASE } from "../apiBase";
+import SquareManualPayment from "./SquareManualPayment";
 
 const money = (cents, currency = "CAD") =>
   new Intl.NumberFormat("en-CA", {
@@ -56,9 +57,11 @@ function StatusCard({ label, done, children }) {
  * Once Square fully replaces Stripe, fold these states into the existing
  * Payments/Documents panels and remove the duplicate migration card.
  */
-export default function SquareRentalStatus({ accessToken }) {
+export default function SquareRentalStatus({ accessToken, customer }) {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = () => setRefreshKey((value) => value + 1);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -72,7 +75,7 @@ export default function SquareRentalStatus({ accessToken }) {
         setData(payload);
       })
       .catch((err) => setError(err.message || "Could not load Square status."));
-  }, [accessToken]);
+  }, [accessToken, refreshKey]);
 
   const txByReservation = useMemo(() => {
     const map = new Map();
@@ -214,6 +217,34 @@ export default function SquareRentalStatus({ accessToken }) {
                     of the reservation.
                   </p>
                 </div>
+              )}
+
+              {manualPayment && !balancePaid && (
+                <SquareManualPayment
+                  accessToken={accessToken}
+                  reservationId={reservation.id}
+                  kind="balance"
+                  amountCents={Math.max(0, balanceDue - paid("balance"))}
+                  currency={reservation.currency}
+                  customerName={customer?.name || ""}
+                  customerEmail={customer?.email || ""}
+                  customerPhone={customer?.phone || ""}
+                  onPaid={refresh}
+                />
+              )}
+
+              {manualPayment && !securityPaid && (
+                <SquareManualPayment
+                  accessToken={accessToken}
+                  reservationId={reservation.id}
+                  kind="security_deposit"
+                  amountCents={Math.max(0, securityDue - paid("security_deposit"))}
+                  currency={reservation.currency}
+                  customerName={customer?.name || ""}
+                  customerEmail={customer?.email || ""}
+                  customerPhone={customer?.phone || ""}
+                  onPaid={refresh}
+                />
               )}
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">

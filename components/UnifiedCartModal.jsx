@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CalendarDays, Info, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "../CartContext";
 import { supabase } from "../supabaseClient";
@@ -45,6 +45,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const [squareReady, setSquareReady] = useState(false);
 
   const saveCardOnFile = futurePaymentMethod === "card_on_file";
+
+  const handleSquareReady = useCallback((tokenize) => {
+    tokenizeCardRef.current = tokenize;
+    setSquareReady(Boolean(tokenize));
+  }, []);
 
   const catalogMap = useMemo(() => new Map(catalog.map((item) => [String(item.id), item])), [catalog]);
   const giftMap = useMemo(() => new Map(gifts.map((item) => [String(item.id), item])), [gifts]);
@@ -526,10 +531,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                     email={email}
                     phone={phone}
                     saveCard={saveCardOnFile}
-                    onReady={(tokenize) => {
-                      tokenizeCardRef.current = tokenize;
-                      setSquareReady(Boolean(tokenize));
-                    }}
+                    onReady={handleSquareReady}
                   />
                 </div>
 

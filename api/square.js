@@ -958,6 +958,161 @@ async function handlePortalActions(req, res) {
 }
 
 // ---------------------------------------------------------------------
+// resource=portal-manual-payment (POST) - lets a manual-payment customer pay
+// their remaining balance or refundable security deposit from the portal with
+// a one-time Square card token. The server computes the amount from the
+// reservation and the ledger; the browser never chooses how much to charge.
+// ---------------------------------------------------------------------
+async function handlePortalManualPayment(req, res) {
+  try {
+    if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const { supabase: clientSupabase, customer } = await requireClient(req);
+
+    const reservationId = Number(req.body?.reservationId);
+    const kind = String(req.body?.kind || "");
+    const paymentToken = String(req.body?.paymentToken || "");
+
+    if (!Number.isFinite(reservationId)) {
+      return res.status(400).json({ error: "reservationId is required." });
+    }
+
+    if (!["balance", "security_deposit"].includes(kind)) {
+      return res.status(400).json({ error: "Invalid manual payment type." });
+    }
+
+    if (!paymentToken) {
+      return res.status(400).json({ error: "Secure card payment details are required." });
+    }
+
+    const { data: reservation, error: reservationError } = await clientSupabase
+      .from("reservations")
+      .select("*")
+      .eq("id", reservationId)
+      .eq("customer_id", customer.id)
+      .eq("payment_provider", "square")
+      .single();
+
+    if (reservationError || !reservation) {
+      return res.status(404).json({ error: "Booking not found." });
+    }
+
+    if (reservation.future_payment_method !== "manual") {
+      return res.status(409).json({
+        error: "This booking is configured for automatic card-on-file payments.",
+      });
+    }
+
+    if (["cancelled", "completed", "returned"].includes(reservation.status)) {
+      return res.status(409).json({ error: "This booking cannot accept another payment." });
+    }
+
+    const { data: paidRows, error: paidRowsError } = await clientSupabase
+      .from("square_transactions")
+      .select("kind,status,amount_cents")
+      .eq("reservation_id", reservation.id)
+      .eq("status", "paid");
+
+    if (paidRowsError) throw paidRowsError;
+
+    const paidFor = (targetKind) =>
+      (paidRows || [])
+        .filter((row) => row.kind === targetKind)
+        .reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
+
+    const configuredDue =
+      kind === "balance"
+        ? Number(reservation.balance_due_cents || 0)
+        : Number(reservation.security_deposit_cents || 0);
+
+    const amount = Math.max(0, configuredDue - paidFor(kind));
+
+    if (amount <= 0) {
+      return res.status(200).json({ ok: true, alreadyPaid: true, kind });
+    }
+
+    const result = await squareRequest("/v2/payments", {
+      method: "POST",
+      body: {
+        source_id: paymentToken,
+        idempotency_key: `asg-manual-${kind}-${reservation.id}-${Date.now()}`.slice(0, 45),
+        amount_money: {
+          amount,
+          currency: String(reservation.currency || "cad").toUpperCase(),
+        },
+        customer_id: reservation.square_customer_id,
+        location_id: squareLocationId(),
+        reference_id: reservation.booking_number,
+        note:
+          kind === "balance"
+            ? `${reservation.booking_number} manual remaining balance`
+            : `${reservation.booking_number} manual refundable security deposit`,
+        autocomplete: true,
+      },
+    });
+
+    const payment = result.payment;
+    if (!payment?.id || payment.status !== "COMPLETED") {
+      throw new Error("The Square payment was not completed.");
+    }
+
+    const { error: ledgerError } = await clientSupabase
+      .from("square_transactions")
+      .insert({
+        customer_id: customer.id,
+        reservation_id: reservation.id,
+        kind,
+        square_payment_id: payment.id,
+        amount_cents: amount,
+        currency: String(reservation.currency || "cad").toLowerCase(),
+        status: "paid",
+        paid_at: payment.created_at || new Date().toISOString(),
+        metadata: { source: "portal_manual_payment" },
+      });
+
+    if (ledgerError) throw ledgerError;
+
+    const update =
+      kind === "balance"
+        ? { manual_balance_payment_due: false, square_payment_failed: false }
+        : {
+            manual_security_payment_due: false,
+            square_security_payment_id: payment.id,
+            square_security_status: payment.status,
+            square_security_collected_at: payment.created_at || new Date().toISOString(),
+            square_payment_failed: false,
+          };
+
+    // resource=timing flags a missed manual deadline as payment_overdue. Once
+    // nothing flagged is still outstanding, put the booking back in good
+    // standing rather than leaving it marked overdue after the customer paid.
+    const balanceStillFlagged = kind === "balance" ? false : reservation.manual_balance_payment_due;
+    const securityStillFlagged = kind === "security_deposit" ? false : reservation.manual_security_payment_due;
+    if (reservation.status === "payment_overdue" && !balanceStillFlagged && !securityStillFlagged) {
+      update.status = "pending";
+    }
+
+    await clientSupabase
+      .from("reservations")
+      .update(update)
+      .eq("id", reservation.id);
+
+    return res.status(200).json({
+      ok: true,
+      kind,
+      paymentId: payment.id,
+      amountCents: amount,
+      status: payment.status,
+    });
+  } catch (error) {
+    return handleApiError(res, error);
+  }
+}
+
+// ---------------------------------------------------------------------
 // resource=admin-return (POST) - Phase 16-20 Step 17. Admin-only return
 // inspection + security-deposit release. Supersedes using the public
 // security-deposit resource for refunds - never expose refund actions
@@ -1574,6 +1729,7 @@ async function handleProductionBooking(req, res) {
   }
 
   let reservation = null;
+  let depositPayment = null;
 
   try {
     const {
@@ -1687,26 +1843,10 @@ async function handleProductionBooking(req, res) {
       paymentToken,
     });
 
-    if (saveCardOnFile) {
-      const card = await saveDepositCard({ reservation, squareCustomerId, payment });
-
-      await supabase
-        .from("customers")
-        .update({ square_primary_card_id: card.id, square_card_on_file: true })
-        .eq("id", customer.id);
-    }
-
-    await supabase
-      .from("reservations")
-      .update({
-        status: "pending",
-        square_booking_deposit_payment_id: payment.id,
-        square_booking_deposit_status: payment.status,
-        square_booking_deposit_paid_at: payment.created_at || new Date().toISOString(),
-        future_payment_method: saveCardOnFile ? "card_on_file" : "manual",
-        manual_payment_acknowledged: saveCardOnFile ? false : true,
-      })
-      .eq("id", reservation.id);
+    // From here on money has moved. Record it first, before anything else
+    // that could fail, so the reservation is never cancelled out from under
+    // a paid deposit.
+    depositPayment = payment;
 
     await supabase.from("square_transactions").upsert(
       {
@@ -1723,18 +1863,83 @@ async function handleProductionBooking(req, res) {
       { onConflict: "square_payment_id" }
     );
 
+    await supabase
+      .from("reservations")
+      .update({
+        status: "pending",
+        square_booking_deposit_payment_id: payment.id,
+        square_booking_deposit_status: payment.status,
+        square_booking_deposit_paid_at: payment.created_at || new Date().toISOString(),
+      })
+      .eq("id", reservation.id);
+
+    let finalFuturePaymentMethod = saveCardOnFile ? "card_on_file" : "manual";
+    let cardSaveWarning = null;
+
+    if (saveCardOnFile) {
+      try {
+        const card = await saveDepositCard({ reservation, squareCustomerId, payment });
+
+        await supabase
+          .from("customers")
+          .update({ square_primary_card_id: card.id, square_card_on_file: true })
+          .eq("id", customer.id);
+      } catch (cardError) {
+        console.error("Deposit paid but card save failed:", cardError);
+
+        finalFuturePaymentMethod = "manual";
+        cardSaveWarning =
+          "Your deposit was paid, but we could not save your card for automatic future charges. Your booking is still active. Future payments will need to be made manually.";
+
+        await supabase
+          .from("customers")
+          .update({ square_primary_card_id: null, square_card_on_file: false })
+          .eq("id", customer.id);
+      }
+    }
+
+    await supabase
+      .from("reservations")
+      .update({
+        future_payment_method: finalFuturePaymentMethod,
+        manual_payment_acknowledged: finalFuturePaymentMethod === "manual",
+      })
+      .eq("id", reservation.id);
+
+    const redirectParams = new URLSearchParams({
+      square_deposit_paid: "1",
+      booking: reservation.booking_number,
+    });
+    if (cardSaveWarning) redirectParams.set("card_not_saved", "1");
+
     return res.status(200).json({
       ok: true,
       bookingNumber: reservation.booking_number,
       reservationId: reservation.id,
       depositPaid: true,
-      redirectUrl: `/checkout-success?square_deposit_paid=1&booking=${encodeURIComponent(reservation.booking_number)}`,
+      cardSaveWarning,
+      redirectUrl: `/checkout-success?${redirectParams.toString()}`,
     });
   } catch (error) {
     console.error("Square production booking error:", error);
 
-    if (reservation?.id) {
+    // A successful deposit must always preserve the reservation. Only a
+    // booking that never got paid is released.
+    if (reservation?.id && !depositPayment?.id) {
       await supabase.from("reservations").update({ status: "cancelled" }).eq("id", reservation.id);
+    }
+
+    // If the deposit went through, answering with an error would invite the
+    // customer to press Pay again and be charged twice. Send them to the
+    // confirmation page instead; the payment is already on the ledger.
+    if (depositPayment?.id && reservation?.booking_number) {
+      return res.status(200).json({
+        ok: true,
+        bookingNumber: reservation.booking_number,
+        reservationId: reservation.id,
+        depositPaid: true,
+        redirectUrl: `/checkout-success?square_deposit_paid=1&booking=${encodeURIComponent(reservation.booking_number)}`,
+      });
     }
 
     return res.status(500).json({ error: error.message || "Could not create the Square booking." });
@@ -1752,6 +1957,7 @@ const RESOURCE_HANDLERS = {
   contract: handleContract,
   portal: handlePortal,
   "portal-actions": handlePortalActions,
+  "portal-manual-payment": handlePortalManualPayment,
   "admin-return": handleAdminReturn,
   "admin-reservations": handleAdminReservations,
   timing: handleTiming,

@@ -14,12 +14,13 @@ export default function CheckoutSuccess({ navigate }) {
     const sessionId = params.get("session_id");
     const isSquareDepositPaid = params.get("square_deposit_paid") === "1";
     const squareBooking = params.get("booking");
+    const cardNotSaved = params.get("card_not_saved") === "1";
 
     if (isSquareDepositPaid) {
       // The 50% booking deposit was already charged in the checkout modal
       // (see api/square.js's chargeBookingDeposit) - there is no separate
       // invoice to wait on. Nothing to fetch here.
-      setSquareDepositPaid({ bookingNumber: squareBooking || null });
+      setSquareDepositPaid({ bookingNumber: squareBooking || null, cardNotSaved });
       clearCart();
       return;
     }
@@ -76,6 +77,19 @@ export default function CheckoutSuccess({ navigate }) {
                 </p>
               </div>
             </div>
+
+            {squareDepositPaid.cardNotSaved && (
+              <div className="mt-4 rounded-xl border border-[#E7D7AD] bg-[#FFFDF6] p-4 text-left">
+                <p className="font-[Space_Grotesk] text-sm font-semibold text-[#6B5517]">
+                  Your card was not saved
+                </p>
+                <p className="mt-1 font-[Space_Grotesk] text-xs leading-5 text-[#6F6859]">
+                  Your deposit was paid and your booking is active, but we could not save your card for automatic
+                  future charges. Please pay your remaining balance at least 7 days before pickup and your
+                  security deposit at least 48 hours before pickup from your client portal.
+                </p>
+              </div>
+            )}
           </>
         ) : (
           <>

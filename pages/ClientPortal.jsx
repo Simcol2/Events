@@ -32,6 +32,7 @@ const STATUS_META = {
   returned: { label: "Returned", tone: "neutral" },
   completed: { label: "Completed", tone: "neutral" },
   cancelled: { label: "Cancelled", tone: "coral" },
+  payment_overdue: { label: "Payment overdue", tone: "coral" },
 };
 
 function statusMeta(status) {
@@ -653,7 +654,7 @@ export default function ClientPortal() {
           ))}
         </div>
 
-        <SquareRentalStatus accessToken={session?.access_token} />
+        <SquareRentalStatus accessToken={session?.access_token} customer={data?.customer} />
 
         {loading && !data ? (
           <Panel className="mt-6"><p className="font-[Space_Grotesk] text-sm text-[#7E7767]">Loading your account...</p></Panel>
