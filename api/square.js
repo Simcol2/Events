@@ -24,6 +24,7 @@ import {
 import { squareLocationId, squareRequest } from "./_squareRest.js";
 import { handleApiError, requireClient } from "./_clientAuth.js";
 import { adminSupabase, requireAdmin } from "./_adminAuth.js";
+import { rentalUnitPrice } from "./_pricing.js";
 
 const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
@@ -104,7 +105,7 @@ async function resolveRentalLines(items) {
 
     const { data: item, error } = await supabase
       .from("items")
-      .select("id,name,rental_price,quantity_owned,quantity_out_of_service,active")
+      .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,quantity_owned,quantity_out_of_service,active")
       .eq("id", line.id)
       .eq("active", true)
       .single();
@@ -113,7 +114,7 @@ async function resolveRentalLines(items) {
       throw new Error("One of the rental items is no longer available.");
     }
 
-    const unitCents = cents(item.rental_price);
+    const unitCents = cents(rentalUnitPrice(item, quantity));
     if (unitCents <= 0) {
       throw new Error(`${item.name} is not available to rent.`);
     }
@@ -1886,14 +1887,19 @@ async function resolveProductionRentals(items) {
     const quantity = Math.max(1, Math.floor(Number(line.quantity) || 1));
     const { data: item, error } = await supabase
       .from("items")
-      .select("id,name,rental_price,active")
+      .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,active")
       .eq("id", line.id)
       .eq("active", true)
       .single();
 
     if (error || !item) throw new Error("A rental item is no longer available.");
 
-    resolved.push({ id: item.id, name: item.name, quantity, unitCents: productionCents(item.rental_price) });
+    resolved.push({
+      id: item.id,
+      name: item.name,
+      quantity,
+      unitCents: productionCents(rentalUnitPrice(item, quantity)),
+    });
   }
   return resolved;
 }

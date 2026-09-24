@@ -8,6 +8,7 @@ import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import DescriptionBody from "../components/ItemDescription";
 import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
 import SourcingRequestModal from "../components/SourcingRequestModal";
+import { rentalUnitPrice } from "../api/_pricing.js";
 import {
   ElevatedCard,
   Kicker,
@@ -83,6 +84,12 @@ const SECTIONS = [
     category: "Cake Stands",
   },
   {
+    key: "servingPieces",
+    title: "Choose Your Serving Pieces",
+    subtitle: "Snacks, fruit and small desserts, served like you meant it.",
+    category: "Serving Pieces",
+  },
+  {
     key: "candles",
     title: "Choose Your Candles",
     subtitle: "Warm lighting fixes an unreasonable number of problems.",
@@ -117,6 +124,18 @@ function money(n) {
 // off which one an item actually is rather than assuming rental.
 const isRental = (item) => item.rental_price != null;
 const unitPrice = (item) => Number(isRental(item) ? item.rental_price : item.purchase_price);
+const linePrice = (item, quantity) =>
+  (isRental(item) ? rentalUnitPrice(item, quantity) : unitPrice(item)) * quantity;
+const hasBulkPrice = (item) => isRental(item) && item.bulk_min_quantity != null && item.bulk_rental_price != null;
+
+function BulkPriceNote({ item, fonts, palette }) {
+  if (!hasBulkPrice(item)) return null;
+  return (
+    <p className="mt-0.5" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "12px", fontWeight: 600 }}>
+      {money(Number(item.bulk_rental_price))} each for {item.bulk_min_quantity}+
+    </p>
+  );
+}
 
 export default function TableBox() {
   const { palette, fonts } = usePalette();
@@ -205,7 +224,7 @@ export default function TableBox() {
         .map((p) => ({
           ...p,
           quantity: qty[p.id],
-          lineTotal: unitPrice(p) * qty[p.id],
+          lineTotal: linePrice(p, qty[p.id]),
         })),
     [allProducts, qty]
   );
@@ -229,7 +248,7 @@ export default function TableBox() {
       rentalItems.reduce((sum, item) => {
         const catalogItem = byId[item.id];
         if (!catalogItem || catalogItem.rental_price == null) return sum;
-        return sum + Number(catalogItem.rental_price) * item.quantity;
+        return sum + linePrice(catalogItem, item.quantity);
       }, 0),
     [rentalItems, byId]
   );
@@ -462,6 +481,7 @@ export default function TableBox() {
                                         {money(unitPrice(activeProduct))}{" "}
                                         <span>{isRental(activeProduct) ? "/ event" : "to buy"}</span>
                                       </p>
+                                      <BulkPriceNote item={activeProduct} fonts={fonts} palette={palette} />
                                     </div>
                                   </button>
 
@@ -774,6 +794,12 @@ export default function TableBox() {
                     {isRental(openProduct) ? "/ event" : "to buy"}
                   </span>
                 </span>
+                <BulkPriceNote item={openProduct} fonts={fonts} palette={palette} />
+                {openProduct.replacement_value && (
+                  <p className="mt-2" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}>
+                    Replacement value: {openProduct.replacement_value}
+                  </p>
+                )}
               </div>
             </div>
           </div>

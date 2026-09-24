@@ -6,6 +6,7 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { BASE_PATH } from "./_basePath.js";
+import { rentalUnitPrice } from "./_pricing.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || process.env.stripe_secret);
 const supabase = createClient(
@@ -75,7 +76,7 @@ async function resolveLines(items) {
     if (line.kind === "rental" || line.kind === "catalog") {
       const { data: item, error } = await supabase
         .from("items")
-        .select("id,name,rental_price,purchase_price,quantity_owned,quantity_out_of_service,active")
+        .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,purchase_price,quantity_owned,quantity_out_of_service,active")
         .eq("id", line.id)
         .eq("active", true)
         .single();
@@ -83,7 +84,7 @@ async function resolveLines(items) {
       if (error || !item) throw new Error("One of the cart items is no longer available.");
 
       const unitCents =
-        line.kind === "rental" ? cents(item.rental_price) : cents(item.purchase_price);
+        line.kind === "rental" ? cents(rentalUnitPrice(item, quantity)) : cents(item.purchase_price);
 
       if (unitCents <= 0) throw new Error(`${item.name} is not available for this order type.`);
 

@@ -567,6 +567,12 @@ export default function ItemDetail({ kind, slug, navigate }) {
                 </div>
               )}
 
+              {isRentable && !outOfStock && active.bulk_rental_price != null && active.bulk_min_quantity != null && (
+                <p className="font-[Space_Grotesk] text-sm font-semibold" style={{ color: palette.accent }}>
+                  ${active.bulk_rental_price} each when you rent {active.bulk_min_quantity} or more
+                </p>
+              )}
+
               {!isPurchasable && !isRentable && (
                 <p className="font-[Space_Grotesk] text-base" style={{ color: palette.goldDeep }}>
                   Contact us to inquire about this piece.
@@ -601,6 +607,12 @@ export default function ItemDetail({ kind, slug, navigate }) {
             >
               BUILD MY EXPERIENCE
             </button>
+
+            {active.replacement_value && (
+              <p className="mt-4 font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
+                Replacement value: {active.replacement_value}
+              </p>
+            )}
           </div>
         </ElevatedCard>
       </section>

@@ -7,6 +7,7 @@ import RentalDateFields, { rentalDatesValid } from "./RentalDateFields";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 import HowRentalWorks from "./HowRentalWorks";
 import SquareCardPayment from "./SquareCardPayment";
+import { rentalUnitPrice } from "../api/_pricing.js";
 
 const MIN_RENTAL_CENTS = 5000;
 
@@ -58,7 +59,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
           ? {
               ...line,
               name: item.name,
-              unitCents: Math.round(Number(item.rental_price || 0) * 100),
+              unitCents: Math.round(rentalUnitPrice(item, line.quantity) * 100),
               mode: "rental",
             }
           : null;
