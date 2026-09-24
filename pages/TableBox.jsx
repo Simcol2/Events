@@ -70,6 +70,12 @@ const SECTIONS = [
     category: "Centerpiece",
   },
   {
+    key: "cakeStands",
+    title: "Choose Your Cake Stand",
+    subtitle: "Add a stand for cakes, cupcakes, or treats.",
+    category: "Cake Stands",
+  },
+  {
     key: "candles",
     title: "Choose Your Candles",
     subtitle: "Finish the table with a little glow.",
@@ -86,6 +92,12 @@ const SECTIONS = [
     title: "Choose Your Garland & Lights",
     subtitle: "Dress the table or the mantle for the holidays.",
     category: "Garland & Lights",
+  },
+  {
+    key: "helpfulAddOns",
+    title: "Helpful Add-Ons",
+    subtitle: "A few extra pieces that make hosting easier.",
+    category: "Helpful Add-Ons",
   },
 ];
 
