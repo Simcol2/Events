@@ -1878,11 +1878,80 @@ async function findOrCreateProductionCustomer(input) {
   return data;
 }
 
+// The physical pieces inside one Table Box package line, with the
+// customer's picks applied. Rows sharing a choice_group are alternatives
+// (napkin colour, glass style, ...): exactly one per group must have been
+// chosen, via line.meta.choiceIds. Rows with no choice_group are always in.
+async function resolvePackageComponents(pkg, meta) {
+  const { data: rows, error } = await supabase
+    .from("table_box_package_items")
+    .select("item_id,quantity,label,choice_group,display_order,items(id,name,active)")
+    .eq("package_id", pkg.id)
+    .order("display_order", { ascending: true });
+
+  if (error) throw error;
+  if (!rows?.length) throw new Error(`${pkg.name} is not fully set up yet.`);
+
+  const chosen = new Set(
+    (Array.isArray(meta?.choiceIds) ? meta.choiceIds : []).map(Number).filter(Number.isFinite)
+  );
+  const groups = new Map();
+  const included = [];
+
+  for (const row of rows) {
+    if (!row.items?.active) {
+      // An unavailable alternative just drops out of its group; a fixed
+      // piece going missing means the package can't be fulfilled.
+      if (row.choice_group) continue;
+      throw new Error(`${pkg.name} contains a piece that is no longer available.`);
+    }
+    if (!row.choice_group) {
+      included.push(row);
+      continue;
+    }
+    if (!groups.has(row.choice_group)) groups.set(row.choice_group, []);
+    groups.get(row.choice_group).push(row);
+  }
+
+  for (const options of groups.values()) {
+    const picked = options.filter((row) => chosen.has(Number(row.item_id)));
+    if (picked.length !== 1) {
+      throw new Error(`Choose one option for each part of ${pkg.name} before checking out.`);
+    }
+    included.push(picked[0]);
+  }
+
+  return included.map((row) => ({
+    id: Number(row.item_id),
+    name: row.items.name,
+    label: row.label || row.items.name,
+    quantity: Number(row.quantity),
+  }));
+}
+
+// Splits the cart into two answers that differ for a Table Box package:
+//   billingLines   - what the customer bought and what Square charges. A
+//                    package bills at its own items.rental_price, never the
+//                    sum of its parts.
+//   inventoryLines - which physical pieces are held for the rental dates,
+//                    totalled per item across the whole cart, so a package
+//                    plus loose plates can't overbook the same plates.
+//   reservationRows - reservation_items rows: every priced line, plus each
+//                    package piece at $0 so it blocks that item's stock.
 async function resolveProductionRentals(items) {
   const rentals = items.filter((row) => row?.kind === "rental");
   if (!rentals.length) throw new Error("No rental items were supplied.");
 
-  const resolved = [];
+  const billingLines = [];
+  const reservationRows = [];
+  const inventory = new Map();
+
+  const holdInventory = (id, name, quantity) => {
+    const current = inventory.get(id) || { id, name, quantity: 0 };
+    current.quantity += quantity;
+    inventory.set(id, current);
+  };
+
   for (const line of rentals) {
     const quantity = Math.max(1, Math.floor(Number(line.quantity) || 1));
     const { data: item, error } = await supabase
@@ -1894,14 +1963,45 @@ async function resolveProductionRentals(items) {
 
     if (error || !item) throw new Error("A rental item is no longer available.");
 
-    resolved.push({
-      id: item.id,
-      name: item.name,
+    const { data: pkg, error: pkgError } = await supabase
+      .from("table_box_packages")
+      .select("id,name")
+      .eq("package_item_id", item.id)
+      .eq("active", true)
+      .maybeSingle();
+
+    if (pkgError) throw pkgError;
+
+    const unitCents = productionCents(rentalUnitPrice(item, quantity));
+    billingLines.push({ id: item.id, name: item.name, quantity, unitCents });
+    reservationRows.push({
+      item_id: Number(item.id),
       quantity,
-      unitCents: productionCents(rentalUnitPrice(item, quantity)),
+      description: item.name,
+      unit_price_cents: unitCents,
+      line_total_cents: unitCents * quantity,
     });
+
+    if (!pkg) {
+      holdInventory(Number(item.id), item.name, quantity);
+      continue;
+    }
+
+    const components = await resolvePackageComponents(pkg, line.meta);
+    for (const component of components) {
+      const pieces = component.quantity * quantity;
+      holdInventory(component.id, component.name, pieces);
+      reservationRows.push({
+        item_id: component.id,
+        quantity: pieces,
+        description: `${component.label} (included in ${item.name})`,
+        unit_price_cents: 0,
+        line_total_cents: 0,
+      });
+    }
   }
-  return resolved;
+
+  return { billingLines, inventoryLines: Array.from(inventory.values()), reservationRows };
 }
 
 async function productionAvailability(lines, pickup, dropoff) {
@@ -2178,15 +2278,15 @@ async function handleProductionBooking(req, res) {
     }
 
     const customer = await findOrCreateProductionCustomer(input);
-    const lines = await resolveProductionRentals(items);
-    const rentalItemsSubtotalCents = lines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
+    const { billingLines, inventoryLines, reservationRows } = await resolveProductionRentals(items);
+    const rentalItemsSubtotalCents = billingLines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
     const rentalSubtotalCents = rentalItemsSubtotalCents + rentalWindow.extraDayFeeCents;
 
     if (rentalSubtotalCents < PRODUCTION_MIN_RENTAL_CENTS) {
       return res.status(400).json({ error: "Rental orders require a $50 minimum." });
     }
 
-    await productionAvailability(lines, rentalWindow.pickup, rentalWindow.dropoff);
+    await productionAvailability(inventoryLines, rentalWindow.pickup, rentalWindow.dropoff);
 
     const { data: bookingNumber, error: numberError } = await supabase.rpc("next_rental_reservation_number");
     if (numberError) throw numberError;
@@ -2225,21 +2325,14 @@ async function handleProductionBooking(req, res) {
     if (reservationError) throw reservationError;
     reservation = created;
 
-    const { error: itemsError } = await supabase.from("reservation_items").insert(
-      lines.map((line) => ({
-        reservation_id: reservation.id,
-        item_id: Number(line.id),
-        quantity: line.quantity,
-        description: line.name,
-        unit_price_cents: line.unitCents,
-        line_total_cents: line.unitCents * line.quantity,
-      }))
-    );
+    const { error: itemsError } = await supabase
+      .from("reservation_items")
+      .insert(reservationRows.map((row) => ({ reservation_id: reservation.id, ...row })));
 
     if (itemsError) throw itemsError;
 
     const squareCustomerId = await ensureSquareCustomer({ supabase, customer });
-    const squareOrder = await createSquareRentalOrder({ reservation, rentalLines: lines, squareCustomerId });
+    const squareOrder = await createSquareRentalOrder({ reservation, rentalLines: billingLines, squareCustomerId });
 
     await supabase
       .from("reservations")

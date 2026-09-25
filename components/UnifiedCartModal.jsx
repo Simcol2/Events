@@ -18,6 +18,18 @@ function money(cents) {
   }).format((Number(cents) || 0) / 100);
 }
 
+// The physical pieces a rental line holds, as [itemId, quantity] pairs:
+// the item itself, or for a Table Box package the pieces recorded on the
+// cart line when it was added. Display only - checkout re-derives package
+// contents from the database.
+function physicalDemand(line) {
+  const boxes = Number(line.quantity || 1);
+  if (Array.isArray(line.meta?.components)) {
+    return line.meta.components.map(([id, perBox]) => [Number(id), Number(perBox) * boxes]);
+  }
+  return [[Number(line.id), boxes]];
+}
+
 export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) {
   const {
     items,
@@ -32,7 +44,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [availability, setAvailability] = useState([]);
+  const [availability, setAvailability] = useState(() => new Map());
   const [checking, setChecking] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [checkingOut, setCheckingOut] = useState(false);
@@ -61,6 +73,9 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
               name: item.name,
               unitCents: Math.round(rentalUnitPrice(item, line.quantity) * 100),
               mode: "rental",
+              choiceNames: Array.isArray(line.meta?.choiceIds)
+                ? line.meta.choiceIds.map((id) => catalogMap.get(String(id))?.name).filter(Boolean)
+                : [],
             }
           : null;
       }
@@ -147,37 +162,42 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const rentalMinimumMet = rentalItems.length === 0 || rentalSubtotalCents >= MIN_RENTAL_CENTS;
   const rentalDatesReady = rentalItems.length === 0 || rentalDatesValid(rentalDates);
 
+  // Total pieces the cart needs of each physical item, across every rental
+  // line - so a Table Box package plus loose plates can't each look fine
+  // on their own while together needing more plates than exist.
+  const demandByItem = useMemo(() => {
+    const totals = new Map();
+    for (const line of rentalItems) {
+      for (const [id, qty] of physicalDemand(line)) totals.set(id, (totals.get(id) || 0) + qty);
+    }
+    return totals;
+  }, [rentalItems]);
+
   useEffect(() => {
     let cancelled = false;
 
     async function checkAll() {
       if (!rentalItems.length || !rentalDatesReady || !supabase) {
-        setAvailability([]);
+        setAvailability(new Map());
         return;
       }
 
       setChecking(true);
-      const rows = [];
+      const available = new Map();
 
-      for (const line of rentalItems) {
+      for (const id of demandByItem.keys()) {
         const { data, error } = await supabase.rpc("get_reservation_item_availability", {
-          p_item_id: Number(line.id),
+          p_item_id: id,
           p_pickup: rentalDates.pickup,
           p_dropoff: rentalDates.dropoff,
         });
 
         if (cancelled) return;
-
-        rows.push({
-          id: line.id,
-          requested: Number(line.quantity || 1),
-          available: error ? null : Number(data || 0),
-          error: error?.message || "",
-        });
+        available.set(id, error ? null : Number(data || 0));
       }
 
       if (!cancelled) {
-        setAvailability(rows);
+        setAvailability(available);
         setChecking(false);
       }
     }
@@ -186,13 +206,24 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
     return () => {
       cancelled = true;
     };
-  }, [rentalItems, rentalDates.pickup, rentalDates.dropoff, rentalDatesReady]);
+  }, [rentalItems, demandByItem, rentalDates.pickup, rentalDates.dropoff, rentalDatesReady]);
 
-  const availabilityById = new Map(availability.map((row) => [String(row.id), row]));
+  // null while unknown; otherwise whether every piece this line holds is
+  // available, plus the first piece that falls short.
+  const lineAvailability = (line) => {
+    let shortfall = null;
+    for (const [id] of physicalDemand(line)) {
+      const available = availability.get(id);
+      if (available == null) return null;
+      const needed = demandByItem.get(id) || 0;
+      if (available < needed && !shortfall) shortfall = { id, available, needed };
+    }
+    return { ok: !shortfall, shortfall };
+  };
+
   const allAvailable =
     rentalItems.length === 0 ||
-    (availability.length === rentalItems.length &&
-      availability.every((row) => row.available != null && row.available >= row.requested));
+    (!checking && rentalItems.every((line) => lineAvailability(line)?.ok === true));
 
   // The card form only needs to be ready (and, for manual payment, the
   // deadline acknowledgment checked) when there are rentals to pay a
@@ -339,7 +370,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
 
             <div className="mt-6 space-y-3">
               {resolved.map((line) => {
-                const av = line.kind === "rental" ? availabilityById.get(String(line.id)) : null;
+                const av = line.kind === "rental" ? lineAvailability(line) : null;
+                const isPackage = Array.isArray(line.meta?.components);
+                const shortName = av?.shortfall
+                  ? catalogMap.get(String(av.shortfall.id))?.name || "one of the pieces"
+                  : "";
                 return (
                   <div
                     key={`${line.kind}-${line.id}-${JSON.stringify(line.meta || {})}`}
@@ -360,6 +395,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                           {line.name}
                         </h4>
                       </div>
+                      {line.choiceNames?.length > 0 && (
+                        <p className="mt-1 font-[Space_Grotesk] text-xs text-[#6B6B6B]">
+                          {line.choiceNames.join(" · ")}
+                        </p>
+                      )}
                       <p className="mt-2 font-[Space_Grotesk] text-sm text-[#8A6A1E]">
                         {money(line.unitCents)} each
                       </p>
@@ -367,11 +407,15 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
                         <p className="mt-1 font-[Space_Grotesk] text-xs text-[#6B6B6B]">
                           {checking
                             ? "Checking availability..."
-                            : av?.available == null
+                            : av == null
                               ? "Availability could not be checked."
-                              : av.available >= line.quantity
-                                ? `${av.available} available for your dates`
-                                : `Only ${av.available} available for your dates`}
+                              : isPackage
+                                ? av.ok
+                                  ? "Every piece is available for your dates"
+                                  : `Not enough ${shortName} for your dates (${av.shortfall.available} available)`
+                                : av.ok
+                                  ? `${availability.get(Number(line.id))} available for your dates`
+                                  : `Only ${av.shortfall.available} available for your dates`}
                         </p>
                       )}
                     </div>

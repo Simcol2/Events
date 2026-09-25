@@ -71,6 +71,16 @@ export async function loadCatalogSnapshot() {
   }
 }
 
+// Same idea for the Table Box package tables: { packages, items, addons }.
+export async function loadTableBoxPackagesSnapshot() {
+  try {
+    const raw = await readFile(path.resolve("scripts/_table-box-packages-snapshot.json"), "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 // One { kind, base, groupName } entry per catalog item page the app can
 // actually reach - the same set pages/Decor.jsx and pages/Gifts.jsx would
 // each show, deduplicated and priced the same way.

@@ -3,16 +3,15 @@ import { ChevronDown, Minus, Plus, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
-import { withBasePath } from "../apiBase";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import DescriptionBody from "../components/ItemDescription";
 import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
 import SourcingRequestModal from "../components/SourcingRequestModal";
+import TableBoxPackages from "../components/TableBoxPackages";
 import { rentalUnitPrice } from "../api/_pricing.js";
 import {
   ElevatedCard,
   Kicker,
-  editorialShadow,
   paperTexture,
   rgba,
 } from "../components/EditorialKit";
@@ -296,99 +295,13 @@ export default function TableBox() {
 
   return (
     <main style={paperTexture(palette)}>
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="absolute rounded-full"
-          style={{ width: "420px", height: "420px", right: "-180px", top: "-220px", background: rgba(palette.decorTint, 0.09) }}
-        />
-        <div className="relative z-10 mx-auto max-w-4xl px-6 py-20 text-center sm:px-10 lg:py-28">
-          <Kicker palette={palette} fonts={fonts}>HOSTING AT HOME?</Kicker>
-          <h1
-            className="mt-4"
-            style={{
-              ...fonts.displayFont,
-              color: palette.primaryDeep,
-              fontSize: "clamp(3.2rem, 6vw, 6rem)",
-              fontWeight: 640,
-              lineHeight: 0.98,
-              letterSpacing: "-0.04em",
-            }}
-          >
-            Make It Cute. Give It Back.
-          </h1>
-          <p
-            className="mx-auto mt-7 max-w-2xl"
-            style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "17px", lineHeight: 1.75 }}
-          >
-            Hosting is expensive enough. You do not need to buy a whole new personality for your
-            dining table.
-          </p>
-          <p
-            className="mx-auto mt-4 max-w-2xl"
-            style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "17px", lineHeight: 1.75 }}
-          >
-            Rent the glasses, linens, candles, serving pieces and little extras that make your place
-            feel like an occasion.
-          </p>
-          <p
-            className="mx-auto mt-4 max-w-2xl"
-            style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "17px", lineHeight: 1.75 }}
-          >
-            Use what you already own, borrow what makes it better, then give it all back when
-            everyone goes home.
-          </p>
-          <div
-            className="mx-auto mt-7 flex max-w-xl flex-wrap items-center justify-center gap-x-6 gap-y-2"
-            style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "14px" }}
-          >
-            <span>$50 minimum rental</span>
-            <span aria-hidden="true">&middot;</span>
-            <span>Toronto pickup &amp; return</span>
-            <span aria-hidden="true">&middot;</span>
-            <span>Delivery + basic setup available</span>
-          </div>
-        </div>
-      </section>
+      <TableBoxPackages />
 
-      <section className="mx-auto max-w-6xl px-6 pb-6 sm:px-10">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div
-            className="relative overflow-hidden"
-            style={{ aspectRatio: "4/3", borderRadius: "5px", boxShadow: editorialShadow, border: `1px solid ${rgba(palette.gold, 0.3)}` }}
-          >
-            <img
-              src={withBasePath("/photos/table-box-before.jpg")}
-              alt="A simple home dinner table before rental styling"
-              className="h-full w-full object-cover"
-            />
-            <span
-              className="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-bold tracking-[0.16em]"
-              style={{ ...fonts.bodyFont, background: "rgba(255,255,255,0.92)", color: palette.primaryDeep }}
-            >
-              BEFORE
-            </span>
-          </div>
-          <div
-            className="relative overflow-hidden"
-            style={{ aspectRatio: "4/3", borderRadius: "5px", boxShadow: editorialShadow, border: `1px solid ${rgba(palette.gold, 0.3)}` }}
-          >
-            <img
-              src={withBasePath("/photos/table-box-after.jpg")}
-              alt="The same home dinner table styled with rental pieces"
-              className="h-full w-full object-cover"
-            />
-            <span
-              className="absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-bold tracking-[0.16em]"
-              style={{ ...fonts.bodyFont, background: "rgba(255,255,255,0.92)", color: palette.primaryDeep }}
-            >
-              AFTER
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+      <section
+        id="build-your-own-table-box"
+        className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32"
+        style={{ scrollMarginTop: "96px" }}
+      >
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
             <Kicker palette={palette} fonts={fonts}>BUILD YOUR BOX</Kicker>

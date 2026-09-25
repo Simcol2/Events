@@ -11,3 +11,4 @@ dist/
 # on a machine that can't reach Supabase directly - see that file's own
 # comments. Never a source of truth, always regenerated before use.
 scripts/_catalog-snapshot.json
+scripts/_table-box-packages-snapshot.json

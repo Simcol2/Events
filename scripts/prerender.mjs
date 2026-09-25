@@ -16,7 +16,7 @@ import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { buildItemPages, loadCatalogSnapshot } from "./catalogRoutes.mjs";
+import { buildItemPages, loadCatalogSnapshot, loadTableBoxPackagesSnapshot } from "./catalogRoutes.mjs";
 
 const { seoForPath, itemSeo, itemUrlPath } = await import(pathToFileURL(path.resolve("seo.js")).href);
 
@@ -131,6 +131,18 @@ async function run() {
     await page.route("**/rest/v1/gifts*", (route) =>
       route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify([]) })
     );
+
+    // Same stand-in for the Table Box package tables (see
+    // components/TableBoxPackages.jsx). Without it the snapshot would bake
+    // in "Package options are unavailable" instead of the two boxes.
+    const packages = await loadTableBoxPackagesSnapshot();
+    if (packages) {
+      const serve = (rows) => (route) =>
+        route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(rows) });
+      await page.route(/\/rest\/v1\/table_box_packages\?/, serve(packages.packages));
+      await page.route(/\/rest\/v1\/table_box_package_items\?/, serve(packages.items));
+      await page.route(/\/rest\/v1\/table_box_package_addons\?/, serve(packages.addons));
+    }
   }
 
   for (const route of routes) {
