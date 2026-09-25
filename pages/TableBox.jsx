@@ -294,20 +294,26 @@ export default function TableBox() {
   };
 
   return (
-    <main style={paperTexture(palette)}>
+    <main className="relative isolate" style={paperTexture(palette)}>
       {/* Decorative raspberry/gold frame accent along the right edge of the
-          viewport, matching the "Borrow the good stuff" ad. Fixed (not
-          scrolled with content), purely decorative, and Table Box only -
-          no other page uses these colors. Mobile carries its own smaller
-          dimensions; sm: and up switch to the ad's full-size numbers. */}
+          page, matching the "Borrow the good stuff" ad. Lives on this
+          wrapper (not the viewport) so `isolate` scopes its z-0 stacking
+          context to this page only, never interacting with the header,
+          cart button, or any modal's own z-index. Every real section below
+          sits in its own z-10 layer with a solid card/surface background,
+          so the stripe never bleeds through - it only shows in the page's
+          own gutters. Table Box only - no other page uses these colors.
+          Mobile carries its own smaller dimensions; sm: and up switch to
+          the ad's full-size numbers. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-y-0 right-[8px] z-0 w-[7px] sm:right-[14px] sm:w-[10px]"
+        className="pointer-events-none absolute inset-y-0 right-[8px] z-0 w-[7px] sm:right-[14px] sm:w-[10px]"
       >
         <div className="absolute right-0 top-0 h-full w-[4px] sm:w-[6px]" style={{ background: "#D4145A" }} />
         <div className="absolute left-0 top-0 h-full w-[1px] sm:w-[2px]" style={{ background: "#C79A3B" }} />
       </div>
 
+      <div className="relative z-10">
       <TableBoxPackages />
 
       <section
@@ -793,6 +799,7 @@ export default function TableBox() {
           </div>
         </div>
       )}
+      </div>
     </main>
   );
 }
