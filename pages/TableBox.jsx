@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Home, Minus, PackagePlus, Plus, RotateCcw, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
@@ -141,7 +142,7 @@ function BulkPriceNote({ item, fonts, palette }) {
   );
 }
 
-export default function TableBox() {
+export default function TableBox({ navigate }) {
   const { palette, fonts } = usePalette();
   const { addRental, addToCart, rentalItems } = useCart();
 
@@ -318,7 +319,7 @@ export default function TableBox() {
       </div>
 
       <div className="relative z-10">
-      <TableBoxPackages />
+      <TableBoxPackages navigate={navigate} />
 
       <section
         id="build-your-own-table-box"
@@ -736,9 +737,37 @@ export default function TableBox() {
         </div>
       </section>
 
+      {navigate && (
+        <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+          <ElevatedCard palette={palette} className="p-8 text-center sm:p-10">
+            <h3
+              style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 640, lineHeight: 1.2 }}
+            >
+              Want to dress up more than the table?
+            </h3>
+            <p className="mx-auto mt-3 max-w-lg" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.65 }}>
+              Hosting a shower, birthday or something a little more extra?
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate("/decor")}
+              className="mt-5"
+              style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "15px", fontWeight: 700 }}
+            >
+              Browse arches, stands, signage, display pieces and larger décor.
+            </button>
+          </ElevatedCard>
+        </section>
+      )}
+
       {showSourcingModal && <SourcingRequestModal onClose={() => setShowSourcingModal(false)} />}
 
-      {openProduct && (
+      {/* Portaled to document.body for the same reason as
+          TableBoxTransportModal: a `position: fixed` modal nested inside
+          <main>, at any z-index, paints behind SiteHeader's `position:
+          sticky` z-50 in Chromium - confirmed, pre-existing, not specific
+          to this modal. */}
+      {openProduct && createPortal(
         <div
           className="fixed inset-0 z-[170] flex items-center justify-center p-4 sm:p-8"
           style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
@@ -801,7 +830,8 @@ export default function TableBox() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       </div>
     </main>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 
@@ -44,7 +45,11 @@ export default function SourcingRequestModal({ onClose }) {
     setSubmitted(true);
   }
 
-  return (
+  // Portaled to document.body: SiteHeader is `position: sticky` with its
+  // own z-50 stacking context, and a `position: fixed` modal nested inside
+  // <main>, at any z-index, paints behind it in Chromium - a confirmed,
+  // pre-existing quirk, not specific to this modal.
+  return createPortal(
     <div
       className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-8"
       style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
@@ -134,6 +139,7 @@ export default function SourcingRequestModal({ onClose }) {
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

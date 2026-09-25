@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
@@ -169,7 +170,12 @@ function PackageModal({ pkg, addons, deliveryItem, onClose, onAdded }) {
     </button>
   );
 
-  return (
+  // Portaled to document.body: SiteHeader is `position: sticky` with its
+  // own z-50 stacking context, and a `position: fixed` modal nested deep
+  // inside <main> - regardless of z-index - paints behind it in Chromium
+  // (a confirmed, pre-existing quirk, not specific to this modal). Escaping
+  // to a literal sibling of the header in the DOM sidesteps it entirely.
+  return createPortal(
     <div
       className="fixed inset-0 z-[190] flex items-center justify-center p-3 sm:p-6"
       style={{ background: "rgba(12,20,16,.76)", backdropFilter: "blur(7px)" }}
@@ -329,11 +335,12 @@ function PackageModal({ pkg, addons, deliveryItem, onClose, onAdded }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
-export default function TableBoxPackages() {
+export default function TableBoxPackages({ navigate }) {
   const { palette, fonts } = usePalette();
   const [packages, setPackages] = useState([]);
   const [addons, setAddons] = useState([]);
@@ -526,6 +533,27 @@ export default function TableBoxPackages() {
               </p>
             )}
           </div>
+
+          {navigate && (
+            <ElevatedCard palette={palette} className="mt-10 p-6 text-center sm:p-8">
+              <h3
+                style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.3rem, 2.6vw, 1.7rem)", fontWeight: 640, lineHeight: 1.2 }}
+              >
+                Hosting something a little bigger?
+              </h3>
+              <p className="mx-auto mt-2 max-w-md" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "15px", lineHeight: 1.6 }}>
+                Need an arch, backdrop, display stand, signage or larger décor?
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/decor")}
+                className="mt-4"
+                style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "14px", fontWeight: 700 }}
+              >
+                Browse the full décor collection →
+              </button>
+            </ElevatedCard>
+          )}
         </div>
       </section>
 
