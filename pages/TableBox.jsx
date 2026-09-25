@@ -4,6 +4,7 @@ import { ChevronDown, Home, Minus, PackagePlus, Plus, RotateCcw, X } from "lucid
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
+import { withBasePath } from "../apiBase";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import DescriptionBody from "../components/ItemDescription";
 import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
@@ -13,9 +14,21 @@ import { rentalUnitPrice } from "../api/_pricing.js";
 import {
   ElevatedCard,
   Kicker,
-  paperTexture,
   rgba,
 } from "../components/EditorialKit";
+
+// Decorative real product photos scattered down the page behind the
+// content, each an absolutely-positioned <img> against the page's
+// outermost `relative` wrapper (not the viewport) so they scroll with
+// the page. Smaller and pushed further offscreen on mobile so they never
+// crowd the narrow content column.
+const DECORATIVE_PHOTOS = [
+  { src: "/photos/grey-staub.png", className: "-left-14 top-[650px] w-28 sm:-left-20 sm:w-48" },
+  { src: "/photos/gold-candle-holder.png", className: "-right-10 top-[1400px] w-20 sm:-right-16 sm:w-28" },
+  { src: "/photos/gold-cake-stand.png", className: "-left-12 top-[2400px] w-24 sm:-left-20 sm:w-44" },
+  { src: "/photos/glass-serving-piece.png", className: "-right-10 top-[3300px] w-24 sm:-right-16 sm:w-40" },
+  { src: "/photos/red-staub.png", className: "-left-14 top-[4300px] w-28 sm:-left-24 sm:w-52" },
+];
 
 const MINIMUM = 50;
 
@@ -295,30 +308,51 @@ export default function TableBox({ navigate }) {
   };
 
   return (
-    <main className="relative" style={paperTexture(palette)}>
-      {/* Decorative raspberry/gold frame accent along the right edge of the
-          page, matching the "Borrow the good stuff" ad. Absolutely
-          positioned against this `relative` wrapper (not the viewport),
-          so it scrolls with the page instead of pinning to the screen.
-          Deliberately NOT `isolate`: that would trap every modal's
-          z-index inside main's own stacking context, capping it below
-          the site header's z-50 (verified - it broke the package modal).
-          Without isolate, the content wrapper's z-10 still keeps the
-          stripe from bleeding through any card, and every modal's own
-          z-index (150+) still compares directly against the header at
-          the true root stacking context, so modals stay on top. Table
-          Box only - no other page uses these colors. Mobile carries its
-          own smaller dimensions; sm: and up switch to the ad's full-size
-          numbers. */}
+    <div className="relative min-h-screen overflow-x-hidden">
+      {/* Layer 1: stationary paper-texture background, fixed to the
+          viewport rather than the page so it never scrolls out from
+          under the decorative photos or the content. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-[8px] z-0 w-[7px] sm:right-[14px] sm:w-[10px]"
-      >
-        <div className="absolute right-0 top-0 h-full w-[4px] sm:w-[6px]" style={{ background: "#D4145A" }} />
-        <div className="absolute left-0 top-0 h-full w-[1px] sm:w-[2px]" style={{ background: "#C79A3B" }} />
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          backgroundColor: "#FBFAF6",
+          backgroundImage:
+            "repeating-linear-gradient(0deg, rgba(30, 50, 42, 0.018) 0px, rgba(30, 50, 42, 0.018) 1px, transparent 1px, transparent 3px)",
+        }}
+      />
+
+      {/* Layer 2: stationary gold + fuchsia frame accent along the right
+          edge, matching the "Borrow the good stuff" ad. Fixed (not
+          absolute) so it stays pinned to the viewport edge the whole
+          way down the page. Deliberately NOT `isolate` anywhere in this
+          tree: that would trap every modal's z-index inside a local
+          stacking context, capping it below the site header's z-50
+          (verified - it broke the package modal). Every modal is
+          portaled to document.body, so its own z-index always compares
+          directly against the header at the true root stacking context.
+          Table Box only - no other page uses these colors. */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-y-0 right-2 z-[1] w-4">
+        <div className="absolute right-0 top-0 h-full w-2" style={{ background: "#D81B72" }} />
+        <div className="absolute left-0 top-0 h-full w-[2px]" style={{ background: "#C79A3B" }} />
       </div>
 
-      <div className="relative z-10">
+      {/* Layer 3: real product photos scattered down the page behind the
+          content. The content below sits at z-20 on solid card
+          backgrounds specifically so it reads cleanly over these. */}
+      {DECORATIVE_PHOTOS.map((photo) => (
+        <img
+          key={photo.src}
+          src={withBasePath(photo.src)}
+          alt=""
+          aria-hidden="true"
+          className={`pointer-events-none absolute z-[2] ${photo.className}`}
+        />
+      ))}
+
+      {/* Layer 4: the actual page content, above both the fixed
+          background and the scattered decorative photos. */}
+      <main className="relative z-10">
       <TableBoxPackages navigate={navigate} />
 
       <section
@@ -833,7 +867,7 @@ export default function TableBox({ navigate }) {
         </div>,
         document.body
       )}
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
