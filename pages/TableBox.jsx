@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, Minus, Plus, X } from "lucide-react";
+import { ChevronDown, Home, Minus, PackagePlus, Plus, RotateCcw, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
@@ -307,16 +307,50 @@ export default function TableBox() {
             <Kicker palette={palette} fonts={fonts}>BUILD YOUR BOX</Kicker>
             <h2
               className="mt-3"
-              style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.9rem, 3.4vw, 2.6rem)", fontWeight: 630 }}
+              style={{
+                ...fonts.displayFont,
+                color: palette.primaryDeep,
+                fontSize: "clamp(2.2rem, 4vw, 3.2rem)",
+                fontWeight: 650,
+                lineHeight: 1.05,
+                letterSpacing: "-0.02em",
+              }}
             >
-              Same table. Better decisions.
+              Same table.
+              <br />
+              <span style={{ color: palette.accent }}>Better decisions.</span>
             </h2>
-            <p className="mt-3" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.7 }}>
-              You don't need a new dining room. You don't even need new plates.
+            <p className="mt-4 max-w-md" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.7 }}>
+              You don't need a new dining room. You don't even need new plates. Start with what you have and add
+              only the pieces that make it feel intentional.
             </p>
-            <p className="mt-2" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.7 }}>
-              Start with what you have. Add the pieces that make it feel intentional.
-            </p>
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              {[
+                { Icon: Home, label: "Use what you have" },
+                { Icon: PackagePlus, label: "Rent what makes it better" },
+                { Icon: RotateCcw, label: "Give it back, guilt-free" },
+              ].map(({ Icon, label }, i) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 rounded-lg px-4 py-3"
+                  style={{
+                    background: rgba([palette.primaryDeep, palette.accent, palette.goldDeep][i], 0.06),
+                    border: `1px solid ${rgba([palette.primaryDeep, palette.accent, palette.goldDeep][i], 0.18)}`,
+                  }}
+                >
+                  <span
+                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
+                    style={{ background: [palette.primaryDeep, palette.accent, palette.goldDeep][i] }}
+                  >
+                    <Icon size={15} color="#fff" strokeWidth={2.25} />
+                  </span>
+                  <span style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "13px", fontWeight: 650, lineHeight: 1.3 }}>
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
 
             {loading && (
               <p className="mt-10" style={{ ...fonts.bodyFont, color: palette.muted }}>Loading rental pieces...</p>

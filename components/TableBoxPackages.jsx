@@ -5,7 +5,7 @@ import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
 import { withBasePath } from "../apiBase";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
-import { ElevatedCard, Kicker, editorialShadow, rgba } from "./EditorialKit";
+import { ElevatedCard, Kicker, rgba } from "./EditorialKit";
 
 const DELIVERY_SETUP_ITEM_ID = 572;
 const FALLBACK_PHOTO = "/photos/table-box-after.jpg";
@@ -430,56 +430,47 @@ export default function TableBoxPackages() {
     <>
       <section className="overflow-hidden">
         <div className="mx-auto max-w-7xl px-5 pb-16 pt-10 sm:px-8 lg:pb-24 lg:pt-16">
-          <div className="grid items-center gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-            <div>
-              <Kicker palette={palette} fonts={fonts}>START WITH A PACKAGE</Kicker>
-              <h1
-                className="mt-4"
-                style={{
-                  ...fonts.displayFont,
-                  color: palette.primaryDeep,
-                  fontSize: "clamp(3rem, 7vw, 6.4rem)",
-                  fontWeight: 640,
-                  lineHeight: 0.95,
-                  letterSpacing: "-0.045em",
-                }}
-              >
-                Start with a <span style={{ color: palette.accent }}>Table Box.</span>
-              </h1>
-              <p className="mt-6" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.35rem, 2.4vw, 2rem)", lineHeight: 1.25 }}>
-                Use what you own.
-                <br />
-                Rent what makes it better.
-              </p>
-              <p className="mt-5 max-w-lg" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "15px", lineHeight: 1.7 }}>
-                Want the easy version? Start with a ready-made box, add anything seasonal you want, and see every
-                dollar before it goes into your cart.
-              </p>
-              <div
-                className="mt-5 flex max-w-xl flex-wrap items-center gap-x-4 gap-y-1"
-                style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}
-              >
-                <span>$50 minimum rental</span>
-                <span aria-hidden="true">&middot;</span>
-                <span>Toronto pickup &amp; return</span>
-                <span aria-hidden="true">&middot;</span>
-                <span>Delivery + basic setup available</span>
-              </div>
-              <a
-                href="#build-your-own-table-box"
-                className="mt-7 inline-flex rounded-full border px-6 py-3 text-xs font-bold tracking-[0.12em]"
-                style={{ ...fonts.bodyFont, borderColor: palette.primaryDeep, color: palette.primaryDeep }}
-              >
-                OR BUILD YOUR OWN
-              </a>
-            </div>
-
-            <div
-              className="overflow-hidden rounded-2xl"
-              style={{ aspectRatio: "4/3", boxShadow: editorialShadow, border: `1px solid ${rgba(palette.gold, 0.3)}` }}
+          <div className="mx-auto max-w-3xl text-center">
+            <Kicker palette={palette} fonts={fonts}>START WITH A PACKAGE</Kicker>
+            <h1
+              className="mt-4"
+              style={{
+                ...fonts.displayFont,
+                color: palette.primaryDeep,
+                fontSize: "clamp(3rem, 7vw, 6.4rem)",
+                fontWeight: 640,
+                lineHeight: 0.95,
+                letterSpacing: "-0.045em",
+              }}
             >
-              <img src={photoUrl(FALLBACK_PHOTO)} alt="A styled Table Box dinner table" className="h-full w-full object-cover" />
+              Start with a <span style={{ color: palette.accent }}>Table Box.</span>
+            </h1>
+            <p className="mx-auto mt-6" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.35rem, 2.4vw, 2rem)", lineHeight: 1.25 }}>
+              Use what you own.
+              <br />
+              Rent what makes it better.
+            </p>
+            <p className="mx-auto mt-5 max-w-lg" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "15px", lineHeight: 1.7 }}>
+              Want the easy version? Start with a ready-made box, add anything seasonal you want, and see every
+              dollar before it goes into your cart.
+            </p>
+            <div
+              className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
+              style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}
+            >
+              <span>$50 minimum rental</span>
+              <span aria-hidden="true">&middot;</span>
+              <span>Toronto pickup &amp; return</span>
+              <span aria-hidden="true">&middot;</span>
+              <span>Delivery + basic setup available</span>
             </div>
+            <a
+              href="#build-your-own-table-box"
+              className="mt-7 inline-flex rounded-full border px-6 py-3 text-xs font-bold tracking-[0.12em]"
+              style={{ ...fonts.bodyFont, borderColor: palette.primaryDeep, color: palette.primaryDeep }}
+            >
+              OR BUILD YOUR OWN
+            </a>
           </div>
 
           {error ? (
