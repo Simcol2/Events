@@ -4,6 +4,7 @@ import { ChevronDown, Home, Minus, PackagePlus, Plus, RotateCcw, X } from "lucid
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
+import { withBasePath } from "../apiBase";
 import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
 import DescriptionBody from "../components/ItemDescription";
 import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
@@ -305,9 +306,20 @@ export default function TableBox({ navigate }) {
 
       <section
         id="build-your-own-table-box"
-        className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32"
+        className="relative mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32"
         style={{ scrollMarginTop: "96px" }}
       >
+        {/* Mobile only: pinned beside this heading rather than at a fixed
+            page depth. z-index -1 keeps it behind the text but still above
+            the page backdrop, since <main> is its own stacking context. */}
+        <img
+          src={withBasePath("/photos/decor/gold-cake-stand-cutout.png")}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          className="pointer-events-none absolute right-[28px] top-[-58px] -z-10 w-[160px] select-none object-contain drop-shadow-[0_14px_18px_rgba(0,0,0,0.10)] sm:hidden"
+        />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
             <Kicker palette={palette} fonts={fonts}>BUILD YOUR BOX</Kicker>
@@ -661,7 +673,17 @@ export default function TableBox({ navigate }) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+      <section className="relative mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+        {/* Mobile only: tucked into the gap above this card, behind both
+            neighbouring cards. */}
+        <img
+          src={withBasePath("/photos/decor/grey-staub-cutout.png")}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          className="pointer-events-none absolute left-[-40px] top-[-135px] -z-10 w-[210px] select-none object-contain drop-shadow-[0_14px_18px_rgba(0,0,0,0.10)] sm:hidden"
+        />
         <div className="grid gap-6 sm:grid-cols-2">
           <ElevatedCard palette={palette} className="p-6 sm:p-7">
             <Kicker palette={palette} fonts={fonts}>CAN'T FIND THE THING?</Kicker>

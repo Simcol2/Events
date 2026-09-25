@@ -15,9 +15,9 @@ const DECOR = [
       "right-[-58px] top-[115px] w-[210px] sm:right-[-72px] sm:w-[290px] lg:w-[340px]",
   },
   {
-    src: "/photos/decor/ribbed-tumbler-cutout.png",
+    src: "/photos/decor/stemmed-wine-glass-cutout.png",
     className:
-      "right-[-18px] top-[410px] w-[94px] sm:right-[-24px] sm:w-[125px]",
+      "right-[56px] top-[395px] w-[92px] sm:right-[36px] sm:top-[430px] sm:w-[120px]",
   },
   {
     src: "/photos/decor/gold-candleholder-cutout.png",
@@ -27,7 +27,8 @@ const DECOR = [
   {
     src: "/photos/decor/gold-cake-stand-cutout.png",
     className:
-      "right-[-64px] top-[1780px] w-[210px] sm:right-[-74px] sm:w-[280px]",
+      // Mobile shows this beside the Build Your Box heading instead (TableBox.jsx).
+      "hidden sm:block right-[-64px] top-[1780px] w-[210px] sm:right-[-74px] sm:w-[280px]",
   },
   {
     src: "/photos/decor/butter-dish-cutout.png",
@@ -42,7 +43,8 @@ const DECOR = [
   {
     src: "/photos/decor/grey-staub-cutout.png",
     className:
-      "left-[-72px] top-[4100px] w-[220px] sm:left-[-94px] sm:w-[310px]",
+      // Mobile shows this beside the Can't Find the Thing card instead (TableBox.jsx).
+      "hidden sm:block left-[-72px] top-[4100px] w-[220px] sm:left-[-94px] sm:w-[310px]",
   },
 ];
 
@@ -54,18 +56,10 @@ export default function TableBoxEditorialBackdrop() {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-0"
         style={{
-          backgroundColor: "#FBF8F1",
-          backgroundImage: `
-            radial-gradient(circle at 20% 10%, rgba(197,154,59,.045), transparent 26%),
-            radial-gradient(circle at 85% 35%, rgba(216,27,114,.025), transparent 22%),
-            repeating-linear-gradient(
-              0deg,
-              rgba(18,74,56,.017) 0px,
-              rgba(18,74,56,.017) 1px,
-              transparent 1px,
-              transparent 4px
-            )
-          `,
+          // Kept deliberately cool: the owner has rejected warm beige twice.
+          backgroundColor: "#FBFAF6",
+          backgroundImage:
+            "repeating-linear-gradient(0deg, rgba(30, 50, 42, 0.018) 0px, rgba(30, 50, 42, 0.018) 1px, transparent 1px, transparent 3px)",
         }}
       />
 

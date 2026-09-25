@@ -47,13 +47,13 @@ function Message({ palette, fonts }) {
   );
 }
 
-export default function ValuePropBar() {
+export default function ValuePropBar({ integrated = false }) {
   const { palette, fonts } = usePalette();
 
   return (
     <div
-      className="w-full overflow-hidden py-2.5"
-      style={{ background: palette.surface, borderBottom: `1px solid ${palette.line}` }}
+      className="relative z-10 w-full overflow-hidden py-2.5"
+      style={integrated ? { background: "transparent" } : { background: palette.surface, borderBottom: `1px solid ${palette.line}` }}
     >
       <div className="marquee-track flex w-max">
         <Message palette={palette} fonts={fonts} />

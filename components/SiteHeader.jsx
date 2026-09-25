@@ -12,7 +12,7 @@ function ctaBackground(item, palette) {
   return item.ctaColor ? FAMILIES[item.ctaColor].base : palette.primaryDeep;
 }
 
-export default function SiteHeader({ current, navigate, nav }) {
+export default function SiteHeader({ current, navigate, nav, integrated = false }) {
   const { palette, fonts } = usePalette();
   const { chooseEventType, openPickerForBuilder } = useEventType();
   const [open, setOpen] = useState(false);
@@ -38,9 +38,12 @@ export default function SiteHeader({ current, navigate, nav }) {
   };
 
   return (
+    // `integrated` pages paint their own background through the header, so it
+    // scrolls with the page instead of sticking: a transparent sticky bar
+    // would let body text slide underneath the logo.
     <header
-      className="sticky top-0 z-50 backdrop-blur-md"
-      style={{ borderBottom: `1px solid ${palette.line}CC`, background: `${palette.bg}F2` }}
+      className={integrated ? "relative z-50" : "sticky top-0 z-50 backdrop-blur-md"}
+      style={integrated ? { background: "transparent" } : { borderBottom: `1px solid ${palette.line}CC`, background: `${palette.bg}F2` }}
     >
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <button onClick={() => go({ path: "/" })} className="group text-left">
