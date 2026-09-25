@@ -8,6 +8,7 @@ import { withBasePath } from "../apiBase";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 import { ElevatedCard, Kicker, rgba } from "./EditorialKit";
 import TableBoxTransportModal from "./TableBoxTransportModal";
+import TableBoxPackageCarousel from "./TableBoxPackageCarousel";
 
 const DELIVERY_SETUP_ITEM_ID = 572;
 const FALLBACK_PHOTO = "/photos/table-box-after.jpg";
@@ -437,8 +438,8 @@ export default function TableBoxPackages({ navigate }) {
   return (
     <>
       <section className="overflow-hidden">
-        <div className="mx-auto max-w-7xl px-5 pb-16 pt-10 sm:px-8 lg:pb-24 lg:pt-16">
-          <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-5xl px-5 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-14">
+          <div className="mx-auto max-w-3xl text-left sm:text-center">
             <Kicker palette={palette} fonts={fonts}>START WITH A PACKAGE</Kicker>
             <h1
               className="mt-4"
@@ -463,7 +464,7 @@ export default function TableBoxPackages({ navigate }) {
               dollar before it goes into your cart.
             </p>
             <div
-              className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1"
+              className="mt-5 flex flex-wrap items-center justify-start gap-x-4 gap-y-1 sm:justify-center"
               style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}
             >
               <span>$50 minimum rental</span>
@@ -472,7 +473,7 @@ export default function TableBoxPackages({ navigate }) {
               <span aria-hidden="true">&middot;</span>
               <span>Delivery + basic setup available</span>
             </div>
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-7 flex flex-wrap items-center justify-start gap-3 sm:justify-center">
               <a
                 href="#build-your-own-table-box"
                 className="inline-flex rounded-full border px-6 py-3 text-xs font-bold tracking-[0.12em]"
@@ -488,37 +489,7 @@ export default function TableBoxPackages({ navigate }) {
             <p className="mt-8" style={{ ...fonts.bodyFont, color: palette.muted }}>{error}</p>
           ) : (
             packages.length > 0 && (
-              <div className="mt-10 grid gap-5 md:grid-cols-2">
-                {packages.map((pkg) => (
-                  <ElevatedCard key={pkg.id} palette={palette} className="overflow-hidden p-0">
-                    <button type="button" onClick={() => setActivePackage(pkg)} className="block h-full w-full text-left">
-                      <div className="grid h-full sm:grid-cols-[1fr_155px]">
-                        <div className="p-6 sm:p-7">
-                          <Kicker palette={palette} fonts={fonts}>{pkg.guest_count} GUESTS</Kicker>
-                          <h2 className="mt-2" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "32px", fontWeight: 650 }}>
-                            {pkg.name}
-                          </h2>
-                          <p className="mt-2" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "14px", lineHeight: 1.55 }}>
-                            {pkg.blurb}
-                          </p>
-                          <div className="mt-5 flex items-end justify-between gap-4">
-                            <div>
-                              <p style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "11px", letterSpacing: "0.08em" }}>PACKAGE RENTAL</p>
-                              <strong className="mt-1 block" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "34px" }}>
-                                {money(pkg.rental_price)}
-                              </strong>
-                            </div>
-                            <span style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "12px", fontWeight: 700 }}>
-                              VIEW + ADD OPTIONS →
-                            </span>
-                          </div>
-                        </div>
-                        <div className="min-h-[180px] bg-cover bg-center" style={{ backgroundImage: `url(${photoUrl(pkg.image_url)})` }} />
-                      </div>
-                    </button>
-                  </ElevatedCard>
-                ))}
-              </div>
+              <TableBoxPackageCarousel packages={packages} onOpen={(pkg) => setActivePackage(pkg)} />
             )
           )}
 
