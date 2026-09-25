@@ -569,7 +569,8 @@ export default function ItemDetail({ kind, slug, navigate }) {
 
               {isRentable && !outOfStock && active.bulk_rental_price != null && active.bulk_min_quantity != null && (
                 <p className="font-[Space_Grotesk] text-sm font-semibold" style={{ color: palette.accent }}>
-                  ${active.bulk_rental_price} each when you rent {active.bulk_min_quantity} or more
+                  ${active.bulk_rental_price} each when you rent {active.variant_group ? "any " : ""}
+                  {active.bulk_min_quantity} or more{active.variant_group ? ", mixed however you like" : ""}
                 </p>
               )}
 

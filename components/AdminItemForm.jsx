@@ -10,6 +10,7 @@ const EMPTY = {
   gender: "",
   quantity_owned: 1,
   made_to_order: false,
+  tracking_mode: "quantity",
   rental_price: "",
   purchase_price: "",
   condition_notes: "",
@@ -30,6 +31,7 @@ function toFormState(item) {
     gender: item.gender || "",
     quantity_owned: item.quantity_owned ?? 1,
     made_to_order: item.made_to_order === true,
+    tracking_mode: item.tracking_mode || "quantity",
     rental_price: item.rental_price ?? "",
     purchase_price: item.purchase_price ?? "",
     condition_notes: item.condition_notes || "",
@@ -148,6 +150,17 @@ export default function AdminItemForm({ item, onSave, onCancel, onDelete, saving
           <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">PURCHASE PRICE</label>
           <input type="number" min="0" step="0.01" value={form.purchase_price} onChange={set("purchase_price")} placeholder="Blank = not purchasable" className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]" />
         </div>
+      </div>
+
+      <div>
+        <label className="block font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.12em] text-[#0B4933]">INVENTORY TRACKING</label>
+        <select value={form.tracking_mode} onChange={set("tracking_mode")} className="mt-1.5 w-full rounded-sm border border-[#D9D9D9] bg-white px-3 py-2.5 font-[Space_Grotesk] text-sm outline-none focus:border-[#0B4933]">
+          <option value="quantity">By quantity (glasses, chargers, linens, cutlery)</option>
+          <option value="serialized">Individual piece (Staub, arches, stands, equipment)</option>
+        </select>
+        <p className="mt-1.5 font-[Space_Grotesk] text-[11px] leading-relaxed text-[#8C846F]">
+          Quantity items share one product QR and ask how many are being packed. Individual pieces get their own QR label each.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

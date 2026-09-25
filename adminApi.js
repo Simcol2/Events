@@ -55,6 +55,18 @@ export const adminApi = {
   updateAsset: (id, fields) => request("/api/admin?resource=assets", { method: "PUT", body: { id, ...fields } }).then((d) => d.asset),
   deleteAsset: (id) => request("/api/admin?resource=assets", { method: "DELETE", body: { id } }),
 
+  inventoryScanLookup: ({ code, itemId }) => {
+    const params = new URLSearchParams({ resource: "inventory-scan" });
+    if (code) params.set("code", code);
+    if (itemId) params.set("itemId", String(itemId));
+    return request(`/api/admin?${params.toString()}`);
+  },
+  packQuantity: ({ reservationItemId, quantity }) =>
+    request("/api/admin?resource=inventory-scan", {
+      method: "POST",
+      body: { action: "pack_quantity", reservationItemId, quantity },
+    }),
+
   listBookings: () => request("/api/admin?resource=bookings"),
   updateBookingStatus: (id, kind, status) =>
     request("/api/admin?resource=bookings", { method: "PUT", body: { id, kind, status } }),

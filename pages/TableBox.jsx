@@ -138,7 +138,8 @@ function BulkPriceNote({ item, fonts, palette }) {
   if (!hasBulkPrice(item)) return null;
   return (
     <p className="mt-0.5" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "12px", fontWeight: 600 }}>
-      {money(Number(item.bulk_rental_price))} each for {item.bulk_min_quantity}+
+      {money(Number(item.bulk_rental_price))} each for {item.variant_group ? "any " : ""}
+      {item.bulk_min_quantity}+{item.variant_group ? ", mix and match" : ""}
     </p>
   );
 }

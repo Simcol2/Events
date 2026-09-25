@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { Printer, Plus, Loader2 } from "lucide-react";
 import { adminApi } from "../adminApi";
+import { withBasePath } from "../apiBase";
+import QuantityQrLabels from "./QuantityQrLabels";
 
 // The physical asset registry and the label sheet.
 //
@@ -11,18 +13,22 @@ import { adminApi } from "../adminApi";
 // that gets scuffed can still be typed in.
 const SITE_URL = import.meta.env.VITE_SITE_URL || "https://asliceofg.com";
 
+// withBasePath adds the /events prefix the site is served under; without
+// it a scanned label would open the main domain's /scan, not this app.
 function scanUrl(code) {
-  return `${SITE_URL}/scan?c=${encodeURIComponent(code)}`;
+  return `${SITE_URL}${withBasePath(`/scan?c=${encodeURIComponent(code)}`)}`;
 }
 
 function StatusPill({ status }) {
   const styles = {
-    in_stock: "bg-[#ECF3EC] text-[#3F6B45]",
+    available: "bg-[#ECF3EC] text-[#3F6B45]",
     out: "bg-[#FBF1DE] text-[#8A5D14]",
-    held: "bg-[#FAECEA] text-[#8E2F27]",
+    cleaning: "bg-[#EAF1F6] text-[#2F5A7A]",
+    repair: "bg-[#FAECEA] text-[#8E2F27]",
+    missing: "bg-[#FAECEA] text-[#8E2F27]",
     retired: "bg-[#F0EBDD] text-[#6A6353]",
   };
-  const labels = { in_stock: "In stock", out: "Out", held: "Held", retired: "Retired" };
+  const labels = { available: "Available", out: "Out", cleaning: "Cleaning", repair: "Repair", missing: "Missing", retired: "Retired" };
   return (
     <span className={`rounded-full px-2.5 py-1 font-[Space_Grotesk] text-[10px] font-semibold tracking-[0.08em] ${styles[status] || styles.retired}`}>
       {(labels[status] || status).toUpperCase()}
@@ -163,9 +169,9 @@ function NewAssetForm({ items, onCreate, onCancel, saving }) {
 // Rendered into a hidden container and sent straight to the browser's own
 // print dialog, sized for a 3-across sheet of 2.5 inch square labels. No
 // label printer needed; regular Avery stock and a home printer work.
-function LabelSheet({ assets, qrByCode }) {
+function LabelSheet({ assets, qrByCode, printing }) {
   return (
-    <div className="label-sheet">
+    <div className={`label-sheet ${printing ? "is-printing" : ""}`}>
       {assets.map((a) => (
         <div className="label" key={a.id}>
           {qrByCode[a.code] ? <img src={qrByCode[a.code]} alt="" /> : <div className="qr-placeholder" />}
@@ -189,6 +195,7 @@ export default function AdminAssetsTab() {
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selected, setSelected] = useState([]);
+  const [printing, setPrinting] = useState(false);
   const printRef = useRef(null);
 
   const load = async () => {
@@ -255,7 +262,15 @@ export default function AdminAssetsTab() {
     [assets, selected]
   );
 
-  const print = () => window.print();
+  // Only one label sheet may be visible to the printer at a time; the
+  // product QR sheet (QuantityQrLabels) uses the same is-printing switch.
+  const print = () => {
+    setPrinting(true);
+    window.setTimeout(() => {
+      window.print();
+      setPrinting(false);
+    }, 50);
+  };
 
   if (loading) return <p className="font-[Space_Grotesk] text-sm text-[#8C846F]">Loading assets...</p>;
 
@@ -265,8 +280,8 @@ export default function AdminAssetsTab() {
         .label-sheet { display: none; }
         @media print {
           body * { visibility: hidden; }
-          .label-sheet, .label-sheet * { visibility: visible; }
-          .label-sheet {
+          .label-sheet.is-printing, .label-sheet.is-printing * { visibility: visible; }
+          .label-sheet.is-printing {
             display: grid; position: absolute; left: 0; top: 0; width: 100%;
             grid-template-columns: repeat(3, 1fr); gap: 0.25in; padding: 0.5in;
           }
@@ -291,7 +306,7 @@ export default function AdminAssetsTab() {
             className="inline-flex items-center gap-2 rounded-full border border-[#D9D9D9] px-5 py-2.5 font-[Space_Grotesk] text-[11px] font-semibold tracking-[0.14em] text-[#0B4933] disabled:opacity-50"
           >
             <Printer size={13} />
-            PRINT {selected.length ? `${selected.length} LABEL${selected.length === 1 ? "" : "S"}` : "ALL LABELS"}
+            PRINT {selected.length ? `${selected.length} ASSET LABEL${selected.length === 1 ? "" : "S"}` : "ALL ASSET LABELS"}
           </button>
           <button
             onClick={() => setAdding((a) => !a)}
@@ -312,21 +327,21 @@ export default function AdminAssetsTab() {
       {unlabelled.length > 0 && (
         <div className="mb-6 rounded-sm border border-[#E0AD5C] bg-[#FBF1DE] p-4">
           <p className="font-[Space_Grotesk] text-sm font-semibold text-[#8A5D14]">
-            {unlabelled.length} catalogue {unlabelled.length === 1 ? "item has" : "items have"} nothing physical registered yet
+            {unlabelled.length} individually tracked {unlabelled.length === 1 ? "item needs" : "items need"} a label
           </p>
           <p className="mt-1 font-[Space_Grotesk] text-xs text-[#8A5D14]">
             {unlabelled.map((i) => i.name).join(", ")}
           </p>
           <p className="mt-2 font-[Space_Grotesk] text-xs text-[#6A6353]">
-            Add a single asset for each object you hand over, or a counted box for anything you rent
-            by the number.
+            These are individually tracked pieces that still need their own QR label. Quantity items
+            (glasses, chargers, napkins) use a product QR below instead.
           </p>
         </div>
       )}
 
       {!assets.length && (
         <p className="font-[Space_Grotesk] text-sm text-[#8C846F]">
-          No assets yet. Everything you add to the catalogue from now on gets a code automatically.
+          No individual asset labels yet. Quantity items use the product QR labels below.
         </p>
       )}
 
@@ -370,8 +385,10 @@ export default function AdminAssetsTab() {
         ))}
       </div>
 
+      <QuantityQrLabels items={items} />
+
       <div ref={printRef}>
-        <LabelSheet assets={toPrint} qrByCode={qrByCode} />
+        <LabelSheet assets={toPrint} qrByCode={qrByCode} printing={printing} />
       </div>
     </div>
   );

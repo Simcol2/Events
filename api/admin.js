@@ -5,9 +5,11 @@
 // Every request must carry the X-Admin-Passcode header - see _adminAuth.js.
 import { requireAdmin, adminSupabase } from "./_adminAuth.js";
 import { upsertReviewRequest } from "./_reviewScheduling.js";
+import { handleInventoryScan } from "./_inventoryScan.js";
 
 const ASSET_KINDS = ["unit", "box"];
-const ASSET_STATUSES = ["in_stock", "out", "held", "retired"];
+// Matches the assets_status_check constraint in the database.
+const ASSET_STATUSES = ["available", "out", "cleaning", "repair", "missing", "retired"];
 const ASSET_MAX_BULK = 50;
 const BOOKING_STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 const REVIEW_STATUSES = ["pending", "approved", "rejected"];
@@ -26,18 +28,20 @@ async function handleItems(req, res, supabase) {
     const { data, error } = await supabase.from("items").insert(fields).select().single();
     if (error) return res.status(400).json({ error: error.message });
 
-    // Every new catalogue row gets one physical asset with its own QR code
-    // straight away, so nothing can be added and then quietly go unlabelled.
-    // One, not one per quantity_owned: 94 wine glasses are not 94 labels.
-    // Anything she owns several of gets extra units added in the Assets tab,
-    // and counted things get a box instead.
-    const { data: asset } = await supabase
-      .from("assets")
-      .insert({ kind: "unit", item_id: data.id, label: data.name })
-      .select()
-      .single();
+    // Only serialized items (one-off pieces like a Staub or an arch) get a
+    // physical asset label on creation. Quantity items (glasses, chargers,
+    // napkins) share one product QR from the Assets tab instead.
+    let asset = null;
+    if (data.tracking_mode === "serialized") {
+      const created = await supabase
+        .from("assets")
+        .insert({ kind: "unit", item_id: data.id, label: data.name })
+        .select()
+        .single();
+      asset = created.data || null;
+    }
 
-    return res.status(200).json({ item: data, asset: asset || null });
+    return res.status(200).json({ item: data, asset });
   }
 
   if (req.method === "PUT") {
@@ -64,7 +68,7 @@ async function handleAssets(req, res, supabase) {
   if (req.method === "GET") {
     const [assets, items] = await Promise.all([
       supabase.from("assets").select("*").order("code", { ascending: true }),
-      supabase.from("items").select("id, name, quantity_owned").eq("active", true).order("name"),
+      supabase.from("items").select("id, name, quantity_owned, tracking_mode, quantity_out_of_service").eq("active", true).order("name"),
     ]);
     if (assets.error) return res.status(500).json({ error: assets.error.message });
     if (items.error) return res.status(500).json({ error: items.error.message });
@@ -76,7 +80,7 @@ async function handleAssets(req, res, supabase) {
     // what drives the "needs a label" prompt in the admin, rather than
     // guessing how many units each catalogue row should have.
     const covered = new Set((assets.data || []).map((a) => a.item_id).filter(Boolean));
-    const unlabelled = (items.data || []).filter((i) => !covered.has(i.id));
+    const unlabelled = (items.data || []).filter((i) => i.tracking_mode === "serialized" && !covered.has(i.id));
 
     return res.status(200).json({ assets: withNames, unlabelled });
   }
@@ -346,6 +350,7 @@ async function handleUpload(req, res, supabase) {
 const RESOURCE_HANDLERS = {
   items: handleItems,
   assets: handleAssets,
+  "inventory-scan": handleInventoryScan,
   bookings: handleBookings,
   reviews: handleReviews,
   gifts: handleGifts,
