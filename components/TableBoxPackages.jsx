@@ -440,7 +440,7 @@ export default function TableBoxPackages({ navigate }) {
       <section className="overflow-hidden">
         <div className="mx-auto max-w-5xl px-5 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-14">
           <div className="mx-auto max-w-3xl text-left sm:text-center">
-            <Kicker palette={palette} fonts={fonts}>START WITH A PACKAGE</Kicker>
+            <Kicker palette={palette} fonts={fonts}>HOSTING AT HOME</Kicker>
             <h1
               className="mt-4"
               style={{
