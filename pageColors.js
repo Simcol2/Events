@@ -44,9 +44,10 @@ export const PAGE_COLORS = {
   "display-options": { dominant: "emerald", secondary: "fuchsia", accent: "gold" },
   decor: { dominant: "emerald", secondary: "cream", accent: "fuchsia" }, // Rentals
   "rental-guide": { dominant: "emerald", secondary: "cream", accent: "fuchsia" },
-  // Matches the ad, except its beige ground: an off-white cream canvas
-  // instead, with white cards lifting off it.
-  "table-box": { dominant: "forest", secondary: "raspberry", accent: "raspberry", gold: "champagne", canvas: "#FFFAF0" },
+  // Matches the ad, except its beige ground: `cream` (a soft, deliberately
+  // non-warm off-white - see its own definition above) instead, with white
+  // cards lifting off it.
+  "table-box": { dominant: "forest", secondary: "raspberry", accent: "raspberry", gold: "champagne", canvas: FAMILIES.cream.base },
   gifts: { dominant: "fuchsia", secondary: "emerald", accent: "gold" },
 };
 
