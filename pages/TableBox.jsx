@@ -393,7 +393,7 @@ export default function TableBox({ navigate }) {
                         className="overflow-hidden rounded-[18px] border shadow-[0_2px_4px_rgba(24,43,35,0.06),0_16px_36px_rgba(24,43,35,0.16)]"
                         style={{
                           borderColor: "rgba(199,154,59,.35)",
-                          background: "#FFFDF8",
+                          background: "#FFFFFF",
                           scrollMarginTop: "96px",
                         }}
                       >

@@ -77,7 +77,7 @@ export default function TableBoxPackageCarousel({
         className="group block w-full overflow-hidden rounded-[18px] border text-left shadow-[0_2px_4px_rgba(24,43,35,0.06),0_16px_36px_rgba(24,43,35,0.16)]"
         style={{
           borderColor: "rgba(199,154,59,.35)",
-          background: "rgba(255,253,248,.97)",
+          background: "#FFFFFF",
         }}
       >
         <div className="relative min-h-[440px] sm:min-h-[390px]">
@@ -162,7 +162,7 @@ export default function TableBoxPackageCarousel({
             className="absolute inset-x-0 bottom-0 h-8 sm:hidden"
             style={{
               background:
-                "linear-gradient(to top, rgba(255,253,248,.18), transparent)",
+                "linear-gradient(to top, rgba(255,255,255,.18), transparent)",
             }}
           />
         </div>

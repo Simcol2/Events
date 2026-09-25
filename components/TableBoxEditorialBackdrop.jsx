@@ -57,10 +57,12 @@ export default function TableBoxEditorialBackdrop() {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-0"
         style={{
-          // Kept deliberately cool: the owner has rejected warm beige twice.
-          backgroundColor: "#FBFAF6",
+          // Bright, neutral off-white. The owner has rejected warm/beige three
+          // times; check the RENDERED colour (texture lines darken it), not
+          // just this value.
+          backgroundColor: "#FDFDFB",
           backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(30, 50, 42, 0.018) 0px, rgba(30, 50, 42, 0.018) 1px, transparent 1px, transparent 3px)",
+            "repeating-linear-gradient(0deg, rgba(30, 50, 42, 0.008) 0px, rgba(30, 50, 42, 0.008) 1px, transparent 1px, transparent 3px)",
         }}
       />
 
