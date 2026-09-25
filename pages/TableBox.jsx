@@ -11,7 +11,7 @@ import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../component
 import SourcingRequestModal from "../components/SourcingRequestModal";
 import TableBoxPackages from "../components/TableBoxPackages";
 import TableBoxEditorialBackdrop from "../components/TableBoxEditorialBackdrop";
-import { rentalUnitPrice } from "../api/_pricing.js";
+import { bulkPoolCounter, rentalUnitPrice } from "../api/_pricing.js";
 import {
   ElevatedCard,
   Kicker,
@@ -130,8 +130,8 @@ function money(n) {
 // off which one an item actually is rather than assuming rental.
 const isRental = (item) => item.rental_price != null;
 const unitPrice = (item) => Number(isRental(item) ? item.rental_price : item.purchase_price);
-const linePrice = (item, quantity) =>
-  (isRental(item) ? rentalUnitPrice(item, quantity) : unitPrice(item)) * quantity;
+const linePrice = (item, quantity, poolQuantity = quantity) =>
+  (isRental(item) ? rentalUnitPrice(item, quantity, poolQuantity) : unitPrice(item)) * quantity;
 const hasBulkPrice = (item) => isRental(item) && item.bulk_min_quantity != null && item.bulk_rental_price != null;
 
 function BulkPriceNote({ item, fonts, palette }) {
@@ -234,17 +234,15 @@ export default function TableBox({ navigate }) {
 
   const allProducts = useMemo(() => sections.flatMap((s) => s.products), [sections]);
 
-  const selected = useMemo(
-    () =>
-      allProducts
-        .filter((p) => (qty[p.id] || 0) > 0)
-        .map((p) => ({
-          ...p,
-          quantity: qty[p.id],
-          lineTotal: linePrice(p, qty[p.id]),
-        })),
-    [allProducts, qty]
-  );
+  const selected = useMemo(() => {
+    const picked = allProducts.filter((p) => (qty[p.id] || 0) > 0);
+    const poolQuantity = bulkPoolCounter(picked.filter(isRental).map((p) => ({ item: p, quantity: qty[p.id] })));
+    return picked.map((p) => ({
+      ...p,
+      quantity: qty[p.id],
+      lineTotal: linePrice(p, qty[p.id], poolQuantity(p, qty[p.id])),
+    }));
+  }, [allProducts, qty]);
 
   const deliveryItem = byId[DELIVERY_SETUP_ITEM_ID];
   // Delivery only makes sense alongside actual rental pieces, so it never

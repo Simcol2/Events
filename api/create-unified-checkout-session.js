@@ -6,7 +6,7 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { BASE_PATH } from "./_basePath.js";
-import { rentalUnitPrice } from "./_pricing.js";
+import { bulkPoolCounter, rentalUnitPrice } from "./_pricing.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || process.env.stripe_secret);
 const supabase = createClient(
@@ -70,21 +70,35 @@ async function findOrCreateCustomer(customer) {
 async function resolveLines(items) {
   const lines = [];
 
+  // Fetched up front so rentals sharing a variant_group can count toward a
+  // bulk price together before any single line is priced.
+  const itemRows = new Map();
+  for (const line of items) {
+    if (line.kind !== "rental" && line.kind !== "catalog") continue;
+    const { data: item, error } = await supabase
+      .from("items")
+      .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,variant_group,purchase_price,quantity_owned,quantity_out_of_service,active")
+      .eq("id", line.id)
+      .eq("active", true)
+      .single();
+
+    if (error || !item) throw new Error("One of the cart items is no longer available.");
+    itemRows.set(line, item);
+  }
+  const poolQuantity = bulkPoolCounter(
+    items.filter((line) => line.kind === "rental").map((line) => ({ item: itemRows.get(line), quantity: cleanQuantity(line.quantity) }))
+  );
+
   for (const line of items) {
     const quantity = cleanQuantity(line.quantity);
 
     if (line.kind === "rental" || line.kind === "catalog") {
-      const { data: item, error } = await supabase
-        .from("items")
-        .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,purchase_price,quantity_owned,quantity_out_of_service,active")
-        .eq("id", line.id)
-        .eq("active", true)
-        .single();
-
-      if (error || !item) throw new Error("One of the cart items is no longer available.");
+      const item = itemRows.get(line);
 
       const unitCents =
-        line.kind === "rental" ? cents(rentalUnitPrice(item, quantity)) : cents(item.purchase_price);
+        line.kind === "rental"
+          ? cents(rentalUnitPrice(item, quantity, poolQuantity(item, quantity)))
+          : cents(item.purchase_price);
 
       if (unitCents <= 0) throw new Error(`${item.name} is not available for this order type.`);
 

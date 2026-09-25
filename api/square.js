@@ -24,7 +24,7 @@ import {
 import { squareLocationId, squareRequest } from "./_squareRest.js";
 import { handleApiError, requireClient } from "./_clientAuth.js";
 import { adminSupabase, requireAdmin } from "./_adminAuth.js";
-import { rentalUnitPrice } from "./_pricing.js";
+import { bulkPoolCounter, rentalUnitPrice } from "./_pricing.js";
 
 const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
@@ -98,14 +98,14 @@ async function resolveRentalLines(items) {
   const requested = items.filter((line) => line?.kind === "rental");
   if (!requested.length) throw new Error("This Square phase currently requires at least one rental item.");
 
-  const lines = [];
+  const fetched = [];
 
   for (const line of requested) {
     const quantity = cleanQuantity(line.quantity);
 
     const { data: item, error } = await supabase
       .from("items")
-      .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,quantity_owned,quantity_out_of_service,active")
+      .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,variant_group,quantity_owned,quantity_out_of_service,active")
       .eq("id", line.id)
       .eq("active", true)
       .single();
@@ -114,7 +114,14 @@ async function resolveRentalLines(items) {
       throw new Error("One of the rental items is no longer available.");
     }
 
-    const unitCents = cents(rentalUnitPrice(item, quantity));
+    fetched.push({ item, quantity });
+  }
+
+  const poolQuantity = bulkPoolCounter(fetched);
+  const lines = [];
+
+  for (const { item, quantity } of fetched) {
+    const unitCents = cents(rentalUnitPrice(item, quantity, poolQuantity(item, quantity)));
     if (unitCents <= 0) {
       throw new Error(`${item.name} is not available to rent.`);
     }
@@ -1952,16 +1959,23 @@ async function resolveProductionRentals(items) {
     inventory.set(id, current);
   };
 
+  const fetched = [];
   for (const line of rentals) {
     const quantity = Math.max(1, Math.floor(Number(line.quantity) || 1));
     const { data: item, error } = await supabase
       .from("items")
-      .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,active")
+      .select("id,name,rental_price,bulk_min_quantity,bulk_rental_price,variant_group,active")
       .eq("id", line.id)
       .eq("active", true)
       .single();
 
     if (error || !item) throw new Error("A rental item is no longer available.");
+    fetched.push({ line, item, quantity });
+  }
+
+  const poolQuantity = bulkPoolCounter(fetched);
+
+  for (const { line, item, quantity } of fetched) {
 
     const { data: pkg, error: pkgError } = await supabase
       .from("table_box_packages")
@@ -1972,7 +1986,7 @@ async function resolveProductionRentals(items) {
 
     if (pkgError) throw pkgError;
 
-    const unitCents = productionCents(rentalUnitPrice(item, quantity));
+    const unitCents = productionCents(rentalUnitPrice(item, quantity, poolQuantity(item, quantity)));
     billingLines.push({ id: item.id, name: item.name, quantity, unitCents });
     reservationRows.push({
       item_id: Number(item.id),

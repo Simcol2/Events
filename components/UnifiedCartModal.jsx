@@ -7,7 +7,7 @@ import RentalDateFields, { rentalDatesValid } from "./RentalDateFields";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 import HowRentalWorks from "./HowRentalWorks";
 import SquareCardPayment from "./SquareCardPayment";
-import { rentalUnitPrice } from "../api/_pricing.js";
+import { bulkPoolCounter, rentalUnitPrice } from "../api/_pricing.js";
 
 const MIN_RENTAL_CENTS = 5000;
 
@@ -64,6 +64,11 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
   const giftMap = useMemo(() => new Map(gifts.map((item) => [String(item.id), item])), [gifts]);
 
   const resolved = useMemo(() => {
+    const poolQuantity = bulkPoolCounter(
+      items
+        .filter((line) => line.kind === "rental")
+        .map((line) => ({ item: catalogMap.get(String(line.id)), quantity: line.quantity }))
+    );
     return items.map((line) => {
       if (line.kind === "rental") {
         const item = catalogMap.get(String(line.id));
@@ -71,7 +76,7 @@ export default function UnifiedCartModal({ catalog = [], gifts = [], onClose }) 
           ? {
               ...line,
               name: item.name,
-              unitCents: Math.round(rentalUnitPrice(item, line.quantity) * 100),
+              unitCents: Math.round(rentalUnitPrice(item, line.quantity, poolQuantity(item, line.quantity)) * 100),
               mode: "rental",
               choiceNames: Array.isArray(line.meta?.choiceIds)
                 ? line.meta.choiceIds.map((id) => catalogMap.get(String(id))?.name).filter(Boolean)
