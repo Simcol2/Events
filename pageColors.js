@@ -22,6 +22,11 @@ export const FAMILIES = {
   // "cream" is now a soft white, used only where a section needs to read as
   // a shade off the main canvas. Never a warm/beige tone.
   cream: { base: "#FFFEFC", deep: "#FFFEFC" },
+  // The "Borrow the good stuff" ad palette (Table Box page): a deep forest
+  // green, raspberry pink and a softer metallic gold than `gold` above.
+  forest: { base: "#0A4A33", deep: "#023C29" },
+  raspberry: { base: "#D7245E", deep: "#B3194C" },
+  champagne: { base: "#D4A853", deep: "#9F7F39" },
 };
 
 export const INK = "#292929"; // Neutral charcoal
@@ -29,7 +34,8 @@ export const LINE = "#E6E6E6"; // Neutral hairline
 export const CREAM = "#FFFFFF";
 export const SURFACE = "#FFFFFF";
 
-// route `current` key -> { dominant, secondary, accent, accentBright }
+// route `current` key -> { dominant, secondary, accent, accentBright }, plus
+// optional `gold` (family key for gold trims) and `canvas` (page background).
 export const PAGE_COLORS = {
   home: { dominant: "navy", secondary: "emerald", accent: "coral", accentBright: "fuchsia" },
   experiences: { dominant: "emerald", secondary: "fuchsia", accent: "gold" },
@@ -38,7 +44,9 @@ export const PAGE_COLORS = {
   "display-options": { dominant: "emerald", secondary: "fuchsia", accent: "gold" },
   decor: { dominant: "emerald", secondary: "cream", accent: "fuchsia" }, // Rentals
   "rental-guide": { dominant: "emerald", secondary: "cream", accent: "fuchsia" },
-  "table-box": { dominant: "emerald", secondary: "coral", accent: "gold" },
+  // Matches the ad, except its beige ground: an off-white cream canvas
+  // instead, with white cards lifting off it.
+  "table-box": { dominant: "forest", secondary: "raspberry", accent: "raspberry", gold: "champagne", canvas: "#FFFAF0" },
   gifts: { dominant: "fuchsia", secondary: "emerald", accent: "gold" },
 };
 
@@ -71,7 +79,7 @@ export function buildPageColorKey(pageKey, eventTypeId) {
 
 export function buildPalette(colorKey) {
   const [pageKey, eventTypeId] = colorKey.includes(":") ? colorKey.split(":") : [colorKey, undefined];
-  const { dominant, secondary, accent, accentBright } = resolvePageColors(pageKey, eventTypeId);
+  const { dominant, secondary, accent, accentBright, gold = "gold", canvas = CREAM } = resolvePageColors(pageKey, eventTypeId);
   const dom = FAMILIES[dominant];
   const sec = FAMILIES[secondary];
   const acc = FAMILIES[accent];
@@ -80,11 +88,11 @@ export function buildPalette(colorKey) {
   // Big decorative shapes sit behind content on a white canvas, so a warm
   // family at low alpha composites straight back into the beige cast. Pick
   // the first saturated (non-warm) family available for those fills.
-  const warm = new Set(["gold", "yellow", "cream"]);
+  const warm = new Set(["gold", "champagne", "yellow", "cream"]);
   const decorKey = [accent, secondary, dominant].find((k) => !warm.has(k)) || dominant;
 
   return {
-    bg: CREAM,
+    bg: canvas,
     surface: SURFACE,
     primary: dom.base,
     primaryDeep: dom.deep,
@@ -97,8 +105,8 @@ export function buildPalette(colorKey) {
     accentDeep: acc.deep,
     accentBright: bright.base,
     decorTint: FAMILIES[decorKey].base,
-    gold: FAMILIES.gold.base,
-    goldDeep: FAMILIES.gold.deep,
+    gold: FAMILIES[gold].base,
+    goldDeep: FAMILIES[gold].deep,
     ink: INK,
     line: LINE,
     muted: tintHex(INK, 0.35),

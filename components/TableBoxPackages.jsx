@@ -456,7 +456,7 @@ export default function TableBoxPackages() {
                 dollar before it goes into your cart.
               </p>
               <div
-                className="mt-5 flex max-w-lg flex-wrap items-center gap-x-4 gap-y-1"
+                className="mt-5 flex max-w-xl flex-wrap items-center gap-x-4 gap-y-1"
                 style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}
               >
                 <span>$50 minimum rental</span>
