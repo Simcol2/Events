@@ -6,6 +6,7 @@ import { usePalette } from "../PaletteContext";
 import { withBasePath } from "../apiBase";
 import { estimateBookingDepositCents, estimateSecurityDepositCents } from "../depositTiers";
 import { ElevatedCard, Kicker, rgba } from "./EditorialKit";
+import TableBoxTransportModal from "./TableBoxTransportModal";
 
 const DELIVERY_SETUP_ITEM_ID = 572;
 const FALLBACK_PHOTO = "/photos/table-box-after.jpg";
@@ -464,13 +465,16 @@ export default function TableBoxPackages() {
               <span aria-hidden="true">&middot;</span>
               <span>Delivery + basic setup available</span>
             </div>
-            <a
-              href="#build-your-own-table-box"
-              className="mt-7 inline-flex rounded-full border px-6 py-3 text-xs font-bold tracking-[0.12em]"
-              style={{ ...fonts.bodyFont, borderColor: palette.primaryDeep, color: palette.primaryDeep }}
-            >
-              OR BUILD YOUR OWN
-            </a>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="#build-your-own-table-box"
+                className="inline-flex rounded-full border px-6 py-3 text-xs font-bold tracking-[0.12em]"
+                style={{ ...fonts.bodyFont, borderColor: palette.primaryDeep, color: palette.primaryDeep }}
+              >
+                OR BUILD YOUR OWN
+              </a>
+              <TableBoxTransportModal />
+            </div>
           </div>
 
           {error ? (

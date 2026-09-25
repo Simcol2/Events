@@ -294,17 +294,21 @@ export default function TableBox() {
   };
 
   return (
-    <main className="relative isolate" style={paperTexture(palette)}>
+    <main className="relative" style={paperTexture(palette)}>
       {/* Decorative raspberry/gold frame accent along the right edge of the
-          page, matching the "Borrow the good stuff" ad. Lives on this
-          wrapper (not the viewport) so `isolate` scopes its z-0 stacking
-          context to this page only, never interacting with the header,
-          cart button, or any modal's own z-index. Every real section below
-          sits in its own z-10 layer with a solid card/surface background,
-          so the stripe never bleeds through - it only shows in the page's
-          own gutters. Table Box only - no other page uses these colors.
-          Mobile carries its own smaller dimensions; sm: and up switch to
-          the ad's full-size numbers. */}
+          page, matching the "Borrow the good stuff" ad. Absolutely
+          positioned against this `relative` wrapper (not the viewport),
+          so it scrolls with the page instead of pinning to the screen.
+          Deliberately NOT `isolate`: that would trap every modal's
+          z-index inside main's own stacking context, capping it below
+          the site header's z-50 (verified - it broke the package modal).
+          Without isolate, the content wrapper's z-10 still keeps the
+          stripe from bleeding through any card, and every modal's own
+          z-index (150+) still compares directly against the header at
+          the true root stacking context, so modals stay on top. Table
+          Box only - no other page uses these colors. Mobile carries its
+          own smaller dimensions; sm: and up switch to the ad's full-size
+          numbers. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 right-[8px] z-0 w-[7px] sm:right-[14px] sm:w-[10px]"
