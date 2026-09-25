@@ -493,16 +493,27 @@ export default function TableBoxPackages({ navigate }) {
             )
           )}
 
-          <div className="mt-8 text-center">
-            <p style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px", lineHeight: 1.6 }}>
-              Package prices are the actual rental prices. Holiday add-ons and delivery are optional and priced
-              separately before you add anything to your cart.
-            </p>
-            {status && (
-              <p className="mt-2 font-semibold" role="status" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "13px" }}>
-                {status}
+          <div className="mt-8 flex items-center gap-4 sm:block sm:text-center">
+            {/* Mobile only; desktop shows this piece in the page backdrop. */}
+            <img
+              src={withBasePath("/photos/decor/gold-candleholder-cutout.png")}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              className="pointer-events-none w-[104px] flex-shrink-0 select-none object-contain drop-shadow-[0_14px_18px_rgba(0,0,0,0.10)] sm:hidden"
+            />
+            <div>
+              <p style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px", lineHeight: 1.6 }}>
+                Package prices are the actual rental prices. Holiday add-ons and delivery are optional and priced
+                separately before you add anything to your cart.
               </p>
-            )}
+              {status && (
+                <p className="mt-2 font-semibold" role="status" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "13px" }}>
+                  {status}
+                </p>
+              )}
+            </div>
           </div>
 
           {navigate && (

@@ -74,7 +74,7 @@ export default function TableBoxPackageCarousel({
       <button
         type="button"
         onClick={() => onOpen(pkg)}
-        className="group block w-full overflow-hidden rounded-[18px] border text-left shadow-[0_18px_45px_rgba(24,43,35,0.10)]"
+        className="group block w-full overflow-hidden rounded-[18px] border text-left shadow-[0_2px_4px_rgba(24,43,35,0.06),0_16px_36px_rgba(24,43,35,0.16)]"
         style={{
           borderColor: "rgba(199,154,59,.35)",
           background: "rgba(255,253,248,.97)",

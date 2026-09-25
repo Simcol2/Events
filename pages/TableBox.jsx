@@ -378,7 +378,7 @@ export default function TableBox({ navigate }) {
             )}
 
             {!loading && !loadError && (
-              <div className="mt-8 space-y-4">
+              <div className="mt-8 space-y-5">
                 {sections.map((section, index) => {
                   const sectionCount = section.products.reduce((n, p) => n + (qty[p.id] || 0), 0);
                   const isOpen = openSection === section.key;
@@ -389,10 +389,11 @@ export default function TableBox({ navigate }) {
                         ref={(el) => {
                           sectionRefs.current[section.key] = el;
                         }}
+                        // Same card treatment as the package carousel (TableBoxPackageCarousel.jsx).
+                        className="overflow-hidden rounded-[18px] border shadow-[0_2px_4px_rgba(24,43,35,0.06),0_16px_36px_rgba(24,43,35,0.16)]"
                         style={{
-                          border: `1px solid ${palette.line}`,
-                          borderRadius: "5px",
-                          background: palette.surface,
+                          borderColor: "rgba(199,154,59,.35)",
+                          background: "#FFFDF8",
                           scrollMarginTop: "96px",
                         }}
                       >

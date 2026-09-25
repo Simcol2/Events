@@ -22,7 +22,8 @@ const DECOR = [
   {
     src: "/photos/decor/gold-candleholder-cutout.png",
     className:
-      "left-[-28px] top-[880px] w-[100px] sm:left-[-38px] sm:w-[145px]",
+      // Mobile shows this beside the package pricing note instead (TableBoxPackages.jsx).
+      "hidden sm:block left-[-28px] top-[880px] w-[100px] sm:left-[-38px] sm:w-[145px]",
   },
   {
     src: "/photos/decor/gold-cake-stand-cutout.png",
