@@ -295,6 +295,19 @@ export default function TableBox() {
 
   return (
     <main style={paperTexture(palette)}>
+      {/* Decorative raspberry/gold frame accent along the right edge of the
+          viewport, matching the "Borrow the good stuff" ad. Fixed (not
+          scrolled with content), purely decorative, and Table Box only -
+          no other page uses these colors. Mobile carries its own smaller
+          dimensions; sm: and up switch to the ad's full-size numbers. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-y-0 right-[8px] z-0 w-[7px] sm:right-[14px] sm:w-[10px]"
+      >
+        <div className="absolute right-0 top-0 h-full w-[4px] sm:w-[6px]" style={{ background: "#D4145A" }} />
+        <div className="absolute left-0 top-0 h-full w-[1px] sm:w-[2px]" style={{ background: "#C79A3B" }} />
+      </div>
+
       <TableBoxPackages />
 
       <section
