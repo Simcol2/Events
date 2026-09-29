@@ -2,6 +2,9 @@
 -- Safe to run more than once.
 
 alter table public.items
+  add column if not exists brand text,
+  add column if not exists material text,
+  add column if not exists care_instructions text,
   add column if not exists feature_highlights text[] not null default '{}',
   add column if not exists details text,
   add column if not exists ideas text,
