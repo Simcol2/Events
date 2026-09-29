@@ -28,6 +28,7 @@ import {
 } from "../components/DecorCard";
 import { normalizePhotos as photoList } from "../components/PhotoCarousel";
 import DescriptionBody from "../components/ItemDescription";
+import ProductPhoto from "../components/ProductPhoto";
 import RentalDatesModal from "../components/RentalDatesModal";
 import { useRentalFlow, formatRentalDate } from "../useRentalFlow";
 import { COMPLETE_LOOK_CONTENTS } from "../completeLooks";
@@ -56,6 +57,19 @@ function splitContentLines(value) {
     .map((line) => line.replace(/^[-•]\s*/, "").trim())
     .filter(Boolean);
 }
+
+// The page background lives on its own fixed layer, underneath everything,
+// so the photos and text scroll over it instead of being painted onto it.
+// A soft emerald and gold wash plus the paper hairline keep the movement
+// visible without hurting legibility.
+const PRODUCT_BACKDROP = {
+  backgroundColor: "#FCFAF7",
+  backgroundImage: [
+    "radial-gradient(60% 50% at 8% 12%, rgba(11,73,51,0.07), transparent 70%)",
+    "radial-gradient(55% 45% at 95% 88%, rgba(212,175,90,0.13), transparent 70%)",
+    "repeating-linear-gradient(0deg, rgba(25,23,19,0.018) 0, rgba(25,23,19,0.018) 1px, transparent 1px, transparent 4px)",
+  ].join(", "),
+};
 
 // The routed replacement for the old click-to-open modal: every decor
 // piece and every gift/wrap/card item gets a real page at its own URL
@@ -345,7 +359,8 @@ export default function ItemDetail({ kind, slug, navigate }) {
   ];
 
   return (
-    <main style={{ background: "#FCFAF7", color: palette.ink }}>
+    <main className="relative isolate" style={{ color: palette.ink, clipPath: "inset(0)" }}>
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10" style={PRODUCT_BACKDROP} />
       <SeoHead path={groupPath} override={seo} productJsonLd={product} />
 
       <div className="mx-auto max-w-[1440px] px-5 pt-8 sm:px-8">
@@ -361,9 +376,9 @@ export default function ItemDetail({ kind, slug, navigate }) {
       <section className="mx-auto max-w-[1440px] px-5 pb-24 pt-6 sm:px-8">
         <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:gap-11">
           <div className="min-w-0" data-product-gallery>
-            <div className="relative aspect-[1.12/1] overflow-hidden" style={{ background: "#F3F0EC" }}>
-              {photos.length ? <img src={photos[activePhoto] || photos[0]} alt={itemAltText(displayName, { color: colorOptions[0] })} className="h-full w-full object-contain" /> :
-                <div className="flex h-full items-center justify-center text-sm tracking-widest">PHOTO COMING SOON</div>}
+            <div className="relative aspect-[1.12/1] overflow-hidden rounded-lg">
+              {photos.length ? <ProductPhoto src={photos[activePhoto] || photos[0]} alt={itemAltText(displayName, { color: colorOptions[0] })} className="h-full w-full object-cover" /> :
+                <div className="flex h-full items-center justify-center text-sm tracking-widest" style={{ background: "#F3F0EC" }}>PHOTO COMING SOON</div>}
               {photos.length > 1 && [-1, 1].map((direction) => (
                 <button key={direction} type="button" aria-label={direction < 0 ? "Previous photo" : "Next photo"}
                   onClick={() => setActivePhoto((current) => (current + direction + photos.length) % photos.length)}
@@ -374,8 +389,8 @@ export default function ItemDetail({ kind, slug, navigate }) {
             </div>
             {photos.length > 1 && <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
               {photos.map((src, index) => <button key={index} type="button" onClick={() => setActivePhoto(index)} aria-label={`View photo ${index + 1}`} aria-pressed={index === activePhoto}
-                className="aspect-[1.15/1] w-[calc((100%-24px)/4)] min-w-[70px] shrink-0 overflow-hidden rounded border-2" style={{ borderColor: index === activePhoto ? "#E50062" : "transparent", background: "#F3F0EC" }}>
-                <img src={src} alt="" className="h-full w-full object-contain" />
+                className="aspect-[1.15/1] w-[calc((100%-24px)/4)] min-w-[70px] shrink-0 overflow-hidden rounded border-2" style={{ borderColor: index === activePhoto ? "#E50062" : "transparent" }}>
+                <ProductPhoto src={src} alt="" className="h-full w-full object-cover" />
               </button>)}
             </div>}
           </div>
@@ -777,11 +792,11 @@ export default function ItemDetail({ kind, slug, navigate }) {
                           onClick={() => navigate(itemUrlPath(kind, item))}
                           className="group text-left"
                         >
-                          <div className="aspect-square overflow-hidden rounded-sm bg-[#F3F0EC]">
+                          <div className="aspect-square overflow-hidden rounded-sm">
                             {pairPhotos[0] ? (
-                              <img src={pairPhotos[0]} alt={item.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                              <ProductPhoto src={pairPhotos[0]} alt={item.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
                             ) : (
-                              <div className="flex h-full items-center justify-center"><Box size={24} color={palette.muted} /></div>
+                              <div className="flex h-full items-center justify-center" style={{ background: "#F3F0EC" }}><Box size={24} color={palette.muted} /></div>
                             )}
                           </div>
                           <div className="mt-2 font-['Fraunces'] text-base font-medium">{item.name}</div>
