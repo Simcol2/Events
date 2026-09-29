@@ -1,13 +1,11 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { Home, PackagePlus, RotateCcw, Star, X } from "lucide-react";
+import { Home, PackagePlus, RotateCcw, Star } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
+import { itemUrlPath } from "../seo";
 import { withBasePath } from "../apiBase";
-import PhotoCarousel, { normalizePhotos } from "../components/PhotoCarousel";
-import DescriptionBody from "../components/ItemDescription";
-import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
+import { groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
 import SourcingRequestModal from "../components/SourcingRequestModal";
 import TableBoxPackages from "../components/TableBoxPackages";
 import TableBoxProductCard from "../components/TableBoxProductCard";
@@ -133,18 +131,6 @@ const isRental = (item) => item.rental_price != null;
 const unitPrice = (item) => Number(isRental(item) ? item.rental_price : item.purchase_price);
 const linePrice = (item, quantity, poolQuantity = quantity) =>
   (isRental(item) ? rentalUnitPrice(item, quantity, poolQuantity) : unitPrice(item)) * quantity;
-const hasBulkPrice = (item) => isRental(item) && item.bulk_min_quantity != null && item.bulk_rental_price != null;
-
-function BulkPriceNote({ item, fonts, palette }) {
-  if (!hasBulkPrice(item)) return null;
-  return (
-    <p className="mt-0.5" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "12px", fontWeight: 600 }}>
-      {money(Number(item.bulk_rental_price))} each for {item.variant_group ? "any " : ""}
-      {item.bulk_min_quantity}+{item.variant_group ? ", mix and match" : ""}
-    </p>
-  );
-}
-
 function ReviewsCarousel({ palette, fonts }) {
   const [reviews, setReviews] = useState([]);
   const [current, setCurrent] = useState(0);
@@ -240,6 +226,11 @@ function ReviewsCarousel({ palette, fonts }) {
   );
 }
 
+function readTableBoxDraft() {
+  try { return JSON.parse(sessionStorage.getItem("asliceofg-table-box-draft") || "{}"); }
+  catch { return {}; }
+}
+
 export default function TableBox({ navigate }) {
   const { palette, fonts } = usePalette();
   const { addRental, addToCart, rentalItems } = useCart();
@@ -247,8 +238,8 @@ export default function TableBox({ navigate }) {
   const [catalogItems, setCatalogItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
-  const [qty, setQty] = useState({});
-  const [openSection, setOpenSection] = useState(SECTIONS[0].key);
+  const [qty, setQty] = useState(() => readTableBoxDraft().qty || {});
+  const [openSection, setOpenSection] = useState(() => readTableBoxDraft().openSection || SECTIONS[0].key);
   // Opening a category collapses whichever one was open above it, which
   // pulls the clicked header up and off screen. Once the new layout is in
   // place, bring that header back to the top of the viewport.
@@ -261,13 +252,15 @@ export default function TableBox({ navigate }) {
     sectionRefs.current[key]?.scrollIntoView({ block: "start", behavior: "smooth" });
   }, [openSection]);
   const [justAdded, setJustAdded] = useState(false);
-  const [openProduct, setOpenProduct] = useState(null);
   const [deliverySetup, setDeliverySetup] = useState(false);
   const [showSourcingModal, setShowSourcingModal] = useState(false);
   // Which variant is showing for each variant_group tile - e.g. which guest
   // count of the Blush and Gold Plate Set. Keyed by the group's key (the
   // variant_group string), valued with the selected row's item id.
-  const [selectedVariant, setSelectedVariant] = useState({});
+  const [selectedVariant, setSelectedVariant] = useState(() => readTableBoxDraft().selectedVariant || {});
+  useEffect(() => {
+    try { sessionStorage.setItem("asliceofg-table-box-draft", JSON.stringify({ qty, openSection, selectedVariant })); } catch {}
+  }, [qty, openSection, selectedVariant]);
 
   // Pulls in pricing for whatever is already sitting in the cart's rental
   // lines too, not just items tagged for this page - the $50 minimum check
@@ -544,7 +537,7 @@ export default function TableBox({ navigate }) {
                                   count={count}
                                   onVariantChange={(id) => setSelectedVariant((current) => ({ ...current, [group.key]: id }))}
                                   onQuantityChange={(next) => setQuantity(activeProduct.id, next)}
-                                  onDetails={() => setOpenProduct(activeProduct)}
+                                  onDetails={() => navigate(itemUrlPath("decor", activeProduct, hasVariants ? group.groupName : undefined) + "?from=table-box")}
                                 />
                               );
                             })}
@@ -779,77 +772,6 @@ export default function TableBox({ navigate }) {
 
       {showSourcingModal && <SourcingRequestModal onClose={() => setShowSourcingModal(false)} />}
 
-      {/* Portaled to document.body for the same reason as
-          TableBoxTransportModal: a `position: fixed` modal nested inside
-          <main>, at any z-index, paints behind SiteHeader's `position:
-          sticky` z-50 in Chromium - confirmed, pre-existing, not specific
-          to this modal. */}
-      {openProduct && createPortal(
-        <div
-          className="fixed inset-0 z-[170] flex items-center justify-center p-4 sm:p-8"
-          style={{ background: "rgba(20,18,12,.72)", backdropFilter: "blur(6px)" }}
-          role="dialog"
-          aria-modal="true"
-          aria-label={openProduct.name}
-          onClick={() => setOpenProduct(null)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl"
-            style={{ background: palette.surface, boxShadow: "0 24px 80px rgba(0,0,0,.35)" }}
-          >
-            <button
-              onClick={() => setOpenProduct(null)}
-              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full"
-              style={{ background: "rgba(255,255,255,0.9)", color: palette.primaryDeep }}
-              aria-label="Close"
-            >
-              <X size={19} />
-            </button>
-
-            <div className="relative aspect-[4/3]" style={{ background: rgba(palette.primary, 0.06) }}>
-              {normalizePhotos(openProduct.photos).length ? (
-                <PhotoCarousel photos={openProduct.photos} alt={openProduct.name} className="h-full w-full object-contain" />
-              ) : (
-                <div className="flex h-full items-center justify-center">
-                  <span style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase" }}>
-                    Photo coming soon
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="px-6 py-6">
-              {parseItemTags(openProduct).length > 0 && (
-                <p style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "12px", letterSpacing: "0.14em", textTransform: "uppercase" }}>
-                  {parseItemTags(openProduct).join(" · ")}
-                </p>
-              )}
-              <h2 className="mt-1" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "26px", fontWeight: 640 }}>
-                {openProduct.name}
-              </h2>
-
-              {openProduct.description && <DescriptionBody text={openProduct.description} />}
-
-              <div className="mt-5 border-t pt-4" style={{ borderColor: palette.line }}>
-                <span style={{ ...fonts.bodyFont, color: palette.primaryDeep, fontSize: "16px", fontWeight: 650 }}>
-                  {money(unitPrice(openProduct))}{" "}
-                  <span style={{ color: palette.muted, fontWeight: 400 }}>
-                    {isRental(openProduct) ? "/ event" : "to buy"}
-                  </span>
-                </span>
-                <BulkPriceNote item={openProduct} fonts={fonts} palette={palette} />
-                {openProduct.replacement_value && (
-                  <p className="mt-2" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}>
-                    Replacement value: {openProduct.replacement_value}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
       </main>
     </div>
   );

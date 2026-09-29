@@ -17,19 +17,20 @@ export function formatRentalDate(value) {
 // detail page) so the availability check and the "set your dates" prompt
 // can never drift into two different behaviors.
 export function useRentalFlow() {
-  const { addRental, rentalDates } = useCart();
+  const { addRental, rentalDates, rentalItems } = useCart();
   const [showDatesModal, setShowDatesModal] = useState(false);
   const [pendingRentItem, setPendingRentItem] = useState(null);
+  const [pendingQuantity, setPendingQuantity] = useState(1);
   const [rentalNotice, setRentalNotice] = useState("");
   const [checkingAvailability, setCheckingAvailability] = useState(false);
 
   const datesReady = rentalDatesValid(rentalDates);
 
-  const attemptAddRental = async (item, dates) => {
+  const attemptAddRental = async (item, dates, quantity = 1) => {
     setRentalNotice("");
 
     if (!supabase) {
-      addRental(item.id);
+      addRental(item.id, null, quantity);
       return;
     }
 
@@ -41,23 +42,28 @@ export function useRentalFlow() {
     });
     setCheckingAvailability(false);
 
-    if (availabilityError || Number(data || 0) < 1) {
+    const alreadyInCart = rentalItems.filter((line) => String(line.id) === String(item.id))
+      .reduce((sum, line) => sum + Number(line.quantity || 0), 0);
+    if (availabilityError || Number(data || 0) < quantity + alreadyInCart) {
       setRentalNotice(
-        `${item.name} isn't available for ${formatRentalDate(dates.pickup)} to ${formatRentalDate(dates.dropoff)}.`
+        `${item.name} isn't available in the requested quantity for ${formatRentalDate(dates.pickup)} to ${formatRentalDate(dates.dropoff)}.`
       );
       return;
     }
 
-    addRental(item.id);
+    addRental(item.id, null, quantity);
   };
 
-  const handleRent = async (item) => {
+  const handleRent = async (item, requestedQuantity = 1) => {
+    const quantity = Math.max(1, Math.floor(Number(requestedQuantity) || 1));
+    if (!Number.isFinite(quantity) || checkingAvailability) return;
     if (!datesReady) {
       setPendingRentItem(item);
+      setPendingQuantity(quantity);
       setShowDatesModal(true);
       return;
     }
-    await attemptAddRental(item, rentalDates);
+    await attemptAddRental(item, rentalDates, quantity);
   };
 
   const handleDatesSaved = async (savedDates) => {
@@ -65,7 +71,7 @@ export function useRentalFlow() {
     if (pendingRentItem) {
       const item = pendingRentItem;
       setPendingRentItem(null);
-      await attemptAddRental(item, savedDates);
+      await attemptAddRental(item, savedDates, pendingQuantity);
     }
   };
 
