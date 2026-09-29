@@ -60,17 +60,8 @@ function splitContentLines(value) {
 
 // The page background lives on its own fixed layer, underneath everything,
 // so the photos and text scroll over it instead of being painted onto it.
-// It is deliberately a step deeper than the content on top of it (warm
-// greige with a faint emerald cast) so the content reads as sitting above
-// it. Flat gradients only: fine repeating patterns on a fixed layer shimmer
-// as scan lines through the blended photos.
-const PRODUCT_BACKDROP = {
-  backgroundColor: "#ECE6DA",
-  backgroundImage: [
-    "radial-gradient(70% 55% at 6% 8%, rgba(11,73,51,0.10), transparent 72%)",
-    "linear-gradient(160deg, #F3EFE6 0%, #E9E2D5 55%, #E0D7C6 100%)",
-  ].join(", "),
-};
+// The colour is the page's original flat cream; do not change it.
+const PRODUCT_BACKDROP = { backgroundColor: "#FCFAF7" };
 
 // The routed replacement for the old click-to-open modal: every decor
 // piece and every gift/wrap/card item gets a real page at its own URL
@@ -511,7 +502,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
                 {(active.size || active.material) && (
                   <section
                     className="mt-5 overflow-hidden rounded-lg"
-                    style={{ background: "rgba(255,255,255,0.72)", boxShadow: "0 6px 20px rgba(25,23,19,0.07)" }}
+                    style={{ background: "#F2EEE8" }}
                     aria-label="Product specifications"
                   >
                     <div className="hidden sm:grid sm:grid-cols-2">
