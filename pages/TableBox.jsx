@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Home, Minus, PackagePlus, Plus, RotateCcw, X } from "lucide-react";
+import { ChevronDown, Home, Minus, PackagePlus, Plus, RotateCcw, Star, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
@@ -141,6 +141,101 @@ function BulkPriceNote({ item, fonts, palette }) {
       {money(Number(item.bulk_rental_price))} each for {item.variant_group ? "any " : ""}
       {item.bulk_min_quantity}+{item.variant_group ? ", mix and match" : ""}
     </p>
+  );
+}
+
+function ReviewsCarousel({ palette, fonts }) {
+  const [reviews, setReviews] = useState([]);
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    if (!supabase) return;
+    supabase
+      .from("reviews")
+      .select("id, rating, body, customer_name, published_at, created_at")
+      .eq("status", "approved")
+      .order("published_at", { ascending: false })
+      .then(({ data }) => { if (data?.length) setReviews(data); });
+  }, []);
+
+  const startTimer = (list) => {
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => setCurrent((c) => (c + 1) % list.length), 5000);
+  };
+
+  useEffect(() => {
+    if (reviews.length < 2) return;
+    startTimer(reviews);
+    return () => clearInterval(timerRef.current);
+  }, [reviews]);
+
+  const goTo = (n) => {
+    const next = (n + reviews.length) % reviews.length;
+    setCurrent(next);
+    startTimer(reviews);
+  };
+
+  if (!reviews.length) return null;
+
+  const review = reviews[current];
+
+  return (
+    <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+      <div className="mb-8 text-center">
+        <p style={{ fontFamily: "'Permanent Marker', cursive", color: palette.primaryDeep, fontSize: "clamp(2rem, 4vw, 2.8rem)", lineHeight: 1.2 }}>
+          Look! We are loved ❤️
+        </p>
+        <div className="mt-3 flex items-center justify-center gap-0.5">
+          {[1,2,3,4,5].map((n) => (
+            <Star key={n} size={18} strokeWidth={1.5} style={{ color: palette.goldDeep, fill: palette.goldDeep }} />
+          ))}
+        </div>
+      </div>
+
+      <div
+        className="mx-auto max-w-2xl rounded-2xl p-8"
+        style={{
+          background: palette.surface,
+          border: `1px solid ${rgba(palette.primaryDeep, 0.1)}`,
+          boxShadow: `0 6px 32px ${rgba(palette.primaryDeep, 0.09)}`,
+          transition: "box-shadow 0.25s, transform 0.25s",
+        }}
+        onMouseEnter={() => clearInterval(timerRef.current)}
+        onMouseLeave={() => startTimer(reviews)}
+      >
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <p style={{ ...fonts.bodyFont, color: palette.primaryDeep, fontSize: "14px", fontWeight: 650 }}>
+            {review.customer_name}
+          </p>
+          <div className="flex gap-0.5">
+            {[1,2,3,4,5].map((n) => (
+              <Star key={n} size={13} strokeWidth={1.5} style={{ color: palette.goldDeep, fill: n <= (review.rating || 5) ? palette.goldDeep : "transparent" }} />
+            ))}
+          </div>
+        </div>
+        <p style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "17px", lineHeight: 1.7, fontStyle: "italic" }}>
+          &ldquo;{review.body?.length > 220 ? review.body.slice(0, 220) + "…" : review.body}&rdquo;
+        </p>
+      </div>
+
+      {reviews.length > 1 && (
+        <div className="mt-5 flex items-center justify-center gap-2">
+          {reviews.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={`Review ${i + 1}`}
+              className="h-2 w-2 rounded-full border-none p-0 transition-all"
+              style={{
+                background: i === current ? palette.primaryDeep : rgba(palette.primaryDeep, 0.2),
+                transform: i === current ? "scale(1.3)" : "scale(1)",
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -763,6 +858,8 @@ export default function TableBox({ navigate }) {
           </ElevatedCard>
         </section>
       )}
+
+      <ReviewsCarousel palette={palette} fonts={fonts} />
 
       {showSourcingModal && <SourcingRequestModal onClose={() => setShowSourcingModal(false)} />}
 
