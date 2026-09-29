@@ -7,6 +7,10 @@ import { withBasePath } from "../apiBase";
   IMPORTANT:
   Use transparent PNG/WebP cutouts for the decorative products.
   These images intentionally sit behind the real content cards.
+
+  They are part of the static background: pinned in the window while the
+  page content scrolls over them. Vertical positions are therefore relative
+  to the window (vh), not to the document.
 */
 const DECOR = [
   {
@@ -23,29 +27,29 @@ const DECOR = [
     src: "/photos/decor/gold-candleholder-cutout.png",
     className:
       // Mobile shows this beside the package pricing note instead (TableBoxPackages.jsx).
-      "hidden sm:block left-[-28px] top-[880px] w-[100px] sm:left-[-38px] sm:w-[145px]",
+      "hidden sm:block left-[-28px] top-[46vh] w-[100px] sm:left-[-38px] sm:w-[145px]",
   },
   {
     src: "/photos/decor/gold-cake-stand-cutout.png",
     className:
       // Mobile shows this beside the Build Your Box heading instead (TableBox.jsx).
-      "hidden sm:block lg:hidden right-[-64px] top-[1780px] w-[210px] sm:right-[-74px] sm:w-[280px]",
+      "hidden sm:block lg:hidden right-[-64px] top-[50vh] w-[210px] sm:right-[-74px] sm:w-[280px]",
   },
   {
     src: "/photos/decor/butter-dish-cutout.png",
     className:
-      "left-[-42px] top-[2450px] w-[150px] sm:left-[-56px] sm:w-[200px]",
+      "left-[-42px] top-[64vh] w-[150px] sm:left-[-56px] sm:w-[200px]",
   },
   {
     src: "/photos/decor/gold-charger-cutout.png",
     className:
-      "right-[-70px] top-[3250px] w-[220px] sm:right-[-90px] sm:w-[310px]",
+      "right-[-70px] top-[72vh] w-[220px] sm:right-[-90px] sm:w-[310px]",
   },
   {
     src: "/photos/decor/grey-staub-cutout.png",
     className:
       // Mobile shows this beside the Can't Find the Thing card instead (TableBox.jsx).
-      "hidden sm:block left-[-72px] top-[4100px] w-[220px] sm:left-[-94px] sm:w-[310px]",
+      "hidden sm:block left-[-72px] bottom-[-60px] w-[220px] sm:left-[-94px] sm:w-[310px]",
   },
 ];
 
@@ -83,21 +87,26 @@ export default function TableBoxEditorialBackdrop() {
         />
       </div>
 
-      {/* Decorative rental cutouts, positioned down the DOCUMENT, not fixed */}
+      {/* Decorative rental cutouts: pinned in the window (sticky inside a
+          full-height wrapper) so the content scrolls over them, and released
+          at the end of the page so they never cover the footer. `overflow-clip`
+          rather than `hidden`, which would break the sticky. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[2] overflow-hidden"
+        className="pointer-events-none absolute inset-0 z-[2] overflow-clip"
       >
-        {DECOR.map((item) => (
-          <img
-            key={item.src}
-            src={withBasePath(item.src)}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className={`absolute select-none object-contain drop-shadow-[0_14px_18px_rgba(0,0,0,0.10)] ${item.className}`}
-          />
-        ))}
+        <div className="sticky top-0 h-screen overflow-clip">
+          {DECOR.map((item) => (
+            <img
+              key={item.src}
+              src={withBasePath(item.src)}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className={`absolute select-none object-contain drop-shadow-[0_14px_18px_rgba(0,0,0,0.10)] ${item.className}`}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

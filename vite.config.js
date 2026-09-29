@@ -15,7 +15,7 @@ import react from "@vitejs/plugin-react";
 // filenames carry a version instead of Vite's own content hash. Changing
 // it updates the build's bundle filenames. copy-prerendered.mjs synchronizes
 // saved HTML references automatically; refresh snapshots when content changes.
-const BUNDLE_VERSION = "v74";
+const BUNDLE_VERSION = "v75";
 
 export default {
   base: "/events/",
