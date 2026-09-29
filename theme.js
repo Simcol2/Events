@@ -82,6 +82,9 @@ export function paperTexture(palette) {
     // composited into a beige cast over the whole canvas. `ink` is a
     // neutral charcoal, so this hairline stays grey.
     backgroundImage: `repeating-linear-gradient(0deg, ${hexToRgba(palette.ink, 0.018)} 0, ${hexToRgba(palette.ink, 0.018)} 1px, transparent 1px, transparent 4px)`,
+    // Pinned to the viewport so the page background stays put while the
+    // content scrolls over it. Colour and texture are unchanged.
+    backgroundAttachment: "fixed",
   };
 }
 

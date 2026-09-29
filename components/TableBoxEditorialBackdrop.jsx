@@ -63,6 +63,8 @@ export default function TableBoxEditorialBackdrop() {
           backgroundColor: "#FDFDFB",
           backgroundImage:
             "repeating-linear-gradient(0deg, rgba(30, 50, 42, 0.008) 0px, rgba(30, 50, 42, 0.008) 1px, transparent 1px, transparent 3px)",
+          // Static: stays put while the page content scrolls over it.
+          backgroundAttachment: "fixed",
         }}
       />
 
