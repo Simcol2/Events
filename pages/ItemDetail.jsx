@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Check, ChevronDown, ChevronLeft, ChevronRight, PackageCheck, Plus, Ruler, Sparkles, X } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, Plus, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import {
   getItemFlags,
@@ -268,7 +268,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
     <main style={{ ...paperTexture(palette), color: palette.ink }}>
       <SeoHead path={groupPath} override={seo} productJsonLd={product} />
 
-      <div className="mx-auto max-w-7xl px-5 pt-8 sm:px-8 lg:px-10">
+      <div className="mx-auto max-w-5xl px-5 pt-8 sm:px-8">
         <button
           onClick={() => navigate(backPath)}
           className="inline-flex items-center gap-2 font-[Space_Grotesk] text-xs font-semibold tracking-[0.12em]"
@@ -278,58 +278,35 @@ export default function ItemDetail({ kind, slug, navigate }) {
         </button>
       </div>
 
-      <section className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-8 lg:px-10">
-        <ElevatedCard palette={palette} className="grid grid-cols-1 overflow-hidden lg:grid-cols-[minmax(0,1.16fr)_minmax(390px,.84fr)]">
-          <div className="min-w-0 border-b lg:border-b-0 lg:border-r" style={{ borderColor: palette.line, background: "#FBF9F3" }}>
-            <div className="relative aspect-[1.04/1] overflow-hidden">
-              {photos.length ? (
-                <img
-                  src={photos[activePhoto] || photos[0]}
-                  alt={itemAltText(displayName, { color: selectedColor || colorOptions[0] })}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center">
-                  <span className="font-[Space_Grotesk] text-sm tracking-[0.2em]" style={{ color: palette.muted }}>
-                    PHOTO COMING SOON
-                  </span>
-                </div>
-              )}
-              {photos.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setActivePhoto((current) => (current - 1 + photos.length) % photos.length)}
-                    className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 shadow-sm"
-                    aria-label="Previous photo"
-                  >
-                    <ChevronLeft size={18} color={palette.primaryDeep} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActivePhoto((current) => (current + 1) % photos.length)}
-                    className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 shadow-sm"
-                    aria-label="Next photo"
-                  >
-                    <ChevronRight size={18} color={palette.primaryDeep} />
-                  </button>
-                </>
-              )}
-            </div>
+      <section className="mx-auto max-w-5xl px-5 pb-24 pt-6 sm:px-8">
+        <ElevatedCard palette={palette} className="grid grid-cols-1 overflow-hidden sm:grid-cols-2">
+          <div className="relative aspect-square" style={{ background: rgba(palette.primary, 0.06) }}>
+            {photos.length ? (
+              <img
+                src={photos[activePhoto] || photos[0]}
+                alt={itemAltText(displayName, { color: colorOptions[0] })}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                <span className="font-[Space_Grotesk] text-sm tracking-[0.2em]" style={{ color: palette.muted }}>
+                  PHOTO COMING SOON
+                </span>
+              </div>
+            )}
             {photos.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto p-4 sm:p-5" aria-label="Product photos">
+              <div className="flex gap-2 overflow-x-auto p-3 sm:absolute sm:bottom-0 sm:left-0 sm:right-0">
                 {photos.map((src, i) => (
                   <button
                     key={i}
                     type="button"
                     onClick={() => setActivePhoto(i)}
-                    className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-sm bg-white sm:h-24 sm:w-24"
+                    className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-sm"
                     style={{
-                      border: i === activePhoto ? `2px solid ${palette.accent}` : `1px solid ${palette.line}`,
-                      opacity: i === activePhoto ? 1 : 0.82,
+                      border: i === activePhoto ? `2px solid ${palette.primaryDeep}` : "2px solid #FFFFFF",
+                      opacity: i === activePhoto ? 1 : 0.75,
                     }}
                     aria-label={`View photo ${i + 1}`}
-                    aria-pressed={i === activePhoto}
                   >
                     <img src={src} alt="" className="h-full w-full object-cover" />
                   </button>
@@ -338,29 +315,68 @@ export default function ItemDetail({ kind, slug, navigate }) {
             )}
           </div>
 
-          <div className="min-w-0 px-6 py-8 sm:px-9 sm:py-10 lg:px-11 lg:py-12">
-            <div
-              className="font-[Space_Grotesk] text-xs font-semibold uppercase tracking-[0.2em]"
-              style={{ color: palette.accent }}
-            >
-              {active.brand || tags[0] || (kind === "decor" ? "A SLICE OF G RENTALS" : "A SLICE OF G")}
+          {isCompleteLook && lookItems.length > 0 && (
+            <div className="border-b p-4 sm:col-span-2 sm:border-b-0 sm:border-t" style={{ borderColor: palette.line }}>
+              <div
+                className="mb-3 font-[Space_Grotesk] text-xs font-semibold uppercase tracking-[0.14em]"
+                style={{ color: palette.muted }}
+              >
+                This look includes
+              </div>
+              <div className="flex gap-4 overflow-x-auto">
+                {lookItems.map((li) => {
+                  const liPhotos = photoList(li.photos);
+                  return (
+                    <button
+                      key={li.id}
+                      type="button"
+                      onClick={() => setOpenLookItem(li)}
+                      className="flex-shrink-0 text-left"
+                    >
+                      <div
+                        className="h-16 w-16 overflow-hidden rounded-sm"
+                        style={{ border: `1px solid ${palette.line}` }}
+                      >
+                        {liPhotos.length ? (
+                          <img src={liPhotos[0]} alt={li.name} className="h-full w-full object-cover" />
+                        ) : (
+                          <div
+                            className="flex h-full items-center justify-center"
+                            style={{ background: rgba(palette.primary, 0.06) }}
+                          >
+                            <span className="font-[Space_Grotesk] text-[8px]" style={{ color: palette.muted }}>
+                              NO PHOTO
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        className="mt-1 w-16 truncate font-[Space_Grotesk] text-[10px]"
+                        style={{ color: palette.ink }}
+                      >
+                        {li.name}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <h1 className="mt-2 break-words font-['Fraunces'] text-4xl font-semibold leading-[0.98] sm:text-5xl" style={{ color: palette.primaryDeep }}>
+          )}
+
+          <div className="px-6 py-8 sm:px-8">
+            <div
+              className="font-[Space_Grotesk] text-sm font-medium uppercase tracking-[0.18em]"
+              style={{ color: palette.muted }}
+            >
+              {tags.length ? tags.join(" · ") : kind === "decor" ? "Decor" : "Gifts"}
+            </div>
+            <h1 className="mt-1 font-['Fraunces'] text-3xl font-semibold" style={{ color: palette.primaryDeep }}>
               {displayName}
             </h1>
-
-            {(colorOptions.length === 1 || active.size) && (
-              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
-                {colorOptions.length === 1 && <span>{colorOptions[0]}</span>}
-                {colorOptions.length === 1 && active.size && <span aria-hidden="true">|</span>}
-                {active.size && <span>{active.size}</span>}
-              </div>
-            )}
 
             {hasVariants && (
               <div className="relative mt-3 max-w-xs">
                 <select
-                  aria-label="Choose variant"
                   value={selectedId}
                   onChange={(e) => {
                     setSelectedId(e.target.value);
@@ -387,11 +403,10 @@ export default function ItemDetail({ kind, slug, navigate }) {
               </div>
             )}
 
-            {colorOptions.length > 1 && (
-              <div className="mt-4 flex flex-wrap items-center gap-2">
+            {colorOptions.length > 1 ? (
+              <div className="mt-1 flex items-center gap-2">
                 <span className="font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>Color:</span>
                 <select
-                  aria-label="Choose color"
                   value={selectedColor}
                   onChange={(e) => setSelectedColor(e.target.value)}
                   className="rounded-sm border border-[#D9D9D9] bg-white px-2 py-1 font-[Space_Grotesk] text-sm outline-none"
@@ -402,6 +417,13 @@ export default function ItemDetail({ kind, slug, navigate }) {
                   ))}
                 </select>
               </div>
+            ) : colorOptions.length === 1 ? (
+              <div className="mt-1 font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>
+                Color: {colorOptions[0]}
+              </div>
+            ) : null}
+            {active.size && (
+              <div className="mt-2 font-[Space_Grotesk] text-sm" style={{ color: palette.muted }}>{active.size}</div>
             )}
 
             {baseItem.description && <DescriptionBody text={baseItem.description} />}
@@ -410,26 +432,6 @@ export default function ItemDetail({ kind, slug, navigate }) {
               <p className="mt-3 font-[Space_Grotesk] text-sm leading-6" style={{ color: palette.muted }}>
                 {baseItem.condition_notes}
               </p>
-            )}
-
-            {!isCompleteLook && (
-              <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {[
-                  active.size && { label: "Size", value: active.size, Icon: Ruler },
-                  isRentable && { label: "Rental", value: "Per event", Icon: PackageCheck },
-                  {
-                    label: "Status",
-                    value: outOfStock ? "Unavailable" : isRentable ? "Check your dates" : active.made_to_order ? "Made to order" : isPurchasable ? "Available to buy" : "Inquire",
-                    Icon: Sparkles,
-                  },
-                ].filter(Boolean).map(({ label, value, Icon }) => (
-                  <div key={label} className="min-w-0 rounded-sm border px-3 py-3" style={{ borderColor: palette.line, background: rgba(palette.gold, 0.06) }}>
-                    <Icon size={17} color={palette.goldDeep} aria-hidden="true" />
-                    <div className="mt-2 font-[Space_Grotesk] text-[10px] font-semibold uppercase tracking-[0.14em]" style={{ color: palette.muted }}>{label}</div>
-                    <div className="mt-0.5 break-words font-[Space_Grotesk] text-xs font-medium" style={{ color: palette.ink }}>{value}</div>
-                  </div>
-                ))}
-              </div>
             )}
 
             {isCompleteLook ? (
@@ -512,11 +514,10 @@ export default function ItemDetail({ kind, slug, navigate }) {
             ) : (
             <div className="mt-6 space-y-3 border-t pt-5" style={{ borderColor: palette.line }}>
               {isPurchasable && (
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <div className="font-['Fraunces'] text-4xl font-semibold leading-none" style={{ color: palette.accent }}>${active.purchase_price}</div>
-                    <div className="mt-1 font-[Space_Grotesk] text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: palette.muted }}>Purchase</div>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-[Space_Grotesk] text-base font-medium" style={{ color: palette.goldDeep }}>
+                    BUY ${active.purchase_price}
+                  </span>
                   {outOfStock ? (
                     <span className="font-[Space_Grotesk] text-sm tracking-[0.08em]" style={{ color: palette.muted }}>
                       UNAVAILABLE
@@ -526,7 +527,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
                       onClick={() =>
                         inPurchaseCart ? removeFromCart(active.id, "catalog") : addToCart(active.id, "catalog")
                       }
-                      className="flex items-center justify-center gap-2 rounded-sm px-5 py-3.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.16em]"
+                      className="flex items-center gap-2 rounded-full px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em]"
                       style={{
                         background: inPurchaseCart ? "transparent" : palette.primaryDeep,
                         color: inPurchaseCart ? palette.primaryDeep : "#FFFFFF",
@@ -547,22 +548,21 @@ export default function ItemDetail({ kind, slug, navigate }) {
               )}
 
               {isRentable && !outOfStock && (
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <div className="font-['Fraunces'] text-4xl font-semibold leading-none" style={{ color: palette.accent }}>${active.rental_price}</div>
-                    <div className="mt-1 font-[Space_Grotesk] text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: palette.muted }}>Rental · per event</div>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-[Space_Grotesk] text-base font-medium" style={{ color: palette.goldDeep }}>
+                    RENT ${active.rental_price} / EVENT
+                  </span>
                   <button
                     onClick={() => (inRentalCart ? removeFromCart(active.id, "rental") : rental.handleRent(active))}
-                    className="flex items-center justify-center gap-2 rounded-sm px-5 py-3.5 font-[Space_Grotesk] text-xs font-semibold tracking-[0.16em]"
+                    className="flex items-center gap-2 rounded-full px-5 py-2.5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.16em]"
                     style={{
-                      background: inRentalCart ? palette.primaryDeep : palette.accent,
-                      color: "#FFFFFF",
-                      border: `1px solid ${inRentalCart ? palette.primaryDeep : palette.accent}`,
+                      background: inRentalCart ? palette.primaryDeep : "transparent",
+                      color: inRentalCart ? "#FFFFFF" : palette.primaryDeep,
+                      border: `1px solid ${palette.primaryDeep}`,
                     }}
                   >
                     {inRentalCart ? <Check size={14} /> : <Plus size={14} />}
-                    {inRentalCart ? "IN CART" : "ADD TO RENTAL"}
+                    {inRentalCart ? "IN CART" : "ADD TO CART"}
                   </button>
                 </div>
               )}
@@ -615,54 +615,6 @@ export default function ItemDetail({ kind, slug, navigate }) {
               </p>
             )}
           </div>
-          {isCompleteLook && lookItems.length > 0 && (
-            <div className="min-w-0 border-t p-5 lg:col-span-2" style={{ borderColor: palette.line }}>
-              <div
-                className="mb-3 font-[Space_Grotesk] text-xs font-semibold uppercase tracking-[0.14em]"
-                style={{ color: palette.muted }}
-              >
-                This look includes
-              </div>
-              <div className="flex gap-4 overflow-x-auto">
-                {lookItems.map((li) => {
-                  const liPhotos = photoList(li.photos);
-                  return (
-                    <button
-                      key={li.id}
-                      type="button"
-                      onClick={() => setOpenLookItem(li)}
-                      className="flex-shrink-0 text-left"
-                    >
-                      <div
-                        className="h-16 w-16 overflow-hidden rounded-sm"
-                        style={{ border: `1px solid ${palette.line}` }}
-                      >
-                        {liPhotos.length ? (
-                          <img src={liPhotos[0]} alt={li.name} className="h-full w-full object-cover" />
-                        ) : (
-                          <div
-                            className="flex h-full items-center justify-center"
-                            style={{ background: rgba(palette.primary, 0.06) }}
-                          >
-                            <span className="font-[Space_Grotesk] text-[8px]" style={{ color: palette.muted }}>
-                              NO PHOTO
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className="mt-1 w-16 truncate font-[Space_Grotesk] text-[10px]"
-                        style={{ color: palette.ink }}
-                      >
-                        {li.name}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
         </ElevatedCard>
       </section>
 

@@ -17,7 +17,7 @@ const DECOR = [
   {
     src: "/photos/decor/stemmed-wine-glass-cutout.png",
     className:
-      "right-[56px] top-[395px] w-[92px] sm:right-[36px] sm:top-[430px] sm:w-[120px]",
+      "right-[56px] top-[395px] w-[92px] sm:right-[36px] sm:top-[430px] sm:w-[120px] lg:right-auto lg:left-[28px] lg:top-[160px] lg:w-[140px]",
   },
   {
     src: "/photos/decor/gold-candleholder-cutout.png",
@@ -29,7 +29,7 @@ const DECOR = [
     src: "/photos/decor/gold-cake-stand-cutout.png",
     className:
       // Mobile shows this beside the Build Your Box heading instead (TableBox.jsx).
-      "hidden sm:block right-[-64px] top-[1780px] w-[210px] sm:right-[-74px] sm:w-[280px]",
+      "hidden sm:block lg:hidden right-[-64px] top-[1780px] w-[210px] sm:right-[-74px] sm:w-[280px]",
   },
   {
     src: "/photos/decor/butter-dish-cutout.png",
@@ -52,10 +52,10 @@ const DECOR = [
 export default function TableBoxEditorialBackdrop() {
   return (
     <>
-      {/* Stationary cream paper background */}
+      {/* Page-scoped paper background: must not cover the following footer */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           // Bright, neutral off-white. The owner has rejected warm/beige three
           // times; check the RENDERED colour (texture lines darken it), not
@@ -66,10 +66,10 @@ export default function TableBoxEditorialBackdrop() {
         }}
       />
 
-      {/* Stationary MCM stripe */}
+      {/* Page-scoped MCM stripe */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-y-0 right-[8px] z-[1] w-[16px]"
+        className="pointer-events-none absolute inset-y-0 right-[8px] z-[1] w-[16px]"
       >
         <div
           className="absolute inset-y-0 left-0 w-[2px]"

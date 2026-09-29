@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Home, Minus, PackagePlus, Plus, RotateCcw, X } from "lucide-react";
+import { Home, PackagePlus, RotateCcw, X } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useCart } from "../CartContext";
 import { usePalette } from "../PaletteContext";
@@ -10,6 +10,7 @@ import DescriptionBody from "../components/ItemDescription";
 import { parseItemTags, groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
 import SourcingRequestModal from "../components/SourcingRequestModal";
 import TableBoxPackages from "../components/TableBoxPackages";
+import TableBoxProductCard from "../components/TableBoxProductCard";
 import TableBoxEditorialBackdrop from "../components/TableBoxEditorialBackdrop";
 import { bulkPoolCounter, rentalUnitPrice } from "../api/_pricing.js";
 import {
@@ -295,7 +296,7 @@ export default function TableBox({ navigate }) {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-clip">
       {/* Never add `isolate` to this tree: it would cap every modal below
           the sticky header's z-50. Modals are portaled to document.body. */}
       <TableBoxEditorialBackdrop />
@@ -429,7 +430,7 @@ export default function TableBox({ navigate }) {
                         </button>
 
                         {isOpen && (
-                          <div className="grid grid-cols-2 gap-4 border-t px-5 py-5" style={{ borderColor: palette.line }}>
+                          <div className="grid grid-cols-1 gap-5 border-t p-3 sm:p-5" style={{ borderColor: palette.line }}>
                             {groupByVariant(section.products).map((group) => {
                               const hasVariants = Array.isArray(group.variants) && group.variants.length > 1;
                               const orderedVariants = hasVariants ? sortVariantsByPrice(group.variants) : null;
@@ -438,112 +439,18 @@ export default function TableBox({ navigate }) {
                                 : group.item;
                               const displayName = hasVariants ? group.groupName : activeProduct.name;
                               const count = qty[activeProduct.id] || 0;
-                              const photos = normalizePhotos(activeProduct.photos);
                               return (
-                                <div
+                                <TableBoxProductCard
                                   key={group.key}
-                                  style={{
-                                    border: `1px solid ${count ? palette.accent : palette.line}`,
-                                    borderRadius: "5px",
-                                    overflow: "hidden",
-                                  }}
-                                >
-                                  <button
-                                    type="button"
-                                    onClick={() => setOpenProduct(activeProduct)}
-                                    className="block w-full text-left"
-                                    aria-label={`View details for ${displayName}`}
-                                  >
-                                    <div className="relative aspect-[4/3]" style={{ background: rgba(palette.primary, 0.06) }}>
-                                      {photos.length ? (
-                                        <PhotoCarousel photos={activeProduct.photos} alt={displayName} className="h-full w-full object-contain" />
-                                      ) : (
-                                        <div className="flex h-full items-center justify-center">
-                                          <span
-                                            style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "11px", letterSpacing: "0.14em", textTransform: "uppercase" }}
-                                          >
-                                            Photo coming soon
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div className="px-3.5 pt-3.5">
-                                      <p style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "15px", fontWeight: 640, lineHeight: 1.2 }}>
-                                        {displayName}
-                                      </p>
-                                      <p className="mt-1" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}>
-                                        {money(unitPrice(activeProduct))}{" "}
-                                        <span>{isRental(activeProduct) ? "/ event" : "to buy"}</span>
-                                      </p>
-                                      <BulkPriceNote item={activeProduct} fonts={fonts} palette={palette} />
-                                    </div>
-                                  </button>
-
-                                  <div className="px-3.5 pt-2.5">
-                                    {hasVariants && (
-                                      <div className="relative">
-                                        <select
-                                          value={activeProduct.id}
-                                          onClick={(e) => e.stopPropagation()}
-                                          onChange={(e) =>
-                                            setSelectedVariant((current) => ({
-                                              ...current,
-                                              [group.key]: Number(e.target.value),
-                                            }))
-                                          }
-                                          aria-label={`Choose ${displayName} option`}
-                                          className="w-full appearance-none rounded-sm border bg-white pl-2.5 pr-7 py-2 text-xs outline-none"
-                                          style={{ ...fonts.bodyFont, borderColor: palette.line, color: palette.ink }}
-                                        >
-                                          {orderedVariants.map((variant) => {
-                                            const label = variant.variant_label || variant.name;
-                                            return (
-                                              <option key={variant.id} value={variant.id}>
-                                                {`${label} (${money(unitPrice(variant))})`}
-                                              </option>
-                                            );
-                                          })}
-                                        </select>
-                                        <ChevronDown
-                                          size={12}
-                                          className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2"
-                                          style={{ color: palette.muted }}
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  <div className="p-3.5 pt-2.5">
-                                    <div className="flex items-center gap-2">
-                                      <button
-                                        onClick={() => setQuantity(activeProduct.id, count - 1)}
-                                        disabled={count === 0}
-                                        aria-label={`Decrease ${displayName} quantity`}
-                                        className="flex h-8 w-8 items-center justify-center rounded-full disabled:opacity-40"
-                                        style={{ border: `1px solid ${palette.line}`, color: palette.primaryDeep }}
-                                      >
-                                        <Minus size={14} />
-                                      </button>
-                                      <input
-                                        type="number"
-                                        min="0"
-                                        value={count}
-                                        onChange={(e) => setQuantity(activeProduct.id, e.target.value)}
-                                        aria-label={`${displayName} quantity`}
-                                        className="w-12 rounded-sm border text-center text-sm outline-none"
-                                        style={{ ...fonts.bodyFont, borderColor: palette.line, color: palette.ink, padding: "4px 0" }}
-                                      />
-                                      <button
-                                        onClick={() => setQuantity(activeProduct.id, count + 1)}
-                                        aria-label={`Increase ${displayName} quantity`}
-                                        className="flex h-8 w-8 items-center justify-center rounded-full"
-                                        style={{ border: `1px solid ${palette.line}`, color: palette.primaryDeep }}
-                                      >
-                                        <Plus size={14} />
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
+                                  item={activeProduct}
+                                  displayName={displayName}
+                                  category={section.category}
+                                  variants={orderedVariants}
+                                  count={count}
+                                  onVariantChange={(id) => setSelectedVariant((current) => ({ ...current, [group.key]: id }))}
+                                  onQuantityChange={(next) => setQuantity(activeProduct.id, next)}
+                                  onDetails={() => setOpenProduct(activeProduct)}
+                                />
                               );
                             })}
                           </div>
@@ -555,7 +462,7 @@ export default function TableBox({ navigate }) {
             )}
           </div>
 
-          <aside className="lg:sticky lg:top-6 lg:self-start">
+          <aside className="min-w-0 lg:self-start">
             <ElevatedCard palette={palette} className="p-6">
               <Kicker palette={palette} fonts={fonts}>YOUR TABLE BOX</Kicker>
 
@@ -669,6 +576,15 @@ export default function TableBox({ navigate }) {
                 choose your rental dates.
               </p>
             </ElevatedCard>
+            <img
+              src={withBasePath("/photos/decor/gold-cake-stand-cutout.png")}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              data-table-box-art="cake-stands"
+              className="pointer-events-none mx-auto mt-10 hidden w-[280px] max-w-full select-none object-contain drop-shadow-[0_14px_18px_rgba(0,0,0,0.10)] lg:block"
+            />
           </aside>
         </div>
       </section>
