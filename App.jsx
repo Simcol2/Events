@@ -183,7 +183,7 @@ function AppRoutes() {
       <SiteHeader current={current} navigate={navigate} nav={NAV} integrated={current === "table-box"} />
       <ValuePropBar integrated={current === "table-box"} />
       {component}
-      <SiteFooter navigate={navigate} />
+      <SiteFooter navigate={navigate} className={current === "table-box" ? "mt-0" : undefined} />
       <EventTypePicker navigate={navigate} />
       <EventDatePicker />
       <CartLauncher />

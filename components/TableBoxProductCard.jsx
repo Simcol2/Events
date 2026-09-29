@@ -25,9 +25,9 @@ export default function TableBoxProductCard({
       style={{ borderColor: count ? palette.accent : palette.line, background: palette.surface }}
       aria-label={displayName}
     >
-      <div className="min-w-0 border-b sm:border-b-0 sm:border-r" style={{ background: "#FBF9F3", borderColor: palette.line }}>
-        <div className="relative aspect-square">
-          <button type="button" onClick={onDetails} className="h-full w-full p-3" aria-label={"View details for " + displayName}>
+      <div className="flex min-w-0 flex-col border-b sm:border-b-0 sm:border-r" style={{ background: "#FBF9F3", borderColor: palette.line }}>
+        <div className="relative aspect-square sm:aspect-auto sm:min-h-[280px] sm:flex-1">
+          <button type="button" onClick={onDetails} className="absolute inset-0 h-full w-full p-3" aria-label={"View details for " + displayName}>
             {photos.length ? (
               <img src={photos[currentPhoto]} alt={displayName} loading="lazy" className="h-full w-full object-contain" />
             ) : (

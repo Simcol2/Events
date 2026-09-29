@@ -13,9 +13,9 @@ import react from "@vitejs/plugin-react";
 // app.js/app.css at any layer between origin and browser (see the /events
 // proxy's cache-control history) - it's the whole reason these two
 // filenames carry a version instead of Vite's own content hash. Changing
-// it means re-running `npm run prerender` before deploying, since the
-// static snapshots' <script>/<link> tags hardcode the current name.
-const BUNDLE_VERSION = "v67";
+// it updates the build's bundle filenames. copy-prerendered.mjs synchronizes
+// saved HTML references automatically; refresh snapshots when content changes.
+const BUNDLE_VERSION = "v68";
 
 export default {
   base: "/events/",

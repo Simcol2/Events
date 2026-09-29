@@ -47,12 +47,12 @@ function NewsletterSignup({ palette, fonts }) {
   );
 }
 
-export default function SiteFooter({ navigate }) {
+export default function SiteFooter({ navigate, className = "mt-24" }) {
   const { palette, fonts } = usePalette();
   const { openPickerForBuilder } = useEventType();
 
   return (
-    <footer className="mt-24" style={{ borderTop: `1px solid ${palette.line}`, background: `${palette.primary}0D` }}>
+    <footer className={className} style={{ borderTop: `1px solid ${palette.line}`, background: `${palette.primary}0D` }}>
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
         <div className="grid gap-10 md:grid-cols-[1.2fr_.7fr_.7fr_.9fr]">
           <div>

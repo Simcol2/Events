@@ -182,7 +182,7 @@ function ReviewsCarousel({ palette, fonts }) {
   const review = reviews[current];
 
   return (
-    <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+    <section className="mx-auto max-w-6xl px-6 pb-12 sm:px-10 lg:pb-16">
       <div className="mb-8 text-center">
         <p style={{ fontFamily: "'Permanent Marker', cursive", color: palette.primaryDeep, fontSize: "clamp(2rem, 4vw, 2.8rem)", lineHeight: 1.2 }}>
           Look! We are loved ❤️
@@ -753,7 +753,7 @@ export default function TableBox({ navigate }) {
       </section>
 
       {navigate && (
-        <section className="mx-auto max-w-6xl px-6 pb-24 sm:px-10 lg:pb-32">
+        <section className="mx-auto max-w-6xl px-6 pb-12 sm:px-10 lg:pb-16">
           <ElevatedCard palette={palette} className="p-8 text-center sm:p-10">
             <h3
               style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 640, lineHeight: 1.2 }}
