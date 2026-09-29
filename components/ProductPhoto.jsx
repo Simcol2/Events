@@ -59,12 +59,18 @@ function detectWhiteBackdrop(src) {
   return result;
 }
 
-export default function ProductPhoto({ src, alt = "", className = "", style, ...rest }) {
-  const [whiteBackdrop, setWhiteBackdrop] = useState(false);
+// Photos that keep their own backdrop (styled shots) are boxes on the page,
+// so `lift` gives them a soft shadow to sit slightly above it. White-backdrop
+// studio shots have no box, so they never get one. The shadow waits for the
+// detection result (null) so it doesn't flash on and off for white shots.
+const LIFT_SHADOW = "0 14px 34px rgba(25,23,19,0.18), 0 3px 8px rgba(25,23,19,0.10)";
+
+export default function ProductPhoto({ src, alt = "", className = "", style, lift = false, ...rest }) {
+  const [whiteBackdrop, setWhiteBackdrop] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
-    setWhiteBackdrop(false);
+    setWhiteBackdrop(null);
     if (src) {
       detectWhiteBackdrop(src).then((isWhite) => {
         if (!cancelled) setWhiteBackdrop(isWhite);
@@ -80,7 +86,11 @@ export default function ProductPhoto({ src, alt = "", className = "", style, ...
       src={src}
       alt={alt}
       className={className}
-      style={whiteBackdrop ? { ...style, mixBlendMode: "multiply" } : style}
+      style={{
+        ...style,
+        ...(whiteBackdrop ? { mixBlendMode: "multiply" } : null),
+        ...(lift ? { boxShadow: whiteBackdrop === false ? LIFT_SHADOW : "none", transition: "box-shadow 200ms ease" } : null),
+      }}
       data-white-backdrop={whiteBackdrop ? "true" : undefined}
       {...rest}
     />

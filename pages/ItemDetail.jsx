@@ -60,14 +60,15 @@ function splitContentLines(value) {
 
 // The page background lives on its own fixed layer, underneath everything,
 // so the photos and text scroll over it instead of being painted onto it.
-// A soft emerald and gold wash plus the paper hairline keep the movement
-// visible without hurting legibility.
+// It is deliberately a step deeper than the content on top of it (warm
+// greige with a faint emerald cast) so the content reads as sitting above
+// it. Flat gradients only: fine repeating patterns on a fixed layer shimmer
+// as scan lines through the blended photos.
 const PRODUCT_BACKDROP = {
-  backgroundColor: "#FCFAF7",
+  backgroundColor: "#ECE6DA",
   backgroundImage: [
-    "radial-gradient(60% 50% at 8% 12%, rgba(11,73,51,0.07), transparent 70%)",
-    "radial-gradient(55% 45% at 95% 88%, rgba(212,175,90,0.13), transparent 70%)",
-    "repeating-linear-gradient(0deg, rgba(25,23,19,0.018) 0, rgba(25,23,19,0.018) 1px, transparent 1px, transparent 4px)",
+    "radial-gradient(70% 55% at 6% 8%, rgba(11,73,51,0.10), transparent 72%)",
+    "linear-gradient(160deg, #F3EFE6 0%, #E9E2D5 55%, #E0D7C6 100%)",
   ].join(", "),
 };
 
@@ -376,8 +377,8 @@ export default function ItemDetail({ kind, slug, navigate }) {
       <section className="mx-auto max-w-[1440px] px-5 pb-24 pt-6 sm:px-8">
         <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:gap-11">
           <div className="min-w-0" data-product-gallery>
-            <div className="relative aspect-[1.12/1] overflow-hidden rounded-lg">
-              {photos.length ? <ProductPhoto src={photos[activePhoto] || photos[0]} alt={itemAltText(displayName, { color: colorOptions[0] })} className="h-full w-full object-cover" /> :
+            <div className="relative aspect-[1.12/1]">
+              {photos.length ? <ProductPhoto src={photos[activePhoto] || photos[0]} alt={itemAltText(displayName, { color: colorOptions[0] })} className="h-full w-full rounded-lg object-cover" lift /> :
                 <div className="flex h-full items-center justify-center text-sm tracking-widest" style={{ background: "#F3F0EC" }}>PHOTO COMING SOON</div>}
               {photos.length > 1 && [-1, 1].map((direction) => (
                 <button key={direction} type="button" aria-label={direction < 0 ? "Previous photo" : "Next photo"}
@@ -510,7 +511,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
                 {(active.size || active.material) && (
                   <section
                     className="mt-5 overflow-hidden rounded-lg"
-                    style={{ background: "#F2EEE8" }}
+                    style={{ background: "rgba(255,255,255,0.72)", boxShadow: "0 6px 20px rgba(25,23,19,0.07)" }}
                     aria-label="Product specifications"
                   >
                     <div className="hidden sm:grid sm:grid-cols-2">
