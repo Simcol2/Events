@@ -1,5 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Check, ChevronDown, ChevronLeft, ChevronRight, Minus, PackageCheck, Ruler, Layers, Plus, X } from "lucide-react";
+import {
+  Box,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Flame,
+  Layers,
+  Lightbulb,
+  Minus,
+  Plus,
+  RotateCcw,
+  Ruler,
+  ShieldCheck,
+  Sparkles,
+  Utensils,
+  X,
+} from "lucide-react";
 import { supabase } from "../supabaseClient";
 import {
   getItemFlags,
@@ -21,6 +38,25 @@ import { usePalette } from "../PaletteContext";
 import { itemAltText, itemSeo, itemUrlPath, parseItemIdFromSlug, productJsonLd } from "../seo";
 import { paperTexture, rgba } from "../components/EditorialKit";
 
+function featureIconFor(label = "") {
+  const value = String(label).toLowerCase();
+  if (value.includes("oven") || value.includes("heat") || value.includes("hot")) return Flame;
+  if (value.includes("durable") || value.includes("finish") || value.includes("sturdy")) return ShieldCheck;
+  if (value.includes("serve") || value.includes("table") || value.includes("dinner")) return Utensils;
+  if (value.includes("rotate") || value.includes("spinning")) return RotateCcw;
+  if (value.includes("size") || value.includes("dimension")) return Ruler;
+  if (value.includes("material") || value.includes("layer")) return Layers;
+  return Sparkles;
+}
+
+function splitContentLines(value) {
+  if (!value || typeof value !== "string") return [];
+  return value
+    .split(/\n+/)
+    .map((line) => line.replace(/^[-•]\s*/, "").trim())
+    .filter(Boolean);
+}
+
 // The routed replacement for the old click-to-open modal: every decor
 // piece and every gift/wrap/card item gets a real page at its own URL
 // (/decor/<slug> or /gifts/<slug>), so it can be indexed, shared and
@@ -41,6 +77,7 @@ export default function ItemDetail({ kind, slug, navigate }) {
   const [activePhoto, setActivePhoto] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [detailTab, setDetailTab] = useState("Details");
+  const [pairedItems, setPairedItems] = useState([]);
 
   const id = parseItemIdFromSlug(slug);
 
@@ -115,6 +152,33 @@ export default function ItemDetail({ kind, slug, navigate }) {
     setDetailTab("Details");
     setActivePhoto(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active?.id]);
+
+  useEffect(() => {
+    const pairWith = Array.isArray(active?.pair_with) ? active.pair_with.filter(Boolean) : [];
+    if (!supabase || !pairWith.length) {
+      setPairedItems([]);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("items")
+        .select("*")
+        .in("name", pairWith)
+        .eq("active", true);
+
+      if (cancelled) return;
+      const ordered = pairWith
+        .map((name) => (data || []).find((item) => item.name === name))
+        .filter(Boolean);
+      setPairedItems(ordered);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [active?.id]);
 
   // A "complete look" (see completeLooks.js) is a decor item that stands in
@@ -268,6 +332,17 @@ export default function ItemDetail({ kind, slug, navigate }) {
 
   const inPurchaseCart = isInCart(active.id, "catalog");
   const inRentalCart = isInCart(active.id, "rental");
+  const featureHighlights = Array.isArray(active.feature_highlights)
+    ? active.feature_highlights.filter(Boolean).slice(0, 4)
+    : [];
+  const detailLines = splitContentLines(active.details || active.condition_notes);
+  const productTabs = [
+    "Details",
+    ...(active.care_instructions ? ["Care"] : []),
+    ...(active.ideas ? ["Ideas"] : []),
+    ...(pairedItems.length ? ["Pair With"] : []),
+    ...(active.replacement_value ? ["Replacement Value"] : []),
+  ];
 
   return (
     <main style={{ background: "#FCFAF7", color: palette.ink }}>
@@ -377,22 +452,104 @@ export default function ItemDetail({ kind, slug, navigate }) {
               </p>
             )}
 
-            {!isCompleteLook && <div className="mt-6 border-t pt-4" style={{ borderColor: palette.line }}>
-              <div className="flex justify-around gap-3 text-center">
-                {[
-                  ...(isRentable ? [{ Icon: PackageCheck, label: "Rental", value: "Per event" }] : []),
-                  ...(active.size ? [{ Icon: Ruler, label: "Size", value: active.size }] : []),
-                  ...(active.material ? [{ Icon: Layers, label: "Material", value: active.material }] : []),
-                ].map(({ Icon, label, value }) => <div key={label} className="max-w-[140px] flex-1">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border" style={{ color: palette.goldDeep, borderColor: palette.goldDeep }}><Icon size={25} strokeWidth={1.3} /></div>
-                  <p className="mt-2 font-[Space_Grotesk] text-[10px] uppercase tracking-[0.12em]">{label}<br />{value}</p>
-                </div>)}
-              </div>
-              {(active.size || active.material) && <div className="mt-5 grid gap-4 rounded-lg bg-[#F1EDE7] p-4 sm:grid-cols-2">
-                {active.size && <div className="flex gap-3"><Ruler className="shrink-0" color={palette.goldDeep} /><div className="text-sm"><p className="mb-1 text-[10px] font-semibold uppercase tracking-widest">Dimensions / size</p>{active.size}</div></div>}
-                {active.material && <div className="flex gap-3"><Layers className="shrink-0" color={palette.goldDeep} /><div className="text-sm"><p className="mb-1 text-[10px] font-semibold uppercase tracking-widest">Material</p>{active.material}</div></div>}
-              </div>}
-            </div>}
+            {!isCompleteLook && (
+              <>
+                {featureHighlights.length > 0 && (
+                  <section
+                    className="mt-7 border-y py-6"
+                    style={{ borderColor: palette.line }}
+                    aria-label="Product highlights"
+                  >
+                    <div
+                      className={`grid gap-5 ${
+                        featureHighlights.length >= 4
+                          ? "grid-cols-2 sm:grid-cols-4"
+                          : featureHighlights.length === 3
+                            ? "grid-cols-3"
+                            : "grid-cols-2"
+                      }`}
+                    >
+                      {featureHighlights.map((feature) => {
+                        const Icon = featureIconFor(feature);
+                        return (
+                          <div key={feature} className="text-center">
+                            <div
+                              className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border"
+                              style={{ borderColor: palette.goldDeep, color: palette.goldDeep }}
+                            >
+                              <Icon size={26} strokeWidth={1.25} />
+                            </div>
+                            <p
+                              className="mx-auto mt-3 max-w-[120px] font-[Space_Grotesk] text-[10px] font-medium uppercase leading-[1.35] tracking-[0.12em]"
+                              style={{ color: palette.ink }}
+                            >
+                              {feature}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                {(active.size || active.material) && (
+                  <section
+                    className="mt-5 overflow-hidden rounded-lg"
+                    style={{ background: "#F2EEE8" }}
+                    aria-label="Product specifications"
+                  >
+                    <div className="hidden sm:grid sm:grid-cols-2">
+                      {active.size && (
+                        <div className="flex gap-4 px-5 py-5">
+                          <Ruler size={27} strokeWidth={1.3} color={palette.goldDeep} className="shrink-0" />
+                          <div>
+                            <div className="font-[Space_Grotesk] text-[10px] font-semibold uppercase tracking-[0.16em]">
+                              Dimensions
+                            </div>
+                            <div className="mt-1 font-[Space_Grotesk] text-sm leading-5">{active.size}</div>
+                          </div>
+                        </div>
+                      )}
+                      {active.material && (
+                        <div
+                          className="flex gap-4 border-l px-5 py-5"
+                          style={{ borderColor: palette.line }}
+                        >
+                          <Layers size={27} strokeWidth={1.3} color={palette.goldDeep} className="shrink-0" />
+                          <div>
+                            <div className="font-[Space_Grotesk] text-[10px] font-semibold uppercase tracking-[0.16em]">
+                              Material
+                            </div>
+                            <div className="mt-1 font-[Space_Grotesk] text-sm leading-5">{active.material}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="divide-y sm:hidden">
+                      {active.size && (
+                        <div className="flex items-center gap-3 px-4 py-4">
+                          <Ruler size={22} color={palette.goldDeep} />
+                          <div className="flex-1">
+                            <div className="text-[10px] font-semibold uppercase tracking-[0.16em]">Dimensions</div>
+                            <div className="mt-1 text-sm">{active.size}</div>
+                          </div>
+                        </div>
+                      )}
+                      {active.material && (
+                        <div className="flex items-center gap-3 px-4 py-4">
+                          <Layers size={22} color={palette.goldDeep} />
+                          <div className="flex-1">
+                            <div className="text-[10px] font-semibold uppercase tracking-[0.16em]">Material</div>
+                            <div className="mt-1 text-sm">{active.material}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                )}
+              </>
+            )}
 
             {isCompleteLook ? (
               <div className="mt-6 space-y-3 border-t pt-5" style={{ borderColor: palette.line }}>
@@ -472,25 +629,34 @@ export default function ItemDetail({ kind, slug, navigate }) {
                 )}
               </div>
             ) : (
-            <div className="mt-6 space-y-3 border-t pt-5" style={{ borderColor: palette.line }}>
-              {!outOfStock && (isRentable || isPurchasable) && <div className="flex items-center justify-end gap-2">
-                <span className="mr-2 text-xs uppercase tracking-widest">Quantity</span>
-                <div className="flex items-center rounded border" style={{ borderColor: palette.line }}>
-                  <button type="button" aria-label="Decrease quantity" disabled={quantity <= 1} onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="p-3 disabled:opacity-30"><Minus size={16} /></button>
-                  <input aria-label="Quantity" type="number" min="1" step="1" value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.floor(Number(event.target.value) || 1)))} className="w-12 bg-transparent text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
-                  <button type="button" aria-label="Increase quantity" onClick={() => setQuantity((q) => q + 1)} className="p-3"><Plus size={16} /></button>
-                </div>
-              </div>}
+            <div className="mt-7 space-y-4 border-y py-6" style={{ borderColor: palette.line }}>
               {outOfStock && <p className="text-sm uppercase tracking-widest">Currently unavailable</p>}
               {[...(isRentable ? [{ type: "rental", price: active.rental_price, label: "Rental / per event", inCart: inRentalCart }] : []), ...(isPurchasable ? [{ type: "catalog", price: active.purchase_price, label: "Purchase", inCart: inPurchaseCart }] : [])].map((offer) => (
-                <div key={offer.type} className="flex flex-wrap items-center justify-between gap-4">
-                  <div style={{ color: "#E50062" }}><div className="font-['Fraunces'] text-5xl leading-none">${Number(offer.price).toLocaleString("en-CA", { minimumFractionDigits: Number(offer.price) % 1 ? 2 : 0, maximumFractionDigits: 2 })}</div><div className="mt-1 text-[10px] uppercase tracking-[0.15em]">{offer.label}</div></div>
+                <div key={offer.type} className="grid items-end gap-5 lg:grid-cols-[auto_auto_1fr]">
+                  <div style={{ color: "#E50062" }}>
+                    <div className="font-['Fraunces'] text-5xl leading-none">
+                      ${Number(offer.price).toLocaleString("en-CA", { minimumFractionDigits: Number(offer.price) % 1 ? 2 : 0, maximumFractionDigits: 2 })}
+                    </div>
+                    <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.15em]">{offer.label}</div>
+                  </div>
+                  {!outOfStock && (
+                    <div>
+                      <div className="mb-2 font-[Space_Grotesk] text-[10px] font-semibold uppercase tracking-[0.16em]">
+                        Quantity
+                      </div>
+                      <div className="flex h-12 items-center rounded-md border bg-white" style={{ borderColor: palette.line }}>
+                        <button type="button" aria-label="Decrease quantity" disabled={quantity <= 1} onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="h-full px-4 disabled:opacity-30"><Minus size={16} /></button>
+                        <span className="min-w-10 text-center text-base">{quantity}</span>
+                        <button type="button" aria-label="Increase quantity" onClick={() => setQuantity((q) => q + 1)} className="h-full px-4"><Plus size={16} /></button>
+                      </div>
+                    </div>
+                  )}
                   {!outOfStock && <button type="button" disabled={rental.checkingAvailability}
                     onClick={() => offer.type === "rental" ? rental.handleRent(active, quantity) : addToCart(active.id, "catalog", null, quantity)}
-                    className="min-h-14 flex-1 rounded-md px-5 py-4 font-[Space_Grotesk] text-xs font-semibold tracking-[0.14em] text-white disabled:opacity-50 sm:flex-none" style={{ background: "#E50062" }}>
+                    className="min-h-[58px] w-full rounded-md px-7 py-4 font-[Space_Grotesk] text-xs font-bold uppercase tracking-[0.16em] text-white disabled:opacity-50" style={{ background: "#E50062" }}>
                     {rental.checkingAvailability && offer.type === "rental" ? "CHECKING…" : offer.type === "rental" ? "ADD TO RENTAL" : "ADD TO CART"}
                   </button>}
-                  {offer.inCart && <p role="status" className="flex w-full items-center gap-2 text-sm" style={{ color: palette.primaryDeep }}><Check size={16} /> In your cart <button type="button" className="ml-auto underline" onClick={() => removeFromCart(active.id, offer.type)}>Remove</button></p>}
+                  {offer.inCart && <p role="status" className="flex items-center gap-2 text-sm lg:col-span-3" style={{ color: palette.primaryDeep }}><Check size={16} /> In your cart <button type="button" className="ml-auto underline" onClick={() => removeFromCart(active.id, offer.type)}>Remove</button></p>}
                 </div>
               ))}
 
@@ -536,20 +702,114 @@ export default function ItemDetail({ kind, slug, navigate }) {
               BUILD MY EXPERIENCE
             </button>
 
-            <div className="mt-6 border-t pt-2" style={{ borderColor: palette.line }}>
-              <div role="tablist" aria-label="Product information" className="flex border-b" style={{ borderColor: palette.line }}>
-                {["Details", ...(active.care_instructions ? ["Care"] : [])].map((tab) => <button key={tab} type="button" role="tab" id={`product-tab-${tab}`} aria-controls="product-tab-panel" aria-selected={detailTab === tab} onClick={() => setDetailTab(tab)} className="border-b-2 px-5 py-3 text-[10px] font-semibold uppercase tracking-widest" style={{ color: detailTab === tab ? "#E50062" : palette.ink, borderColor: detailTab === tab ? "#E50062" : "transparent" }}>{tab}</button>)}
+            <section className="mt-8 border-t" style={{ borderColor: palette.line }}>
+              <div
+                role="tablist"
+                aria-label="Product information"
+                className="grid border-b"
+                style={{
+                  borderColor: palette.line,
+                  gridTemplateColumns: `repeat(${productTabs.length}, minmax(0, 1fr))`,
+                }}
+              >
+                {productTabs.map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    role="tab"
+                    id={`product-tab-${tab}`}
+                    aria-controls={`product-panel-${tab}`}
+                    aria-selected={detailTab === tab}
+                    onClick={() => setDetailTab(tab)}
+                    className="relative px-2 py-4 font-[Space_Grotesk] text-[10px] font-semibold uppercase tracking-[0.12em]"
+                    style={{ color: detailTab === tab ? "#E50062" : palette.ink }}
+                  >
+                    {tab}
+                    {detailTab === tab && (
+                      <span className="absolute bottom-[-1px] left-0 h-[2px] w-full" style={{ background: "#E50062" }} />
+                    )}
+                  </button>
+                ))}
               </div>
-              <div role="tabpanel" id="product-tab-panel" aria-labelledby={`product-tab-${detailTab}`} className="py-4 text-sm leading-6">
-                {detailTab === "Care" ? <DescriptionBody text={active.care_instructions} /> : <>
-                  {active.condition_notes && <p>{active.condition_notes}</p>}
-                  {active.size && <p>Size: {active.size}</p>}
-                  {active.replacement_value && <p>Replacement value: {active.replacement_value}</p>}
-                  {isRentable && <p>Select your event dates to check availability for your chosen quantity.</p>}
-                  {!active.size && !active.condition_notes && !active.replacement_value && !isRentable && <p>{displayName}</p>}
-                </>}
+
+              <div
+                role="tabpanel"
+                id={`product-panel-${detailTab}`}
+                aria-labelledby={`product-tab-${detailTab}`}
+                className="py-6 text-sm leading-6"
+              >
+                {detailTab === "Details" && (
+                  <div>
+                    {detailLines.length > 0 ? (
+                      <ul className="space-y-2">
+                        {detailLines.map((line) => (
+                          <li key={line} className="flex gap-3 font-[Space_Grotesk] text-sm leading-6">
+                            <span className="mt-[10px] h-1 w-1 shrink-0 rounded-full" style={{ background: palette.goldDeep }} />
+                            <span>{line}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <DescriptionBody text={active.description || baseItem.description || displayName} />
+                    )}
+                  </div>
+                )}
+
+                {detailTab === "Care" && (
+                  <DescriptionBody text={active.care_instructions} />
+                )}
+
+                {detailTab === "Ideas" && (
+                  <div className="flex gap-3">
+                    <Lightbulb size={20} className="mt-1 shrink-0" color={palette.goldDeep} />
+                    <DescriptionBody text={active.ideas} />
+                  </div>
+                )}
+
+                {detailTab === "Pair With" && (
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                    {pairedItems.map((item) => {
+                      const pairPhotos = photoList(item.photos);
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => navigate(itemUrlPath(kind, item))}
+                          className="group text-left"
+                        >
+                          <div className="aspect-square overflow-hidden rounded-sm bg-[#F3F0EC]">
+                            {pairPhotos[0] ? (
+                              <img src={pairPhotos[0]} alt={item.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+                            ) : (
+                              <div className="flex h-full items-center justify-center"><Box size={24} color={palette.muted} /></div>
+                            )}
+                          </div>
+                          <div className="mt-2 font-['Fraunces'] text-base font-medium">{item.name}</div>
+                          {item.rental_price != null && (
+                            <div className="mt-1 font-[Space_Grotesk] text-xs" style={{ color: palette.goldDeep }}>
+                              ${item.rental_price} / event
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {detailTab === "Replacement Value" && (
+                  <div className="max-w-xl">
+                    <div className="font-['Fraunces'] text-4xl font-medium" style={{ color: "#E50062" }}>
+                      {active.replacement_value}
+                    </div>
+                    <p className="mt-3 font-[Space_Grotesk] text-sm leading-6" style={{ color: palette.muted }}>
+                      This is the item's replacement value, not the rental price or security deposit.
+                      Replacement charges may apply if the item is lost, not returned, or damaged beyond normal rental wear,
+                      subject to the rental agreement.
+                    </p>
+                  </div>
+                )}
               </div>
-            </div>
+            </section>
           </div>
           {isCompleteLook && lookItems.length > 0 && (
             <div className="border-b p-4 lg:col-span-2 sm:border-b-0 sm:border-t" style={{ borderColor: palette.line }}>

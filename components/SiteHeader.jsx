@@ -12,11 +12,24 @@ function ctaBackground(item, palette) {
   return item.ctaColor ? FAMILIES[item.ctaColor].base : palette.primaryDeep;
 }
 
-export default function SiteHeader({ current, navigate, nav, integrated = false }) {
+export default function SiteHeader({ current, navigate, nav, integrated = false, emerald = false }) {
   const { palette, fonts } = usePalette();
   const { chooseEventType, openPickerForBuilder } = useEventType();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState({});
+
+  const emeraldBg = "#0B4933";
+  const emeraldGold = "#D4AF5A";
+  const headerBg = emerald
+    ? emeraldBg
+    : integrated
+      ? "transparent"
+      : `${palette.bg}F2`;
+  const headerBorder = emerald ? "rgba(255,255,255,0.14)" : `${palette.line}CC`;
+  const navIdle = emerald ? "rgba(255,255,255,0.82)" : palette.muted;
+  const navActive = emerald ? "#FFFFFF" : palette.primaryDeep;
+  const logoTop = emerald ? "#FFFFFF" : palette.goldDeep;
+  const logoBottom = emerald ? emeraldGold : palette.primaryDeep;
 
   const toggleExpanded = (key) => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -43,16 +56,20 @@ export default function SiteHeader({ current, navigate, nav, integrated = false 
     // would let body text slide underneath the logo.
     <header
       className={integrated ? "relative z-50" : "sticky top-0 z-50 backdrop-blur-md"}
-      style={integrated ? { background: "transparent" } : { borderBottom: `1px solid ${palette.line}CC`, background: `${palette.bg}F2` }}
+      style={
+        integrated && !emerald
+          ? { background: "transparent" }
+          : { borderBottom: `1px solid ${headerBorder}`, background: headerBg }
+      }
     >
       <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <button onClick={() => go({ path: "/" })} className="group text-left">
-          <div className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.42em]" style={{ color: palette.goldDeep }}>
+          <div className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.42em]" style={{ color: logoTop }}>
             A SLICE OF G
           </div>
           <div
             className="font-['Fraunces'] text-[25px] font-semibold leading-none tracking-[0.03em]"
-            style={{ color: palette.primaryDeep }}
+            style={{ color: logoBottom }}
           >
             EVENTS
           </div>
@@ -81,14 +98,14 @@ export default function SiteHeader({ current, navigate, nav, integrated = false 
                   <button
                     onClick={() => go(item)}
                     className="relative flex items-center gap-1 whitespace-nowrap py-2 font-[Space_Grotesk] text-sm font-medium tracking-[0.02em] transition-colors"
-                    style={{ color: active || childActive ? palette.primaryDeep : palette.muted }}
+                    style={{ color: active || childActive ? navActive : navIdle }}
                   >
                     {label.toUpperCase()}
                     <ChevronDown size={13} />
                     {(active || childActive) && (
                       <span
                         className="absolute -bottom-1 left-0 right-0 mx-auto h-px w-5"
-                        style={{ background: palette.gold }}
+                        style={{ background: emerald ? emeraldGold : palette.gold }}
                       />
                     )}
                   </button>
@@ -116,13 +133,13 @@ export default function SiteHeader({ current, navigate, nav, integrated = false 
                 key={path}
                 onClick={() => go(item)}
                 className="relative whitespace-nowrap py-2 font-[Space_Grotesk] text-sm font-medium tracking-[0.02em] transition-colors"
-                style={{ color: active ? palette.primaryDeep : palette.muted }}
+                style={{ color: active ? navActive : navIdle }}
               >
                 {label.toUpperCase()}
                 {active && (
                   <span
                     className="absolute -bottom-1 left-0 right-0 mx-auto h-px w-5"
-                    style={{ background: palette.gold }}
+                    style={{ background: emerald ? emeraldGold : palette.gold }}
                   />
                 )}
               </button>
@@ -133,7 +150,7 @@ export default function SiteHeader({ current, navigate, nav, integrated = false 
         <button
           onClick={() => setOpen(!open)}
           className="rounded-full p-2 md:hidden"
-          style={{ color: palette.primaryDeep }}
+          style={{ color: emerald ? "#FFFFFF" : palette.primaryDeep }}
           aria-label="Open menu"
         >
           {open ? <X size={21} /> : <Menu size={21} />}
@@ -141,7 +158,13 @@ export default function SiteHeader({ current, navigate, nav, integrated = false 
       </div>
 
       {open && (
-        <div className="px-5 py-4 md:hidden" style={{ borderTop: `1px solid ${palette.line}`, background: palette.bg }}>
+        <div
+          className="px-5 py-4 md:hidden"
+          style={{
+            borderTop: `1px solid ${headerBorder}`,
+            background: emerald ? emeraldBg : palette.bg,
+          }}
+        >
           <nav className="mx-auto flex max-w-7xl flex-col">
             {nav.map((item) => {
               const isExpanded = Boolean(expanded[item.path]);
@@ -157,12 +180,15 @@ export default function SiteHeader({ current, navigate, nav, integrated = false 
                     style={
                       item.cta
                         ? { background: ctaBackground(item, palette) }
-                        : { borderBottom: item.children && isExpanded ? "none" : `1px solid ${palette.line}CC`, color: palette.primaryDeep }
+                        : {
+                            borderBottom: item.children && isExpanded ? "none" : `1px solid ${headerBorder}`,
+                            color: emerald ? "#FFFFFF" : palette.primaryDeep,
+                          }
                     }
                   >
                     {item.label.toUpperCase()}
                     {item.children && (
-                      <span aria-hidden="true" style={{ color: palette.goldDeep }}>
+                      <span aria-hidden="true" style={{ color: emerald ? emeraldGold : palette.goldDeep }}>
                         {isExpanded ? "−" : "+"}
                       </span>
                     )}
@@ -173,7 +199,10 @@ export default function SiteHeader({ current, navigate, nav, integrated = false 
                         key={child.path + (child.eventTypeId || "")}
                         onClick={() => go(child)}
                         className="py-3 pl-5 text-left font-[Space_Grotesk] text-sm font-medium tracking-[0.18em]"
-                        style={{ borderBottom: `1px solid ${palette.line}CC`, color: palette.muted }}
+                        style={{
+                          borderBottom: `1px solid ${headerBorder}`,
+                          color: emerald ? "rgba(255,255,255,0.78)" : palette.muted,
+                        }}
                       >
                         {child.label.toUpperCase()}
                       </button>

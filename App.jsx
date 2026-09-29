@@ -140,7 +140,7 @@ function AppRoutes() {
     return (
       <>
         <PaletteRouteSync current={kind} />
-        <SiteHeader current={kind} navigate={navigate} nav={NAV} />
+        <SiteHeader current={kind} navigate={navigate} nav={NAV} emerald />
         <ValuePropBar />
         <ItemDetail kind={kind} slug={slug} navigate={navigate} />
         <SiteFooter navigate={navigate} />
