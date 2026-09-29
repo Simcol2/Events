@@ -9,7 +9,7 @@ import { groupByVariant, sortVariantsByPrice } from "../components/DecorCard";
 import SourcingRequestModal from "../components/SourcingRequestModal";
 import TableBoxPackages from "../components/TableBoxPackages";
 import TableBoxProductCard from "../components/TableBoxProductCard";
-import TableBoxEditorialBackdrop from "../components/TableBoxEditorialBackdrop";
+import TableBoxEditorialBackdrop, { useHoldInPlace } from "../components/TableBoxEditorialBackdrop";
 import { bulkPoolCounter, rentalUnitPrice } from "../api/_pricing.js";
 import {
   ElevatedCard,
@@ -243,6 +243,8 @@ export default function TableBox({ navigate }) {
   // Opening a category collapses whichever one was open above it, which
   // pulls the clicked header up and off screen. Once the new layout is in
   // place, bring that header back to the top of the viewport.
+  const pageRootRef = useRef(null);
+  useHoldInPlace(pageRootRef);
   const sectionRefs = useRef({});
   const scrollToSectionRef = useRef(null);
   useLayoutEffect(() => {
@@ -384,7 +386,7 @@ export default function TableBox({ navigate }) {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-clip">
+    <div ref={pageRootRef} className="relative min-h-screen overflow-x-clip">
       {/* Never add `isolate` to this tree: it would cap every modal below
           the sticky header's z-50. Modals are portaled to document.body. */}
       <TableBoxEditorialBackdrop />
@@ -406,6 +408,7 @@ export default function TableBox({ navigate }) {
           aria-hidden="true"
           loading="lazy"
           decoding="async"
+          data-hold-in-place
           className="pointer-events-none absolute right-[28px] top-[-58px] -z-10 w-[160px] select-none object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.16))_drop-shadow(0_7px_9px_rgba(0,0,0,0.10))] sm:hidden"
         />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -671,6 +674,7 @@ export default function TableBox({ navigate }) {
               loading="lazy"
               decoding="async"
               data-table-box-art="cake-stands"
+              data-hold-in-place
               className="pointer-events-none mx-auto mt-10 hidden w-[280px] max-w-full select-none object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.16))_drop-shadow(0_7px_9px_rgba(0,0,0,0.10))] lg:block"
             />
           </aside>
@@ -686,6 +690,7 @@ export default function TableBox({ navigate }) {
           aria-hidden="true"
           loading="lazy"
           decoding="async"
+          data-hold-in-place
           className="pointer-events-none absolute left-[-40px] top-[-135px] -z-10 w-[210px] select-none object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.16))_drop-shadow(0_7px_9px_rgba(0,0,0,0.10))] sm:hidden"
         />
         <div className="grid gap-6 sm:grid-cols-2">

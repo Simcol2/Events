@@ -501,6 +501,7 @@ export default function TableBoxPackages({ navigate }) {
               aria-hidden="true"
               loading="lazy"
               decoding="async"
+              data-hold-in-place
               className="pointer-events-none w-[104px] flex-shrink-0 select-none object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.16))_drop-shadow(0_7px_9px_rgba(0,0,0,0.10))] sm:hidden"
             />
             <div>
