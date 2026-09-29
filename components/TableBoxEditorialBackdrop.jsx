@@ -26,14 +26,12 @@ const DECOR = [
   {
     src: "/photos/decor/gold-candleholder-cutout.png",
     className:
-      // Mobile shows this beside the package pricing note instead (TableBoxPackages.jsx).
-      "hidden sm:block left-[-28px] top-[46vh] w-[100px] sm:left-[-38px] sm:w-[145px]",
+      "left-[-28px] top-[28vh] w-[104px] sm:left-[-38px] sm:top-[46vh] sm:w-[145px]",
   },
   {
     src: "/photos/decor/gold-cake-stand-cutout.png",
     className:
-      // Mobile shows this beside the Build Your Box heading instead (TableBox.jsx).
-      "hidden sm:block lg:hidden right-[-64px] top-[50vh] w-[210px] sm:right-[-74px] sm:w-[280px]",
+      "left-[-50px] top-[40vh] w-[160px] sm:left-auto sm:right-[-74px] sm:top-[47vh] sm:w-[280px]",
   },
   {
     src: "/photos/decor/butter-dish-cutout.png",
@@ -43,15 +41,19 @@ const DECOR = [
   {
     src: "/photos/decor/gold-charger-cutout.png",
     className:
-      "right-[-70px] top-[72vh] w-[220px] sm:right-[-90px] sm:w-[310px]",
+      "right-[-70px] top-[72vh] w-[220px] sm:right-[-90px] sm:top-[76vh] sm:w-[310px]",
   },
   {
     src: "/photos/decor/grey-staub-cutout.png",
     className:
-      // Mobile shows this beside the Can't Find the Thing card instead (TableBox.jsx).
-      "hidden sm:block left-[-72px] bottom-[-60px] w-[220px] sm:left-[-94px] sm:w-[310px]",
+      "left-[-40px] bottom-[-60px] w-[210px] sm:left-[-94px] sm:w-[310px]",
   },
 ];
+
+// Small, subtle lift: a tight contact shadow plus a soft short one.
+const LIFT = {
+  filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.16)) drop-shadow(0 7px 9px rgba(0,0,0,0.10))",
+};
 
 export default function TableBoxEditorialBackdrop() {
   return (
@@ -103,7 +105,8 @@ export default function TableBoxEditorialBackdrop() {
               alt=""
               loading="lazy"
               decoding="async"
-              className={`absolute select-none object-contain drop-shadow-[0_14px_18px_rgba(0,0,0,0.10)] ${item.className}`}
+              style={LIFT}
+              className={`absolute select-none object-contain ${item.className}`}
             />
           ))}
         </div>
