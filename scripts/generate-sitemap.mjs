@@ -17,6 +17,9 @@ const { SITE_URL, INDEXABLE_ROUTES, itemUrlPath } = await import(pathToFileURL(p
 const PRIORITY = {
   "/": "1.0",
   "/decor": "0.9",
+  "/table-box": "0.9",
+  "/table-box/dinner-for-8": "0.8",
+  "/table-box/house-full-for-20": "0.8",
   "/display-options": "0.9",
   "/package-builder": "0.9",
   "/experiences": "0.8",

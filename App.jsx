@@ -17,6 +17,7 @@ import { BASE_PATH } from "./apiBase";
 import Home from "./pages/Home";
 import Decor from "./pages/Decor";
 import TableBox from "./pages/TableBox";
+import TableBoxPackage from "./pages/TableBoxPackage";
 import Gifts from "./pages/Gifts";
 import HowItWorks from "./pages/HowItWorks";
 import Experiences from "./pages/Experiences";
@@ -143,6 +144,25 @@ function AppRoutes() {
         <SiteHeader current={kind} navigate={navigate} nav={NAV} emerald />
         <ValuePropBar />
         <ItemDetail kind={kind} slug={slug} navigate={navigate} />
+        <SiteFooter navigate={navigate} />
+        <EventTypePicker navigate={navigate} />
+        <EventDatePicker />
+        <CartLauncher />
+      </>
+    );
+  }
+
+  // Each pre-built Table Box has its own page at /table-box/<slug> (see
+  // pages/TableBoxPackage.jsx), so it can be indexed and shared on its own.
+  // The metadata for the two current boxes lives in seo.js's ROUTE_SEO.
+  const packageMatch = page.match(/^\/table-box\/([^/]+)$/);
+  if (packageMatch) {
+    return (
+      <>
+        <PaletteRouteSync current="table-box" />
+        <SiteHeader current="table-box" navigate={navigate} nav={NAV} />
+        <ValuePropBar />
+        <TableBoxPackage slug={packageMatch[1]} navigate={navigate} />
         <SiteFooter navigate={navigate} />
         <EventTypePicker navigate={navigate} />
         <EventDatePicker />

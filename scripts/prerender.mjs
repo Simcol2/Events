@@ -28,6 +28,8 @@ const ROUTES = [
   "/faq",
   "/decor",
   "/table-box",
+  "/table-box/dinner-for-8",
+  "/table-box/house-full-for-20",
   "/birthdays/tutu-twirls-tea",
   "/milestone-events/baby-shower",
   "/gifts",
@@ -40,7 +42,9 @@ const ROUTES = [
 ];
 
 // Pass routes to rebuild only those snapshots, e.g.
-// `npm run prerender -- /past-events`. Rebuilding all fifteen takes about
+// `npm run prerender -- /past-events`. Add `--skip-items` to also skip the
+// per-item catalog pass below (which otherwise regenerates every /decor and
+// /gifts item page whenever a catalog snapshot is present). Rebuilding all fifteen takes about
 // ten minutes, and a typical change touches one page. An unknown route is
 // a hard error rather than a no-op, so a typo can't quietly leave a page's
 // snapshot stale while the run still reports success. Catalog item pages
@@ -178,6 +182,19 @@ async function run() {
       throw new Error(`${route}: LocalBusiness structured data missing from snapshot`);
     }
 
+    // A Table Box package page must ship its own Product, FAQ and three-level
+    // breadcrumb markup, the box's real contents and a crawlable link back
+    // to the Table Box page; a snapshot captured before the package data
+    // loaded would have none of it.
+    if (/^\/table-box\/[^/]+$/.test(route)) {
+      for (const needed of ['"@type":"Product"', '"@type":"FAQPage"', '"@type":"BreadcrumbList"', "Everything in the"]) {
+        if (!html.includes(needed)) throw new Error(`${route}: ${needed} missing from snapshot`);
+      }
+    }
+    if (route === "/table-box" && !/href="\/events\/table-box\/[a-z0-9-]+"/.test(html)) {
+      throw new Error("/table-box: crawlable links to the package pages are missing from the snapshot");
+    }
+
     // The decor and gift grids load live from Supabase, so a crawl that
     // can't reach it (missing VITE_SUPABASE_* credentials, no network
     // route to Supabase, or no catalog snapshot loaded above) ships a
@@ -216,7 +233,9 @@ async function run() {
     );
   }
 
-  if (!catalog) {
+  if (catalog && process.argv.includes("--skip-items")) {
+    console.log("\n--skip-items: leaving the existing /decor and /gifts item snapshots as they are.");
+  } else if (!catalog) {
     console.warn(
       "\nNo scripts/_catalog-snapshot.json found and no other route to Supabase from " +
         "this machine - skipping per-item catalog page prerendering (/decor/<item> and " +

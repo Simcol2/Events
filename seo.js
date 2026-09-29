@@ -85,6 +85,24 @@ export const ROUTE_SEO = {
     description:
       "Charger plates, wine glasses, centerpieces, arch stands, marquee letters and more, available to rent for weddings, showers, birthdays and parties across Toronto and the GTA.",
   },
+  "/table-box": {
+    title: "Table Box Rentals for Hosting at Home | Toronto & GTA",
+    description:
+      "Rent a ready-made Table Box or build your own: plates, chargers, flatware, glassware and centrepieces for dinner parties and holidays in Toronto and the GTA.",
+    breadcrumb: "Table Box",
+  },
+  "/table-box/dinner-for-8": {
+    title: "Dinner for 8 Table Box Rental | Toronto & the GTA",
+    description:
+      "Rent a full table setting for 8: dinner plates, gold chargers, black and gold flatware, glassware, cloth napkins and candle holders in Toronto and the GTA.",
+    parent: "/table-box",
+  },
+  "/table-box/house-full-for-20": {
+    title: "House Full for 20 Table Box Rental | Toronto & GTA",
+    description:
+      "Rent a full table setting for 20: plates, gold chargers, flatware, glassware, napkins, candle holders, serving pieces and a centrepiece in Toronto and the GTA.",
+    parent: "/table-box",
+  },
   "/display-options": {
     title: "Backdrop & Display Wall Rentals | Toronto & GTA",
     description:
@@ -323,19 +341,31 @@ export function websiteJsonLd() {
 }
 
 // Breadcrumbs give Google the site's shape and replace the raw URL in the
-// search result with a readable path. Every route is one level deep, so
-// this is always Home plus the page itself.
+// search result with a readable path. Most routes are one level deep
+// (Home plus the page itself); a route whose ROUTE_SEO entry names a
+// `parent` gets that page in between, e.g. Home > Table Box > Dinner for 8.
 export function breadcrumbJsonLd(pathname, titleOverride) {
   const { path, title } = seoForPath(pathname);
   if (path === "/") return null;
   const label = (titleOverride || title).split("|")[0].trim();
+  const trail = [{ name: "Home", item: `${SITE_URL}/` }];
+  const parent = ROUTE_SEO[path]?.parent;
+  if (parent && ROUTE_SEO[parent]) {
+    trail.push({
+      name: ROUTE_SEO[parent].breadcrumb || ROUTE_SEO[parent].title.split("|")[0].trim(),
+      item: `${SITE_URL}${parent}`,
+    });
+  }
+  trail.push({ name: label, item: `${SITE_URL}${path}` });
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-      { "@type": "ListItem", position: 2, name: label, item: `${SITE_URL}${path}` },
-    ],
+    itemListElement: trail.map((entry, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: entry.name,
+      item: entry.item,
+    })),
   };
 }
 
@@ -378,4 +408,93 @@ export function displayAltText(name, opts = {}) {
 // "Baby shower styled by A Slice of G Events in Toronto"
 export function eventPhotoAltText(subject, opts = {}) {
   return withContext(subject, "styled by A Slice of G Events", opts);
+}
+
+// --- Table Box package pages -------------------------------------------
+//
+// Each pre-built Table Box (Dinner for 8, House Full for 20) has its own
+// page at /table-box/<slug>. The two current boxes have hand-written
+// metadata in ROUTE_SEO above, so their titles and descriptions are known
+// ahead of time (the prerender, the sitemap and the crawler-facing
+// snapshot all read them from there). A box added later still gets sensible
+// metadata from the fallback below, built from its own data.
+
+export function tableBoxPackagePath(slug) {
+  return `/table-box/${slug}`;
+}
+
+export function tableBoxPackageAltText(name, guestCount, { city = "Toronto" } = {}) {
+  return `${name} Table Box rental: a complete table setting for ${guestCount} guests in ${city}`;
+}
+
+export function tableBoxPackageSeo({ slug, name, guestCount, blurb, photo, price }) {
+  const path = tableBoxPackagePath(slug);
+  const fixed = ROUTE_SEO[path];
+  const fallbackTitle = `${name} Table Box Rental | ${SERVICE_AREA_SHORT}`;
+  const fallbackDescription = `Rent the ${name} Table Box, a complete table setting for ${guestCount} guests. ${plainText(blurb)} Available across ${SERVICE_AREA_LONG}.`;
+  const description = fixed?.description || fallbackDescription;
+
+  return {
+    path,
+    title: fixed?.title || fallbackTitle,
+    description: description.length > 160 ? `${description.slice(0, 157)}...` : description,
+    canonical: `${SITE_URL}${path}`,
+    image: absoluteImageUrl(photo) || `${SITE_URL}/og-cover.jpg`,
+    imageAlt: tableBoxPackageAltText(name, guestCount),
+    price: price != null ? String(price) : undefined,
+    noindex: false,
+  };
+}
+
+// schema.org/Product for one rentable box. `businessFunction` marks the
+// offer as a rental (LeaseOut) rather than a sale, `includesObject` lists
+// the fixed pieces with their quantities, and `areaServed` states where the
+// box is available. Pieces the customer chooses between (napkin colour,
+// glass style) are described in the page text and FAQ, not listed here as
+// if every option came in the box.
+export function tableBoxPackageJsonLd({ slug, name, guestCount, description, image, price, fixedPieces, inStock }) {
+  const path = tableBoxPackagePath(slug);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${SITE_URL}${path}#package`,
+    name: `${name} Table Box`,
+    description: plainText(description) || `${name} Table Box`,
+    image: image ? [image] : undefined,
+    sku: `table-box-${slug}`,
+    category: "Event table setting rental",
+    brand: { "@type": "Brand", name: SITE_NAME },
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "Guests served", value: guestCount },
+    ],
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}${path}`,
+      priceCurrency: "CAD",
+      price: price != null ? String(price) : undefined,
+      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      businessFunction: "http://purl.org/goodrelations/v1#LeaseOut",
+      seller: { "@id": `${SITE_URL}/#business` },
+      areaServed: { "@type": "AdministrativeArea", name: "Greater Toronto Area" },
+      includesObject: (fixedPieces || []).map((piece) => ({
+        "@type": "TypeAndQuantityNode",
+        amountOfThisGood: piece.quantity,
+        typeOfGood: { "@type": "Product", name: piece.name },
+      })),
+    },
+  };
+}
+
+// FAQPage markup. Google only accepts it when the same questions and
+// answers are visible on the page, so the page renders from this exact list.
+export function faqJsonLd(faqs) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
 }

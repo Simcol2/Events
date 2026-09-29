@@ -60,7 +60,9 @@ function fillSiteJsonLd() {
 // returns, not something that can be hardcoded per route ahead of time.
 // `productJsonLd` is an additional structured-data block those same pages
 // pass in; it's replaced on every navigation same as the breadcrumb block.
-export default function SeoHead({ path, override, productJsonLd }) {
+// `extraJsonLd` is a list of further structured-data objects (a package
+// page's FAQ, for example), replaced the same way.
+export default function SeoHead({ path, override, productJsonLd, extraJsonLd }) {
   useEffect(fillSiteJsonLd, []);
 
   useEffect(() => {
@@ -89,7 +91,26 @@ export default function SeoHead({ path, override, productJsonLd }) {
     setMeta('meta[property="og:locale"]', { tag: "meta", property: "og:locale", content: "en_CA" });
     setMeta('meta[property="og:image"]', { tag: "meta", property: "og:image", content: override?.image || `${SITE_URL}/og-cover.jpg` });
 
+    // Alt text for the share image, and the price tags Facebook and
+    // Pinterest read on product pages. Removed again on pages without them
+    // so one page's values never leak onto the next during in-app navigation.
+    const shareImage = override?.image || `${SITE_URL}/og-cover.jpg`;
+    const optionalMeta = {
+      'meta[property="og:image:alt"]': { property: "og:image:alt", content: override?.imageAlt },
+      'meta[name="twitter:image:alt"]': { name: "twitter:image:alt", content: override?.imageAlt },
+      'meta[property="product:price:amount"]': { property: "product:price:amount", content: override?.price },
+      'meta[property="product:price:currency"]': {
+        property: "product:price:currency",
+        content: override?.price ? "CAD" : undefined,
+      },
+    };
+    Object.entries(optionalMeta).forEach(([selector, attrs]) => {
+      if (attrs.content) setMeta(selector, { tag: "meta", ...attrs });
+      else document.head.querySelector(selector)?.remove();
+    });
+
     setMeta('meta[name="twitter:card"]', { tag: "meta", name: "twitter:card", content: "summary_large_image" });
+    setMeta('meta[name="twitter:image"]', { tag: "meta", name: "twitter:image", content: shareImage });
     setMeta('meta[name="twitter:title"]', { tag: "meta", name: "twitter:title", content: title });
     setMeta('meta[name="twitter:description"]', { tag: "meta", name: "twitter:description", content: description });
 
@@ -118,7 +139,15 @@ export default function SeoHead({ path, override, productJsonLd }) {
       script.textContent = JSON.stringify(productJsonLd);
       document.head.appendChild(script);
     }
-  }, [path, override, productJsonLd]);
+    document.head.querySelectorAll('script[data-seo^="extra-"]').forEach((node) => node.remove());
+    (extraJsonLd || []).forEach((block, index) => {
+      const script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.dataset.seo = `extra-${index}`;
+      script.textContent = JSON.stringify(block);
+      document.head.appendChild(script);
+    });
+  }, [path, override, productJsonLd, extraJsonLd]);
 
   return null;
 }

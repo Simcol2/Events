@@ -25,6 +25,8 @@
     { "source": "/events/faq", "destination": "/faq/index.html" },
     { "source": "/events/decor", "destination": "/decor/index.html" },
     { "source": "/events/table-box", "destination": "/table-box/index.html" },
+    { "source": "/events/table-box/dinner-for-8", "destination": "/table-box/dinner-for-8/index.html" },
+    { "source": "/events/table-box/house-full-for-20", "destination": "/table-box/house-full-for-20/index.html" },
     { "source": "/events/birthdays/tutu-twirls-tea", "destination": "/birthdays/tutu-twirls-tea/index.html" },
     { "source": "/events/milestone-events/baby-shower", "destination": "/milestone-events/baby-shower/index.html" },
     { "source": "/events/gifts", "destination": "/gifts/index.html" },
