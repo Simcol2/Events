@@ -2244,7 +2244,7 @@ async function saveDepositCard({ reservation, squareCustomerId, payment }) {
   return result.card;
 }
 
-async function handleProductionBooking(req, res) {
+async function handleProductionBooking(req, res, deliveryOnly = false) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -2262,6 +2262,29 @@ async function handleProductionBooking(req, res) {
       saveCardOnFile = true,
       manualPaymentAcknowledged = false,
     } = req.body || {};
+
+    // G Events checkout: enforce delivery-only items and persist the customer's
+    // agreement and venue address BEFORE charging any deposit.
+    const gEvents = deliveryOnly ? (req.body?.gEvents || {}) : null;
+    if (deliveryOnly) {
+      const allowed = new Set([600, 604, 605, 606, 607]);
+      const address = String(gEvents.venueAddress || '').trim();
+      const venue = String(gEvents.venueName || '').trim();
+      const accepted = gEvents.agreementAccepted === true && gEvents.agreementVersion === 'g-events-v1';
+      if (!items.length || items.some(line => line?.kind !== 'rental' || !allowed.has(Number(line.id)))) {
+        return res.status(400).json({error:'Only G Events rentals may be booked through this checkout.'});
+      }
+      if (address.length < 10 || address.length > 500 || venue.length > 160) {
+        return res.status(400).json({error:'Enter a complete event delivery address.'});
+      }
+      if (!accepted) return res.status(400).json({error:'Review and accept the G Events booking terms.'});
+      if (String(rentalDates.pickupTime || '') !== '09:00' ||
+          String(rentalDates.pickup || '') !== addDateDays(String(rentalDates.event || ''), -1) ||
+          String(rentalDates.dropoff || '') !== addDateDays(String(rentalDates.event || ''), 1)) {
+        return res.status(400).json({error:'Invalid G Events inventory hold dates.'});
+      }
+      // 09:00 is an inventory/timing anchor, never a promised customer appointment.
+    }
 
     const purchaseItems = items.filter((row) => row?.kind !== "rental");
     if (purchaseItems.length) {
@@ -2312,6 +2335,12 @@ async function handleProductionBooking(req, res) {
       .insert({
         customer_id: customer.id,
         source: "a_la_carte",
+        ...(deliveryOnly ? {
+          venue_name: String(gEvents.venueName || '').trim() || null,
+          venue_address: String(gEvents.venueAddress || '').trim(),
+          service_style: 'g_events_delivery_setup_collection_included',
+          notes: `G Events delivery-only | Agreement: g-events-v1 accepted ${new Date().toISOString()} | Delivery/setup/collection INCLUDED in item price | Delivery and collection schedule to be coordinated with client; inventory hold dates are not appointment times.`,
+        } : {}),
         booking_number: bookingNumber,
         status: "checkout_pending",
         pickup_date: rentalWindow.pickup,
@@ -2486,6 +2515,7 @@ const RESOURCE_HANDLERS = {
   "admin-reservations": handleAdminReservations,
   timing: handleTiming,
   "production-booking": handleProductionBooking,
+  "g-events-booking": (req, res) => handleProductionBooking(req, res, true),
 };
 
 export default async function handler(req, res) {

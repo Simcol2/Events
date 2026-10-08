@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "../CartContext";
 import UnifiedCartModal from "./UnifiedCartModal";
+import GEventsCheckoutModal from "./GEventsCheckoutModal";
 import { supabase } from "../supabaseClient";
 
 export default function CartLauncher() {
   const { cartCount } = useCart();
   const [open, setOpen] = useState(() => new URLSearchParams(window.location.search).get('openCart') === '1');
+  const [gOpen, setGOpen] = useState(() => new URLSearchParams(window.location.search).get('gEventsCheckout') === '1' || window.sessionStorage.getItem('asliceofg-g-events-checkout') === '1');
   useEffect(() => {
-    if(new URLSearchParams(window.location.search).get('openCart') === '1'){
+    if(new URLSearchParams(window.location.search).get('openCart') === '1' || new URLSearchParams(window.location.search).get('gEventsCheckout') === '1'){
       // Clear one-time handoff so refreshing doesn't force the cart back open.
-      const clean=new URL(window.location.href);clean.searchParams.delete('openCart');
+      const clean=new URL(window.location.href);clean.searchParams.delete('openCart');clean.searchParams.delete('gEventsCheckout');window.sessionStorage.removeItem('asliceofg-g-events-checkout');
       window.history.replaceState(window.history.state,'',clean.pathname+clean.search+clean.hash);
     }
   }, []);
@@ -18,7 +20,7 @@ export default function CartLauncher() {
   const [gifts, setGifts] = useState([]);
 
   useEffect(() => {
-    if (!open || !supabase) return;
+    if ((!open && !gOpen) || !supabase) return;
     let cancelled = false;
 
     Promise.all([
@@ -33,7 +35,7 @@ export default function CartLauncher() {
     return () => {
       cancelled = true;
     };
-  }, [open]);
+  }, [open, gOpen]);
 
   return (
     <>
@@ -53,6 +55,7 @@ export default function CartLauncher() {
       </button>
 
       {open && <UnifiedCartModal catalog={catalog} gifts={gifts} onClose={() => setOpen(false)} />}
+      {gOpen && <GEventsCheckoutModal catalog={catalog} onClose={() => setGOpen(false)} />}
     </>
   );
 }
