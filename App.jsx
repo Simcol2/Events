@@ -115,6 +115,24 @@ function AppRoutes() {
 
   const page = path.split("?")[0].replace(/\/+$/, "") || "/";
 
+  // G Events checkout is a stand-alone payment surface, not a Rentals page.
+  // CartLauncher mounts the dedicated G Events modal from the checkout URL.
+  // Keep the cart provider (in App) but omit every Rentals nav, banner, footer
+  // and catalogue element behind the checkout.
+  if (page === "/g-events-checkout") {
+    return (
+      <main className="min-h-screen bg-[#FAF7F0] text-[#0B4933]">
+        <div className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-6 py-16 text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A17920]">A Slice of G · Events</p>
+          <h1 className="mt-3 font-serif text-3xl">Your Event Reservation</h1>
+          <p className="mt-3 text-sm">Review your event booking and payment details.</p>
+          <a className="mt-6 underline underline-offset-4" href="/events">Return to Events</a>
+        </div>
+        <CartLauncher />
+      </main>
+    );
+  }
+
   // Internal tool, not a customer-facing page - skip the nav/footer/event
   // picker chrome entirely rather than routing it through routeMap below.
   if (page === "/admin") {
