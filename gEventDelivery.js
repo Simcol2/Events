@@ -6,6 +6,6 @@ export function gEventDeliveryZone(postalInput) {
   if(!/^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(postal)||/[DFIOQU]/.test(postal))return null;
   const fsa=postal.slice(0,3);
   if(postal[0]==='M'||['L1S','L1T','L1V','L1W','L1X','L1Z'].includes(fsa))return {feeCents:0,label:'Included delivery, setup & collection'};
-  if(/^L[134567]/.test(fsa))return {feeCents:5000,label:'Extended GTA delivery, setup & collection'};
+  if(/^L[134567]/.test(fsa)||['L9T','L9E'].includes(fsa))return {feeCents:5000,label:'Extended GTA delivery, setup & collection'};
   return null;
 }
