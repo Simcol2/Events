@@ -457,10 +457,74 @@ async function createBillingPortalSession(req, res) {
   return res.status(200).json({ url: session.url });
 }
 
+
+// Read-only authenticated Square purchase history, linked by Square customer ID.
+// This intentionally excludes guest Square orders without a verified customer link.
+async function squareShopHistory(req, res) {
+  if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
+  const { user, customer } = await requireClient(req);
+  if (!user.email_confirmed_at && !user.user_metadata?.email_verified) {
+    return res.status(403).json({ error: "Please verify your email before viewing linked shop orders." });
+  }
+  let squareCustomerId = customer.square_customer_id || null;
+  if (!squareCustomerId) {
+    const search = await squareRequest("/v2/customers/search", {
+      method: "POST",
+      body: { query: { filter: { email_address: { exact: user.email.trim().toLowerCase() } } }, limit: 10 },
+    });
+    const matches = (search.customers || []).filter(row =>
+      String(row.email_address || "").trim().toLowerCase() === user.email.trim().toLowerCase()
+    );
+    // Ambiguous customer records must be resolved by an administrator.
+    if (matches.length !== 1) return res.status(200).json({ orders: [], linked: false });
+    squareCustomerId = matches[0].id;
+    // Don't silently mutate the canonical customer record based on an email lookup.
+  }
+  const locationId = process.env.SQUARE_LOCATION_ID;
+  if (!locationId) throw new Error("Square location is not configured.");
+  const orders = [];
+  let cursor;
+  for (let page = 0; page < 5; page += 1) {
+    const result = await squareRequest("/v2/orders/search", {
+      method: "POST",
+      body: {
+        location_ids: [locationId],
+        query: {
+          filter: { customer_filter: { customer_ids: [squareCustomerId] } },
+          sort: { sort_field: "CREATED_AT", sort_order: "DESC" },
+        },
+        limit: 100,
+        ...(cursor ? { cursor } : {}),
+      },
+    });
+    orders.push(...(result.orders || []));
+    cursor = result.cursor;
+    if (!cursor) break;
+  }
+  const purchases = orders.filter(row => row.state === "COMPLETED" &&
+    // These bookings are already shown under Reservations.
+    !String(row.reference_id || "").startsWith("ASG-")
+  ).map(row => ({
+    id: row.id,
+    date: row.closed_at || row.updated_at || row.created_at,
+    status: row.state,
+    totalCents: Number(row.total_money?.amount || 0),
+    currency: row.total_money?.currency || "CAD",
+    items: (row.line_items || []).map(line => ({
+      name: line.name || "Shop item",
+      quantity: Number(line.quantity || 1),
+      totalCents: Number(line.total_money?.amount || 0),
+    })),
+  }));
+  res.setHeader("Cache-Control", "private, no-store");
+  return res.status(200).json({ orders: purchases, linked: true, moreAvailable: Boolean(cursor) });
+}
+
 export default async function handler(req, res) {
   try {
     const action = String(req.query?.action || "");
 
+    if (req.method === "GET" && action === "square-shop-history") return await squareShopHistory(req, res);
     if (req.method === "GET" && !action) return await getPortalData(req, res);
     if (req.method === "POST" && action === "invoice") return await createInvoice(req, res);
     if (req.method === "POST" && action === "billing-portal") return await createBillingPortalSession(req, res);

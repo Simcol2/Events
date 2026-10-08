@@ -218,11 +218,11 @@ function ReservationCard({ reservation, reservationItems, contracts, transaction
             {reservation.booking_number || `BOOKING ${reservation.id}`}
           </p>
           <h2 className="mt-1 font-['Fraunces'] text-lg font-semibold text-[#5C5645]">
-            {reservation.event_name || reservation.package_name || "Event rental"}
+            {reservation.service_style === "g_events_delivery_setup_collection_included" ? "G Events · Cart & Photo Moments" : (reservation.event_name || reservation.package_name || "Event rental")}
           </h2>
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-[Space_Grotesk] text-sm text-[#6F6859]">
             <span>Event {dateLabel(reservation.event_date)}</span>
-            {reservation.pickup_date && <span>Pickup {dateLabel(reservation.pickup_date)}</span>}
+            {reservation.service_style === "g_events_delivery_setup_collection_included" ? <span>Delivery, setup & collection included</span> : (reservation.pickup_date && <span>Pickup {dateLabel(reservation.pickup_date)}</span>)}
             {dropoff && <span>Return {dateLabel(dropoff)}</span>}
           </div>
         </div>
@@ -278,7 +278,7 @@ function ReservationCard({ reservation, reservationItems, contracts, transaction
             })}
           </div>
           <p className="mt-3 font-[Space_Grotesk] text-xs text-[#9A9A9A]">
-            Pickup {dateLabel(reservation.pickup_date)} · Return {dateLabel(dropoff)}
+            {reservation.service_style === "g_events_delivery_setup_collection_included" ? `Event venue: ${reservation.venue_name || reservation.venue_address || "See booking details"}` : `Pickup ${dateLabel(reservation.pickup_date)} · Return ${dateLabel(dropoff)}`}
           </p>
         </div>
       )}
@@ -411,6 +411,7 @@ export default function ClientPortal() {
   const [session, setSession] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [data, setData] = useState(null);
+  const [squareShop, setSquareShop] = useState({ orders: [], linked: null, loading: false, error: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [tab, setTab] = useState("bookings");
@@ -458,6 +459,26 @@ export default function ClientPortal() {
   useEffect(() => {
     if (session?.access_token) loadPortal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.access_token]);
+
+  // Square cake-shop orders are read separately, strictly under the signed-in user's token.
+  useEffect(() => {
+    if (!session?.access_token) {
+      setSquareShop({ orders: [], linked: null, loading: false, error: "" });
+      return;
+    }
+    let active = true;
+    setSquareShop(prev => ({ ...prev, loading: true, error: "" }));
+    fetch(`${API_BASE}/client-portal?action=square-shop-history`, {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    }).then(async response => {
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Could not load Square orders.");
+      if (active) setSquareShop({ orders: payload.orders || [], linked: payload.linked, loading: false, error: "" });
+    }).catch(error => {
+      if (active) setSquareShop({ orders: [], linked: null, loading: false, error: error.message });
+    });
+    return () => { active = false; };
   }, [session?.access_token]);
 
   const transactionMap = useMemo(() => {
@@ -540,7 +561,8 @@ export default function ClientPortal() {
   if (!session) return <SignIn />;
 
   const reservations = data?.reservations || [];
-  const activeReservations = reservations.filter((row) => row.status !== "cancelled");
+  const activeReservations = reservations.filter((row) => !["cancelled", "completed", "returned"].includes(row.status));
+  const historicalReservations = reservations.filter((row) => ["completed", "returned"].includes(row.status));
   // The backend already excludes cancelled reservations that never collected
   // a payment, so everything landing here was cancelled after money changed
   // hands - kept visible for its receipt/refund record, not as an active booking.
@@ -630,6 +652,18 @@ export default function ClientPortal() {
               />
             ))}
 
+            {!!historicalReservations.length && (
+              <div className="mt-10">
+                <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Past completed rentals</h2>
+                <div className="mt-4 space-y-6">
+                  {historicalReservations.map(reservation => (
+                    <ReservationCard key={reservation.id} reservation={reservation} reservationItems={reservationItems}
+                      contracts={contracts} transactionMap={transactionMap} busyAction={busyAction}
+                      openInvoice={openInvoice} onCancel={() => setCancelTarget(reservation)} />
+                  ))}
+                </div>
+              </div>
+            )}
             {!!cancelledReservations.length && (
               <div className="mt-10">
                 <h2 className="font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">Past / Cancelled bookings</h2>
@@ -657,13 +691,35 @@ export default function ClientPortal() {
 
         {tab === "purchases" && data && (
           <div className="mt-6 space-y-4">
-            {!purchases.length && (
+            {!purchases.length && !squareShop.orders.length && !squareShop.loading && (
               <Panel>
                 <ShoppingBag className="text-[#D9AE45]" size={30} />
                 <h2 className="mt-3 font-['Fraunces'] text-2xl font-semibold text-[#0B4933]">No purchase history yet</h2>
-                <p className="mt-2 font-[Space_Grotesk] text-sm text-[#7E7767]">New Stripe purchases will appear here automatically.</p>
+                <p className="mt-2 font-[Space_Grotesk] text-sm text-[#7E7767]">Purchases linked to your account appear here. Some older guest orders may require verification.</p>
               </Panel>
             )}
+            <div className="rounded-2xl border border-[#E7DFCE] bg-[#FFFDF8] p-5">
+              <h2 className="font-['Fraunces'] text-xl font-semibold text-[#0B4933]">Square cake shop purchases</h2>
+              {squareShop.loading && <p className="mt-2 text-sm">Loading Square order history…</p>}
+              {squareShop.error && <p role="alert" className="mt-2 text-sm text-[#8A3142]">{squareShop.error}</p>}
+              {!squareShop.loading && !squareShop.error && !squareShop.orders.length && (
+                <p className="mt-2 text-sm text-[#6F6859]">No linked Square shop purchases found. Guest orders not associated with your verified Square customer record will not appear automatically.</p>
+              )}
+              <div className="mt-3 space-y-3">
+                {squareShop.orders.map(order => (
+                  <div key={order.id} className="rounded-xl border border-[#E7DFCE] bg-white p-4">
+                    <div className="flex flex-wrap justify-between gap-2 text-sm">
+                      <span>{order.date ? new Date(order.date).toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'}) : 'Order'}</span>
+                      <strong>{money(order.totalCents, order.currency)}</strong>
+                    </div>
+                    <div className="mt-2 divide-y divide-[#EEE7D8]">
+                      {order.items.map((item, i) => <div key={i} className="flex justify-between gap-2 py-2 text-sm"><span>{item.name} × {item.quantity}</span><span>{money(item.totalCents,order.currency)}</span></div>)}
+                    </div>
+                    <p className="mt-2 text-xs text-[#6F6859]">Square · {order.status}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
             {purchases.map((order) => {
               const rows = purchaseItems.filter((item) => item.purchase_order_id === order.id);
               return (
