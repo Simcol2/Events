@@ -2245,6 +2245,8 @@ async function saveDepositCard({ reservation, squareCustomerId, payment }) {
   return result.card;
 }
 
+import {gEventDeliveryZone} from "../gEventDelivery.js";
+
 async function handleProductionBooking(req, res, deliveryOnly = false) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -2267,6 +2269,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
     // G Events checkout: enforce delivery-only items and persist the customer's
     // agreement and venue address BEFORE charging any deposit.
     const gEvents = deliveryOnly ? (req.body?.gEvents || {}) : null;
+    const deliveryZone=deliveryOnly ? gEventDeliveryZone(gEvents.postalCode) : null;
     if (deliveryOnly) {
       const allowed = new Set([600, 604, 605, 606, 607]);
       const address = String(gEvents.venueAddress || '').trim();
@@ -2279,6 +2282,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
         return res.status(400).json({error:'Enter a complete event delivery address.'});
       }
       if (!accepted) return res.status(400).json({error:'Review and accept the G Events booking terms.'});
+      if (!deliveryZone) return res.status(400).json({error:'Enter an eligible Toronto/GTA postal code. Contact us for service outside the listed area.'});
       if (String(rentalDates.pickupTime || '') !== '09:00' ||
           String(rentalDates.pickup || '') !== addDateDays(String(rentalDates.event || ''), -1) ||
           String(rentalDates.dropoff || '') !== addDateDays(String(rentalDates.event || ''), 1)) {
@@ -2326,12 +2330,14 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
     const customer = await findOrCreateProductionCustomer(input);
     const { billingLines, inventoryLines, reservationRows } = await resolveProductionRentals(items);
     const rentalItemsSubtotalCents = billingLines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
-    const rentalSubtotalCents = rentalItemsSubtotalCents + rentalWindow.extraDayFeeCents + (eventPackage?.addonsCents||0);
+    const deliveryFeeCents=deliveryZone?.feeCents||0;
+    const rentalSubtotalCents = rentalItemsSubtotalCents + rentalWindow.extraDayFeeCents + (eventPackage?.addonsCents||0) + deliveryFeeCents;
     if(eventPackage){
       for(const line of eventPackage.lines){billingLines.push({name:line.name,quantity:line.quantity,unitCents:line.unitCents});}
       if(eventPackage.staffCents){billingLines.push({name:`Staffed dessert service (${eventPackage.attendants} attendants, ${eventPackage.hours} hours)`,quantity:1,unitCents:eventPackage.staffCents});}
     }
 
+    if(deliveryFeeCents)billingLines.push({name:"Extended GTA delivery, setup & collection",quantity:1,unitCents:deliveryFeeCents});
     if (rentalSubtotalCents < PRODUCTION_MIN_RENTAL_CENTS) {
       return res.status(400).json({ error: "Rental orders require a $50 minimum." });
     }
@@ -2352,7 +2358,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
           venue_name: String(gEvents.venueName || '').trim() || null,
           venue_address: String(gEvents.venueAddress || '').trim(),
           service_style: 'g_events_delivery_setup_collection_included',
-          notes: `G Events delivery-only | Agreement: g-events-v1 accepted ${new Date().toISOString()} | Delivery/setup/collection INCLUDED in item price | Delivery and collection schedule to be coordinated with client; inventory hold dates are not appointment times.${eventPackage?` Treat package: ${JSON.stringify(eventPackage)}`:''}`, 
+          notes: `G Events delivery-only | Postal code: ${String(gEvents.postalCode||'').trim().toUpperCase()} | Travel charge: ${deliveryFeeCents} cents | Agreement: g-events-v1 accepted ${new Date().toISOString()} | Delivery/setup/collection INCLUDED in item price | Delivery and collection schedule to be coordinated with client; inventory hold dates are not appointment times.${eventPackage?` Treat package: ${JSON.stringify(eventPackage)}`:''}`, 
         } : {}),
         booking_number: bookingNumber,
         status: "checkout_pending",
@@ -2365,7 +2371,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
         early_pickup_days: rentalWindow.earlyPickupDays,
         extended_return_days: rentalWindow.extendedReturnDays,
         rental_window_fee_cents: rentalWindow.extraDayFeeCents,
-        rental_subtotal_cents: rentalItemsSubtotalCents + (eventPackage?.addonsCents||0),
+        rental_subtotal_cents: rentalItemsSubtotalCents + (eventPackage?.addonsCents||0) + deliveryFeeCents,
         rental_total_cents: rentalSubtotalCents,
         total_price: rentalSubtotalCents / 100,
         booking_deposit_cents: bookingDepositCents,

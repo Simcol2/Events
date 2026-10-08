@@ -4,6 +4,7 @@ import {supabase} from "../supabaseClient";
 import {API_BASE,withBasePath} from "../apiBase";
 import SquareCardPayment from "./SquareCardPayment";
 import {calculateGPackage} from "../gEventsPricing";
+import {gEventDeliveryZone} from "../gEventDelivery";
 import {estimateBookingDepositCents,estimateSecurityDepositCents} from "../depositTiers";
 
 const G_IDS=new Set([600,604,605,606,607]);
@@ -16,7 +17,9 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
   const subtotal=lines.reduce((sum,x)=>sum+Math.round(Number(x.record?.rental_price||0)*100)*Number(x.quantity||1),0);
   const configured=useMemo(()=>{try{return JSON.parse(localStorage.getItem('asliceofg-g-events-package-v1')||'null')}catch{return null}},[]);
   const pkg=useMemo(()=>{try{return configured&&selected.some(x=>Number(x.id)===600)?calculateGPackage(configured):null}catch{return null}},[configured,selected]);
-  const grandTotal=subtotal+(pkg?.addonsCents||0);
+  const [postalCode,setPostalCode]=useState('');
+  const zone=gEventDeliveryZone(postalCode);
+  const grandTotal=subtotal+(pkg?.addonsCents||0)+(zone?.feeCents||0);
   const deposit=estimateBookingDepositCents(grandTotal);
   const security=estimateSecurityDepositCents(grandTotal);
   const [name,setName]=useState('');const [email,setEmail]=useState('');const [phone,setPhone]=useState('');
@@ -39,7 +42,7 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
     return()=>{cancelled=true};
   },[eventDate,selected,catalog]);
   async function pay(){
-    if(busy||!accepted||!ready||!availability||!address.trim()||!name.trim()||!email.trim()||!selected.length)return;
+    if(busy||!accepted||!ready||!availability||!address.trim()||!zone||!name.trim()||!email.trim()||!selected.length)return;
     setBusy(true);setError('');
     try{
       const paymentToken=await tokenize.current();
@@ -49,7 +52,7 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
           customer:{name:name.trim(),email:email.trim(),phone:phone.trim()||null},
           rentalDates:range,
           items:selected.map(x=>({id:x.id,kind:'rental',meta:null,quantity:x.quantity})),
-          gEvents:{venueName:venueName.trim(),venueAddress:address.trim(),agreementAccepted:true,agreementVersion:'g-events-v1',package:pkg?configured:null},
+          gEvents:{venueName:venueName.trim(),venueAddress:address.trim(),postalCode:postalCode.trim().toUpperCase(),agreementAccepted:true,agreementVersion:'g-events-v1',package:pkg?configured:null},
           paymentToken,saveCardOnFile:true,manualPaymentAcknowledged:false
         })
       });
@@ -72,15 +75,17 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
       <div className="mt-5 grid gap-3"><label className="text-sm">Event date<input className="mt-1 w-full rounded border p-3" type="date" value={eventDate} onChange={e=>setEventDate(e.target.value)}/></label>
       <label className="text-sm">Event venue name (optional)<input className="mt-1 w-full rounded border p-3" value={venueName} onChange={e=>setVenueName(e.target.value)}/></label>
       <label className="text-sm">Event venue / delivery address<textarea className="mt-1 w-full rounded border p-3" rows="2" value={address} onChange={e=>setAddress(e.target.value)} placeholder="Venue name, street address, Toronto / GTA"/></label>
+      <label className="text-sm">Event postal code<input className="mt-1 w-full rounded border p-3" autoComplete="postal-code" value={postalCode} onChange={e=>setPostalCode(e.target.value)} placeholder="M5V 2T6" maxLength={7}/></label>
+      <p className="text-sm">{zone?zone.feeCents?`Extended GTA delivery: ${cash(zone.feeCents)}`:"Delivery, setup and collection included at no extra charge.":"Enter an eligible Toronto or GTA postal code to calculate delivery. For other areas, contact us before booking."}</p>
       <label className="text-sm">Full name<input className="mt-1 w-full rounded border p-3" value={name} onChange={e=>setName(e.target.value)}/></label>
       <label className="text-sm">Email<input className="mt-1 w-full rounded border p-3" type="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>
       <label className="text-sm">Phone<input className="mt-1 w-full rounded border p-3" type="tel" value={phone} onChange={e=>setPhone(e.target.value)}/></label></div>
       <p className="mt-3 text-sm">{availability===null?'Checking date availability…':availability?'Selected items are available for the provisional booking window.':'One or more items are unavailable for that date.'}</p>
-      <div className="mt-4 rounded-lg bg-[#f6f0e4] p-4 text-sm"><p>Rental subtotal: <strong>{cash(subtotal)}</strong></p>{pkg&&<p>Treats and staffing: <strong>{cash(pkg.addonsCents)}</strong></p>}<p>Package total: <strong>{cash(grandTotal)}</strong></p><p>Estimated 50% booking deposit: <strong>{cash(deposit)}</strong></p><p>Estimated security deposit: <strong>{cash(security)}</strong></p><p className="mt-2">Delivery, setup and collection are included in the rental price. Selected treats and staffing are included in the package total above.</p></div>
+      <div className="mt-4 rounded-lg bg-[#f6f0e4] p-4 text-sm"><p>Rental subtotal: <strong>{cash(subtotal)}</strong></p>{pkg&&<p>Treats and staffing: <strong>{cash(pkg.addonsCents)}</strong></p>}<p>Delivery, setup &amp; collection: <strong>{zone?cash(zone.feeCents):"Enter postal code"}</strong></p><p>Package total: <strong>{cash(grandTotal)}</strong></p><p>Estimated 50% booking deposit: <strong>{cash(deposit)}</strong></p><p>Estimated security deposit: <strong>{cash(security)}</strong></p><p className="mt-2">Delivery, setup and collection are included in standard-area rental prices. Eligible extended GTA postal codes add a $50 travel fee, shown above. Treats and staffing are included in the package total above.</p></div>
       <label className="mt-5 flex gap-2 text-sm"><input type="checkbox" checked={accepted} onChange={e=>setAccepted(e.target.checked)}/>I agree to the G Events booking terms displayed above and below, including delivery-only service, the 50% booking deposit, remaining balance due seven days before the reserved date window, and refundable security deposit due 48 hours before the reserved date window. Delivery and collection appointment times will be coordinated separately.</label>
        <div className="mt-4 rounded-lg border border-[#D8C69D] bg-[#FFFDF7] p-4 text-sm leading-6">
          <h3 className="font-bold">G Events booking terms · v1</h3>
-         <p>Delivery, setup and collection are included in the listed rental price. Self-pickup is not available. The calendar dates surrounding your event are inventory holds, not promised delivery or collection appointment times. We will coordinate access and scheduling with you.</p>
+         <p>Delivery, setup and collection are included for eligible standard-area postal codes. Eligible extended GTA postal codes add $50 per booking, disclosed before payment. Self-pickup is not available. The calendar dates surrounding your event are inventory holds, not promised delivery or collection appointment times. We will coordinate access and scheduling with you.</p>
          <p className="mt-2">A 50% booking deposit is collected now. The remaining balance is due seven days before the reserved delivery window, and a refundable security deposit is due 48 hours before that window. The security deposit is subject to return inspection and the applicable rental agreement. Applicable taxes may be charged where required.</p>
          <p className="mt-2">Rental damage, cancellation and refund provisions require the full rental agreement supplied by A Slice of G. Acceptance here records these disclosed checkout terms; it does not replace a separately required signed rental contract.</p>
        </div>
@@ -88,7 +93,7 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
       <div className="mt-5 rounded-lg border p-4"><h3 className="mb-3 font-bold">Secure deposit payment</h3>
          <SquareCardPayment amountCents={deposit} name={name} email={email} phone={phone} saveCard={true} onReady={onCardReady}/>
        </div>
-       <button type="button" onClick={pay} disabled={busy||!ready||!accepted||!availability||!address.trim()||!name.trim()||!email.trim()||!selected.length}
+       <button type="button" onClick={pay} disabled={busy||!ready||!accepted||!availability||!address.trim()||!zone||!name.trim()||!email.trim()||!selected.length}
          className="mt-4 w-full rounded-lg bg-[#0B4933] p-4 font-bold text-white disabled:opacity-40">{busy?'PROCESSING…':`PAY ${cash(deposit)} DEPOSIT`}</button>
     </div>
   </div>;
