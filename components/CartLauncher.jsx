@@ -6,7 +6,14 @@ import { supabase } from "../supabaseClient";
 
 export default function CartLauncher() {
   const { cartCount } = useCart();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => new URLSearchParams(window.location.search).get('openCart') === '1');
+  useEffect(() => {
+    if(new URLSearchParams(window.location.search).get('openCart') === '1'){
+      // Clear one-time handoff so refreshing doesn't force the cart back open.
+      const clean=new URL(window.location.href);clean.searchParams.delete('openCart');
+      window.history.replaceState(window.history.state,'',clean.pathname+clean.search+clean.hash);
+    }
+  }, []);
   const [catalog, setCatalog] = useState([]);
   const [gifts, setGifts] = useState([]);
 
