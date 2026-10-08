@@ -12,7 +12,7 @@ import { BASE_PATH } from "./_basePath.js";
 
 const BATCH_LIMIT = 50;
 // If SITE_URL is set as a Vercel env var on this project, it must include
-// the /events path (e.g. https://asliceofg.com/events) - an env var
+// the /events path (e.g. https://asliceofg.com/rentals) - an env var
 // override always wins over the default below, prefix included.
 const SITE_URL = process.env.SITE_URL || `https://asliceofg.com${BASE_PATH}`;
 

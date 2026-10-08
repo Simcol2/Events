@@ -11,7 +11,7 @@
 //      snapshot in prerendered/ - the markup Google, Bing, and every
 //      link-preview bot actually index, since none of them run our JS.
 
-export const SITE_URL = "https://asliceofg.com/events";
+export const SITE_URL = "https://asliceofg.com/rentals";
 export const SITE_NAME = "A Slice of G Events";
 export const CONTACT_EMAIL = "hello@asliceofgevents.com";
 
@@ -220,11 +220,11 @@ function absoluteImageUrl(url) {
   if (/^https?:\/\//.test(url)) return url;
   if (!url.startsWith("/")) return null;
   // A photo path can arrive either raw from the database ("/photos/x.jpg")
-  // or already prefixed with the app's own base path ("/events/photos/x.jpg",
+  // or already prefixed with the app's own base path ("/rentals/photos/x.jpg",
   // e.g. from components/PhotoCarousel.jsx's withBasePath()) - SITE_URL
-  // below already ends in "/events", so a pre-prefixed path has to be
-  // stripped back to raw first or it doubles up into "/events/events/...".
-  const path = url.startsWith("/events/") ? url.slice("/events".length) : url;
+  // below already ends in "/rentals", so a pre-prefixed path has to be
+  // stripped back to raw first or it doubles up into "/rentals/events/...".
+  const path = url.startsWith("/rentals/") ? url.slice("/rentals".length) : url;
   return `${SITE_URL}${path}`;
 }
 

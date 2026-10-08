@@ -1,4 +1,4 @@
-// The app is deployed under asliceofg.com/events (see App.jsx's matching
+// The app is deployed under asliceofg.com/rentals (see App.jsx's matching
 // BASE_PATH), so any absolute reference to this app's own routes or its
 // /api/* serverless functions needs that prefix too - a bare "/client" or
 // fetch("/api/...") would resolve against the rum cake business's domain

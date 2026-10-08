@@ -18,7 +18,7 @@ import react from "@vitejs/plugin-react";
 const BUNDLE_VERSION = "v79";
 
 export default {
-  base: "/events/",
+  base: "/rentals/",
   plugins: [react()],
   build: {
     rollupOptions: {

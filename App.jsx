@@ -82,7 +82,7 @@ const NAV = [
   { label: "Build My Experience", path: "/package-builder", cta: true, opensPicker: true },
 ];
 
-// The site is deployed under asliceofg.com/events (a rewrite on the rum
+// The site is deployed under asliceofg.com/rentals (a rewrite on the rum
 // cake business's main domain proxies /events/* here, see apiBase.js), so
 // every route the rest of the app works with stays a plain unprefixed path
 // (e.g. "/decor") and only these two functions - the router's boundary
