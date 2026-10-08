@@ -119,9 +119,15 @@ async function getPortalData(req, res) {
     item: itemMap.get(row.item_id) || null,
   }));
 
+  const {data:acceptedAgreements,error:agreementsError}=reservationIds.length
+    ? await supabase.from('g_events_agreement_acceptances').select('reservation_id,agreement_version,accepted_at,terms_html,accessibility_html,snapshot_sha256').in('reservation_id',reservationIds)
+    : {data:[],error:null};
+  if(agreementsError)throw agreementsError;
+  const agreementMap=new Map((acceptedAgreements||[]).map(a=>[a.reservation_id,a]));
   const decoratedReservations = sortNewest(visibleReservations, "event_date").map((reservation) => ({
     ...reservation,
     has_payment: paidReservationIds.has(reservation.id),
+    accepted_event_agreement: agreementMap.get(reservation.id)||null,
   }));
 
   return res.status(200).json({

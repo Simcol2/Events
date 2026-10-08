@@ -2274,7 +2274,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
       const allowed = new Set([600, 604, 605, 606, 607]);
       const address = String(gEvents.venueAddress || '').trim();
       const venue = String(gEvents.venueName || '').trim();
-      const accepted = gEvents.agreementAccepted === true && gEvents.agreementVersion === 'g-events-v1';
+      const accepted = gEvents.agreementAccepted === true && gEvents.agreementReviewed === true && gEvents.agreementVersion === 'asg-events-terms-2026-10-08';
       if (!items.length || items.some(line => line?.kind !== 'rental' || !allowed.has(Number(line.id)))) {
         return res.status(400).json({error:'Only G Events rentals may be booked through this checkout.'});
       }
@@ -2349,6 +2349,21 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
 
     const bookingDepositCents = Math.ceil(rentalSubtotalCents * 0.5);
 
+    // Archive the exact published policy documents before accepting payment.
+    // Fail closed if pages are unavailable rather than charge for unrecorded terms.
+    let policySnapshot=null;
+    if(deliveryOnly){
+      const urls=['https://asliceofg.com/terms.html','https://asliceofg.com/accessibility.html'];
+      const docs=[];
+      for(const url of urls){
+        const response=await fetch(url,{signal:AbortSignal.timeout(8000),headers:{Accept:'text/html'}});
+        if(!response.ok)throw new Error('The booking agreement is temporarily unavailable. No payment was taken. Please retry later.');
+        const html=await response.text();
+        if(html.length<1000||html.length>500000||!/<html[\s>]/i.test(html))throw new Error('Could not verify the complete booking agreement. No payment was taken.');
+        docs.push(html);
+      }
+      policySnapshot={termsHtml:docs[0],accessibilityHtml:docs[1],termsUrl:urls[0],accessibilityUrl:urls[1],hash:crypto.createHash('sha256').update(JSON.stringify(docs)).digest('hex')};
+    }
     const { data: created, error: reservationError } = await supabase
       .from("reservations")
       .insert({
@@ -2358,7 +2373,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
           venue_name: String(gEvents.venueName || '').trim() || null,
           venue_address: String(gEvents.venueAddress || '').trim(),
           service_style: 'g_events_delivery_setup_collection_included',
-          notes: `G Events delivery-only | Postal code: ${String(gEvents.postalCode||'').trim().toUpperCase()} | Travel charge: ${deliveryFeeCents} cents | Agreement: g-events-v1 accepted ${new Date().toISOString()} | Delivery/setup/collection INCLUDED in item price | Delivery and collection schedule to be coordinated with client; inventory hold dates are not appointment times.${eventPackage?` Treat package: ${JSON.stringify(eventPackage)}`:''}`, 
+          notes: `G Events delivery-only | Postal code: ${String(gEvents.postalCode||'').trim().toUpperCase()} | Travel charge: ${deliveryFeeCents} cents | Agreement: asg-events-terms-2026-10-08 acknowledged; archived copy stored separately | Delivery/setup/collection INCLUDED in item price | Delivery and collection schedule to be coordinated with client; inventory hold dates are not appointment times.${eventPackage?` Treat package: ${JSON.stringify(eventPackage)}`:''}`, 
         } : {}),
         booking_number: bookingNumber,
         status: "checkout_pending",
@@ -2386,6 +2401,18 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
 
     if (reservationError) throw reservationError;
     reservation = created;
+    if(deliveryOnly){
+      const {error:agreementError}=await supabase.from('g_events_agreement_acceptances').insert({
+        reservation_id:reservation.id,agreement_version:'asg-events-terms-2026-10-08',
+        terms_url:policySnapshot.termsUrl,accessibility_url:policySnapshot.accessibilityUrl,
+        terms_html:policySnapshot.termsHtml,accessibility_html:policySnapshot.accessibilityHtml,
+        snapshot_sha256:policySnapshot.hash,
+        acknowledgment_text:'I have reviewed and agree to the A Slice of G Terms & Conditions, including cancellation, refundable security deposits, equipment damage and zero-tolerance conduct policies.',
+        client_ip:String(req.headers['x-forwarded-for']||'').split(',')[0].slice(0,64)||null,
+        user_agent:String(req.headers['user-agent']||'').slice(0,512)||null
+      });
+      if(agreementError)throw new Error('Could not record agreement acceptance. No payment was taken.');
+    }
 
     const { error: itemsError } = await supabase
       .from("reservation_items")

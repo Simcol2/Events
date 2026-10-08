@@ -169,6 +169,7 @@ function PaymentRow({ label, due, paid, refundable, onPay, busy, note }) {
 }
 
 function ReservationCard({ reservation, reservationItems, contracts, transactionMap, busyAction, openInvoice, onCancel }) {
+  const [showAcceptedTerms,setShowAcceptedTerms]=useState(false);
   const rows = reservationItems.filter((item) => item.reservation_id === reservation.id);
   const tx = transactionMap.get(reservation.id) || [];
   const paid = (kind) => tx.filter((row) => row.kind === kind && row.status === "paid").reduce((sum, row) => sum + Number(row.amount_cents || 0), 0);
@@ -210,6 +211,7 @@ function ReservationCard({ reservation, reservationItems, contracts, transaction
   const canSelfCancel = ["checkout_pending", "pending"].includes(reservation.status) && !reservation.has_payment;
 
   return (
+    <>
     <Panel>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -370,6 +372,7 @@ function ReservationCard({ reservation, reservationItems, contracts, transaction
                 Your rental agreement will appear here once it is ready to review and sign.
               </p>
             )}
+            {reservation.accepted_event_agreement&&<div className="rounded-lg bg-[#FFF4EA] p-3 text-sm"><p className="font-semibold">Accepted Events Terms & Conditions</p><p className="text-xs">Accepted {new Date(reservation.accepted_event_agreement.accepted_at).toLocaleString('en-CA')} · {reservation.accepted_event_agreement.agreement_version}</p><button type="button" className="mt-2 font-semibold text-[#0B4933] underline" onClick={()=>setShowAcceptedTerms(true)}>View my accepted agreement</button></div>}
             {contract?.document_url && (
               <a href={contract.document_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-semibold text-[#0B4933] underline underline-offset-4">
                 <FileText size={15} /> View agreement
@@ -385,6 +388,8 @@ function ReservationCard({ reservation, reservationItems, contracts, transaction
         </div>
       </div>
     </Panel>
+    {showAcceptedTerms&&reservation.accepted_event_agreement&&<div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/75 p-4" onMouseDown={e=>{if(e.target===e.currentTarget)setShowAcceptedTerms(false)}}><section role="dialog" aria-modal="true" aria-label="Your accepted event agreement" onKeyDown={e=>{if(e.key==='Escape')setShowAcceptedTerms(false)}} className="flex h-[85vh] w-full max-w-3xl flex-col rounded-xl bg-white p-4"><div className="mb-3 flex items-center justify-between gap-3"><div><h2 className="font-semibold">Your accepted agreement</h2><p className="text-xs">Saved on {new Date(reservation.accepted_event_agreement.accepted_at).toLocaleString('en-CA')} · SHA-256: {reservation.accepted_event_agreement.snapshot_sha256.slice(0,16)}…</p></div><button autoFocus type="button" onClick={()=>setShowAcceptedTerms(false)} className="rounded border px-3 py-2">Close</button></div><div className="flex gap-4 text-sm"><a target="_blank" rel="noreferrer" href="https://asliceofg.com/terms.html" className="underline">Current website terms</a><a target="_blank" rel="noreferrer" href="https://asliceofg.com/accessibility.html" className="underline">Current accessibility policy</a></div><p className="my-2 text-xs">The archived document below is the exact version available when you booked.</p><iframe title="Archived terms accepted with booking" className="min-h-0 flex-1 rounded border" sandbox="" srcDoc={reservation.accepted_event_agreement.terms_html}/><details className="mt-2"><summary className="cursor-pointer font-semibold">Archived Accessibility & Inclusion policy</summary><iframe title="Archived accessibility policy" className="h-64 w-full rounded border" sandbox="" srcDoc={reservation.accepted_event_agreement.accessibility_html}/></details></section></div>}
+    </>
   );
 }
 
