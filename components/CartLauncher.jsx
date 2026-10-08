@@ -39,7 +39,7 @@ export default function CartLauncher() {
 
   return (
     <>
-      <button
+      {!window.location.pathname.includes("/g-events-checkout") && <button
         type="button"
         onClick={() => setOpen(true)}
         className="fixed bottom-5 right-5 z-[120] flex h-14 items-center gap-2 rounded-full bg-[#0B4933] px-5 font-[Space_Grotesk] text-sm font-semibold tracking-[0.08em] text-white shadow-xl"
@@ -52,10 +52,10 @@ export default function CartLauncher() {
             {cartCount}
           </span>
         )}
-      </button>
+      </button>}
 
       {open && <UnifiedCartModal catalog={catalog} gifts={gifts} onClose={() => setOpen(false)} />}
-      {gOpen && <GEventsCheckoutModal catalog={catalog} onClose={() => setGOpen(false)} />}
+      {gOpen && <GEventsCheckoutModal catalog={catalog} onClose={() => { setGOpen(false); if (window.location.pathname.includes("/g-events-checkout")) window.location.assign("/events"); }} />}
     </>
   );
 }

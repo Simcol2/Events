@@ -173,6 +173,7 @@ function AppRoutes() {
 
   const routeMap = {
     "/": { component: <Home navigate={navigate} />, current: "home" },
+    "/g-events-checkout": { component: <div className="min-h-screen bg-[#FAF7F0] px-4 py-32 text-center"><h1 className="font-serif text-3xl text-[#0B4933]">A Slice of G Event Checkout</h1><p className="mt-3 text-[#0B4933]">Review your reservation in the checkout window.</p><a className="mt-6 inline-block underline" href="/events">Back to Events</a></div>, current: "g-events-checkout" },
     "/decor": { component: <Decor navigate={navigate} />, current: "decor" },
     "/table-box": { component: <TableBox navigate={navigate} />, current: "table-box" },
     "/gifts": { component: <Gifts navigate={navigate} />, current: "gifts" },

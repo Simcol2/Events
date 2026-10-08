@@ -8,7 +8,7 @@ import {estimateBookingDepositCents,estimateSecurityDepositCents} from "../depos
 const G_IDS=new Set([600,604,605,606,607]);
 const cash=c=>new Intl.NumberFormat("en-CA",{style:"currency",currency:"CAD"}).format(c/100);
 export default function GEventsCheckoutModal({catalog=[],onClose}){
-  const {items,rentalDates,setRentalDates,removeFromCart}=useCart();
+  const {items,rentalDates,setRentalDates,removeFromCart,setQuantity}=useCart();
   const selected=useMemo(()=>items.filter(x=>x.kind==="rental"&&G_IDS.has(Number(x.id))),[items]);
   const allItems=useMemo(()=>new Map(catalog.map(i=>[Number(i.id),i])),[catalog]);
   const lines=selected.map(x=>({ ...x,record:allItems.get(Number(x.id))}));
@@ -59,10 +59,10 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
   return <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-3" role="dialog" aria-modal="true" aria-label="A Slice of G Events checkout">
     <div className="max-h-[94vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 text-[#143d2a] shadow-2xl">
       <button type="button" onClick={onClose} className="float-right text-2xl" aria-label="Close checkout">×</button>
-      <p className="text-xs font-bold uppercase tracking-widest text-[#997a3a]">A Slice of G · Delivery Only</p>
+      <p className="text-xs font-bold uppercase tracking-widest text-[#997a3a]">A Slice of G · Events</p>
       <h2 className="mt-2 font-serif text-3xl">Your Event Reservation</h2>
       <p className="mt-2 text-sm">Delivery, installation and collection are handled by our team. There is no self-pickup option.</p>
-      <div className="mt-5 space-y-2">{lines.map(x=><div key={x.id} className="flex justify-between border-b py-3 text-sm"><span>{x.record?.name||'Rental item'} × {x.quantity}</span><strong>{cash(Math.round(Number(x.record?.rental_price||0)*100)*x.quantity)}</strong></div>)}</div>
+      <div className="mt-5 space-y-2">{lines.map(x=><div key={x.id} className="flex justify-between border-b py-3 text-sm"><span><span className="block">{x.record?.name||'Rental item'}</span><span className="mt-2 flex items-center gap-3"><button type="button" className="rounded border px-2" aria-label="Decrease quantity" onClick={()=>setQuantity(x.id,'rental',x.quantity-1,x.meta)}>−</button><strong>{x.quantity}</strong><button type="button" className="rounded border px-2" aria-label="Increase quantity" onClick={()=>setQuantity(x.id,'rental',x.quantity+1,x.meta)}>+</button><button type="button" className="text-xs underline" onClick={()=>removeFromCart(x.id,'rental',x.meta)}>Remove</button></span></span><strong>{cash(Math.round(Number(x.record?.rental_price||0)*100)*x.quantity)}</strong></div>)}</div>
       {!selected.length&&<p className="mt-4 text-red-700">No G Events rentals were found in the cart.</p>}
       <div className="mt-5 grid gap-3"><label className="text-sm">Event date<input className="mt-1 w-full rounded border p-3" type="date" value={eventDate} onChange={e=>setEventDate(e.target.value)}/></label>
       <label className="text-sm">Event venue name (optional)<input className="mt-1 w-full rounded border p-3" value={venueName} onChange={e=>setVenueName(e.target.value)}/></label>
