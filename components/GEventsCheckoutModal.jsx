@@ -3,6 +3,7 @@ import {useCart} from "../CartContext";
 import {supabase} from "../supabaseClient";
 import {API_BASE,withBasePath} from "../apiBase";
 import SquareCardPayment from "./SquareCardPayment";
+import {calculateGPackage} from "../gEventsPricing";
 import {estimateBookingDepositCents,estimateSecurityDepositCents} from "../depositTiers";
 
 const G_IDS=new Set([600,604,605,606,607]);
@@ -13,8 +14,11 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
   const allItems=useMemo(()=>new Map(catalog.map(i=>[Number(i.id),i])),[catalog]);
   const lines=selected.map(x=>({ ...x,record:allItems.get(Number(x.id))}));
   const subtotal=lines.reduce((sum,x)=>sum+Math.round(Number(x.record?.rental_price||0)*100)*Number(x.quantity||1),0);
-  const deposit=estimateBookingDepositCents(subtotal);
-  const security=estimateSecurityDepositCents(subtotal);
+  const configured=useMemo(()=>{try{return JSON.parse(localStorage.getItem('asliceofg-g-events-package-v1')||'null')}catch{return null}},[]);
+  const pkg=useMemo(()=>{try{return configured&&selected.some(x=>Number(x.id)===600)?calculateGPackage(configured):null}catch{return null}},[configured,selected]);
+  const grandTotal=subtotal+(pkg?.addonsCents||0);
+  const deposit=estimateBookingDepositCents(grandTotal);
+  const security=estimateSecurityDepositCents(grandTotal);
   const [name,setName]=useState('');const [email,setEmail]=useState('');const [phone,setPhone]=useState('');
   const [venueName,setVenueName]=useState('');const [address,setAddress]=useState('');const [eventDate,setEventDate]=useState(rentalDates.event||'');
   const [accepted,setAccepted]=useState(false);const [ready,setReady]=useState(false);
@@ -45,7 +49,7 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
           customer:{name:name.trim(),email:email.trim(),phone:phone.trim()||null},
           rentalDates:range,
           items:selected.map(x=>({id:x.id,kind:'rental',meta:null,quantity:x.quantity})),
-          gEvents:{venueName:venueName.trim(),venueAddress:address.trim(),agreementAccepted:true,agreementVersion:'g-events-v1'},
+          gEvents:{venueName:venueName.trim(),venueAddress:address.trim(),agreementAccepted:true,agreementVersion:'g-events-v1',package:pkg?configured:null},
           paymentToken,saveCardOnFile:true,manualPaymentAcknowledged:false
         })
       });
@@ -63,6 +67,7 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
       <h2 className="mt-2 font-serif text-3xl">Your Event Reservation</h2>
       <p className="mt-2 text-sm">Delivery, installation and collection are handled by our team. There is no self-pickup option.</p>
       <div className="mt-5 space-y-2">{lines.map(x=><div key={x.id} className="flex justify-between border-b py-3 text-sm"><span><span className="block">{x.record?.name||'Rental item'}</span><span className="mt-2 flex items-center gap-3"><button type="button" className="rounded border px-2" aria-label="Decrease quantity" onClick={()=>setQuantity(x.id,'rental',x.quantity-1,x.meta)}>−</button><strong>{x.quantity}</strong><button type="button" className="rounded border px-2" aria-label="Increase quantity" onClick={()=>setQuantity(x.id,'rental',x.quantity+1,x.meta)}>+</button><button type="button" className="text-xs underline" onClick={()=>removeFromCart(x.id,'rental',x.meta)}>Remove</button></span></span><strong>{cash(Math.round(Number(x.record?.rental_price||0)*100)*x.quantity)}</strong></div>)}</div>
+      {pkg&&<div className="rounded-lg bg-[#F8F3E8] p-4 text-sm"><h3 className="font-bold">Your treat cart configuration</h3><p>{pkg.guests} guests{pkg.attendants?` · ${pkg.attendants} attendants for ${pkg.hours} hours`:''}</p>{pkg.lines.map(l=><p key={l.id}>{l.quantity} × {l.name}: {cash(l.totalCents)}</p>)}{pkg.staffCents>0&&<p>Staffed service: {cash(pkg.staffCents)}</p>}<strong>Treats and staffing: {cash(pkg.addonsCents)}</strong></div>}
       {!selected.length&&<p className="mt-4 text-red-700">No G Events rentals were found in the cart.</p>}
       <div className="mt-5 grid gap-3"><label className="text-sm">Event date<input className="mt-1 w-full rounded border p-3" type="date" value={eventDate} onChange={e=>setEventDate(e.target.value)}/></label>
       <label className="text-sm">Event venue name (optional)<input className="mt-1 w-full rounded border p-3" value={venueName} onChange={e=>setVenueName(e.target.value)}/></label>
@@ -71,7 +76,7 @@ export default function GEventsCheckoutModal({catalog=[],onClose}){
       <label className="text-sm">Email<input className="mt-1 w-full rounded border p-3" type="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>
       <label className="text-sm">Phone<input className="mt-1 w-full rounded border p-3" type="tel" value={phone} onChange={e=>setPhone(e.target.value)}/></label></div>
       <p className="mt-3 text-sm">{availability===null?'Checking date availability…':availability?'Selected items are available for the provisional booking window.':'One or more items are unavailable for that date.'}</p>
-      <div className="mt-4 rounded-lg bg-[#f6f0e4] p-4 text-sm"><p>Rental subtotal: <strong>{cash(subtotal)}</strong></p><p>Estimated 50% booking deposit: <strong>{cash(deposit)}</strong></p><p>Estimated security deposit: <strong>{cash(security)}</strong></p><p className="mt-2">Delivery, setup and collection are included in the rental price. Treats and staffing are not included unless separately arranged.</p></div>
+      <div className="mt-4 rounded-lg bg-[#f6f0e4] p-4 text-sm"><p>Rental subtotal: <strong>{cash(subtotal)}</strong></p>{pkg&&<p>Treats and staffing: <strong>{cash(pkg.addonsCents)}</strong></p>}<p>Package total: <strong>{cash(grandTotal)}</strong></p><p>Estimated 50% booking deposit: <strong>{cash(deposit)}</strong></p><p>Estimated security deposit: <strong>{cash(security)}</strong></p><p className="mt-2">Delivery, setup and collection are included in the rental price. Selected treats and staffing are included in the package total above.</p></div>
       <label className="mt-5 flex gap-2 text-sm"><input type="checkbox" checked={accepted} onChange={e=>setAccepted(e.target.checked)}/>I agree to the G Events booking terms displayed above and below, including delivery-only service, the 50% booking deposit, remaining balance due seven days before the reserved date window, and refundable security deposit due 48 hours before the reserved date window. Delivery and collection appointment times will be coordinated separately.</label>
        <div className="mt-4 rounded-lg border border-[#D8C69D] bg-[#FFFDF7] p-4 text-sm leading-6">
          <h3 className="font-bold">G Events booking terms · v1</h3>

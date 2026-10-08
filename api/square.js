@@ -11,6 +11,7 @@
 // body parsing for an entire function. Mixing that into a shared dispatcher
 // would break every other resource's normal JSON req.body.
 import crypto from "crypto";
+import {calculateGPackage} from "../gEventsPricing.js";
 import { createClient } from "@supabase/supabase-js";
 import { getSquareClient, getSquareLocationId, squareEnvironmentName } from "./_square.js";
 import { ensureSquareCustomer } from "./_squareCustomer.js";
@@ -2314,10 +2315,22 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
       });
     }
 
+    let eventPackage=null;
+    if(deliveryOnly && gEvents.package != null){
+      if(items.filter(row=>Number(row.id)===600).length!==1 || Number(items.find(row=>Number(row.id)===600)?.quantity)!==1){
+        return res.status(400).json({error:'A configured treat cart requires exactly one cart.'});
+      }
+      try{eventPackage=calculateGPackage(gEvents.package)}catch(e){return res.status(400).json({error:e.message});}
+      if(eventPackage.kind==='cart')return res.status(400).json({error:'Choose a valid configured treat cart.'});
+    }
     const customer = await findOrCreateProductionCustomer(input);
     const { billingLines, inventoryLines, reservationRows } = await resolveProductionRentals(items);
     const rentalItemsSubtotalCents = billingLines.reduce((sum, line) => sum + line.unitCents * line.quantity, 0);
-    const rentalSubtotalCents = rentalItemsSubtotalCents + rentalWindow.extraDayFeeCents;
+    const rentalSubtotalCents = rentalItemsSubtotalCents + rentalWindow.extraDayFeeCents + (eventPackage?.addonsCents||0);
+    if(eventPackage){
+      for(const line of eventPackage.lines){billingLines.push({name:line.name,quantity:line.quantity,unitCents:line.unitCents});}
+      if(eventPackage.staffCents){billingLines.push({name:`Staffed dessert service (${eventPackage.attendants} attendants, ${eventPackage.hours} hours)`,quantity:1,unitCents:eventPackage.staffCents});}
+    }
 
     if (rentalSubtotalCents < PRODUCTION_MIN_RENTAL_CENTS) {
       return res.status(400).json({ error: "Rental orders require a $50 minimum." });
@@ -2339,7 +2352,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
           venue_name: String(gEvents.venueName || '').trim() || null,
           venue_address: String(gEvents.venueAddress || '').trim(),
           service_style: 'g_events_delivery_setup_collection_included',
-          notes: `G Events delivery-only | Agreement: g-events-v1 accepted ${new Date().toISOString()} | Delivery/setup/collection INCLUDED in item price | Delivery and collection schedule to be coordinated with client; inventory hold dates are not appointment times.`,
+          notes: `G Events delivery-only | Agreement: g-events-v1 accepted ${new Date().toISOString()} | Delivery/setup/collection INCLUDED in item price | Delivery and collection schedule to be coordinated with client; inventory hold dates are not appointment times.${eventPackage?` Treat package: ${JSON.stringify(eventPackage)}`:''}`, 
         } : {}),
         booking_number: bookingNumber,
         status: "checkout_pending",
@@ -2352,7 +2365,7 @@ async function handleProductionBooking(req, res, deliveryOnly = false) {
         early_pickup_days: rentalWindow.earlyPickupDays,
         extended_return_days: rentalWindow.extendedReturnDays,
         rental_window_fee_cents: rentalWindow.extraDayFeeCents,
-        rental_subtotal_cents: rentalItemsSubtotalCents,
+        rental_subtotal_cents: rentalItemsSubtotalCents + (eventPackage?.addonsCents||0),
         rental_total_cents: rentalSubtotalCents,
         total_price: rentalSubtotalCents / 100,
         booking_deposit_cents: bookingDepositCents,
