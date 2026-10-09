@@ -129,6 +129,29 @@ export default function TableBoxPackages({ navigate }) {
               Want the easy version? Start with a ready-made box, add anything seasonal you want, and see every
               dollar before it goes into your cart.
             </p>
+            {/* ASG TABLE BOX CHOICE PATHS: two simple ways to start */}
+            <div className="mt-7 grid gap-3 sm:grid-cols-2" aria-label="Choose how to build your Table Box">
+              <a
+                href="#ready-made-table-boxes"
+                className="group block rounded-[20px] border px-5 py-5 text-left shadow-[0_6px_18px_rgba(9,49,37,.10)] transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={{ background: "#FCF9F2", borderColor: "#D7BE92", color: "#103E2E" }}
+              >
+                <span className="block text-xs font-bold uppercase tracking-[0.15em]" style={{ color: "#AD5B43" }}>THE EASY START</span>
+                <strong className="mt-2 block font-serif text-[23px] leading-tight">Choose a Ready-Made Box</strong>
+                <span className="mt-2 block text-sm leading-relaxed" style={{ color: "#335548" }}>A coordinated setup with a visible package price. Customize only if you want to.</span>
+                <span className="mt-3 block text-sm font-bold">See ready-made boxes →</span>
+              </a>
+              <a
+                href="#build-your-own-table-box"
+                className="group block rounded-[20px] border px-5 py-5 text-left shadow-[0_6px_18px_rgba(9,49,37,.10)] transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                style={{ background: "#FCF9F2", borderColor: "#D7BE92", color: "#103E2E" }}
+              >
+                <span className="block text-xs font-bold uppercase tracking-[0.15em]" style={{ color: "#AD5B43" }}>MAKE IT YOURS</span>
+                <strong className="mt-2 block font-serif text-[23px] leading-tight">Build My Own</strong>
+                <span className="mt-2 block text-sm leading-relaxed" style={{ color: "#335548" }}>Choose the pieces you need from three simple groups. Everything else is optional.</span>
+                <span className="mt-3 block text-sm font-bold">Build my box →</span>
+              </a>
+            </div>
             <div
               className="mt-5 flex flex-wrap items-center justify-start gap-x-4 gap-y-1 sm:justify-center"
               style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}
@@ -140,13 +163,6 @@ export default function TableBoxPackages({ navigate }) {
               <span>Delivery + basic setup available</span>
             </div>
             <div className="mt-7 flex flex-wrap items-center justify-start gap-3 sm:justify-center">
-              <a
-                href="#build-your-own-table-box"
-                className="inline-flex rounded-full border px-6 py-3 text-xs font-bold tracking-[0.12em]"
-                style={{ ...fonts.bodyFont, borderColor: palette.primaryDeep, color: palette.primaryDeep }}
-              >
-                OR BUILD YOUR OWN
-              </a>
               <TableBoxTransportModal />
             </div>
           </div>
@@ -156,7 +172,7 @@ export default function TableBoxPackages({ navigate }) {
           ) : (
             packages.length > 0 && (
               <>
-                <TableBoxPackageCarousel packages={packages} onOpen={(pkg) => setActivePackage(pkg)} />
+                <div id="ready-made-table-boxes" className="scroll-mt-28"><TableBoxPackageCarousel packages={packages} onOpen={(pkg) => setActivePackage(pkg)} /></div>
                 <nav
                   aria-label="Table Box package pages"
                   className="mt-6 flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-6"

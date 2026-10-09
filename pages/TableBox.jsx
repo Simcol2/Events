@@ -120,6 +120,33 @@ const SECTIONS = [
   },
 ];
 
+/* ASG Table Box three-decision grouping */
+// These are DISPLAY groups only. SECTIONS above remains the inventory allowlist.
+// Do not remove item.active and price filters from the page's catalog query.
+const TABLE_BOX_GROUPS = [
+  {
+    key: "set-the-table",
+    title: "01. Set the Table",
+    subtitle: "Everything guests eat and drink with. Skip anything you already own.",
+    categories: ["Glassware", "Plates", "Chargers", "Napkins", "Cutlery", "Disposables"],
+  },
+  {
+    key: "make-it-beautiful",
+    title: "02. Make It Beautiful",
+    subtitle: "The finishing touches: centrepieces, place cards and a little atmosphere.",
+    categories: ["Centerpiece", "Candles", "Place Cards", "Garland & Lights", "Linens"],
+  },
+  {
+    key: "serve-and-celebrate",
+    title: "03. Serve & Celebrate",
+    subtitle: "Cake stands, serving pieces and useful extras. Only if you need them.",
+    categories: ["Cake Stands", "Serving Pieces", "Helpful Add-Ons"],
+  },
+];
+const tableBoxGroupFor = (key) => TABLE_BOX_GROUPS.find((group) => group.categories.some((category) =>
+  SECTIONS.some((section) => section.key === key && section.category === category)
+))?.key || key;
+
 function money(n) {
   return new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(n);
 }
@@ -239,7 +266,7 @@ export default function TableBox({ navigate }) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [qty, setQty] = useState(() => readTableBoxDraft().qty || {});
-  const [openSection, setOpenSection] = useState(() => readTableBoxDraft().openSection || SECTIONS[0].key);
+  const [openSection, setOpenSection] = useState(() => tableBoxGroupFor(readTableBoxDraft().openSection || TABLE_BOX_GROUPS[0].key));
   // Opening a category collapses whichever one was open above it, which
   // pulls the clicked header up and off screen. Once the new layout is in
   // place, bring that header back to the top of the viewport.
@@ -312,15 +339,19 @@ export default function TableBox({ navigate }) {
 
   const sections = useMemo(
     () =>
-      SECTIONS.map((section) => ({
-        ...section,
+      TABLE_BOX_GROUPS.map((group) => ({
+        ...group,
+        // Same permitted products as the previous 14-category interface.
+        // Avoid accidentally exposing unrelated active inventory.
         products: catalogItems.filter(
           (item) =>
-            item.table_box_category === section.category &&
+            group.categories.includes(item.table_box_category) &&
             item.active !== false &&
             (item.rental_price != null || item.purchase_price != null)
+        ).sort((left, right) =>
+          group.categories.indexOf(left.table_box_category) - group.categories.indexOf(right.table_box_category)
         ),
-      })).filter((section) => section.products.length > 0),
+      })).filter((group) => group.products.length > 0),
     [catalogItems]
   );
 
@@ -413,6 +444,10 @@ export default function TableBox({ navigate }) {
         />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
+            <div
+              className="rounded-[28px] border px-5 py-7 shadow-[0_12px_32px_rgba(9,49,37,0.13)] sm:px-8 sm:py-9"
+              style={{ background: "#FCF9F2", borderColor: "#D7BE92" }}
+            >
             <Kicker palette={palette} fonts={fonts}>BUILD YOUR BOX</Kicker>
             <h2
               className="mt-3"
@@ -429,16 +464,15 @@ export default function TableBox({ navigate }) {
               <br />
               <span style={{ color: palette.accent }}>Better decisions.</span>
             </h2>
-            <p className="mt-4 max-w-md" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "16px", lineHeight: 1.7 }}>
-              You don't need a new dining room. You don't even need new plates. Start with what you have and add
-              only the pieces that make it feel intentional.
+            <p className="mt-4 max-w-md" style={{ ...fonts.bodyFont, color: "#335548", fontSize: "16px", lineHeight: 1.7 }}>
+              You don't need a whole new tablescape. Start with what you have and rent only the pieces that make it feel special.
             </p>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-3">
               {[
-                { Icon: Home, label: "Use what you have" },
-                { Icon: PackagePlus, label: "Rent what makes it better" },
-                { Icon: RotateCcw, label: "Give it back, guilt-free" },
+                { Icon: Home, label: "Use what you own" },
+                { Icon: PackagePlus, label: "Add what you love" },
+                { Icon: RotateCcw, label: "Return it afterward" },
               ].map(({ Icon, label }, i) => (
                 <div
                   key={label}
@@ -459,6 +493,8 @@ export default function TableBox({ navigate }) {
                   </span>
                 </div>
               ))}
+            </div>
+
             </div>
 
             {loading && (
