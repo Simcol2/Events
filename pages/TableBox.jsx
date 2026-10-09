@@ -1,3 +1,4 @@
+// ASG_TABLE_BOX_LEGIBILITY_GRID_V1
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Home, PackagePlus, RotateCcw, Star } from "lucide-react";
 import { supabase } from "../supabaseClient";
@@ -446,7 +447,7 @@ export default function TableBox({ navigate }) {
           <div>
             <div
               className="rounded-[28px] border px-5 py-7 shadow-[0_12px_32px_rgba(9,49,37,0.13)] sm:px-8 sm:py-9"
-              style={{ background: "#FCF9F2", borderColor: "#D7BE92" }}
+              style={{ background: "rgba(255, 252, 247, 0.84)", borderColor: "rgba(215, 190, 146, 0.75)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)" }}
             >
             <Kicker palette={palette} fonts={fonts}>BUILD YOUR BOX</Kicker>
             <h2
@@ -517,7 +518,7 @@ export default function TableBox({ navigate }) {
                           sectionRefs.current[section.key] = el;
                         }}
                         // Same card treatment as the package carousel (TableBoxPackageCarousel.jsx).
-                        className="overflow-hidden rounded-[18px] border shadow-[0_2px_4px_rgba(24,43,35,0.06),0_16px_36px_rgba(24,43,35,0.16)]"
+                        className="min-w-0 overflow-hidden rounded-[18px] border shadow-[0_2px_4px_rgba(24,43,35,0.06),0_16px_36px_rgba(24,43,35,0.16)]"
                         style={{
                           borderColor: "rgba(199,154,59,.35)",
                           background: "#FFFFFF",
@@ -557,7 +558,7 @@ export default function TableBox({ navigate }) {
                         </button>
 
                         {isOpen && (
-                          <div className="grid grid-cols-1 gap-5 border-t p-3 sm:p-5" style={{ borderColor: palette.line }}>
+                          <div className="grid grid-cols-1 gap-4 border-t p-3 sm:p-5 md:grid-cols-2 xl:gap-5" style={{ borderColor: palette.line }}>
                             {groupByVariant(section.products).map((group) => {
                               const hasVariants = Array.isArray(group.variants) && group.variants.length > 1;
                               const orderedVariants = hasVariants ? sortVariantsByPrice(group.variants) : null;
@@ -568,6 +569,7 @@ export default function TableBox({ navigate }) {
                               const count = qty[activeProduct.id] || 0;
                               return (
                                 <TableBoxProductCard
+                                  compact
                                   key={group.key}
                                   item={activeProduct}
                                   displayName={displayName}

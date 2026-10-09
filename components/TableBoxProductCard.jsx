@@ -1,3 +1,4 @@
+// ASG_TABLE_BOX_LEGIBILITY_GRID_V1
 import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { usePalette } from "../PaletteContext";
@@ -8,7 +9,7 @@ import { rgba } from "./EditorialKit";
 const money = (value) => new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(Number(value));
 
 export default function TableBoxProductCard({
-  item, displayName, category, variants, count, onVariantChange, onQuantityChange, onDetails,
+  item, displayName, category, variants, count, onVariantChange, onQuantityChange, onDetails, compact = false,
 }) {
   const { palette, fonts } = usePalette();
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -21,12 +22,12 @@ export default function TableBoxProductCard({
 
   return (
     <article
-      className="grid min-w-0 overflow-hidden rounded-lg border sm:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]"
+      className={`grid min-w-0 overflow-hidden rounded-lg border ${compact ? "grid-cols-1" : "sm:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]"}`}
       style={{ borderColor: count ? palette.accent : palette.line, background: palette.surface }}
       aria-label={displayName}
     >
-      <div className="flex min-w-0 flex-col border-b sm:border-b-0 sm:border-r" style={{ background: "#FBF9F3", borderColor: palette.line }}>
-        <div className="relative aspect-square sm:aspect-auto sm:min-h-[280px] sm:flex-1">
+      <div className={`flex min-w-0 flex-col border-b ${compact ? "" : "sm:border-b-0 sm:border-r"}`} style={{ background: "#FBF9F3", borderColor: palette.line }}>
+        <div className={compact ? "relative h-[185px] sm:h-[205px]" : "relative aspect-square sm:aspect-auto sm:min-h-[280px] sm:flex-1"}>
           <button type="button" onClick={onDetails} className="absolute inset-0 h-full w-full p-3" aria-label={"View details for " + displayName}>
             {photos.length ? (
               <img src={photos[currentPhoto]} alt={displayName} loading="lazy" className="h-full w-full object-contain" />

@@ -1,3 +1,4 @@
+// ASG_TABLE_BOX_LEGIBILITY_GRID_V1
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
@@ -106,7 +107,7 @@ export default function TableBoxPackages({ navigate }) {
       <section className="overflow-hidden">
         <div className="mx-auto max-w-5xl px-5 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-14">
           <div className="mx-auto max-w-3xl text-left sm:text-center">
-            <Kicker palette={palette} fonts={fonts}>HOSTING AT HOME</Kicker>
+            <span className="inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[.18em]" style={{ color: "#FFFFFF", background: "rgba(5,62,45,.86)" }}>HOSTING AT HOME</span>
             <h1
               className="mt-4"
               style={{
@@ -154,7 +155,7 @@ export default function TableBoxPackages({ navigate }) {
             </div>
             <div
               className="mt-5 flex flex-wrap items-center justify-start gap-x-4 gap-y-1 sm:justify-center"
-              style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px" }}
+              style={{ ...fonts.bodyFont, color: "#FFFFFF", background: "rgba(5,62,45,.85)", borderRadius: "12px", padding: "9px 14px", fontSize: "14px", fontWeight: 650 }}
             >
               <span>$50 minimum rental</span>
               <span aria-hidden="true">&middot;</span>
@@ -205,7 +206,7 @@ export default function TableBoxPackages({ navigate }) {
               className="pointer-events-none w-[104px] flex-shrink-0 select-none object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.16))_drop-shadow(0_7px_9px_rgba(0,0,0,0.10))] sm:hidden"
             />
             <div>
-              <p style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "13px", lineHeight: 1.6 }}>
+              <p style={{ ...fonts.bodyFont, color: "#FFFFFF", background: "rgba(5,62,45,.86)", borderRadius: "12px", padding: "12px 16px", fontSize: "16px", fontWeight: 650, lineHeight: 1.6 }}>
                 Package prices are the actual rental prices. Holiday add-ons and delivery are optional and priced
                 separately before you add anything to your cart.
               </p>
@@ -218,7 +219,7 @@ export default function TableBoxPackages({ navigate }) {
           </div>
 
           {navigate && (
-            <ElevatedCard palette={palette} className="mt-10 p-6 text-center sm:p-8">
+            <div className="mt-10 rounded-[26px] border p-6 text-center shadow-[0_12px_36px_rgba(10,48,35,.12)] sm:p-8" style={{ background: "rgba(255,252,247,.78)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)", borderColor: "rgba(215,190,146,.65)" }}>
               <h3
                 style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "clamp(1.3rem, 2.6vw, 1.7rem)", fontWeight: 640, lineHeight: 1.2 }}
               >
@@ -235,7 +236,7 @@ export default function TableBoxPackages({ navigate }) {
               >
                 Browse the full décor collection →
               </button>
-            </ElevatedCard>
+            </div>
           )}
         </div>
       </section>
