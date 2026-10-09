@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { withBasePath } from "../apiBase";
 
 /*
   Decorative page layer for /table-box.
@@ -8,47 +7,6 @@ import { withBasePath } from "../apiBase";
   Use transparent PNG/WebP cutouts for the decorative products.
   These images intentionally sit behind the real content cards.
 */
-const DECOR = [
-  {
-    src: "/photos/decor/red-staub-cutout.png",
-    className:
-      "right-[-58px] top-[115px] w-[210px] sm:right-[-72px] sm:w-[290px] lg:w-[340px]",
-  },
-  {
-    src: "/photos/decor/stemmed-wine-glass-cutout.png",
-    className:
-      "right-[56px] top-[395px] w-[92px] sm:right-[36px] sm:top-[430px] sm:w-[120px] lg:right-auto lg:left-[28px] lg:top-[160px] lg:w-[140px]",
-  },
-  {
-    src: "/photos/decor/gold-candleholder-cutout.png",
-    className:
-      // Mobile shows this beside the package pricing note instead (TableBoxPackages.jsx).
-      "hidden sm:block left-[-28px] top-[880px] w-[100px] sm:left-[-38px] sm:w-[145px]",
-  },
-  {
-    src: "/photos/decor/gold-cake-stand-cutout.png",
-    className:
-      // Mobile shows this beside the Build Your Box heading instead (TableBox.jsx).
-      "hidden sm:block lg:hidden right-[-64px] top-[1780px] w-[210px] sm:right-[-74px] sm:w-[280px]",
-  },
-  {
-    src: "/photos/decor/butter-dish-cutout.png",
-    className:
-      "left-[-42px] top-[2450px] w-[150px] sm:left-[-56px] sm:w-[200px]",
-  },
-  {
-    src: "/photos/decor/gold-charger-cutout.png",
-    className:
-      "right-[-70px] top-[3250px] w-[220px] sm:right-[-90px] sm:w-[310px]",
-  },
-  {
-    src: "/photos/decor/grey-staub-cutout.png",
-    className:
-      // Mobile shows this beside the Can't Find the Thing card instead (TableBox.jsx).
-      "hidden sm:block left-[-72px] top-[4100px] w-[220px] sm:left-[-94px] sm:w-[310px]",
-  },
-];
-
 /*
   "Reveal in place": every cutout stays exactly where it is laid out, but once
   it reaches its spot it holds still on screen while the page content scrolls
@@ -140,56 +98,20 @@ export function useHoldInPlace(rootRef) {
 
 export default function TableBoxEditorialBackdrop() {
   return (
-    <>
-      {/* Page-scoped paper background: must not cover the following footer */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          // Bright, neutral off-white. The owner has rejected warm/beige three
-          // times; check the RENDERED colour (texture lines darken it), not
-          // just this value.
-          backgroundColor: "#FDFDFB",
-          backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(30, 50, 42, 0.008) 0px, rgba(30, 50, 42, 0.008) 1px, transparent 1px, transparent 3px)",
-          // Static: stays put while the page content scrolls over it.
-          backgroundAttachment: "fixed",
-        }}
-      />
-
-      {/* Page-scoped MCM stripe */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-[8px] z-[1] w-[16px]"
-      >
-        <div
-          className="absolute inset-y-0 left-0 w-[2px]"
-          style={{ background: "#C79A3B" }}
-        />
-        <div
-          className="absolute inset-y-0 right-0 w-[8px]"
-          style={{ background: "#D81B72" }}
-        />
-      </div>
-
-      {/* Decorative rental cutouts, positioned down the DOCUMENT, not fixed */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[2] overflow-hidden"
-      >
-        {DECOR.map((item) => (
-          <img
-            key={item.src}
-            src={withBasePath(item.src)}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            data-hold-in-place
-            style={{ willChange: "transform" }}
-            className={`absolute select-none object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.16))_drop-shadow(0_7px_9px_rgba(0,0,0,0.10))] ${item.className}`}
-          />
-        ))}
-      </div>
-    </>
+    <div
+      aria-hidden="true"
+      data-table-box-background="ASG_TABLE_BOX_STATIC_IMAGE_BACKGROUND_V1"
+      className="pointer-events-none sticky top-0 z-0 h-screen w-full"
+      style={{
+        // Sticky rather than position:fixed keeps this image scoped to the
+        // Table Box page. It doesn't continue across the website footer.
+        // The negative margin lets the existing page content scroll over it.
+        marginBottom: "-100vh",
+        backgroundImage: `linear-gradient(rgba(255, 253, 248, 0.12), rgba(255, 253, 248, 0.12)), url("https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/tableboxbackground.png")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
+      }}
+    />
   );
 }
