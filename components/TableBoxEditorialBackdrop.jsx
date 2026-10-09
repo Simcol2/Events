@@ -108,7 +108,11 @@ export default function TableBoxEditorialBackdrop() {
         // The negative margin lets the existing page content scroll over it.
         marginBottom: "-100vh",
         backgroundImage: `linear-gradient(rgba(255, 253, 248, 0.12), rgba(255, 253, 248, 0.12)), url("https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/tableboxbackground.png")`,
-        backgroundSize: "cover",
+        // Show the ENTIRE editorial composition instead of cropping both sides.
+        // Cream fills unused space on wide screens; the artwork remains fixed
+        // within the sticky page-scoped layer.
+        backgroundColor: "#FFF9F0",
+        backgroundSize: "contain",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
       }}
