@@ -108,6 +108,11 @@ export default function TableBoxPackages({ navigate }) {
       <section className="overflow-hidden">
         <div className="mx-auto max-w-5xl px-5 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-14">
           <div className="mx-auto max-w-3xl text-left sm:text-center">
+            {/* ASG_TABLE_BOX_HERO_NAV_GLASS_V1: readable hero over fixed tabletop artwork */}
+            <div
+              className="rounded-[28px] border px-5 py-6 shadow-[0_16px_48px_rgba(9,49,37,.16)] sm:px-9 sm:py-9"
+              style={{ background: "rgba(255,252,247,.88)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)", borderColor: "rgba(215,190,146,.78)" }}
+            >
             <span className="inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[.18em]" style={{ color: "#FFFFFF", background: "rgba(5,62,45,.86)" }}>HOSTING AT HOME</span>
             <h1
               className="mt-4"
@@ -127,10 +132,11 @@ export default function TableBoxPackages({ navigate }) {
               <br />
               Rent what makes it better.
             </p>
-            <p className="mx-auto mt-5 max-w-lg" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "15px", lineHeight: 1.7 }}>
+            <p className="mx-auto mt-5 max-w-lg" style={{ ...fonts.bodyFont, color: "#335548", fontSize: "16px", lineHeight: 1.7 }}>
               Want the easy version? Start with a ready-made box, add anything seasonal you want, and see every
               dollar before it goes into your cart.
             </p>
+            </div>
             {/* ASG TABLE BOX CHOICE PATHS: two simple ways to start */}
             <div className="mt-7 grid gap-3 sm:grid-cols-2" aria-label="Choose how to build your Table Box">
               <a

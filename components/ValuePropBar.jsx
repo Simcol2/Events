@@ -13,12 +13,12 @@ import { SERVICE_AREA_SHORT } from "../seo";
 // as the viewport, then animated from translateX(0) to translateX(-50%) -
 // since the two copies are identical, the loop point is invisible and the
 // scroll reads as endless rather than a jarring reset.
-function Message({ palette, fonts }) {
+function Message({ palette, fonts, light = false }) {
   return (
     <span className="mx-6 inline-flex items-center whitespace-nowrap">
       <span
         className="text-sm font-semibold tracking-[0.18em]"
-        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+        style={{ ...fonts.bodyFont, color: light ? "#FFF9EF" : palette.primaryDeep }}
       >
         INTERACTIVE GUEST EXPERIENCES
       </span>
@@ -27,7 +27,7 @@ function Message({ palette, fonts }) {
       </span>
       <span
         className="text-sm font-semibold tracking-[0.18em]"
-        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+        style={{ ...fonts.bodyFont, color: light ? "#FFF9EF" : palette.primaryDeep }}
       >
         CUSTOM KEEPSAKES
       </span>
@@ -39,7 +39,7 @@ function Message({ palette, fonts }) {
           them, and a crawler should see the same answer on every URL. */}
       <span
         className="text-sm font-semibold tracking-[0.18em]"
-        style={{ ...fonts.bodyFont, color: palette.primaryDeep }}
+        style={{ ...fonts.bodyFont, color: light ? "#FFF9EF" : palette.primaryDeep }}
       >
         RENTALS ACROSS {SERVICE_AREA_SHORT.toUpperCase()}
       </span>
@@ -48,16 +48,17 @@ function Message({ palette, fonts }) {
 }
 
 export default function ValuePropBar({ integrated = false }) {
+  // ASG_TABLE_BOX_HERO_NAV_GLASS_V1
   const { palette, fonts } = usePalette();
 
   return (
     <div
       className="relative z-10 w-full overflow-hidden py-2.5"
-      style={integrated ? { background: "transparent" } : { background: palette.surface, borderBottom: `1px solid ${palette.line}` }}
+      style={integrated ? { background: "linear-gradient(100deg, #083D2E 0%, #0C553E 55%, #083D2E 100%)", borderBottom: "1px solid rgba(213,175,90,.42)" } : { background: palette.surface, borderBottom: `1px solid ${palette.line}` }}
     >
       <div className="marquee-track flex w-max">
-        <Message palette={palette} fonts={fonts} />
-        <Message palette={palette} fonts={fonts} />
+        <Message palette={palette} fonts={fonts} light={integrated} />
+        <Message palette={palette} fonts={fonts} light={integrated} />
       </div>
     </div>
   );
