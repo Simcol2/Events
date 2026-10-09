@@ -1,3 +1,4 @@
+// ASG_TABLE_BOX_CARD_GRID_POLISH_V1 (Table Box filtering and existing single-open accordion)
 // ASG_TABLE_BOX_LEGIBILITY_GRID_V1
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Home, PackagePlus, RotateCcw, Star } from "lucide-react";
@@ -347,6 +348,7 @@ export default function TableBox({ navigate }) {
         products: catalogItems.filter(
           (item) =>
             group.categories.includes(item.table_box_category) &&
+            !/thanksgiving/i.test(item.name || "") &&
             item.active !== false &&
             (item.rental_price != null || item.purchase_price != null)
         ).sort((left, right) =>

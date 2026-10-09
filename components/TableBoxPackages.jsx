@@ -1,3 +1,4 @@
+// ASG_TABLE_BOX_CARD_GRID_POLISH_V1 (remove price disclaimer, preserve cart success status)
 // ASG_TABLE_BOX_LEGIBILITY_GRID_V1
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -194,29 +195,11 @@ export default function TableBoxPackages({ navigate }) {
             )
           )}
 
-          <div className="mt-8 flex items-center gap-4 sm:block sm:text-center">
-            {/* Mobile only; desktop shows this piece in the page backdrop. */}
-            <img
-              src={withBasePath("/photos/decor/gold-candleholder-cutout.png")}
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              decoding="async"
-              data-hold-in-place
-              className="pointer-events-none w-[104px] flex-shrink-0 select-none object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.16))_drop-shadow(0_7px_9px_rgba(0,0,0,0.10))] sm:hidden"
-            />
-            <div>
-              <p style={{ ...fonts.bodyFont, color: "#FFFFFF", background: "rgba(5,62,45,.86)", borderRadius: "12px", padding: "12px 16px", fontSize: "16px", fontWeight: 650, lineHeight: 1.6 }}>
-                Package prices are the actual rental prices. Holiday add-ons and delivery are optional and priced
-                separately before you add anything to your cart.
-              </p>
-              {status && (
-                <p className="mt-2 font-semibold" role="status" style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "13px" }}>
-                  {status}
-                </p>
-              )}
-            </div>
-          </div>
+          {status && (
+            <p className="mt-3 text-center font-semibold" role="status" style={{ ...fonts.bodyFont, color: "#07563F", fontSize: "14px" }}>
+              {status}
+            </p>
+          )}
 
           {navigate && (
             <div className="mt-10 rounded-[26px] border p-6 text-center shadow-[0_12px_36px_rgba(10,48,35,.12)] sm:p-8" style={{ background: "rgba(255,252,247,.78)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)", borderColor: "rgba(215,190,146,.65)" }}>

@@ -1,3 +1,4 @@
+// ASG_TABLE_BOX_CARD_GRID_POLISH_V1 (consistent product cards and shorter previews)
 // ASG_TABLE_BOX_LEGIBILITY_GRID_V1
 import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
@@ -19,10 +20,13 @@ export default function TableBoxProductCard({
   const colors = parseColorOptions(item);
   const rental = item.rental_price != null;
   const price = rental ? item.rental_price : item.purchase_price;
+  const description = plainDescription(item.description || "").replace(/\s+/g, " ").trim();
+  const sentenceMatch = description.match(/^.*?[.!?](?=\s|$)/);
+  const preview = sentenceMatch ? sentenceMatch[0] : description;
 
   return (
     <article
-      className={`grid min-w-0 overflow-hidden rounded-lg border ${compact ? "grid-cols-1" : "sm:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]"}`}
+      className={`grid min-w-0 h-full overflow-hidden rounded-lg border ${compact ? "grid-cols-1 grid-rows-[auto_1fr]" : "sm:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]"}`}
       style={{ borderColor: count ? palette.accent : palette.line, background: palette.surface }}
       aria-label={displayName}
     >
@@ -51,7 +55,7 @@ export default function TableBoxProductCard({
           )}
         </div>
         {photos.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto px-3 pb-3">
+          <div className={`flex gap-2 overflow-x-auto px-3 pb-3 ${compact ? "h-[60px] items-start" : ""}`}>
             {photos.map((src, index) => (
               <button key={index} type="button" onClick={() => setPhotoIndex(index)}
                 className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-sm border bg-white"
@@ -62,13 +66,14 @@ export default function TableBoxProductCard({
             ))}
           </div>
         )}
+        {compact && photos.length <= 1 && <div aria-hidden="true" className="h-[60px]" />}
       </div>
 
       <div className="flex min-w-0 flex-col p-4 sm:p-5">
         <p style={{ ...fonts.bodyFont, color: palette.accent, fontSize: "10px", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase" }}>
           {item.brand || category}
         </p>
-        <h3 className="mt-2 break-words" style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: "24px", fontWeight: 650, lineHeight: 1.1 }}>
+        <h3 className={compact ? "mt-2 min-h-[3.65em] break-words" : "mt-2 break-words"} style={{ ...fonts.displayFont, color: palette.primaryDeep, fontSize: compact ? "21px" : "24px", fontWeight: 650, lineHeight: 1.16 }}>
           <button type="button" className="text-left" onClick={onDetails}>{displayName}</button>
         </h3>
         {(colors.length > 0 || item.size) && (
@@ -77,8 +82,8 @@ export default function TableBoxProductCard({
           </p>
         )}
         {item.description && (
-          <p className="mt-3 line-clamp-3" style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "13px", lineHeight: 1.65 }}>
-            {plainDescription(item.description)}
+          <p className="mt-3 line-clamp-2" style={{ ...fonts.bodyFont, color: palette.ink, fontSize: "13px", lineHeight: 1.55 }}>
+            {preview}
           </p>
         )}
         <button type="button" onClick={onDetails} className="mt-3 self-start text-left underline underline-offset-4"
@@ -104,7 +109,7 @@ export default function TableBoxProductCard({
 
         <div className="mt-auto pt-5">
           <div className="border-t pt-4" style={{ borderColor: palette.line }}>
-            <p style={{ ...fonts.displayFont, color: palette.accent, fontSize: "28px", fontWeight: 650, lineHeight: 1 }}>
+            <p style={{ ...fonts.displayFont, color: palette.accent, fontSize: compact ? "23px" : "26px", fontWeight: 650, lineHeight: 1 }}>
               {money(price)}
             </p>
             <p className="mt-1" style={{ ...fonts.bodyFont, color: palette.muted, fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase" }}>
