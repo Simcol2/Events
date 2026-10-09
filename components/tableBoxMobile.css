@@ -1,0 +1,40 @@
+/* Table Box mobile only. No desktop layout or product logic changes. */
+@media (max-width: 767px) {
+  [data-table-box-background="ASG_TABLE_BOX_STATIC_IMAGE_BACKGROUND_V1"] {
+    background-size: auto 100% !important;
+    background-position: center top !important;
+    background-color: #fffcf7 !important;
+  }
+  /* A softly feathered wash, not a text box; keep the tabletop visible. */
+  .tb-mobile-hero { position: relative; isolation: isolate; }
+  .tb-mobile-hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: min(690px, 90vh);
+    background: linear-gradient(to bottom,
+      rgba(255,252,247,.94) 0%,
+      rgba(255,252,247,.92) 34%,
+      rgba(255,252,247,.70) 68%,
+      rgba(255,252,247,0) 100%);
+    pointer-events: none;
+  }
+  .tb-mobile-hero > div { padding-top: 28px !important; }
+  .tb-mobile-hero-inner h1 {
+    font-size: clamp(2.65rem, 11.4vw, 4rem) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -.045em !important;
+  }
+  .tb-mobile-hero-inner > p {
+    max-width: 100%; color: #123f30 !important; text-wrap: pretty;
+  }
+  .tb-mobile-hero-inner > p:last-of-type {
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    font-weight: 500;
+  }
+  .tb-mobile-hero-inner > .grid { margin-top: 24px !important; }
+  .tb-mobile-hero-inner > .grid > a { padding: 18px 20px !important; }
+  .tb-mobile-hero-inner > .grid strong { font-size: 21px !important; }
+}

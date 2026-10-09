@@ -1,5 +1,6 @@
 // ASG_TABLE_BOX_CARD_GRID_POLISH_V1 (remove price disclaimer, preserve cart success status)
 // ASG_TABLE_BOX_LEGIBILITY_GRID_V1
+import "./tableBoxMobile.css";
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
@@ -105,9 +106,9 @@ export default function TableBoxPackages({ navigate }) {
 
   return (
     <>
-      <section className="overflow-hidden">
+      <section className="tb-mobile-hero overflow-hidden">
         <div className="mx-auto max-w-5xl px-5 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-14">
-          <div className="mx-auto max-w-3xl text-left sm:text-center">
+          <div className="tb-mobile-hero-inner mx-auto max-w-3xl text-left sm:text-center">
             {/* ASG_TABLE_BOX_OPEN_HERO_V1: typography directly on calm centre of artwork */}
             <span className="inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[.18em]" style={{ color: "#FFFFFF", background: "rgba(5,62,45,.86)" }}>HOSTING AT HOME</span>
             <h1
