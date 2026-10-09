@@ -12,7 +12,7 @@ function ctaBackground(item, palette) {
   return item.ctaColor ? FAMILIES[item.ctaColor].base : palette.primaryDeep;
 }
 
-export default function SiteHeader({ current, navigate, nav, integrated = false, emerald = false }) {
+export default function SiteHeader({ current, navigate, nav, integrated = false, emerald = false, tableBoxWide = false }) {
   const { palette, fonts } = usePalette();
   const { chooseEventType, openPickerForBuilder } = useEventType();
   const [open, setOpen] = useState(false);
@@ -62,8 +62,8 @@ export default function SiteHeader({ current, navigate, nav, integrated = false,
           : { borderBottom: `1px solid ${headerBorder}`, background: headerBg }
       }
     >
-      <div className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8">
-        <button onClick={() => go({ path: "/" })} className="group text-left">
+      <div className={tableBoxWide ? "mx-auto flex h-[78px] w-full items-center justify-between gap-8 px-5 sm:px-8 xl:px-10" : "mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 sm:px-8"}>
+        <button onClick={() => go({ path: "/" })} className="group shrink-0 text-left">
           <div className="font-[Space_Grotesk] text-sm font-semibold tracking-[0.42em]" style={{ color: logoTop }}>
             A SLICE OF G
           </div>
@@ -75,7 +75,7 @@ export default function SiteHeader({ current, navigate, nav, integrated = false,
           </div>
         </button>
 
-        <nav className="hidden items-center gap-3 md:flex lg:gap-4">
+        <nav className={tableBoxWide ? "hidden items-center gap-5 xl:gap-7 lg:flex" : "hidden items-center gap-3 md:flex lg:gap-4"}>
           {nav.map((item) => {
             const { label, path, cta, children } = item;
             const active = path === "/" ? current === "home" : current === path.slice(1);

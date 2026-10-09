@@ -220,7 +220,7 @@ function AppRoutes() {
       <SeoHead path={page} />
       <PaletteRouteSync current={current} />
       {/* ASG_TABLE_BOX_HERO_NAV_GLASS_V1: emerald Table Box header */}
-      <SiteHeader current={current} navigate={navigate} nav={NAV} integrated={current === "table-box"} emerald={current === "table-box"} />
+      <SiteHeader current={current} navigate={navigate} nav={NAV} integrated={current === "table-box"} emerald={current === "table-box"} tableBoxWide={current === "table-box"} />
       <ValuePropBar integrated={current === "table-box"} />
       {component}
       <SiteFooter navigate={navigate} className={current === "table-box" ? "mt-0" : undefined} />

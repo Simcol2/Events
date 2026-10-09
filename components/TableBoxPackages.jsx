@@ -110,8 +110,8 @@ export default function TableBoxPackages({ navigate }) {
           <div className="mx-auto max-w-3xl text-left sm:text-center">
             {/* ASG_TABLE_BOX_HERO_NAV_GLASS_V1: readable hero over fixed tabletop artwork */}
             <div
-              className="rounded-[28px] border px-5 py-6 shadow-[0_16px_48px_rgba(9,49,37,.16)] sm:px-9 sm:py-9"
-              style={{ background: "rgba(255,252,247,.88)", WebkitBackdropFilter: "blur(18px)", backdropFilter: "blur(18px)", borderColor: "rgba(215,190,146,.78)" }}
+              className="rounded-[30px] border px-5 py-6 shadow-[0_8px_32px_rgba(9,49,37,.08)] sm:px-9 sm:py-9" /* ASG_TABLE_BOX_GLASS_NAV_REFINEMENT_V2 */
+              style={{ background: "rgba(255,252,247,.58)", WebkitBackdropFilter: "blur(30px) saturate(115%)", backdropFilter: "blur(30px) saturate(115%)", borderColor: "rgba(255,255,255,.55)" }}
             >
             <span className="inline-block rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[.18em]" style={{ color: "#FFFFFF", background: "rgba(5,62,45,.86)" }}>HOSTING AT HOME</span>
             <h1
