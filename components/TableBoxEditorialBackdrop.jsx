@@ -107,8 +107,8 @@ export default function TableBoxEditorialBackdrop() {
         // Table Box page. It does not continue through the rest of the site.
         marginBottom: "-100vh",
         backgroundImage: `linear-gradient(rgba(255, 252, 247, 0.14), rgba(255, 252, 247, 0.14)), url("https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/tableboxbackground.png")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
+        backgroundSize: "100% auto",
+        backgroundPosition: "center 43%",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "scroll",
       }}
