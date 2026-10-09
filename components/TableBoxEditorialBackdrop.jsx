@@ -101,20 +101,16 @@ export default function TableBoxEditorialBackdrop() {
     <div
       aria-hidden="true"
       data-table-box-background="ASG_TABLE_BOX_STATIC_IMAGE_BACKGROUND_V1"
-      className="pointer-events-none sticky top-0 z-0 h-screen w-full"
+      className="pointer-events-none sticky top-0 z-0 h-screen w-full overflow-hidden"
       style={{
         // Sticky rather than position:fixed keeps this image scoped to the
-        // Table Box page. It doesn't continue across the website footer.
-        // The negative margin lets the existing page content scroll over it.
+        // Table Box page. It does not continue through the rest of the site.
         marginBottom: "-100vh",
-        backgroundImage: `linear-gradient(rgba(255, 253, 248, 0.12), rgba(255, 253, 248, 0.12)), url("https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/tableboxbackground.png")`,
-        // Show the ENTIRE editorial composition instead of cropping both sides.
-        // Cream fills unused space on wide screens; the artwork remains fixed
-        // within the sticky page-scoped layer.
-        backgroundColor: "#FFF9F0",
-        backgroundSize: "contain",
-        backgroundPosition: "center center",
+        backgroundImage: `linear-gradient(rgba(255, 252, 247, 0.14), rgba(255, 252, 247, 0.14)), url("https://rsexseihtkaqoxccrylk.supabase.co/storage/v1/object/public/Photos%20from/tableboxbackground.png")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center top",
         backgroundRepeat: "no-repeat",
+        backgroundAttachment: "scroll",
       }}
     />
   );
